@@ -33,6 +33,9 @@ do
 		nodevfs)
 			USE_DEVFS_NORMAL=0
 		;;
+		loop\=*)
+			LOOP=`parse_opt "${x}"`
+		;;
 		*)
 		;;
 	esac
@@ -71,14 +74,24 @@ mkdir /newroot
 if [ "${CDROOT}" -eq "1" ]
 then
 	mount -t tmpfs tmpfs /newroot
-	mkdir /newroot/dev /newroot/mnt /newroot/mnt/cdrom /newroot/mnt/.init.d /newroot/mnt/gentoo
+	mkdir /newroot/dev /newroot/mnt /newroot/mnt/cdrom /newrot/mnt/loop /newroot/tmp/.initrd /newroot/mnt/gentoo
 	[ ! -e /newroot/dev/.devfsd ] && mount -t devfs devfs /newroot/dev
 	devfsd /newroot/dev
+	sleep 1
 	findcdmount /newroot/dev/cdroms/*
+	# not in /dev/cdroms try /dev/ide/cd
+	if [ "${REAL_ROOT}" = "" ]
+	then
+		findcdmount /newroot/dev/ide/cd/*
+	fi
+
+
 	if [ "${REAL_ROOT}" = "" ]
 	then
 		kill_devfsd
+		sleep 1
 		umount /newroot/dev/
+		sleep 1
 		umount /newroot
 		# shouldn't be anything in here b/c it was on tmpfs
 		rm -rf /newroot/*
@@ -152,13 +165,27 @@ if [ "${CDROOT}" = "1" ]
 then
 	echo "STEP 5a: filling tmpfs filesystem"
 	cd /newroot
+	if [ "${LOOP}" != "" ]
+	then
+		echo "STEP 5a1: mounting loop filesystem"
+		mount -o loop /newroot/mnt/cdrom/${LOOP} /newroot/mnt/loop
+		if [ "$?" != 0 ]
+		then
+			echo "FAILED TO MOUNT LOOP FILESYSTEM, barfing out to shell"
+			/bin/ash
+		fi
+		FS_LOCATION="mnt/loop"
+	else
+		FS_LOCATION="mnt/cdrom"
+	fi
+	echo "STEP 5a2: filling filesystem"
 	for x in ${ROOT_LINKS}
 	do
-		ln -s "mnt/cdrom/${x}" "${x}"
+		ln -s "${FS_LOCATION}/${x}" "${x}"
 	done
 	mkdir initrd proc tmp sys
 	chmod 1777 tmp
-	(cd /newroot/mnt/cdrom; cp -a ${ROOT_TREES} /newroot)
+	(cd /newroot/${FS_LOCATION}; cp -a ${ROOT_TREES} /newroot)
 	kill_devfsd
 else
 	echo "STEP 5b: setting up stuff for pivot_root"
