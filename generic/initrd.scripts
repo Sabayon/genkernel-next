@@ -33,7 +33,7 @@ findcdmount() {
 		for x in $*
 		do
 			echo -e "${GOOD}>>${NORMAL} Attempting to mount CD:- ${x}"
-			mount -t iso9660 -r ${x} /newroot/mnt/cdrom > /dev/null 2>&1
+			mount -r ${x} /newroot/mnt/cdrom > /dev/null 2>&1
 			if [ "$?" = "0" ]
 			then
 				REAL_ROOT="${x}"
