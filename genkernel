@@ -183,7 +183,7 @@ then
 		echo
 		eval ${CMD_CALLBACK} | tee -a ${DEBUGFILE}
 		echo
-		print_info 1 "<<< Callback exit status: $?"
+		print_info 1 "<<< Callback exit status: ${PIPESTATUS[0]}"
 	else
 		echo
 		print_info 1 ">>> Callback cancelled..."

@@ -120,28 +120,38 @@ compile_generic() {
 		export_utils_args
 		MAKE=${UTILS_MAKE}
 	fi
+	case "$2" in
+		kernel) ARGS="`compile_kernel_args`" ;;
+		utils) ARGS="`compile_utils_args`" ;;
+		*) ARGS="" ;; # includes runtask
+	esac
+		
 
+	# the eval usage is needed in the next set of code
+	# as ARGS can contain spaces and quotes, eg:
+	# ARGS='CC="ccache gcc"'
 	if [ "${2}" == 'runtask' ]
 	then
-		print_info 2 "COMMAND: ${MAKE} ${MAKEOPTS} ${1}" 1 0 1
-		${MAKE} -s ${MAKEOPTS/-j?/-j1} ${1}
+		print_info 2 "COMMAND: ${MAKE} ${MAKEOPTS/-j?/j1} ${ARGS} ${1}" 1 0 1
+		eval ${MAKE} -s ${MAKEOPTS/-j?/-j1} "${ARGS}" ${1}
 		RET=$?
 	elif [ "${DEBUGLEVEL}" -gt "1" ]
 	then
 		# Output to stdout and debugfile
-		print_info 2 "COMMAND: ${MAKE} ${MAKEOPTS} ${1}" 1 0 1
-		${MAKE} ${MAKEOPTS} ${1} 2>&1 | tee -a ${DEBUGFILE}
-		RET=$?
+		print_info 2 "COMMAND: ${MAKE} ${MAKEOPTS} ${ARGS} ${1}" 1 0 1
+		eval ${MAKE} ${MAKEOPTS} ${ARGS} ${1} 2>&1 | tee -a ${DEBUGFILE}
+		RET=${PIPESTATUS[0]}
 	else
 		# Output to debugfile only
-		print_info 2 "COMMAND: ${MAKE} ${MAKEOPTS} ${1}" 1 0 1
-		${MAKE} ${MAKEOPTS} ${1} >> ${DEBUGFILE} 2>&1
+		print_info 2 "COMMAND: ${MAKE} ${MAKEOPTS} ${ARGS} ${1}" 1 0 1
+		eval ${MAKE} ${MAKEOPTS} ${ARGS} ${1} >> ${DEBUGFILE} 2>&1
 		RET=$?
 	fi
 	[ "${RET}" -ne '0' ] &&
 		gen_die "Failed to compile the \"${1}\" target..."
 
 	unset MAKE
+	unset ARGS
 	if [ "${2}" = 'kernel' ]
 	then
 		unset_kernel_args
