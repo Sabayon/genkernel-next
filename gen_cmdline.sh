@@ -36,6 +36,7 @@ usage() {
   echo "	--utils-ld=<linker>	Linker to use for utils"
   echo "	--utils-as=<assembler>	Assembler to use for utils"
   echo "	--utils-make=<makeprog>	GNU Make to use for utils"
+  echo "	--makeopts=<makeopts>	Make Opts such as -j2, etc"
   echo "  Internals"
   echo "	--arch-override=<arch>	Force to arch instead of autodetect (cross-compile?)"
   echo "	--busybox-config=<file>	Busybox configuration file to use"
@@ -96,12 +97,14 @@ parse_cmdline() {
 				CMD_UTILS_MAKE=`parse_opt "${x}"`
 				print_info 2 "CMD_UTILS_MAKE: $CMD_UTILS_MAKE"
 			;;
-			
+			--makeopts*)
+				CMD_MAKEOPTS=`parse_opt "${x}"`
+				print_info 2 "CMD_MAKEOPTS: $CMD_MAKEOPTS"
+			;;			
 			--debuglevel*)
 				CMD_DEBUGLEVEL=`parse_opt "${x}"`
 				DEBUGLEVEL="${CMD_DEBUGLEVEL}"
 				print_info 2 "CMD_DEBUGLEVEL: $CMD_DEBUGLEVEL"
-
 			;;
 			--menuconfig)
 				CMD_MENUCONFIG=1

@@ -16,7 +16,11 @@ get_KV() {
 }
 
 determine_real_args() {
-	MAKEOPTS="-j2"
+	if [ "${CMD_MAKEOPTS}" != "" ]
+	then
+		MAKEOPTS="${CMD_MAKEOPTS}"
+	fi
+
 	if [ "${CMD_KERNELDIR}" != "" ]
 	then
 		KERNEL_DIR=${CMD_KERNELDIR}

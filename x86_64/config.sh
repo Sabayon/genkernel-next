@@ -7,6 +7,8 @@ KERNEL_BINARY="arch/x86_64/boot/bzImage"
 
 USE_DIETLIBC=1
 
+MAKEOPTS="-j2"
+
 KERNEL_MAKE=make
 UTILS_MAKE=make
 
