@@ -8,6 +8,8 @@
 
 USE_DEVFS_NORMAL=1
 USE_UDEV_NORMAL=2
+USE_EVMS_NORMAL=1
+USE_LVM2_NORMAL=1
 
 if [ "$$" != '1' ]
 then
@@ -45,6 +47,12 @@ do
 		;;
 		nodevfs)
 			USE_DEVFS_NORMAL=0
+		;;
+		nolvm2)
+			USE_LVM2_NORMAL=0
+		;;
+		noevms)
+			USE_EVMS_NORMAL=0
 		;;
 		udev)
 			USE_UDEV_NORMAL=1
@@ -246,7 +254,7 @@ then
 	devfsd /dev -np
 fi
 
-if [ "${DO_lvm2}" ]
+if [ "${DO_lvm2}" -a "{USE_LVM2_NORMAL}" -eq '1' ]
 then
 	if [ -e '/sbin/vgscan' -a -e '/sbin/vgchange' ]
 	then
@@ -257,7 +265,7 @@ then
 	fi
 fi
 
-if [ "${DO_evms2}" ]
+if [ "${DO_evms2}" -a "{USE_LVM2_NORMAL}" -eq '1' ]
 then
        if [ -e '/sbin/evms_activate' ]
        then
