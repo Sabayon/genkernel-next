@@ -97,9 +97,9 @@ create_base_initrd_sys() {
 		then
 			cp /sbin/lvm "${TEMP}/initrd-temp/bin/lvm" ||
 				gen_die 'Could not copy over lvm!'
-			ln -sf "${TEMP}/initrd-temp/bin/lvm" "${TEMP}/initrd-temp/bin/vgscan" ||
+			ln -sf "./lvm" "${TEMP}/initrd-temp/bin/vgscan" ||
 				gen_die 'Could not symlink lvm -> vgscan!'
-			ln -sf "${TEMP}/initrd-temp/bin/lvm" "${TEMP}/initrd-temp/bin/vgchange" ||
+			ln -sf "./lvm" "${TEMP}/initrd-temp/bin/vgchange" ||
 				gen_die 'Could not symlink lvm -> vgchange!'
 		fi
 #	else
