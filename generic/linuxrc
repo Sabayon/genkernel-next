@@ -444,11 +444,11 @@ then
 	rm -rf /tmp/.initrd/dev || echo '*: Failed to remove the initrd /dev!'
 elif [ "${USE_UDEV_NORMAL}" -eq '1' ]
 then
-	rm /tmp/.initrd/dev/fd || echo '*: Failed to rm the initrd fd!'
-	rm /tmp/.initrd/dev/stdin || echo '*: Failed to rm the initrd stdin!'
-	rm /tmp/.initrd/dev/stdout || echo '*: Failed to rm the initrd stdout!'
-	rm /tmp/.initrd/dev/stderr || echo '*: Failed to rm the initrd stderr!'
-	rm /tmp/.initrd/dev/core || echo '*: Failed to rm the initrd core!'
+	[ -e /tmp/.initrd/dev/fd ] && rm /tmp/.initrd/dev/fd
+	[ -e /tmp/.initrd/dev/stdin ] && rm /tmp/.initrd/dev/stdin
+	[ -e /tmp/.initrd/dev/stdout ] && rm /tmp/.initrd/dev/stdout
+	[ -e /tmp/.initrd/dev/stderr ] && rm /tmp/.initrd/dev/stderr
+	[ -e /tmp/.initrd/dev/core ] && rm /tmp/.initrd/dev/core 
 	umount /tmp/.initrd/dev || echo '*: Failed to unmount the initrd /dev!'
 	umount /tmp/.initrd/proc || echo '*: Failed to unmount the initrd /proc!'
 	umount /tmp/.initrd/sys || echo '*: Failed to unmount the initrd /sys!'
