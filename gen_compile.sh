@@ -253,7 +253,7 @@ compile_busybox() {
 #			UTILS_CC="${TEMP}/diet/bin/diet ${UTILS_CC}"
 #		fi
 		print_info 1 'busybox: >> Configuring...'
-		yes '' | compile_generic oldconfig utils
+		yes '' 2>/dev/null | compile_generic oldconfig utils
 		print_info 1 'busybox: >> Compiling...'
 		compile_generic all utils
 # Busybox and dietlibc don't play nice right now
