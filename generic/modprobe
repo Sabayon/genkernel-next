@@ -1,36 +1,23 @@
 #!/bin/ash
 
-#KV=`uname -r`
-#KMAJOR=`echo ${KV} | cut -d. -f1`
-#KMINOR=`echo ${KV} | cut -d. -f2`
-#INSMOD="insmod.static"
-
-#if [ "${KMINOR}" -gt "4" ]
-#then
-#	KEXT=".ko"
-#else
-#	KEXT=".o"
-#fi
-
 . /etc/initrd.defaults
 
 usage()
 {
-	echo "modprobe gentoo script v1.0"
 	echo "Usage:"
 	echo "  modprobe moduleprefix"
-	echo ""
+	echo
 	echo "Ex:"
 	echo "  modprobe eepro100"
-	echo ""
-	echo "Note: Do not pass the suffix to modprobe"
+	echo
+	echo "Note: Do not pass the suffix to modprobe!"
 	exit 1
 }
 
 # Pass module name to this function
 modules_dep_list()
 {
-	if [ "$#" != "1" ]
+	if [ "$#" -lt "1" ]
 	then
 		echo "modules_dep_list(): improper usage"
 		exit 1
@@ -91,7 +78,10 @@ modprobe2()
 	local modlist
 	local ret
 
-	if [ "$#" != "1" ]
+	local echoAppend
+	local echoFlags
+
+	if [ "$#" -lt "1" ]
 	then
 		echo "modprobe(): improper usage"
 		exit 1
@@ -99,8 +89,8 @@ modprobe2()
 	real_path=`real_mod_path ${1}`
 	if [ "${real_path}" = "" -o "${real_path}" = " " ]
 	then
-		echo "no such module found"
-		exit 1
+		echo "module not found..."
+		exit 2
 	fi
 	modlist=`modules_dep_list ${1}`
 	if [ "${modlist}" != "" -a "${modlist}" != " " ]
@@ -109,7 +99,6 @@ modprobe2()
 	else
 		deps=""
 	fi
-#	echo "$1 -- DEPS='${deps}'"
 	# Make sure we don't do any endless loops!
 
 	LOADED_MODULES="${LOADED_MODULES} ${1}"
@@ -119,30 +108,30 @@ modprobe2()
 		then
 			if [ "${x}" != "" -a "${x}" != " " ]
 			then
-#				echo "loading dep: ${x}"
-				modprobe2 "${x}"
+				modprobe2 "${x}" -n
 			fi
 		else
 			filler=1
-#			echo "skipping ${x}, module already loaded by us"
 		fi
 	done
-#	echo "running insmod on '${real_path}'"
 	${INSMOD} ${real_path} > /dev/null 2>&1
 	ret=$?
 	if [ "$ret" -eq "0" ]
 	then
-		echo "module ${real_path} loaded"
+		echoAppend=" loaded..."
+		[ "${2}" = "-n" ] && echoFlags="-n" && echoAppend=", "
+		echo ${echoFlags} "${1}${echoAppend}"
 	fi
 	return $ret
 }
 
 
-if [ "$#" != "1" ]
+if [ "$#" -lt "1" ]
 then
 	usage
 fi
 
+[ -f "/modules.cache" ] || touch /modules.cache
 for x in `cat /modules.cache`
 do
 	LOADED_MODULES="${LOADED_MODULES} ${x}"

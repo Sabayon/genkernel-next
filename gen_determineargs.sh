@@ -1,10 +1,6 @@
 #!/bin/bash
 
 get_KV() {
-# don't want VER local anymore, used when finding kernelconfig to use
-#	local VER
-# don't want PAT local anymore, used in initrd
-#	local PAT
 	local SUB
 	local EXV
 	
@@ -32,7 +28,7 @@ determine_real_args() {
 	else
 		KERNEL_DIR=${DEFAULT_KERNEL_SOURCE}
 	fi
-	[ "${KERNEL_DIR}" = "" ] && gen_die "no kernel source directory"
+	[ "${KERNEL_DIR}" = "" ] && gen_die "No kernel source directory!"
 
 	get_KV
 

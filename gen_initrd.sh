@@ -31,8 +31,6 @@ create_base_initrd_sys() {
 	mkdir -p ${TEMP}/initrd-temp/proc
 	mkdir -p ${TEMP}/initrd-temp/temp
 	mkdir -p ${TEMP}/initrd-temp/.initrd
-	mkdir -p ${TEMP}/initrd-temp/new_root
-	mkdir -p ${TEMP}/initrd-temp/keymaps
 	ln -s bin ${TEMP}/initrd-temp/sbin
 	ln -s ../bin ${TEMP}/initrd-temp/usr/bin
 	ln -s ../bin ${TEMP}/initrd-temp/usr/sbin
@@ -43,7 +41,6 @@ create_base_initrd_sys() {
 	echo "UNREGISTER      .*           RMOLDCOMPAT" >> ${TEMP}/initrd-temp/etc/devfsd.conf
 	echo "REGISTER        .*           MKNEWCOMPAT" >> ${TEMP}/initrd-temp/etc/devfsd.conf
 	echo "UNREGISTER      .*           RMNEWCOMPAT" >> ${TEMP}/initrd-temp/etc/devfsd.conf
-
 
 	cd ${TEMP}/initrd-temp/dev
 	MAKEDEV std
@@ -78,10 +75,10 @@ create_base_initrd_sys() {
 
 	for i in '[' ash basename cat chroot clear cp dirname echo env false find \
 	grep gunzip gzip ln ls loadkmap losetup lsmod mkdir mknod more mount mv \
-	pivot_root ps awk pwd rm rmdir rmmod sh sleep tar test touch true umount uname \
+	pivot_root ps awk pwd rm rmdir rmmod sed sh sleep tar test touch true umount uname \
 	xargs yes zcat chmod chown cut kill killall; do
 		rm -f ${TEMP}/initrd-temp/bin/$i > /dev/null
-		ln  ${TEMP}/initrd-temp/bin/busybox ${TEMP}/initrd-temp/bin/$i || gen_die "could not link ${i}"
+		ln  ${TEMP}/initrd-temp/bin/busybox ${TEMP}/initrd-temp/bin/$i || gen_die "Busybox error: could not link ${i}!"
 	done
 }
 
@@ -101,16 +98,17 @@ create_initrd_modules() {
 	else
 		MOD_EXT=".o"
 	fi
+
+	print_info 2 "initrd: >> Searching for modules..."
 	for i in `gen_dep_list`
 	do
-		print_info 2 "$i : module searching" 1 0
 		mymod=`find /lib/modules/${KV} -name "${i}${MOD_EXT}"`
 		if [ -z "${mymod}" ]
 		then
-			print_info 2 "Warning : ${i}${MOD_EXT} not found; skipping..."
+			print_warning 2 "Warning :: ${i}${MOD_EXT} not found; skipping..."
 			continue;
 		fi
-		print_info 2 "copying ${mymod} to initrd"
+		print_info 2 "initrd: >> Copying ${i}${MOD_EXT}..."
 		cp -ax --parents "${mymod}" "${TEMP}/initrd-temp"
 	done
 
@@ -151,12 +149,19 @@ create_initrd_aux() {
 	else
 		cp "${GK_SHARE}/generic/modprobe" "${TEMP}/initrd-temp/sbin/modprobe"
 	fi
+	if isTrue $CMD_DOKEYMAPAUTO
+	then
+		echo 'MY_HWOPTS="${MY_HWOPTS} keymap"' >> ${TEMP}/initrd-temp/etc/initrd.defaults
+	fi
+	mkdir -p "${TEMP}/initrd-temp/lib/keymaps"
+	tar -C "${TEMP}/initrd-temp/lib/keymaps" -zxf "${GK_SHARE}/generic/keymaps.tar.gz"
 
+	cd ${TEMP}/initrd-temp/sbin && ln -s ../linuxrc init
+	cd ${OLDPWD}
 	chmod +x "${TEMP}/initrd-temp/linuxrc"
 	chmod +x "${TEMP}/initrd-temp/etc/initrd.scripts"
 	chmod +x "${TEMP}/initrd-temp/etc/initrd.defaults"
 	chmod +x "${TEMP}/initrd-temp/sbin/modprobe"
-
 }
 
 calc_initrd_size() {
@@ -169,35 +174,31 @@ calc_initrd_size() {
 create_initrd() {
 	local MOD_EXT
 
-	print_info 1 "initrd: creating base system"
+	print_info 1 "initrd: >> Initializing..."
 	create_base_initrd_sys
 
 	if [ "${NOINITRDMODULES}" = "" ]
 	then
-		print_info 1 "initrd: copying modules"
+		print_info 1 "        >> Copying modules..."
 		create_initrd_modules
 	else
-		print_info 1 "initrd: not copying modules"
+		print_info 1 "initrd: Not copying modules..."
 	fi
 
-	print_info 1 "initrd: copying auxilary files"
+	print_info 1 "        >> Copying auxilary files..."
 	create_initrd_aux
 
-	print_info 1 "initrd: calculating initrd size"
 	INITRD_CALC_SIZE=`calc_initrd_size`
-
-	print_info 1 "initrd: calculated size ${INITRD_CALC_SIZE} + 100k slop for fs overhead"
 	INITRD_SIZE=`expr ${INITRD_CALC_SIZE} + 100`
+	print_info 1 "        :: Size is at ${INITRD_SIZE}K"
 
-	print_info 1 "initrd: real size ${INITRD_SIZE}"
-
-	print_info 1 "initrd: creating loopback filesystem"
+	print_info 1 "        >> Creating loopback filesystem..."
 	create_initrd_loop ${INITRD_SIZE}
 
-	print_info 1 "initrd: moving initrd fs to loopback"
+	print_info 1 "        >> Moving initrd files to the loopback..."
 	move_initrd_to_loop
 
-	print_info 1 "initrd: cleaning up and compressing initrd"
+	print_info 1 "        >> Cleaning up and compressing the initrd..."
 	create_initrd_unmount_loop
 
 	if [ "${COMPRESS_INITRD}" ]
@@ -208,12 +209,28 @@ create_initrd() {
 
 	if [ "${BOOTSPLASH}" -eq "1" ]
 	then
-		print_info 1 "initrd: copying bootsplash"
-		/sbin/splash -s -f /etc/bootsplash/default/config/bootsplash-800x600.cfg >> ${TEMP}/initrd-loop || gen_die "could not copy 800x600 bootsplash"
-		/sbin/splash -s -f /etc/bootsplash/default/config/bootsplash-1024x768.cfg >> ${TEMP}/initrd-loop || gen_die "could not copy 1024x768 bootsplash"
-		/sbin/splash -s -f /etc/bootsplash/default/config/bootsplash-1280x1024.cfg >> ${TEMP}/initrd-loop || gen_die "could not copy 1280x1024 bootsplash"
-		/sbin/splash -s -f /etc/bootsplash/default/config/bootsplash-1600x1200.cfg >> ${TEMP}/initrd-loop || gen_die "could not copy 1600x1200 bootsplash"
+		if [ -x /sbin/splash ]
+		then
+			[ -z "${BOOTSPLASH_THEME}" ] && source /etc/conf.d/bootsplash.conf
+			[ -z "${BOOTSPLASH_THEME}" ] && BOOTSPLASH_THEME=default
+			print_info 1 "        >> Installing bootsplash [ using the ${BOOTSPLASH_THEME} theme ]..."
+			for bootRes in '800x600' '1024x768' '1280x1024' '1600x1200'
+			do
+				if [ -f "/etc/bootsplash/${BOOTSPLASH_THEME}/config/bootsplash-${bootRes}.cfg" ]
+				then
+					/sbin/splash -s -f /etc/bootsplash/${BOOTSPLASH_THEME}/config/bootsplash-${bootRes}.cfg >> ${TEMP}/initrd-loop || gen_die "Error: could not copy ${bootRes} bootsplash!"
+				else
+					print_info 1 "splash: Did not find a bootplash for the ${bootRes} resolution..."
+				fi
+			done
+		else
+			print_warning 1 "      >> No bootsplash detected; skipping!"
+		fi
 	fi
-	cp ${TEMP}/initrd-loop /boot/initrd-${KV} || gen_die "could not copy initrd to boot"
+	if ! isTrue "${CMD_NOINSTALL}"
+	then
+		cp ${TEMP}/initrd-loop /boot/initrd-${KV} || gen_die "Could not copy the initrd to /boot!"
+	else
+		mv ${TEMP}/initrd-loop ${TEMP}/initrd-${KV} || gen_die "Could not move the initrd to ${TEMP}/initrd-${KV}!"
+	fi
 }
-

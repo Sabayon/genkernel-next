@@ -1,7 +1,7 @@
 #!/bin/bash
 # Genkernel v3
 
-GK_V="3.0.1"
+GK_V="3.0.2_rc1"
 TEMP="/var/tmp/genkernel"
 
 small_die() {
@@ -25,8 +25,12 @@ BUILD_ALL=0
 BUILD_KERNEL=0
 BUILD_INITRD=0
 
-# Parse all command line options, and load into memory
-parse_cmdline $*
+# Parse all command line options...
+while [ $# -gt 0 ]
+do
+	Option=$1; shift
+	parse_cmdline $Option
+done
 
 if [ "${BUILD_ALL}" -eq 0 -a "${BUILD_KERNEL}" -eq 0 -a "${BUILD_INITRD}" -eq 0 ]
 then
@@ -34,7 +38,7 @@ then
 	exit 1
 fi
 
-print_info 1 "GenKernel v${GK_V}" 1 0
+NORMAL=${GOOD} print_info 1 "Gentoo Linux Genkernel; Version ${GK_V}"
 
 # Set ${ARCH}
 get_official_arch
@@ -49,14 +53,52 @@ source ${GK_SHARE}/${ARCH}/modules_load || gen_die "could not read ${GK_SHARE}/$
 # get the real args for use.
 determine_real_args
 
-print_info 1 "ARCH: ${ARCH}"
-print_info 1 "KERNEL VER: ${KV}"
+NORMAL=${BOLD} print_info 1 "Compiling Linux Kernel ${WARN}${KV}${BOLD} for ${WARN}${ARCH}${BOLD}..."
+echo
 
 if ! has_loop
 then
-	print_info 1 "Your kernel does not appear to have loop device support. "
-	print_info 1 "Please 'modprobe loop' if it is a module before running genkernel"
-	gen_die "----Load loop support----"
+	print_error print_info 1 "Your kernel does not appear to have loop device support. "
+	print_error print_info 1 "Please 'modprobe loop' if it is a module before running genkernel"
+	gen_die "Load loop support!"
+fi
+
+# Check /boot is mounted
+if ! grep -q "/boot" /proc/mounts
+then
+	if isTrue ${MOUNTBOOT}
+	then
+		if ! mount /boot
+		then
+			print_warning 1 "${BOLD}WARNING${NORMAL}: Failed to mount /boot!"
+			echo
+		fi
+	else
+		print_warning 1 "${BOLD}WARNING${NORMAL}: No mounted /boot partition detected!"
+		print_warning 1 '         Run ``mount /boot`` to mount it!'
+		echo
+	fi
+fi
+
+# Check whether another Genkernel is running
+GENPIDS="`ps -C genkernel --no-headers -o pid | wc -l`"
+if [ "${GENPIDS}" -gt "3" ]
+then
+	[ "${GENPIDS}" -gt "4" ] && EX='s'
+	print_warning 1 "${BOLD}WARNING${NORMAL}: Another Genkernel instance is running under"
+	print_warning 1 "         process ID${EX} " 0
+	GENPIDS=`ps -C genkernel --no-headers -o pid`
+	echo -n ${GENPIDS} | sed -e "s/$$//; s/ /, /g"
+	echo "halting..."
+	echo
+	print_warning 1 "Running multiple genkernels on the same source tree will cause data loss!"
+	print_info 1 "Press ^C to halt; ^D to continue [ ${BOLD}if${NORMAL} you know what you're doing! ]"
+	cat
+	echo
+	TEMP="/var/tmp/genkernel-`date | md5sum | cut -d\  -f1`"
+	print_info 1 "thread: Running multiple genkernels may cause problems!"
+	print_info 1 "thread: Temporary files reallocated to ${TEMP}..."
+	echo
 fi
 
 # Configure kernel
@@ -74,6 +116,37 @@ compile_modules
 print_info 1 "Copying config for successful build to /etc/kernels/kernel-config-${ARCH}-${KV}"
 [ ! -e "/etc/kernels" ] && mkdir -p /etc/kernels
 cp "${KERNEL_DIR}/.config" "/etc/kernels/kernel-config-${ARCH}-${KV}"
+
+# Run callback
+if [ "${CMD_CALLBACK}" != "" ]
+then
+	print_info 1 "" 1 0
+	print_info 1 "Preparing to run callback: \"${CMD_CALLBACK}\"" 0
+
+	CALLBACK_ESCAPE=0
+	CALLBACK_COUNT=0
+
+	trap "CALLBACK_ESCAPE=1" TERM KILL INT QUIT ABRT
+	while [[ ${CALLBACK_ESCAPE} -eq 0 && ${CALLBACK_COUNT} -lt 5 ]]
+	do
+		sleep 1; echo -n '.';
+		let CALLBACK_COUNT=${CALLBACK_COUNT}+1
+	done
+
+	if [ "${CALLBACK_ESCAPE}" -eq 0 ]
+	then
+		echo
+		echo
+		eval ${CMD_CALLBACK} | tee -a ${DEBUGFILE}
+		echo
+		print_info 1 "<<< Callback exit status: $?"
+	else
+		echo
+		print_info 1 ">>> Callback cancelled..."
+	fi
+	trap - TERM KILL INT QUIT ABRT
+	print_info 1 "" 1 0
+fi
 
 # Compile dietlibc
 if [ "${USE_DIETLIBC}" = "1" ]
@@ -106,20 +179,19 @@ then
 	gen_minkernpackage
 fi
 
-print_info 1 " "
-print_info 1 " "
+print_info 1 ''
 print_info 1 "Kernel compiled successfully!"
-print_info 1 "Required Kernel Params:"
-print_info 1 "  : root=/dev/ram0 init=/linuxrc real_root=/dev/\$ROOT"
-print_info 1 "    where \$ROOT is the devicenode for your root partition as"
-print_info 1 "    you should have specified in /etc/fstab"
-print_info 1 ""
-print_info 1 "You MUST tell your bootloader to use the generated initrd"
-print_info 1 ""
-print_info 1 "Recommended Kernel Params:"
-print_info 1 "  : vga=0x317 splash=verbose"
-print_info 1 ""
+print_info 1 ''
+print_info 1 "Required Kernel Parameters:"
+print_info 1 '    root=/dev/ram0 real_root=/dev/$ROOT init=/linuxrc'
+print_info 1 '    [ And "vga=0x317 splash=verbose" if you use a framebuffer ]'
+print_info 1 ''
+print_info 1 '    Where $ROOT is the device node for your root partition as the'
+print_info 1 '    one specified in /etc/fstab'
+print_info 1 ''
+print_info 1 "You MUST also tell your bootloader to use the generated initrd."
+print_info 1 ''
 print_info 1 "Do NOT report kernel bugs (configs included) as genkernel bugs."
-print_info 1 "Make sure you have the latest genkernel before reporting bugs"
+print_info 1 "Make sure you have the latest genkernel before reporting bugs."
 print_info 1 ""
-print_info 1 "For more info see /usr/share/genkernel/README"
+print_info 1 "For more information please see /usr/share/genkernel/README..."

@@ -25,23 +25,23 @@ isTrue() {
 if isTrue ${USECOLOR}
 then
 #	COLS="`stty size 2> /dev/null`"
-#        COLS="`getcols ${COLS}`"
-#        COLS=$((${COLS} - 7))
-#        ENDCOL=$'\e[A\e['${COLS}'G'    # Now, ${ENDCOL} will move us to the end of the
+#       COLS="`getcols ${COLS}`"
+#       COLS=$((${COLS} - 7))
+#       ENDCOL=$'\e[A\e['${COLS}'G'    # Now, ${ENDCOL} will move us to the end of the
                                        # column;  irregardless of character width
 	GOOD=$'\e[32;01m'
 	WARN=$'\e[33;01m'
 	BAD=$'\e[31;01m'
 	NORMAL=$'\e[0m'
-	HILITE=$'\e[36;01m'
-	BRACKET=$'\e[34;01m'
+	BOLD=$'\e[0;01m'
+	UNDER=$'\e[4m'
 else
 	GOOD=""
 	WARN=""
 	BAD=""
 	NORMAL=""
-	HILITE=""
-	BRACKET=""
+	BOLD=""
+	UNDER=""
 fi
 
 
@@ -124,11 +124,16 @@ print_info() {
 	# STRUCTURE DATA TO BE OUTPUT TO FILE, AND OUTPUT IT
 	if [ "${SCRPRINT}" -eq "1" -o "${FORCEFILE}" -eq "1" ]
 	then
+		STRR=${2//${WARN}/}
+		STRR=${STRR//${BAD}/}
+		STRR=${STRR//${BOLD}/}
+		STRR=${STRR//${NORMAL}/}
+
 		if [ "${PREFIXLINE}" = "1" ]
 		then
-			STR="* ${2}"
+			STR="* ${STRR}"
 		else
-			STR="${2}"
+			STR="${STRR}"
 		fi
 
 		if [ "${NEWLINE}" = "0" ]
@@ -140,6 +145,16 @@ print_info() {
 	fi
 
 	return 0
+}
+
+print_error()
+{
+	GOOD=${BAD} print_info "$@"
+}
+
+print_warning()
+{
+	GOOD=${WARN} print_info "$@"
 }
 
 # var_replace(var_name, var_value, string)
@@ -163,13 +178,31 @@ clear_log() {
 gen_die() {
 	if [ "$#" -gt "0" ]
 	then
-		print_info 1 "gen_die(): ${1}"
+		print_error 1 "ERROR: ${1}"
 	fi
-	print_info 1 "Please see ${DEBUGFILE} for more info on failures"
-	print_info 1 ""
-	print_info 1 "DO NOT REPORT KERNEL COMPILE FAILURES AS GENKERNEL BUGS!"
-	print_info 1 ""
-	print_info 1 "Report real genkernel bugs to bugs.gentoo.org"
+	echo
+	print_info 1 "-- Grepping log... --"
+	echo
+
+	if isTrue ${USECOLOR}
+	then
+		GREP_COLOR="1" grep -B5 -E --colour=always "([Ww][Aa][Rr][Nn][Ii][Nn][Gg]|[Ee][Rr][Rr][Oo][Rr][ :,!]|[Ff][Aa][Ii][Ll][Ee]?[Dd]?)" ${DEBUGFILE}
+	else
+		grep -B5 -E "([Ww][Aa][Rr][Nn][Ii][Nn][Gg]|[Ee][Rr][Rr][Oo][Rr][ :,!]|[Ff][Aa][Ii][Ll][Ee]?[Dd]?)" ${DEBUGFILE}
+	fi
+	echo
+	print_info 1 "-- End log... --"
+	echo
+	print_info 1 "Please consult ${DEBUGFILE} for more information and any"
+	print_info 1 "errors that were reported above."
+	echo
+	print_info 1 "Report any real genkernel bugs to bugs.gentoo.org and"
+	print_info 1 "assign your bug to genkernel@gentoo.org. Please include"
+	print_info 1 "as much information as you can in your bug report; attaching"
+	print_info 1 "${DEBUGFILE} so that your issue can be dealt with effectively."
+	print_info 1 ''
+	print_info 1 "DO ${BAD}NOT${NORMAL} REPORT KERNEL COMPILE FAILURES AS GENKERNEL BUGS!"
+	print_info 1 ''
   	exit 1
 }
 

@@ -1,5 +1,6 @@
 #!/bin/ash
 
+. /etc/initrd.defaults
 backup() {
 	echo -ne "\033[0G\033[0K"
 }
@@ -14,17 +15,17 @@ parse_opt() {
 
 modules_scan() {
 	local MODS
+	[ -d /etc/modules/${1} ] || touch /etc/modules/${1}
+
 	MODS=`cat /etc/modules/${1}`
 	for x in ${MODS}
 	do
-		echo -ne "${HILITE}---- Scanning for ${x}..."
-#		MODULE=`find /lib/modules -name "${x}.$KSUFF"`
-		modprobe ${x}
-# > /dev/null 2>&1
+		echo -ne "${BOLD}   ::${NORMAL} Scanning for ${x}..."
+		modprobe ${x} -n
 		if [ $? -eq 0 ]
 		then
 			backup
-			echo -e "${GOOD}---- Detected ${x} hardware${NORMAL}"
+			echo -e "${GOOD}   ::${NORMAL} Detected ${x} hardware..."
 			continue
 		fi
 		backup
@@ -37,7 +38,7 @@ findcdmount() {
 	then
 		for x in $*
 		do
-			echo -e "${HILITE}---- Attempting to mount CD -- ${x}${NORMAL}"
+			echo -e "${GOOD}>>${NORMAL} Attempting to mount CD:- ${x}"
 			mount -t iso9660 -r ${x} /newroot/mnt/cdrom > /dev/null 2>&1
 			if [ "$?" = "0" ]
 			then
@@ -47,7 +48,7 @@ findcdmount() {
 		done
 		if [ "${REAL_ROOT}" != "" ]
 		then
-			echo -e "${HILITE}---- CD medium found on $1${NORMAL}"
+			echo -e "${GOOD}>>${NORMAL} CD medium found on $1"
 		fi
 	fi
 }

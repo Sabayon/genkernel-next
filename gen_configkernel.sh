@@ -20,20 +20,17 @@ determine_config_file() {
 	then
 		KERNEL_CONFIG="${GK_SHARE}/${ARCH}/kernel-config"
 	else
-		gen_die "no kernel config specified, or file not found"
+		gen_die "Error: No kernel config specified, or file not found!"
 	fi
 }
 
 config_kernel() {
-	print_info 1 "kernel: configuring source"
-
 	determine_config_file
-
-	cd "${KERNEL_DIR}" || gen_die "could not switch to kernel directory"
+	cd "${KERNEL_DIR}" || gen_die "Could not switch to the kernel directory!"
 
 	if isTrue ${MRPROPER}
 	then
-		print_info 1 "kernel: running mrproper"
+		print_info 1 "kernel: >> Running mrproper..."
 		compile_generic "mrproper" kernel
 	fi
 
@@ -41,24 +38,48 @@ config_kernel() {
 	# or we might screw up something someone is trying to test.
 	if isTrue ${CLEAN}
 	then
-		print_info 1 "kernel: using config from ${KERNEL_CONFIG} -- prev backed up to .config.bak"
+		print_info 1 "config: Using config from ${KERNEL_CONFIG}"
+		print_info 1 "        Previous config backed up to .config.bak"
 		cp "${KERNEL_DIR}/.config" "${KERNEL_DIR}/.config.bak" > /dev/null 2>&1
 		cp "${KERNEL_CONFIG}" "${KERNEL_DIR}/.config" || gen_die "could not copy config file"
 
-		print_info 1 "kernel: running oldconfig"
+		print_info 1 "        >> Running oldconfig..."
 		yes "" | compile_generic "oldconfig" kernel
 
-		print_info 1 "kernel: running clean"
+		print_info 1 "kernel: >> Cleaning..."
 		compile_generic "clean" kernel
 	else
-		print_info 1 "kernel: skipping copy of config. CLEAN is OFF"
+		print_info 1 "config: --no-clean is enabled; leaving the .config alone."
 	fi
 	
 	if isTrue ${MENUCONFIG}
 	then
-		print_info 1 "kernel: running menuconfig"
-		make menuconfig
-		[ "$?" != "0" ] && gen_die "menuconfig failed"
+		print_info 1 "config: >> Invoking menuconfig..."
+		compile_generic menuconfig runtask
+		[ "$?" != "0" ] && gen_die "Error: menuconfig failed."
+	elif isTrue ${CMD_GCONFIG}
+	then
+		if [ "${VER}" == "2" ] && [ "${PAT}" -lt "6" ]
+		then
+			print_warning 1 "config: gconfig is not available in 2.4 series kernels. Running xconfig"
+			print_warning 1 "        instead..."
+
+			CMD_GCONFIG=0
+			CMD_XCONFIG=1
+		else
+			print_info 1 "config: >> Invoking gconfig..."
+			compile_generic gconfig kernel
+			[ "$?" != "0" ] && gen_die "Error: gconfig failed."
+
+			CMD_XCONFIG=0
+		fi
+	fi
+
+	if isTrue ${CMD_XCONFIG}
+	then
+		print_info 1 "config: >> Invoking xconfig..."
+		compile_generic xconfig kernel
+		[ "$?" != "0" ] && gen_die "Error: xconfig failed."
 	fi
 
 }

@@ -1,30 +1,30 @@
 #!/bin/ash
+
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 BACK_UP="\033[1K\033[0G"
-HILITE="\033[1m"
 NORMAL="\033[0m"
-WARN="\033[1m"
-BAD="\033[1m"
+WARN="\033[33;1m"
+BAD="\033[31;1m"
+BOLD="\033[1m"
+GOOD="\033[32;1m"
+
 KV="`uname -r`"
 KMAJOR=`echo $KV | cut -f1 -d.`
 KMINOR=`echo $KV | cut -f2 -d.`
 KVER="${KMAJOR}.${KMINOR}"
 MISCOPTS="cdcache idebug detect"
-HWOPTS="scsi firewire ataraid pcmcia usb"
+HWOPTS="scsi firewire ataraid pcmcia usb keymap"
 MY_HWOPTS="usb firewire"
 QUIET=1
 ROOT_LINKS="bin sbin lib lib64 boot usr opt"
 ROOT_TREES="etc root home var"
+INSMOD="insmod"
 if [ "${KMINOR}" -gt "4" ]
 then
 	KSUFF=".ko"
-	INSMOD="insmod"
 else
 	KSUFF=".o"
-	INSMOD="insmod"
 fi
 
 REAL_ROOT=""
 CDROOT=0
-
-
