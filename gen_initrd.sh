@@ -128,9 +128,9 @@ create_base_initrd_sys() {
 	fi
 	
 	# EVMS2
-	if [ -e '/sbin/evms_activate' ]
+	if [ "${CMD_EVMS2}" -eq '1' ]
 	then
-		if [ "${CMD_NOEVMS2}" != '1' ]
+		if [ -e '/sbin/evms_activate' ]
 		then
 			print_info 1 'EVMS2: Adding support...'	
 			mkdir -p ${TEMP}/initrd-temp/lib

@@ -63,6 +63,8 @@ longusage() {
   echo "	--bootsplash=<theme>	Force bootsplash using <theme>"
   echo "	--gensplash=<theme>	Force gensplash using <theme>"
   echo "	--do-keymap-auto	Forces keymap selection at boot"
+  echo "	--evms2			Include EVMS2 support"
+  echo "				 --> 'emerge evms' in the host operating system first"
   echo "	--lvm2			Include LVM2 support"
   echo "	--bootloader=grub	Add new kernel to GRUB configuration"
   echo "	--linuxrc=<file>	Specifies a user created linuxrc"
@@ -149,9 +151,9 @@ parse_cmdline() {
 		      CMD_DOKEYMAPAUTO=1
 		      print_info 2 "CMD_DOKEYMAPAUTO: $CMD_DOKEYMAPAUTO"
 	      ;;
-	      --no-evms2)
-		      CMD_NOEVMS2=1
-		      print_info 2 'CMD_NOEVMS2: 1'
+	      --evms2)
+		      CMD_EVMS2=1
+		      print_info 2 'CMD_EVMS2: 1'
 	      ;;
 	      --lvm2)
 		      CMD_LVM2=1
