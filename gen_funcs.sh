@@ -176,7 +176,6 @@ var_replace()
   SAFE_VAR=`echo "${2}" | sed -e 's/\([\/\.]\)/\\\\\\1/g'`
   
   echo "${3}" | sed -e "s/%%${1}%%/${SAFE_VAR}/g" -
-  echo "${3}" | sed -e "s/%%${1}%%/${SAFE_VAR}/g" >> /tmp/out
 }
 
 arch_replace() {
