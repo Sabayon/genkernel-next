@@ -1,19 +1,27 @@
 #!/bin/bash
 
-config_kernel() {
-	print_info 1 "kernel: configuring source"
+determine_config_file() {
 	if [ "${CMD_KERNEL_CONFIG}" != "" ]
 	then
 		KERNEL_CONFIG="${CMD_KERNEL_CONFIG}"
-	elif [ "${DEFAULT_KERNEL_CONFIG}" != "" ]
+	elif [ "${DEFAULT_KERNEL_CONFIG}" != "" -a -f "${DEFAULT_KERNEL_CONFIG}" ]
 	then
 		KERNEL_CONFIG="${DEFAULT_KERNEL_CONFIG}"
+	elif [ -f "${GK_SHARE}/${ARCH}/kernel-config-${VER}.${PAT}" ]
+	then
+		KERNEL_CONFIG="${GK_SHARE}/${ARCH}/kernel-config-${VER}.${PAT}"
+	elif [ -f "${GK_SHARE}/${ARCH}/kernel-config" ]
+	then
+		KERNEL_CONFIG="${GK_SHARE}/${ARCH}/kernel-config"
 	else
-		gen_die "no kernel config specified"
+		gen_die "no kernel config specified, or file not found"
 	fi
+}
 
-	[ ! -f "${KERNEL_CONFIG}" ] && gen_die "kernel config not found at specified location"
+config_kernel() {
+	print_info 1 "kernel: configuring source"
 
+	determine_config_file
 
 	cd "${KERNEL_DIR}" || gen_die "could not switch to kernel directory"
 

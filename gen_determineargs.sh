@@ -1,7 +1,8 @@
 #!/bin/bash
 
 get_KV() {
-	local VER
+# don't want VER local anymore, used when finding kernelconfig to use
+#	local VER
 # don't want PAT local anymore, used in initrd
 #	local PAT
 	local SUB
