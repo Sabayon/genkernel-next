@@ -93,7 +93,7 @@ create_base_initrd_sys() {
 	# LVM2
 	if [ -e '/sbin/vgscan.static' -a -e '/sbin/vgchange.static' ]
 	then
-		if [ "${CMD_NOLVM2}" -ne '1' ]
+		if [ "${CMD_NOLVM2}" != '1' ]
 		then
 			cp /sbin/vgscan.static "${TEMP}/initrd-temp/bin/vgscan" ||
 				gen_die 'Could not copy over vgscan!'

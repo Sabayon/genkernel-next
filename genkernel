@@ -215,7 +215,7 @@ then
 	fi
 
 	compile_devfsd
-	compile_udev
+	[ "${CMD_UDEV}" ] && compile_udev
 
 	# Create initrd
 	create_initrd
