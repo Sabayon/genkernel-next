@@ -1,6 +1,6 @@
 #!/bin/bash
 
-usage() {
+longusage() {
   echo "Gentoo Linux Genkernel ${GK_V}"
   echo "Usage: "
   echo "	genkernel [options] action"
@@ -64,6 +64,20 @@ usage() {
   echo "				'initrd' inside the package without any path"
   echo "                                information. No modules outside of the initrd"
   echo "                                will be included."
+}
+
+usage() {
+  echo "Gentoo Linux Genkernel ${GK_V}"
+  echo "Usage: "
+  echo "	genkernel [options] all"
+  echo
+  echo "Some useful options:"
+  echo "	--menuconfig		Run menuconfig after oldconfig"
+  echo "	--no-clean		Do not run make clean before compilation"
+  echo "	--no-mrproper		Do not run make mrproper before compilation"
+  echo
+  echo "For a detailed list of supported options and flags; issue:"
+  echo "	genkernel --help"
 }
 
 parse_opt() {
@@ -244,9 +258,14 @@ parse_cmdline() {
 		      BUILD_KERNEL=1
 	      ;;
 	      --help)
-		      usage
+		      longusage
+		      exit 1
+	      ;;
+	      *)
+		      echo "Error: Unknown option '$*'!"
 		      exit 1
 	      ;;
 
 	esac
 }
+
