@@ -227,8 +227,9 @@ Turns off udev support.
 \fBreal_init=\fR<...>
 Passes arguments to init on bootup.
 .TP
-\fBscandelay\fR
-Pauses for 10 seconds before running devfsd.
+\fBscandelay\fR=<...>
+Pauses for 10 seconds before running devfsd if no argument is specified;
+otherwise pauses for the number of specified seconds.
 .SH REPORTING BUGS
 If you believe you have found a bug in the genkernel scripts, then please
 file a bug on the Gentoo Linux Bugzilla: 
