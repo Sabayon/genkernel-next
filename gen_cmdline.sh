@@ -29,6 +29,7 @@ usage() {
   echo "	--utils-cc=<compiler>	Compiler to use for utils (e.g. busybox, modutils)"
   echo "	--utils-ld=<linker>	Linker to use for utils"
   echo "	--utils-as=<assembler>	Assembler to use for utils"
+  echo "	--make=<make prog>	GNU Make to use"
   echo "  Internals"
   echo "	--arch-override=<arch>	Force to arch instead of autodetect (cross-compile?)"
   echo "	--busybox-config=<file>	Busybox configuration file to use"
@@ -75,6 +76,10 @@ parse_cmdline() {
 			--utils-as*)
 				CMD_UTILS_AS=`parse_opt "${x}"`
 				print_info 2 "CMD_UTILS_AS: $CMD_UTILS_AS"
+			;;
+			--make*)
+				CMD_MAKE=`parse_opt "${x}"`
+				print_info 2 "CMD_MAKE: $CMD_MAKE"
 			;;
 			
 			--debuglevel*)

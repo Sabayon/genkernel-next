@@ -28,6 +28,16 @@ determine_real_args() {
 
 	get_KV
 
+	if [ "${CMD_MAKE}" != "" ]
+	then
+		MAKE="${CMD_MAKE}"
+	fi
+
+	if [ "${MAKE}" = "" ]
+	then
+		MAKE="make"
+	fi
+
 	if [ "${CMD_KERNEL_CC}" != "" ]
 	then
 		KERNEL_CC="${CMD_KERNEL_CC}"
