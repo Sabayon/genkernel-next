@@ -67,7 +67,7 @@ create_base_initrd_sys() {
 	for i in '[' ash basename cat chroot clear cp dirname echo env false find \
 	grep gunzip gzip insmod ln ls loadkmap losetup lsmod mkdir mknod modprobe more mount mv \
 	pivot_root ps awk pwd rm rmdir rmmod sh sleep tar test touch true umount uname \
-	xargs yes zcat chmod chown cut kill; do
+	xargs yes zcat chmod chown cut kill killall; do
 		rm -f ${TEMP}/initrd-temp/bin/$i > /dev/null
 		ln  ${TEMP}/initrd-temp/bin/busybox ${TEMP}/initrd-temp/bin/$i || gen_die "could not link ${i}"
 	done
