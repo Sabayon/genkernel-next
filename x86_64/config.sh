@@ -1,8 +1,8 @@
 #!/bin/bash
 # x86_64/config.sh
 
-KERNEL_MAKE="bzImage"
-KERNEL_MAKE_2=""
+KERNEL_MAKE_DIRECTIVE="bzImage"
+KERNEL_MAKE_DIRECTIVE_2=""
 KERNEL_BINARY="arch/x86_64/boot/bzImage"
 
 USE_DIETLIBC=1

@@ -192,10 +192,10 @@ compile_kernel() {
 	[ "${KERNEL_MAKE}" = "" ] && gen_die "KERNEL_MAKE undefined. Don't know how to compile kernel for arch."
 	cd ${KERNEL_DIR}
 	print_info 1 "kernel: Starting compile of linux ${KV} ${KERNEL_MAKE}"
-	compile_generic "${KERNEL_MAKE}" kernel
-	if [ "${KERNEL_MAKE_2}" != "" ]
+	compile_generic "${KERNEL_MAKE_DIRECTIVE}" kernel
+	if [ "${KERNEL_MAKE_DIRECTIVE_2}" != "" ]
 	then
-		compile_generic "${KERNEL_MAKE_2}" kernel
+		compile_generic "${KERNEL_MAKE_DIRECTIVE_2}" kernel
 	fi
 	cp "${KERNEL_BINARY}" "/boot/kernel-${KV}" || gen_die "Could not copy kernel binary to boot"
 }
