@@ -78,6 +78,9 @@ then
 	[ ! -e /newroot/dev/.devfsd ] && mount -t devfs devfs /newroot/dev
 	devfsd /newroot/dev
 	sleep 1
+	# Bind our mounted dev to /dev  otherwise we may not be able to mount
+	# our loop device later on
+	mount -o bind /newroot/dev /dev
 	findcdmount /newroot/dev/cdroms/*
 	# not in /dev/cdroms try /dev/ide/cd
 	if [ "${REAL_ROOT}" = "" ]
@@ -172,7 +175,7 @@ then
 	if [ "${LOOP}" != "" ]
 	then
 		echo "STEP 5a1: mounting loop filesystem"
-		mount -o loop /newroot/mnt/cdrom/${LOOP} /newroot/mnt/loop
+		mount -t ext3 -o loop,ro /newroot/mnt/cdrom/${LOOP} /newroot/mnt/loop
 		if [ "$?" != 0 ]
 		then
 			echo "FAILED TO MOUNT LOOP FILESYSTEM, barfing out to shell"
@@ -190,6 +193,9 @@ then
 	mkdir initrd proc tmp sys
 	chmod 1777 tmp
 	(cd /newroot/${FS_LOCATION}; cp -a ${ROOT_TREES} /newroot)
+	
+	# Unmount the -o bind /dev and kill devfsd
+	umount /dev
 	kill_devfsd
 else
 	echo "STEP 5b: setting up stuff for pivot_root"
