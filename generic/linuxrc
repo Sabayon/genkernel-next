@@ -141,6 +141,37 @@ chooseKeymap() {
 	fi
 }
 
+startVolumes() {
+	if [ "${DO_dmraid}" -a "${USE_DMRAID_NORMAL}" -eq '1' ]
+	then
+		if [ -e '/sbin/dmraid' ]
+		then
+			echo -e "${GOOD}>>${NORMAL}${BOLD} Activating Device-Mapper raid(s)...${NORMAL}"
+			/sbin/dmraid -ay
+		fi
+	fi
+
+	if [ "${DO_lvm2}" -a "${USE_LVM2_NORMAL}" -eq '1' ]
+	then
+		if [ -e '/sbin/vgscan' -a -e '/sbin/vgchange' ]
+		then
+			echo -e "${GOOD}>>${NORMAL}${BOLD} Scanning for Volume Groups...${NORMAL}"
+			/sbin/vgscan
+			echo -e "${GOOD}>>${NORMAL}${BOLD} Activating Volume Groups...${NORMAL}"
+			/sbin/vgchange -ay
+		fi
+	fi
+
+	if [ "${DO_evms2}" -a "${USE_EVMS_NORMAL}" -eq '1' ]
+	then
+		if [ -e '/sbin/evms_activate' ]
+		then
+			echo -e "${GOOD}>>${NORMAL}${BOLD} Activating EVMS...${NORMAL}"
+			evms_activate
+		fi
+	fi
+}
+
 echo -e "${GOOD}>>${NORMAL}${BOLD} Mounting filesystems${NORMAL}"
 
 # Check udev is on...
@@ -173,6 +204,7 @@ then
 		kill_devfsd
 		echo -e "${GOOD}>>${NORMAL}${BOLD} Activating udev...${NORMAL}"
 		runUdev
+		startVolumes
 		mv /dev/* /newroot/dev
 	else
 		if [ ! -e /newroot/dev/.devfsd ]
@@ -265,31 +297,7 @@ then
 	devfsd /dev -np
 fi
 
-if [ -e '/sbin/dmraid' -a "${USE_DMRAID_NORMAL}" -eq '1' ]
-then
-    echo -e "${GOOD}>>${NORMAL}${BOLD} Activating device-mapper raid array(s)...${NORMAL}"
-    /sbin/dmraid -ay
-fi
-
-if [ "${DO_lvm2}" -a "${USE_LVM2_NORMAL}" -eq '1' ]
-then
-	if [ -e '/sbin/vgscan' -a -e '/sbin/vgchange' ]
-	then
-		echo -e "${GOOD}>>${NORMAL}${BOLD} Scanning for Volume Groups...${NORMAL}"
-		/sbin/vgscan
-		echo -e "${GOOD}>>${NORMAL}${BOLD} Activating Volume Groups...${NORMAL}"
-		/sbin/vgchange -ay
-	fi
-fi
-
-if [ "${DO_evms2}" -a "${USE_EVMS_NORMAL}" -eq '1' ]
-then
-       if [ -e '/sbin/evms_activate' ]
-       then
-               echo -e "${GOOD}>>${NORMAL}${BOLD} Activating EVMS...${NORMAL}"
-               evms_activate
-       fi
-fi
+[ "${CDROOT}" -eq '0' ] && startVolumes
 
 echo -e "${GOOD}>>${NORMAL}${BOLD} Determining root device...${NORMAL}"
 
@@ -496,9 +504,9 @@ echo -n '.'
 exec <dev/console >dev/console 2>&1
 echo '.'
 exec chroot . /bin/sh <<- EOF
- 	umount /tmp/.initrd || echo "*: Failed to unmount the initrd!"
+	umount /tmp/.initrd || echo "*: Failed to unmount the initrd!"
 	/sbin/blockdev --flushbufs /dev/ram0 >/dev/null 2>&1
- 	exec /sbin/init ${REAL_INIT}
+	exec /sbin/init ${REAL_INIT}
 EOF
 
 echo 'A fatal error has probably occured since /sbin/init did not'
