@@ -188,7 +188,7 @@ then
 			[ -z "${GENSPLASH_THEME}" ] && [ -e /etc/conf.d/splash ] && source /etc/conf.d/splash
 			[ -z "${GENSPLASH_THEME}" ] && GENSPLASH_THEME=default
 			print_info 1 "	>> Installing gensplash [ using the ${GENSPLASH_THEME} theme ]..."
-			sed -i 's:$(obj)/gen_init_cpio $(initramfs-y) FORCE:$(if $(shell [ ! -f $(obj)/initramfs_data.cpio ] && echo '1' ), $(obj)/gen_init_cpio $(initramfs-y)):' ${KERNEL_DIR}/usr/Makefile
+			sed -i -e 's:$(obj)/gen_init_cpio $(initramfs-y) FORCE:$(if $(shell [ ! -f $(obj)/initramfs_data.cpio ] \&\& echo 1 ), $(obj)/gen_init_cpio $(initramfs-y)):' ${KERNEL_DIR}/usr/Makefile
 			splash_geninitramfs -g ${KERNEL_DIR}/usr/initramfs_data.cpio.gz ${GENSPLASH_THEME}
 			gunzip ${KERNEL_DIR}/usr/initramfs_data.cpio.gz
 		else
