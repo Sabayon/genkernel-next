@@ -191,10 +191,11 @@ compile_modules() {
 compile_kernel() {
 	[ "${KERNEL_MAKE}" = "" ] && gen_die "KERNEL_MAKE undefined. Don't know how to compile kernel for arch."
 	cd ${KERNEL_DIR}
-	print_info 1 "kernel: Starting compile of linux ${KV} ${KERNEL_MAKE}"
+	print_info 1 "kernel: Starting compile of linux ${KV} ${KERNEL_MAKE_DIRECTIVE}"
 	compile_generic "${KERNEL_MAKE_DIRECTIVE}" kernel
 	if [ "${KERNEL_MAKE_DIRECTIVE_2}" != "" ]
 	then
+		print_info 1 "kernel: Starting suppliment compile of linux ${KV} ${KERNEL_MAKE_DIRECTIVE_2}"
 		compile_generic "${KERNEL_MAKE_DIRECTIVE_2}" kernel
 	fi
 	cp "${KERNEL_BINARY}" "/boot/kernel-${KV}" || gen_die "Could not copy kernel binary to boot"
@@ -219,7 +220,7 @@ compile_busybox() {
 #			UTILS_CC="${TEMP}/diet/bin/diet ${UTILS_CC}"
 #		fi
 		print_info 1 "Busybox: make oldconfig"
-		compile_generic "oldconfig" utils
+		yes "" | compile_generic "oldconfig" utils
 		print_info 1 "Busybox: make all"
 		compile_generic "all" utils
 # Busybox and dietlibc don't play nice right now

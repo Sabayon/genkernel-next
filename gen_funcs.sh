@@ -167,3 +167,14 @@ gen_die() {
 	fi
   	exit 1
 }
+
+has_loop() {
+	if [ -e "/dev/loop0" -o -e "/dev/loop/0" ]
+	then
+		# We found devfs or standard dev loop device, assume
+		# loop is compiled into the kernel or the module is loaded
+		return 0
+	else
+		return 1
+	fi
+}
