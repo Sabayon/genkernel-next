@@ -137,7 +137,7 @@ compile_generic() {
 		${MAKE} ${MAKEOPTS} ${1} >> ${DEBUGFILE} 2>&1
 		RET=$?
 	fi
-	[ "${RET}" -ne "0" ] && gen_die "compile of failed"
+	[ "${RET}" -ne "0" ] && gen_die "compile of ${1} failed"
 
 	unset MAKE
 	if [ "${2}" = "kernel" ]
@@ -185,7 +185,9 @@ compile_modules() {
 	print_info 1 "kernel: Starting compile of linux ${KV} modules"
 	cd ${KERNEL_DIR}
 	compile_generic "modules" kernel
+	export UNAME_MACHINE="${ARCH}"
 	compile_generic "modules_install" kernel
+	unset UNAME_MACHINE
 }
 
 compile_kernel() {
