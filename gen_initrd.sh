@@ -80,7 +80,7 @@ create_base_initrd_sys() {
 	bunzip2 "${TEMP}/initrd-temp/bin/devfsd.bz2" || gen_die "could not uncompress devfsd"
 	chmod +x "${TEMP}/initrd-temp/bin/devfsd"
 
-	[ "${CMD_UDEV}" ] && { tar -jxpf "${UDEV_BINCACHE}" -C "${TEMP}/initrd-temp" ||
+	[ "${UDEV}" -eq '1' ] && { tar -jxpf "${UDEV_BINCACHE}" -C "${TEMP}/initrd-temp" ||
 		gen_die "Could not extract udev binary cache!"; }
 
 # We make our own devfsd.conf these days, the default one doesn't work with the stripped

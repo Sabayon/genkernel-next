@@ -50,3 +50,30 @@ findcdmount() {
 kill_devfsd() {
 	killall devfsd > /dev/null 2>&1
 }
+
+runUdev() {
+	export ACTION=add
+	export UDEV_NO_SLEEP=1
+
+	# Add block devices and their partitions to /dev,
+	# using information from /sys, and only those
+	# devices (since other are not needed for boot).
+
+	for x in block/*
+	do
+		export DEVPATH="/${x}"
+		/sbin/udev block
+
+		for y in ${x}/*
+		do
+			if [ -f "${y}/dev" ]
+			then
+				export DEVPATH="/${y}"
+				/sbin/udev block
+			fi
+		done
+	done
+	cd /
+
+	unset -v ACTION DEVPATH UDEV_NO_SLEEP
+}

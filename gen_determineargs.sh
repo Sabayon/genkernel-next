@@ -190,4 +190,11 @@ determine_real_args() {
 	else
 		OLDCONFIG=0
 	fi
+
+	if isTrue "${CMD_UDEV}"
+	then
+		UDEV=1
+	else
+		UDEV=0
+	fi
 }

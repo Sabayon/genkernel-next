@@ -238,7 +238,7 @@ parse_cmdline() {
 		      print_info 2 "CMD_NOINITRDMODULES: $CMD_NOINITRDMODULES"
 	      ;;
 	      --udev)
-		      CMD_UDEV=0
+		      CMD_UDEV=1
 		      print_info 2 "CMD_UDEV: $CMD_UDEV"
 	      ;;
 	      --callback*)

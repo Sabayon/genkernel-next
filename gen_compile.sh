@@ -482,17 +482,22 @@ compile_udev() {
 		print_info 1 'udev: >> Compiling...'
 		ln -snf "${KERNEL_DIR}" klibc/linux ||
 			gen_die "Could not link to ${KERNEL_DIR}"
-		compile_generic 'USE_KLIBC=true USE_LOG=false DEBUG=false udevdir=/dev all etc/udev/udev.conf' utils
+		compile_generic "KERNEL_DIR=$KERNEL_DIR USE_KLIBC=true USE_LOG=false DEBUG=false udevdir=/dev all etc/udev/udev.conf" utils
 		strip udev || gen_die 'Failed to strip the udev binary!'
 
 		print_info 1 '      >> Installing...'
-		install -d "${TEMP}/udev/etc/udev" "${TEMP}/udev/sbin" ||
+		install -d "${TEMP}/udev/etc/udev" "${TEMP}/udev/sbin" "${TEMP}/udev/etc/udev/scripts" "${TEMP}/udev/etc/udev/rules.d" "${TEMP}/udev/etc/udev/permissions.d" ||
 			gen_die 'Could not create directory hierarchy'
 		install -m 0755 udev "${TEMP}/udev/sbin" ||
-			gen_die 'Could not install udev binary'
-		install -m 0644 etc/udev/udev.conf "etc/udev/udev.rules" \
-			"etc/udev/udev.permissions" "${TEMP}/udev/etc/udev" ||
-				gen_die 'Could not install udev configuration'
+			gen_die 'Could not install udev binary!'
+		install -m 0644 etc/udev/udev.conf "${TEMP}/udev/etc/udev" ||
+				gen_die 'Could not install udev configuration!'
+		install -m 0644 etc/udev/udev.rules.gentoo "${TEMP}/udev/etc/udev/rules.d/50-udev.rules" ||
+				gen_die 'Could not install udev rules!'
+		install -m 0644 etc/udev/udev.permissions "${TEMP}/udev/etc/udev/permissions.d/50-udev.permissions" ||
+				gen_die 'Could not install udev permissions!'
+		install -m 0755 extras/ide-devfs.sh "${TEMP}/udev/etc/udev/scripts" ||
+			gen_die 'Could not install udev scripts!'
 
 		cd "${TEMP}/udev"
 		print_info 1 '      >> Copying to bincache...'
