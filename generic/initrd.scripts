@@ -20,10 +20,19 @@ modules_scan() {
 	MODS=`cat /etc/modules/${1}`
 	for x in ${MODS}
 	do
-		echo -ne "${BOLD}   ::${NORMAL} Scanning for ${x}..."
-		modprobe ${x} -n
-		backup
-		echo -ne "${NORMAL}"
+		MLOAD=`echo ${MLIST} | sed -e "s/.*${x}.*/${x}/"`
+		if [ "${MLIST}" = "${x}" ] # Only module to no-load
+		then
+			echo -e "${BOLD}   ::${NORMAL} Skipping ${x}..."
+		elif [ "${MLOAD}" = "${MLIST}" ] # == No change == No specified no-load
+		then
+			echo -ne "${BOLD}   ::${NORMAL} Scanning for ${x}..."
+			modprobe ${x} -n
+			backup
+			echo -ne "${NORMAL}"
+		else
+			echo -e "${BOLD}   ::${NORMAL} Skipping ${x}..."
+		fi
 	done
 }
 
@@ -65,7 +74,6 @@ kill_devfsd() {
 }
 
 runUdev() {
-
 	mount -t tmpfs -o size=100k udev /dev
 	mkdir /dev/pts
 	mkdir /dev/shm
@@ -75,5 +83,4 @@ runUdev() {
 	ln -snf /proc/self/fd/1 /dev/stdout
 	ln -snf /proc/self/fd/2 /dev/stderr
 	ln -snf /proc/kcore /dev/core
-
 }
