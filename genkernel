@@ -2,7 +2,7 @@
 # Genkernel v3
 
 GK_V="3.0.1_beta12"
-TEMP="/tmp"
+TEMP="/var/tmp/genkernel"
 
 small_die() {
   echo $1
@@ -42,6 +42,8 @@ get_official_arch
 # Read arch-specific config
 source ${ARCH_CONFIG} || gen_die "could not read ${ARCH_CONFIG}"
 source ${GK_SHARE}/${ARCH}/modules_load || gen_die "could not read ${GK_SHARE}/${ARCH}/modules_load"
+
+[ ! -f "${TEMP}" ] && mkdir -p "${TEMP}"
 
 # Based on genkernel.conf, arch-specific configs, and commandline options,
 # get the real args for use.
