@@ -240,8 +240,8 @@ compile_modutils() {
 	local ARGS
 	if [ ! -f "${MODUTILS_BINCACHE}" ]
 	then
-		[ ! -f "${MODUTILS_SRCTAR}" ] && gen_die "Could not find modutils source tarball: ${MODUTILS_BINCACHE}"
-		cd ${TEMP}
+		[ ! -f "${MODUTILS_SRCTAR}" ] && gen_die "Could not find modutils source tarball: ${MODUTILS_SRCTAR}"
+		cd "${TEMP}"
 		rm -rf "${MODUTILS_DIR}"
 		tar -jxpf "${MODUTILS_SRCTAR}"
 		[ ! -d "${MODUTILS_DIR}" ] && gen_die "Modutils directory ${MODUTILS_DIR} invalid"
@@ -287,8 +287,8 @@ compile_module_init_tools() {
 	local ARGS
 	if [ ! -f "${MODULE_INIT_TOOLS_BINCACHE}" ]
 	then
-		[ ! -f "${MODULE_INIT_TOOLS_SRCTAR}" ] && gen_die "Could not find module-init-tools source tarball: ${MODULE_INIT_TOOLS_BINCACHE}"
-		cd ${TEMP}
+		[ ! -f "${MODULE_INIT_TOOLS_SRCTAR}" ] && gen_die "Could not find module-init-tools source tarball: ${MODULE_INIT_TOOLS_SRCTAR}"
+		cd "${TEMP}"
 		rm -rf "${MODULE_INIT_TOOLS_DIR}"
 		tar -jxpf "${MODULE_INIT_TOOLS_SRCTAR}"
 		[ ! -d "${MODULE_INIT_TOOLS_DIR}" ] && gen_die "Module-init-tools directory ${MODULE_INIT_TOOLS_DIR} invalid"
@@ -326,6 +326,59 @@ compile_module_init_tools() {
 		rm -rf "${MODULE_INIT_TOOLS_DIR}" > /dev/null
 	else
 		print_info 1 "module-init-tools: Found bincache at ${MODULE_INIT_TOOLS_BINCACHE}"
+	fi
+}
+
+compile_devfsd() {
+	local ARGS
+	if [ ! -f "${DEVFSD_BINCACHE}" -o ! -f "${DEVFSD_CONF_BINCACHE}" ]
+	then
+		[ ! -f "${DEVFSD_SRCTAR}" ] && gen_die "Could not find devfsd source tarball: ${DEVFSD_SRCTAR}"
+		cd "${TEMP}"
+		rm -rf "${DEVFSD_DIR}"
+		tar -jxpf "${DEVFSD_SRCTAR}"
+		[ ! -d "${DEVFSD_DIR}" ] && gen_die "Devfsd directory ${DEVFSD_DIR} invalid"
+		cd "${DEVFSD_DIR}"
+
+		if [ "${USE_DIETLIBC}" -eq "1" ]
+		then
+			extract_dietlibc_bincache
+			OLD_CC="${UTILS_CC}"
+			UTILS_CC="${TEMP}/diet/bin/diet ${UTILS_CC}"
+		fi
+
+		print_info 1 "devfsd: make all"
+
+		if [ "${USE_DIETLIBC}" -eq "1" ]
+		then
+			compile_generic "has_dlopen=0 has_rpcsvc=0" utils
+		else
+			compile_generic "LDFLAGS=-static" utils
+		fi
+
+ 		if [ "${USE_DIETLIBC}" -eq "1" ]
+		then
+			clean_dietlibc_bincache
+			UTILS_CC="${OLD_CC}"
+		fi
+
+		print_info 1 "devfsd: copying to bincache"
+		[ ! -f "${TEMP}/${DEVFSD_DIR}/devfsd" ] && gen_die "devfsd executable does not exist after compilation of devfsd"
+		strip "${TEMP}/${DEVFSD_DIR}/devfsd" || gen_die "could not strip devfsd"
+		bzip2 "${TEMP}/${DEVFSD_DIR}/devfsd" || gen_die "compression of devfsd failed"
+		[ ! -f "${TEMP}/${DEVFSD_DIR}/devfsd.bz2" ] && gen_die "could not find compressed devfsd.bz2 binary"
+		mv "${TEMP}/${DEVFSD_DIR}/devfsd.bz2" "${DEVFSD_BINCACHE}" || gen_die "could not move compressed binary to bincache"
+
+		[ ! -f "${TEMP}/${DEVFSD_DIR}/devfsd.conf" ] && gen_die "devfsd.conf does not exist after compilation of devfsd"
+		bzip2 "${TEMP}/${DEVFSD_DIR}/devfsd.conf" || gen_die "compression of devfsd.conf failed"
+		[ ! -f "${TEMP}/${DEVFSD_DIR}/devfsd.conf.bz2" ] && gen_die "could not find compressed devfsd.conf.bz2 binary"
+		mv "${TEMP}/${DEVFSD_DIR}/devfsd.conf.bz2" "${DEVFSD_CONF_BINCACHE}" || gen_die "could not move compressed binary to bincache"
+
+		print_info 1 "devfsd: cleaning up"
+		cd "${TEMP}"
+		rm -rf "${DEVFSD_DIR}" > /dev/null
+	else
+		print_info 1 "devfsd: Found bincache at ${DEVFSD_BINCACHE} and ${DEVFSD_CONF_BINCACHE}"
 	fi
 }
 

@@ -65,6 +65,8 @@ determine_real_args() {
 	MODUTILS_BINCACHE=`arch_replace "${MODUTILS_BINCACHE}"`
 	DIETLIBC_BINCACHE=`arch_replace "${DIETLIBC_BINCACHE}"`
 	DIETLIBC_BINCACHE_TEMP=`arch_replace "${DIETLIBC_BINCACHE_TEMP}"`
+	DEVFSD_BINCACHE=`arch_replace "${DEVFSD_BINCACHE}"`
+	DEVFSD_CONF_BINCACHE=`arch_replace "${DEVFSD_CONF_BINCACHE}"`
 	if isTrue ${BOOTSPLASH}
 	then
 		BOOTSPLASH=1

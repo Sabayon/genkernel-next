@@ -66,6 +66,8 @@ else
 	compile_modutils
 fi
 
+compile_devfsd
+
 # Create initrd
 create_initrd
 
