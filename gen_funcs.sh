@@ -165,6 +165,11 @@ gen_die() {
 	then
 		print_info 1 "gen_die(): ${1}"
 	fi
+	print_info 1 "Please see ${DEBUGFILE} for more info on failures"
+	print_info 1 ""
+	print_info 1 "DO NOT REPORT KERNEL COMPILE FAILURES AS GENKERNEL BUGS!"
+	print_info 1 ""
+	print_info 1 "Report real genkernel bugs to bugs.gentoo.org"
   	exit 1
 }
 

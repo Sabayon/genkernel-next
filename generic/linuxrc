@@ -77,7 +77,7 @@ mkdir /newroot
 if [ "${CDROOT}" -eq "1" ]
 then
 	mount -t tmpfs tmpfs /newroot
-	mkdir /newroot/dev /newroot/mnt /newroot/mnt/cdrom /newroot/mnt/loop /newroot/tmp /newroot/tmp/.initrd /newroot/mnt/gentoo
+	mkdir /newroot/dev /newroot/mnt /newroot/mnt/cdrom /newroot/mnt/livecd /newroot/tmp /newroot/tmp/.initrd /newroot/mnt/gentoo
 	[ ! -e /newroot/dev/.devfsd ] && mount -t devfs devfs /newroot/dev
 	devfsd /newroot/dev
 	sleep 1
@@ -208,13 +208,13 @@ then
 		mount -o bind /newroot/dev /dev
 
 		echo "STEP 5a1: mounting loop filesystem"
-		mount -t ext2 -o loop,ro /newroot/mnt/cdrom/${LOOP} /newroot/mnt/loop
+		mount -t ext2 -o loop,ro /newroot/mnt/cdrom/${LOOP} /newroot/mnt/livecd
 		if [ "$?" != "0" ]
 		then
 			echo "FAILED TO MOUNT LOOP FILESYSTEM, barfing out to shell"
 			/bin/ash
 		fi
-		FS_LOCATION="mnt/loop"
+		FS_LOCATION="mnt/livecd"
 		umount /dev
 	elif [ "${LOOPTYPE}" = "zisofs" ]
 	then
