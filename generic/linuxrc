@@ -292,5 +292,5 @@ fi
 # here's the line it says we should do:
 #       exec chroot . /sbin/init </dev/console >/dev/console 2>&1
 # not gonna though ....
-exec chroot . /sbin/init ${CMDLINE} < /dev/console > /dev/consle 2>&1
+exec chroot . /sbin/init ${CMDLINE} < /dev/console > /dev/console 2>&1
 
