@@ -1,5 +1,27 @@
 #!/bin/bash
 
+compile_args()
+{
+	local ARGS
+
+	ARGS=""
+	if [ "${CC}" != "" ]
+	then
+		ARGS="CC=\"${CC}\""
+	fi
+	if [ "${LD}" != "" ]
+	then
+		ARGS="${ARGS} LD=\"${LD}\""
+	fi
+
+	if [ "${AS}" != "" ]
+	then
+		ARGS="${ARGS} AS=\"${AS}\""
+	fi
+	
+	echo -n "${ARGS}"
+}
+
 compile_generic() {
 	local RET
 	if [ "$#" -lt "1" ]
@@ -7,14 +29,18 @@ compile_generic() {
 		gen_die "compile_generic(): improper usage"
 	fi
 
+	ARGS=`compile_args`
+
 	if [ "${DEBUGLEVEL}" -gt "1" ]
 	then
 		# Output to stdout and debugfile
-		${MAKE} CC="${CC}" AS="${AS}" LD="${LD}" ${MAKEOPTS} ${1} 2>&1 | tee -a ${DEBUGFILE}
+		print_info 2 "COMMAND: ${MAKE} ${ARGS} ${MAKEOPTS} ${1}" 1 0
+		${MAKE} ${ARGS} ${MAKEOPTS} ${1} 2>&1 | tee -a ${DEBUGFILE}
 		RET=$?
 	else
 		# Output to debugfile only
-		${MAKE} CC="${CC}" AS="${AS}" LD="${LD}" ${MAKEOPTS} ${1} >> ${DEBUGFILE} 2>&1
+		print_info 2 "COMMAND: ${MAKE} ${ARGS} ${MAKEOPTS} ${1}" 1 0
+		${MAKE} ${ARGS} ${MAKEOPTS} ${1} >> ${DEBUGFILE} 2>&1
 		RET=$?
 	fi
 	[ "${RET}" -ne "0" ] && gen_die "compile of failed"
@@ -92,7 +118,7 @@ compile_modutils() {
 		[ ! -d "${MODUTILS_DIR}" ] && gen_die "Modutils directory ${MODUTILS_DIR} invalid"
 		cd "${MODUTILS_DIR}"
 		print_info 1 "modutils: configure"
-		CC="${CC}" LD="${LD}" AS="${AS}" ./configure --disable-combined --enable-insmod-static >> ${DEBUGFILE} 2>&1 || gen_die "Configure of modutils failed"
+		${ARGS} ./configure --disable-combined --enable-insmod-static >> ${DEBUGFILE} 2>&1 || gen_die "Configure of modutils failed"
 		print_info 1 "modutils: make all"
 		compile_generic "all"
 		print_info 1 "modutils: copying to bincache"
@@ -116,7 +142,7 @@ compile_module_init_tools() {
 		[ ! -d "${MODULE_INIT_TOOLS_DIR}" ] && gen_die "Module-init-tools directory ${MODULE_INIT_TOOLS_DIR} invalid"
 		cd "${MODULE_INIT_TOOLS_DIR}"
 		print_info 1 "module-init-tools: configure"
-		CC="${CC}" LD="${LD}" AS="${AS}" ./configure >> ${DEBUGFILE} 2>&1 || gen_die "Configure of module-init-tools failed"
+		${ARGS} ./configure >> ${DEBUGFILE} 2>&1 || gen_die "Configure of module-init-tools failed"
 		print_info 1 "module-init-tools: make all"
 		compile_generic "all"
 		print_info 1 "module-init-tools: copying to bincache"

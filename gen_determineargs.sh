@@ -30,26 +30,17 @@ determine_real_args() {
 
 	if [ "${CMD_CC}" != "" ]
 	then
-		CC=${CMD_CC}
-	elif [ "${CC}" = "" ]
-	then
-		CC="gcc"
+		CC="${CMD_CC}"
 	fi
 
 	if [ "${CMD_LD}" != "" ]
 	then
-		LD=${CMD_LD}
-	elif [ "${LD}" = "" ]
-	then
-		LD="ld"
+		LD="${CMD_LD}"
 	fi
 
 	if [ "${CMD_AS}" != "" ]
 	then
-		AS=${CMD_AS}
-	elif [ "${AS}" = "" ]
-	then
-		AS="as"
+		AS="${CMD_AS}"
 	fi
 
 	DEFAULT_KERNEL_CONFIG=`arch_replace "${DEFAULT_KERNEL_CONFIG}"`
