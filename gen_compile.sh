@@ -44,6 +44,38 @@ compile_utils_args()
 	echo -n "${ARGS}"
 }
 
+export_utils_args()
+{
+	if [ "${UTILS_CC}" != "" ]
+	then
+		export CC="${UTILS_CC}"
+	fi
+	if [ "${UTILS_LD}" != "" ]
+	then
+		export LD="${UTILS_LD}"
+	fi
+	if [ "${UTILS_AS}" != "" ]
+	then
+		export AS="${UTILS_AS}"
+	fi
+}
+
+unset_utils_args()
+{
+	if [ "${UTILS_CC}" != "" ]
+	then
+		unset CC
+	fi
+	if [ "${UTILS_LD}" != "" ]
+	then
+		unset LD
+	fi
+	if [ "${UTILS_AS}" != "" ]
+	then
+		unset AS
+	fi
+}
+
 compile_generic() {
 	local RET
 	if [ "$#" -lt "2" ]
@@ -137,6 +169,7 @@ compile_busybox() {
 }
 
 compile_modutils() {
+	local ARGS
 	if [ ! -f "${MODUTILS_BINCACHE}" ]
 	then
 		[ ! -f "${MODUTILS_SRCTAR}" ] && gen_die "Could not find modutils source tarball: ${MODUTILS_BINCACHE}"
@@ -146,8 +179,9 @@ compile_modutils() {
 		[ ! -d "${MODUTILS_DIR}" ] && gen_die "Modutils directory ${MODUTILS_DIR} invalid"
 		cd "${MODUTILS_DIR}"
 		print_info 1 "modutils: configure"
-		ARGS=`compile_utils_args`
-		env ${ARGS} ./configure --disable-combined --enable-insmod-static >> ${DEBUGFILE} 2>&1 || gen_die "Configure of modutils failed"
+		export_utils_args
+		./configure --disable-combined --enable-insmod-static >> ${DEBUGFILE} 2>&1 || gen_die "Configure of modutils failed"
+		unset_utils_args
 		print_info 1 "modutils: make all"
 		compile_generic "all" utils
 		print_info 1 "modutils: copying to bincache"
@@ -162,6 +196,7 @@ compile_modutils() {
 }
 
 compile_module_init_tools() {
+	local ARGS
 	if [ ! -f "${MODULE_INIT_TOOLS_BINCACHE}" ]
 	then
 		[ ! -f "${MODULE_INIT_TOOLS_SRCTAR}" ] && gen_die "Could not find module-init-tools source tarball: ${MODULE_INIT_TOOLS_BINCACHE}"
@@ -171,8 +206,9 @@ compile_module_init_tools() {
 		[ ! -d "${MODULE_INIT_TOOLS_DIR}" ] && gen_die "Module-init-tools directory ${MODULE_INIT_TOOLS_DIR} invalid"
 		cd "${MODULE_INIT_TOOLS_DIR}"
 		print_info 1 "module-init-tools: configure"
-		ARGS=`compile_utils_args`
-		env ${ARGS} ./configure >> ${DEBUGFILE} 2>&1 || gen_die "Configure of module-init-tools failed"
+		export_utils_args
+		./configure >> ${DEBUGFILE} 2>&1 || gen_die "Configure of module-init-tools failed"
+		unset_utils_args
 		print_info 1 "module-init-tools: make all"
 		compile_generic "all" utils
 		print_info 1 "module-init-tools: copying to bincache"
