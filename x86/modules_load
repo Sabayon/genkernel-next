@@ -2,13 +2,10 @@ MODULES_SCSI="sd_mod sg sr_mod aic79xx \
 aic7xxx aic7xxx_old BusLogic \
 ncr53c8xx NCR53c406a \
 initio advansys  aha1740  aha1542  aha152x  \
-atp870u dtc eata fdomain gdth \
-megaraid pas16 pci2220i pci2000 psi240i \
+dtc fdomain gdth pas16 pci2220i pci2000 psi240i \
 qlogicfas qlogicfc qlogicisp \
-seagate t128  tmscsim  u14-34f  ultrastor  wd7000  \
-a100u2w 3w-xxxx DAC960 NCR53c406a \
-aacraid sym53c8xx a100u2w cpqfc \
-dmx3191d dpt_i2o imm in2000 ips qla1280 \
+seagate t128  tmscsim u14-34f ultrastor wd7000  \
+NCR53c406a sym53c8xx dmx3191d imm in2000 ips qla1280 \
 sim710 sym53c416"
 
 MODULES_FIREWIRE="ieee1394 ohci1394 sbp2"
