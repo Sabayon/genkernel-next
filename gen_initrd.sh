@@ -191,7 +191,7 @@ create_initrd_aux() {
 		group="$(echo $group_modules | cut -d_ -f2 | tr "[:upper:]" "[:lower:]")"
 		echo -n "${group} " >> "${TEMP}/initrd-temp/etc/initrd.defaults"
 	done
-	echo "\"" >> "${TEMP}/initrd-temp/etc/initrd.defaults"	
+	echo '"' >> "${TEMP}/initrd-temp/etc/initrd.defaults"	
 
 	if [ -f "${GK_SHARE}/${ARCH}/modprobe" ]
 	then

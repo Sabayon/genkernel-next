@@ -332,6 +332,9 @@ compile_modutils() {
 }
 
 compile_module_init_tools() {
+	# I've disabled dietlibc support for the time being since the
+	# version we use misses a few needed system calls.
+
 	local ARGS
 	if [ ! -f "${MODULE_INIT_TOOLS_BINCACHE}" ]
 	then
@@ -345,12 +348,12 @@ compile_module_init_tools() {
 		cd "${MODULE_INIT_TOOLS_DIR}"
 		print_info 1 'module-init-tools: >> Configuring'
 
-		if [ "${USE_DIETLIBC}" -eq '1' ]
-		then
-			extract_dietlibc_bincache
-			OLD_CC="${UTILS_CC}"
-			UTILS_CC="${TEMP}/diet/bin/diet ${UTILS_CC}"
-		fi
+#		if [ "${USE_DIETLIBC}" -eq '1' ]
+#		then
+#			extract_dietlibc_bincache
+#			OLD_CC="${UTILS_CC}"
+#			UTILS_CC="${TEMP}/diet/bin/diet ${UTILS_CC}"
+#		fi
 
 		export_utils_args
 		./configure >> ${DEBUGFILE} 2>&1 ||
@@ -359,11 +362,11 @@ compile_module_init_tools() {
 		print_info 1 '                   >> Compiling...'
 		compile_generic "all" utils
 
- 		if [ "${USE_DIETLIBC}" -eq '1' ]
-		then
-			clean_dietlibc_bincache
-			UTILS_CC="${OLD_CC}"
-		fi
+# 		if [ "${USE_DIETLIBC}" -eq '1' ]
+#		then
+#			clean_dietlibc_bincache
+#			UTILS_CC="${OLD_CC}"
+#		fi
 
 		print_info 1 '                   >> Copying to cache...'
 		[ -f "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static" ] ||

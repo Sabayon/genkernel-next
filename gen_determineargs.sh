@@ -116,6 +116,18 @@ determine_real_args() {
 		BOOTSPLASH=0
 	fi
 
+	if [ "${CMD_GENSPLASH}" != '' ]
+	then
+		GENSPLASH=${CMD_GENSPLASH}
+	fi
+
+	if isTrue ${GENSPLASH}
+	then
+		GENSPLASH=1
+	else
+		GENSPLASH=0
+	fi
+
 	if isTrue ${COMPRESS_INITRD}
 	then
 		COMPRESS_INITRD=1
@@ -194,7 +206,9 @@ determine_real_args() {
 	if isTrue "${CMD_UDEV}"
 	then
 		UDEV=1
+		DEVFS=0
 	else
 		UDEV=0
+		DEVFS=1
 	fi
 }

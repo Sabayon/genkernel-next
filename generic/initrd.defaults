@@ -17,8 +17,8 @@ MISCOPTS='idebug detect'
 # Only sections that are in by default or those that
 # are not module groups need to be defined here...
 
-HWOPTS="usb firewire keymap cache lvm2"
-MY_HWOPTS="usb firewire lvm2"
+HWOPTS='usb firewire keymap cache lvm2'
+MY_HWOPTS='usb firewire lvm2'
 
 QUIET=1
 ROOT_LINKS='bin sbin lib lib64 boot usr opt'
@@ -33,3 +33,4 @@ fi
 
 REAL_ROOT=''
 CDROOT=0
+CDROOT_DEV=''

@@ -21,6 +21,9 @@ IMPORTANT KERNEL NOTES:
   - If you want Bootsplash, you MUST have VESAFB enabled for 2.6,
     other framebuffers won't work.  You MUST also enable
     "video mode selection support" and "Framebuffer Console support"
+  - From gentoo-dev-sources-2.6.8 and above, bootsplash has been replaced
+    with gensplash.  Gensplash has the same kernel configuration requirements
+    as bootsplash, but works properly with any framebuffer device.
   - To build a kernel with Genkernel you must have  
     "Block devices->Loopback device support"  
     "Block devices->RAM disk support"

@@ -31,13 +31,18 @@ longusage() {
   echo "	--oldconfig		Implies --no-clean and runs a 'make oldconfig'"
   echo "	--bootsplash		Install bootsplash support to the initrd"
   echo "	--no-bootsplash		Do not use bootsplash"
+  echo "	--gensplash		Install gensplash support into bzImage"
+  echo "	--no-gensplash		Do not use gensplash"
   echo "	--install		Install the kernel after building"
   echo "	--no-install		Do not install the kernel after building"
   echo "	--no-initrdmodules	Don't copy any modules to the initrd"
-  echo "	--udev			Add in udev support."
+  echo "	--udev			Enables udev support in your initrd"
+  echo "	--no-udev		Remove udev support."
   echo "	--callback=<...>	Run the specified arguments after"
   echo "				the kernel and modules have been"
   echo "				compiled."
+  echo "	--postconf=<...>	Run the specified arguments after"
+  echo "				the kernel has been configured."
   echo "  Kernel settings"
   echo "	--kerneldir=<dir>	Location of the kernel sources"
   echo "	--kernel-config=<file>	Kernel configuration file to use for compilation"
@@ -57,9 +62,10 @@ longusage() {
   echo "	--no-mountboot		Don't mount /boot automatically"  
   echo "  Initialization"
   echo "	--bootsplash=<theme>	Force bootsplash using <theme>."
+  echo "	--gensplash=<theme>	Force gensplash using <theme>."
   echo "	--do-keymap-auto	Forces keymap selection at boot."
   echo "	--no-lvm2		Don't add in LVM2 support."
-  echo "        --bootloader=grub       Add new kernel to GRUB configuration"
+  echo "	--bootloader=grub	Add new kernel to GRUB configuration"
   echo "  Internals"
   echo "	--arch-override=<arch>	Force to arch instead of autodetect"
   echo "	--cachedir=<dir>	Override the default cache location"
@@ -213,17 +219,40 @@ parse_cmdline() {
 	      ;;
 	      --bootsplash=*)
 		      CMD_BOOTSPLASH=1
+		      CMD_GENSPLASH=0
 		      BOOTSPLASH_THEME=`parse_opt "$*"`
 		      print_info 2 "CMD_BOOTSPLASH: $CMD_BOOTSPLASH"
+		      print_info 2 "CMD_GENSPLASH: $CMD_GENSPLASH"
 		      print_info 2 "BOOTSPLASH_THEME: $BOOTSPLASH_THEME"
 	      ;;
 	      --bootsplash)
 		      CMD_BOOTSPLASH=1
+		      CMD_GENSPLASH=0
 		      print_info 2 "CMD_BOOTSPLASH: $CMD_BOOTSPLASH"
+		      print_info 2 "CMD_GENSPLASH: $CMD_GENSPLASH"
 	      ;;
 	      --no-bootsplash)
 		      CMD_BOOTSPLASH=0
 		      print_info 2 "CMD_BOOTSPLASH: $CMD_BOOTSPLASH"
+	      ;;
+	      --gensplash=*)
+		      CMD_GENSPLASH=1
+		      CMD_BOOTSPLASH=0
+		      GENSPLASH_THEME=`parse_opt "$*"`
+		      print_info 2 "CMD_GENSPLASH: $CMD_GENSPLASH"
+		      print_info 2 "GENSPLASH_THEME: $GENSPLASH_THEME"
+		      print_info 2 "CMD_BOOTSPLASH: $CMD_BOOTSPLASH"
+	      ;;
+	      --gensplash)
+		      CMD_GENSPLASH=1
+		      CMD_BOOTSPLASH=0
+		      GENSPLASH_THEME='default'
+		      print_info 2 "CMD_GENSPLASH: $CMD_GENSPLASH"
+		      print_info 2 "CMD_BOOTSPLASH: $CMD_BOOTSPLASH"
+	      ;;
+	      --no-gensplash)
+		      CMD_GENSPLASH=0
+	              print_info 2 "CMD_GENSPLASH: $CMD_GENSPLASH"
 	      ;;
 	      --install)
 		      CMD_NOINSTALL=0
@@ -241,9 +270,17 @@ parse_cmdline() {
 		      CMD_UDEV=1
 		      print_info 2 "CMD_UDEV: $CMD_UDEV"
 	      ;;
+	      --no-udev)
+		      CMD_UDEV=0
+		      print_info 2 "CMD_UDEV: $CMD_UDEV"
+	      ;;
 	      --callback*)
 		      CMD_CALLBACK=`parse_opt "$*"`
 		      print_info 2 "CMD_CALLBACK: $CMD_CALLBACK/$*"
+	      ;;
+	      --postconf*)
+		      CMD_POSTCONF=`parse_opt "$*"`
+		      print_info 2 "CMD_POSTCONF: $CMD_POSTCONF/$*"
 	      ;;
 	      --tempdir*)
 	        TEMP=`parse_opt "$*"`

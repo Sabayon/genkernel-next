@@ -34,15 +34,28 @@ findcdmount() {
 		do
 			echo -e "${GOOD}>>${NORMAL} Attempting to mount CD:- ${x}"
 			mount -r ${x} /newroot/mnt/cdrom > /dev/null 2>&1
-			if [ "$?" = "0" ]
+
+			if [ "$?" = '0' ]
 			then
 				REAL_ROOT="${x}"
 				break
+
+				## FIXME: I need a proper identifier present on all LiveCDs to work across
+				##        all architectures.
+
+#				# Check for a LiveCD
+#				if [ -e /newroot/mnt/cdrom/.gentoo_LiveCD ]
+#				then
+#					REAL_ROOT="${x}"
+#					break
+#				else
+#					umount /newroot/mnt/cdrom
+#				fi
 			fi
 		done
 		if [ "${REAL_ROOT}" != "" ]
 		then
-			echo -e "${GOOD}>>${NORMAL} CD medium found on $1"
+			echo -e "${GOOD}>>${NORMAL} CD medium found on ${x}"
 		fi
 	fi
 }
@@ -59,6 +72,8 @@ runUdev() {
 	# using information from /sys, and only those
 	# devices (since other are not needed for boot).
 
+	# We also do VC's for keymap support.
+
 	for x in block/*
 	do
 		export DEVPATH="/${x}"
@@ -73,6 +88,21 @@ runUdev() {
 			fi
 		done
 	done
+	for x in class/tty
+	do
+		export DEVPATH="/${x}"
+		/sbin/udev class
+
+		for y in ${x}/*
+		do
+			if [ -f "${y}/dev" ]
+			then
+				export DEVPATH="/${y}"
+				/sbin/udev class
+			fi
+		done
+	done
+	
 	cd /
 
 	unset -v ACTION DEVPATH UDEV_NO_SLEEP
