@@ -1,4 +1,4 @@
-STORAGE_MODULES="sd_mod sg sr_mod  \
+SCSI_MODULES="sd_mod sg sr_mod  \
 aic7xxx aic7xxx_old BusLogic \
 ncr53c8xx NCR53c406a \
 initio advansys  aha1740  aha1542  aha152x  \
@@ -17,11 +17,5 @@ ATARAID_MODULES="ataraid pdcraid hptraid"
 
 PCMCIA_MODULES="ide-cs"
 
-USB_MODULES="usbcore ehci-hcd uhci usb-ohci hid usb-storage"
-
-INITRD_SIZE=5000
-
-#BOOT_SPLASH_INITRD="/boot/initrd.bs"
-
-MRPROPER="yes"
+USB_MODULES="ehci-hcd uhci usb-ohci hid usb-storage"
 

@@ -82,6 +82,15 @@ create_base_initrd_sys() {
 	done
 }
 
+print_list()
+{
+	local x
+	for x in ${*}
+	do
+		echo ${x}
+	done
+}
+
 create_initrd_modules() {
 	if [ "${PAT}" -gt "4" ]
 	then
@@ -113,7 +122,6 @@ create_initrd_modules() {
 
 	cp -ax --parents /lib/modules/${KV}/modules* ${TEMP}/initrd-temp
 
-	print_info 1 "WARNING WARNING: Brad, Dont forget to output modules files to autoload"
 #	cat ${GK_SHARE}/${ARCH}/linuxrc | sed 	-e "s/%%STORAGE_MODULES%%/${STORAGE_MODULES}/" \
 #						-e "s/%%FIREWIRE_MODULES%%/${FIREWIRE_MODULES}/" \
 #						-e "s/%%ATARAID_MODULES%%/${ATARAID_MODULES}/" \
@@ -121,10 +129,40 @@ create_initrd_modules() {
 #						-e "s/%%USB_MODULES%%/${USB_MODULES}/" \
 #						> ${TEMP}/initrd-temp/linuxrc
 
-	cp "${GK_SHARE}/generic/linuxrc" "${TEMP}/initrd-temp/linuxrc"
-	cp "${GK_SHARE}/generic/initrd.scripts" "${TEMP}/initrd-temp/etc/initrd.scripts"
-	cp "${GK_SHARE}/generic/initrd.defaults" "${TEMP}/initrd-temp/etc/initrd.defaults"
-	cp "${GK_SHARE}/generic/modprobe" "${TEMP}/initrd-temp/sbin/modprobe"
+	mkdir -p "${TEMP}/initrd-temp/etc/modules"
+	print_list ${SCSI_MODULES} > "${TEMP}/initrd-temp/etc/modules/scsi"
+	print_list ${FIREWIRE_MODULES} > "${TEMP}/initrd-temp/etc/modules/firewire"
+	print_list ${ATARAID_MODULES} > "${TEMP}/initrd-temp/etc/modules/ataraid"
+	print_list ${PCMCIA_MODULES} > "${TEMP}/initrd-temp/etc/modules/pcmcia"
+	print_list ${USB_MODULES} > "${TEMP}/initrd-temp/etc/modules/usb"
+
+	if [ -f "${GK_SHARE}/${ARCH}/linuxrc" ]
+	then
+		cp "${GK_SHARE}/${ARCH}/linuxrc" "${TEMP}/initrd-temp/linuxrc"
+	else
+		cp "${GK_SHARE}/generic/linuxrc" "${TEMP}/initrd-temp/linuxrc"
+	fi
+
+	if [ -f "${GK_SHARE}/${ARCH}/initrd.scripts" ]
+	then
+		cp "${GK_SHARE}/${ARCH}/initrd.scripts" "${TEMP}/initrd-temp/etc/initrd.scripts"
+	else	
+		cp "${GK_SHARE}/generic/initrd.scripts" "${TEMP}/initrd-temp/etc/initrd.scripts"
+	fi
+
+	if [ -f "${GK_SHARE}/${ARCH}/initrd.defaults" ]
+	then
+		cp "${GK_SHARE}/${ARCH}/initrd.defaults" "${TEMP}/initrd-temp/etc/initrd.defaults"
+	else
+		cp "${GK_SHARE}/generic/initrd.defaults" "${TEMP}/initrd-temp/etc/initrd.defaults"
+	fi
+	if [ -f "${GK_SHARE}/${ARCH}/modprobe" ]
+	then
+		cp "${GK_SHARE}/${ARCH}/modprobe" "${TEMP}/initrd-temp/sbin/modprobe"
+	else
+		cp "${GK_SHARE}/generic/modprobe" "${TEMP}/initrd-temp/sbin/modprobe"
+	fi
+
 	chmod +x "${TEMP}/initrd-temp/linuxrc"
 	chmod +x "${TEMP}/initrd-temp/etc/initrd.scripts"
 	chmod +x "${TEMP}/initrd-temp/etc/initrd.defaults"
