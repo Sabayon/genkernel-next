@@ -19,7 +19,7 @@ create_initrd_unmount_loop()
 move_initrd_to_loop()
 {
 	cd "${TEMP}/initrd-temp"
-	mv * "${TEMP}/initrd-mount" > ${DEBUGFILE}
+	mv * "${TEMP}/initrd-mount" >> ${DEBUGFILE} 2>&1
 }
 
 create_base_initrd_sys() {
