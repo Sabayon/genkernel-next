@@ -13,6 +13,8 @@ usage() {
   echo "	--menuconfig		Run menu config after oldconfig"
   echo "	--no-menuconfig		Do no run menu config after oldconfig"
   echo "	--mrproper		Run make mrproper before compilation"
+  echo "	--clean			Run make clean before compilation"
+  echo "	--no-clean		Do not run make clean before compilation"
   echo "	--no-mrproper		Do not run make mrproper before compilation"
   echo "	--bootsplash		Install bootsplash to initrd"
   echo "	--no-bootsplash		Do not use bootsplash"
