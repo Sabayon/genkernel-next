@@ -76,6 +76,38 @@ unset_utils_args()
 	fi
 }
 
+export_kernel_args()
+{
+	if [ "${KERNEL_CC}" != "" ]
+	then
+		export CC="${KERNEL_CC}"
+	fi
+	if [ "${KERNEL_LD}" != "" ]
+	then
+		export LD="${KERNEL_LD}"
+	fi
+	if [ "${KERNEL_AS}" != "" ]
+	then
+		export AS="${KERNEL_AS}"
+	fi
+}
+
+unset_kernel_args()
+{
+	if [ "${KERNEL_CC}" != "" ]
+	then
+		unset CC
+	fi
+	if [ "${KERNEL_LD}" != "" ]
+	then
+		unset LD
+	fi
+	if [ "${KERNEL_AS}" != "" ]
+	then
+		unset AS
+	fi
+}
+
 compile_generic() {
 	local RET
 	if [ "$#" -lt "2" ]
@@ -85,26 +117,54 @@ compile_generic() {
 
 	if [ "${2}" = "kernel" ]
 	then
-		ARGS=`compile_kernel_args`
+		export_kernel_args
 	elif [ "${2}" = "utils" ]
 	then
-		ARGS=`compile_utils_args`
+		export_utils_args
 	fi
 
 	if [ "${DEBUGLEVEL}" -gt "1" ]
 	then
 		# Output to stdout and debugfile
-		print_info 2 "COMMAND: ${MAKE} ${ARGS} ${MAKEOPTS} ${1}" 1 0
-		${MAKE} ${ARGS} ${MAKEOPTS} ${1} 2>&1 | tee -a ${DEBUGFILE}
+		print_info 2 "COMMAND: ${MAKE} ${MAKEOPTS} ${1}" 1 0 1
+		${MAKE} ${MAKEOPTS} ${1} 2>&1 | tee -a ${DEBUGFILE}
 		RET=$?
 	else
 		# Output to debugfile only
-		print_info 2 "COMMAND: ${MAKE} ${ARGS} ${MAKEOPTS} ${1}" 1 0
-		${MAKE} ${ARGS} ${MAKEOPTS} ${1} >> ${DEBUGFILE} 2>&1
+		print_info 2 "COMMAND: ${MAKE} ${MAKEOPTS} ${1}" 1 0 1
+		${MAKE} ${MAKEOPTS} ${1} >> ${DEBUGFILE} 2>&1
 		RET=$?
 	fi
 	[ "${RET}" -ne "0" ] && gen_die "compile of failed"
+
+	if [ "${2}" = "kernel" ]
+	then
+		unset_kernel_args
+	elif [ "${2}" = "utils" ]
+	then
+		unset_utils_args
+	fi
+
 }
+
+extract_dietlibc_bincache() {
+	print_info 1 "extracting dietlibc bincache"
+	CURR_DIR=`pwd`
+	cd "${TEMP}"
+	rm -rf "${TEMP}/diet" > /dev/null
+	tar -jxpf "${DIETLIBC_BINCACHE}" || gen_die "Could not extract dietlibc bincache"
+	[ ! -d "${TEMP}/diet" ] && gen_die "${TEMP}/diet directory not found"
+	cd "${CURR_DIR}"
+}
+
+clean_dietlibc_bincache() {
+	print_info 1 "cleaning up dietlibc bincache"
+	CURR_DIR=`pwd`
+	cd "${TEMP}"
+	rm -rf "${TEMP}/diet" > /dev/null
+	cd "${CURR_DIR}"
+}
+
 
 compile_dep() {
 	# Only make dep for 2.4 kernels
@@ -138,31 +198,39 @@ compile_busybox() {
 	then
 		[ ! -f "${BUSYBOX_SRCTAR}" ] && gen_die "Could not find busybox source tarball: ${BUSYBOX_SRCTAR}"
 		[ ! -f "${BUSYBOX_CONFIG}" ] && gen_die "Cound not find busybox config file: ${BUSYBOX_CONFIG}"
-		cd ${TEMP}
+		cd "${TEMP}"
 		rm -rf ${BUSYBOX_DIR} > /dev/null
 		tar -jxpf ${BUSYBOX_SRCTAR} || gen_die "Could not extract busybox source tarball"
 		[ ! -d "${BUSYBOX_DIR}" ] && gen_die "Busybox directory ${BUSYBOX_DIR} invalid"
 		cp "${BUSYBOX_CONFIG}" "${BUSYBOX_DIR}/.config"
 		cd "${BUSYBOX_DIR}"
-		if [ "${USE_DIETLIBC}" -eq "1" ]
-		then
-			OLD_CC="${UTILS_CC}"
-			UTILS_CC="${TEMP}/diet/bin/diet ${CC}"
-		fi
+# Busybox and dietlibc don't play nice right now
+#		if [ "${USE_DIETLIBC}" -eq "1" ]
+#		then
+#			extract_dietlibc_bincache
+#			OLD_CC="${UTILS_CC}"
+#			UTILS_CC="${TEMP}/diet/bin/diet ${UTILS_CC}"
+#		fi
 		print_info 1 "Busybox: make oldconfig"
 		compile_generic "oldconfig" utils
 		print_info 1 "Busybox: make all"
 		compile_generic "all" utils
-		if [ "${USE_DIETLIBC}" -eq "1" ]
-		then
-			UTILS_CC="${OLD_CC}"
-		fi
+# Busybox and dietlibc don't play nice right now
+# 		if [ "${USE_DIETLIBC}" -eq "1" ]
+#		then
+#			clean_dietlibc_bincache
+#			UTILS_CC="${OLD_CC}"
+#		fi
 		print_info 1 "Busybox: copying to bincache"
 		[ ! -f "${TEMP}/${BUSYBOX_DIR}/busybox" ] && gen_die "busybox executable does not exist after compile, error"
 		strip "${TEMP}/${BUSYBOX_DIR}/busybox" || gen_die "could not strip busybox"
 		bzip2 "${TEMP}/${BUSYBOX_DIR}/busybox" || gen_die "bzip2 compression of busybox failed"
 		[ ! -f "${TEMP}/${BUSYBOX_DIR}/busybox.bz2" ] && gen_die "could not find compressed busybox binary"
 		mv "${TEMP}/${BUSYBOX_DIR}/busybox.bz2" "${BUSYBOX_BINCACHE}" || gen_die "could not copy busybox binary to arch package directory, does the directory exist?"
+
+		print_info 1 "Busybox: cleaning up"
+		cd "${TEMP}"
+		rm -rf "${BUSYBOX_DIR}" > /dev/null
 	else
 		print_info 1 "Busybox: Found bincache at ${BUSYBOX_BINCACHE}"
 	fi
@@ -179,17 +247,37 @@ compile_modutils() {
 		[ ! -d "${MODUTILS_DIR}" ] && gen_die "Modutils directory ${MODUTILS_DIR} invalid"
 		cd "${MODUTILS_DIR}"
 		print_info 1 "modutils: configure"
+
+		if [ "${USE_DIETLIBC}" -eq "1" ]
+		then
+			extract_dietlibc_bincache
+			OLD_CC="${UTILS_CC}"
+			UTILS_CC="${TEMP}/diet/bin/diet ${UTILS_CC}"
+		fi
+
 		export_utils_args
 		./configure --disable-combined --enable-insmod-static >> ${DEBUGFILE} 2>&1 || gen_die "Configure of modutils failed"
 		unset_utils_args
+
 		print_info 1 "modutils: make all"
 		compile_generic "all" utils
+
+ 		if [ "${USE_DIETLIBC}" -eq "1" ]
+		then
+			clean_dietlibc_bincache
+			UTILS_CC="${OLD_CC}"
+		fi
+
 		print_info 1 "modutils: copying to bincache"
 		[ ! -f "${TEMP}/${MODUTILS_DIR}/insmod/insmod.static" ] && gen_die "insmod.static does not exist after compilation of modutils"
 		strip "${TEMP}/${MODUTILS_DIR}/insmod/insmod.static" || gen_die "could not strip insmod.static"
 		bzip2 "${TEMP}/${MODUTILS_DIR}/insmod/insmod.static" || gen_die "compression of insmod.static failed"
 		[ ! -f "${TEMP}/${MODUTILS_DIR}/insmod/insmod.static.bz2" ] && gen_die "could not find compressed insmod.static.bz2 binary"
-		mv "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static.bz2" "${MODUTILS_BINCACHE}"
+		mv "${TEMP}/${MODUTILS_DIR}/insmod/insmod.static.bz2" "${MODUTILS_BINCACHE}" || gen_die "could not move compress binary to bincache"
+
+		print_info 1 "modutils: cleaning up"
+		cd "${TEMP}"
+		rm -rf "${MODULE_INIT_TOOLS_DIR}" > /dev/null
 	else
 		print_info 1 "modutils: Found bincache at ${MODUTILS_BINCACHE}"
 	fi
@@ -206,17 +294,36 @@ compile_module_init_tools() {
 		[ ! -d "${MODULE_INIT_TOOLS_DIR}" ] && gen_die "Module-init-tools directory ${MODULE_INIT_TOOLS_DIR} invalid"
 		cd "${MODULE_INIT_TOOLS_DIR}"
 		print_info 1 "module-init-tools: configure"
+
+		if [ "${USE_DIETLIBC}" -eq "1" ]
+		then
+			extract_dietlibc_bincache
+			OLD_CC="${UTILS_CC}"
+			UTILS_CC="${TEMP}/diet/bin/diet ${UTILS_CC}"
+		fi
+
 		export_utils_args
 		./configure >> ${DEBUGFILE} 2>&1 || gen_die "Configure of module-init-tools failed"
 		unset_utils_args
 		print_info 1 "module-init-tools: make all"
 		compile_generic "all" utils
+
+ 		if [ "${USE_DIETLIBC}" -eq "1" ]
+		then
+			clean_dietlibc_bincache
+			UTILS_CC="${OLD_CC}"
+		fi
+
 		print_info 1 "module-init-tools: copying to bincache"
 		[ ! -f "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static" ] && gen_die "insmod.static does not exist after compilation of module-init-tools"
 		strip "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static" || gen_die "could not strip insmod.static"
 		bzip2 "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static" || gen_die "compression of insmod.static failed"
 		[ ! -f "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static.bz2" ] && gen_die "could not find compressed insmod.static.bz2 binary"
-		mv "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static.bz2" "${MODULE_INIT_TOOLS_BINCACHE}"
+		mv "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static.bz2" "${MODULE_INIT_TOOLS_BINCACHE}" || gen_die "could not move compressed binary to bincache"
+
+		print_info 1 "module-init-tools: cleaning up"
+		cd "${TEMP}"
+		rm -rf "${MODULE_INIT_TOOLS_DIR}" > /dev/null
 	else
 		print_info 1 "module-init-tools: Found bincache at ${MODULE_INIT_TOOLS_BINCACHE}"
 	fi
@@ -242,8 +349,8 @@ compile_dietlibc() {
 	if [ "${BUILD_DIETLIBC}" -eq "1" ]
 	then
 		[ ! -f "${DIETLIBC_SRCTAR}" ] && gen_die "Could not find dietlibc source tarball: ${DIETLIBC_SRCTAR}"
-		cd ${TEMP}
-		rm -rf ${DIETLIBC_DIR} > /dev/null
+		cd "${TEMP}"
+		rm -rf "${DIETLIBC_DIR}" > /dev/null
 		tar -jxpf ${DIETLIBC_SRCTAR} || gen_die "Could not extract dietlibc source tarball"
 		[ ! -d "${DIETLIBC_DIR}" ] && gen_die "Dietlibc directory ${DIETLIBC_DIR} invalid"
 		cd "${DIETLIBC_DIR}"
@@ -256,6 +363,11 @@ compile_dietlibc() {
 		tar -jcpf "${DIETLIBC_BINCACHE}" diet || gen_die "Could not tar up dietlibc bin"
 		[ ! -f "${DIETLIBC_BINCACHE}" ] && gen_die "bincache not created"
 		echo "${TEMP}" > "${DIETLIBC_BINCACHE_TEMP}"
+
+		print_info 1 "dietlibc: cleaning up"
+		cd "${TEMP}"
+		rm -rf "${DIETLIBC_DIR}" > /dev/null
+		rm -rf "${TEMP}/diet" > /dev/null
 	else
 		print_info 1 "Dietlibc: Found bincache at ${DIETLIBC_BINCACHE}"
 	fi
