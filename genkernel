@@ -272,6 +272,10 @@ then
 	fi
 
 	compile_devfsd
+	if [ "${DEVFS}" -eq '0' ]
+	then
+		[ "${VER}" -gt '2' ] || [ "${VER}" -eq '2' -a "${PAT}" -ge '6' ] && UDEV=1
+	fi
 	[ "${UDEV}" -eq '1' ] && compile_udev
 
 	# Create initrd
