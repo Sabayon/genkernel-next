@@ -52,7 +52,7 @@ config_kernel() {
 		else
 			print_info 1 '        >> Running oldconfig...'
 		fi
-		yes '' | compile_generic oldconfig kernel
+		yes '' 2>/dev/null | compile_generic oldconfig kernel
 	fi
 	if isTrue "${CLEAN}"
 	then
