@@ -148,6 +148,10 @@ parse_cmdline() {
 		      CMD_DOKEYMAPAUTO=1
 		      print_info 2 "CMD_DOKEYMAPAUTO: $CMD_DOKEYMAPAUTO"
 	      ;;
+	      --no-evms2)
+		      CMD_NOEVMS2=1
+		      print_info 2 'CMD_NOEVMS2: 1'
+	      ;;
 	      --no-lvm2)
 		      CMD_NOLVM2=1
 		      print_info 2 'CMD_NOLVM2: 1'

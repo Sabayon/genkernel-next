@@ -232,6 +232,15 @@ then
 	fi
 fi
 
+if [ "${DO_evms2}" ]
+then
+       if [ -e '/sbin/evms_activate' ]
+       then
+               echo -e "${GOOD}>>${NORMAL}${BOLD} Activating EVMS...${NORMAL}"
+               evms_activate
+       fi
+fi
+
 echo -e "${GOOD}>>${NORMAL}${BOLD} Determining root device...${NORMAL}"
 
 while true

@@ -95,6 +95,7 @@ create_base_initrd_sys() {
 	then
 		if [ "${CMD_NOLVM2}" != '1' ]
 		then
+			print_info 1 'lvm2: Adding support...'
 			cp /sbin/lvm "${TEMP}/initrd-temp/bin/lvm" ||
 				gen_die 'Could not copy over lvm!'
 			ln -sf "./lvm" "${TEMP}/initrd-temp/bin/vgscan" ||
@@ -102,9 +103,27 @@ create_base_initrd_sys() {
 			ln -sf "./lvm" "${TEMP}/initrd-temp/bin/vgchange" ||
 				gen_die 'Could not symlink lvm -> vgchange!'
 		fi
-#	else
-#		print_warning 1 "initrd: No LVM2 static binaries found; skipping support..."
 	fi
+	
+	#EVMS2
+	if [ -e '/sbin/evms_activate' ]
+	then
+		if [ "${CMD_NOEVMS2}" -ne '1' ]
+		then
+			print_info 1 'evms2: Adding support...'	
+			mkdir -p ${TEMP}/initrd-temp/lib
+			cp -a /lib/ld-* "${TEMP}/initrd-temp/lib" || gen_die 'Could not copy files for EVMS2!'
+			cp -a /lib/libc-* /lib/libc.* "${TEMP}/initrd-temp/lib" || gen_die 'Could not copy files for EVMS2!'
+			cp -a /lib/libdl-* /lib/libdl.* "${TEMP}/initrd-temp/lib" || gen_die 'Could not copy files for EVMS2!'
+			cp -a /lib/libpthread* "${TEMP}/initrd-temp/lib" || gen_die 'Could not copy files for EVMS2!'
+			cp -a /lib/libuuid*so* "${TEMP}/initrd-temp/lib" || gen_die 'Could not copy files for EVMS2!'
+			cp -a /lib/libevms*so* "${TEMP}/initrd-temp/lib" || gen_die 'Could not copy files for EVMS2!'
+			cp -a /lib/evms "${TEMP}/initrd-temp/lib" || gen_die 'Could not copy files for EVMS2!'
+			cp -a /lib/evms/* "${TEMP}/initrd-temp/lib/evms" || gen_die 'Could not copy files for EVMS2!'
+			cp -a /etc/evms.conf "${TEMP}/initrd-temp/etc" || gen_die 'Could not copy files for EVMS2!'
+			cp /sbin/evms_activate "${TEMP}/initrd-temp/bin/evms_activate" || gen_die 'Could not copy over vgscan!'
+		fi
+	fi	
 
 	for i in '[' ash basename cat chroot clear cp dirname echo env false find \
 	grep gunzip gzip ln ls loadkmap losetup lsmod mkdir mknod more mount mv \
