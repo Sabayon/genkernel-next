@@ -47,7 +47,7 @@ findcdmount() {
 			if [ "$?" = '0' ]
 			then
 				# Check for a LiveCD
-				if [ -e /newroot/mnt/cdrom/gentoo ]
+				if [ -e /newroot/mnt/cdrom/livecd ]
 				then
 					REAL_ROOT="${x}"
 					break
