@@ -31,12 +31,19 @@ create_base_initrd_sys() {
 	echo "/dev/ram0     /           ext2    defaults" > ${TEMP}/initrd-temp/etc/fstab
 	echo "proc          /proc       proc    defaults    0 0" >> ${TEMP}/initrd-temp/etc/fstab
 
+	echo "REGISTER        .*           MKOLDCOMPAT" > ${TEMP}/initrd-temp/etc/devfsd.conf
+	echo "UNREGISTER      .*           RMOLDCOMPAT" >> ${TEMP}/initrd-temp/etc/devfsd.conf
+	echo "REGISTER        .*           MKNEWCOMPAT" >> ${TEMP}/initrd-temp/etc/devfsd.conf
+	echo "UNREGISTER      .*           RMNEWCOMPAT" >> ${TEMP}/initrd-temp/etc/devfsd.conf
+
+
 	cd ${TEMP}/initrd-temp/dev
 	MAKEDEV generic-i386
 	MAKEDEV scd
 
 	cp "${BUSYBOX_BINCACHE}" "${TEMP}/initrd-temp/bin/busybox.bz2" || gen_die "could not copy busybox from bincache"
 	bunzip2 "${TEMP}/initrd-temp/bin/busybox.bz2" || gen_die "could not uncompress busybox"
+	chmod +x "${TEMP}/initrd-temp/bin/busybox"
 
 	if [ "${PAT}" -gt "4" ]
 	then
@@ -46,11 +53,21 @@ create_base_initrd_sys() {
 	fi
 
 	bunzip2 "${TEMP}/initrd-temp/bin/insmod.static.bz2" || gen_die "could not uncompress insmod.static"
+	chmod +x "${TEMP}/initrd-temp/bin/insmod.static"
+
+	cp "${DEVFSD_BINCACHE}" "${TEMP}/initrd-temp/bin/devfsd.bz2" || gen_die "could not copy devfsd executable from bincache"
+	bunzip2 "${TEMP}/initrd-temp/bin/devfsd.bz2" || gen_die "could not uncompress devfsd"
+	chmod +x "${TEMP}/initrd-temp/bin/devfsd"
+
+# We make our own devfsd.conf these days, the default one doesn't work with the stripped
+# down devfsd we use with dietlibc
+#	cp "${DEVFSD_CONF_BINCACHE}" "${TEMP}/initrd-temp/etc/devfsd.conf.bz2" || gen_die "could not copy devfsd.conf from bincache"
+#	bunzip2 "${TEMP}/initrd-temp/etc/devfsd.conf.bz2" || gen_die "could not uncompress devfsd.conf"
 
 	for i in '[' ash basename cat chroot clear cp dirname echo env false find \
 	grep gunzip gzip insmod ln ls loadkmap losetup lsmod mkdir mknod modprobe more mount mv \
 	pivot_root ps awk pwd rm rmdir rmmod sh sleep tar test touch true umount uname \
-	xargs yes zcat chmod chown; do
+	xargs yes zcat chmod chown cut kill; do
 		rm -f ${TEMP}/initrd-temp/bin/$i > /dev/null
 		ln  ${TEMP}/initrd-temp/bin/busybox ${TEMP}/initrd-temp/bin/$i || gen_die "could not link ${i}"
 	done
