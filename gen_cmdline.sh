@@ -65,6 +65,7 @@ longusage() {
   echo "	--do-keymap-auto	Forces keymap selection at boot"
   echo "	--no-lvm2		Don't include LVM2 support"
   echo "	--bootloader=grub	Add new kernel to GRUB configuration"
+  echo "	--linuxrc=<file>	Specifies a user created linuxrc"
   echo "  Internals"
   echo "	--arch-override=<arch>	Force to arch instead of autodetect"
   echo "	--cachedir=<dir>	Override the default cache location"
@@ -100,39 +101,39 @@ parse_opt() {
 
 parse_cmdline() {
 	case "$*" in
-	      --kernel-cc*)
+	      --kernel-cc=*)
 		      CMD_KERNEL_CC=`parse_opt "$*"`
 		      print_info 2 "CMD_KERNEL_CC: $CMD_KERNEL_CC"
 	      ;;
-	      --kernel-ld*)
+	      --kernel-ld=*)
 		      CMD_KERNEL_LD=`parse_opt "$*"`
 		      print_info 2 "CMD_KERNEL_LD: $CMD_KERNEL_LD"
 	      ;;
-	      --kernel-as*)
+	      --kernel-as=*)
 		      CMD_KERNEL_AS=`parse_opt "$*"`
 		      print_info 2 "CMD_KERNEL_AS: $CMD_KERNEL_AS"
 	      ;;
-	      --kernel-make*)
+	      --kernel-make=*)
 		      CMD_KERNEL_MAKE=`parse_opt "$*"`
 		      print_info 2 "CMD_KERNEL_MAKE: $CMD_KERNEL_MAKE"
 	      ;;
-	      --utils-cc*)
+	      --utils-cc=*)
 		      CMD_UTILS_CC=`parse_opt "$*"`
 		      print_info 2 "CMD_UTILS_CC: $CMD_UTILS_CC"
 	      ;;
-	      --utils-ld*)
+	      --utils-ld=*)
 		      CMD_UTILS_LD=`parse_opt "$*"`
 		      print_info 2 "CMD_UTILS_LD: $CMD_UTILS_LD"
 	      ;;
-	      --utils-as*)
+	      --utils-as=*)
 		      CMD_UTILS_AS=`parse_opt "$*"`
 		      print_info 2 "CMD_UTILS_AS: $CMD_UTILS_AS"
 	      ;;
-	      --utils-make*)
+	      --utils-make=*)
 		      CMD_UTILS_MAKE=`parse_opt "$*"`
 		      print_info 2 "CMD_UTILS_MAKE: $CMD_UTILS_MAKE"
 	      ;;
-	      --makeopts*)
+	      --makeopts=*)
 		      CMD_MAKEOPTS=`parse_opt "$*"`
 		      print_info 2 "CMD_MAKEOPTS: $CMD_MAKEOPTS"
 	      ;;
@@ -156,11 +157,11 @@ parse_cmdline() {
 		      CMD_NOLVM2=1
 		      print_info 2 'CMD_NOLVM2: 1'
 	      ;;
-	      --bootloader*)
+	      --bootloader=*)
 		      CMD_BOOTLOADER=`parse_opt "$*"`
 		      print_info 2 "CMD_BOOTLOADER: $CMD_BOOTLOADER"
 	      ;;
-	      --debuglevel*)
+	      --debuglevel=*)
 		      CMD_DEBUGLEVEL=`parse_opt "$*"`
 		      DEBUGLEVEL="${CMD_DEBUGLEVEL}"
 		      print_info 2 "CMD_DEBUGLEVEL: $CMD_DEBUGLEVEL"
@@ -277,19 +278,19 @@ parse_cmdline() {
 		      CMD_UDEV=0
 		      print_info 2 "CMD_UDEV: $CMD_UDEV"
 	      ;;
-	      --callback*)
+	      --callback=*)
 		      CMD_CALLBACK=`parse_opt "$*"`
 		      print_info 2 "CMD_CALLBACK: $CMD_CALLBACK/$*"
 	      ;;
-	      --postconf*)
+	      --postconf=*)
 		      CMD_POSTCONF=`parse_opt "$*"`
 		      print_info 2 "CMD_POSTCONF: $CMD_POSTCONF/$*"
 	      ;;
-	      --tempdir*)
-	        TEMP=`parse_opt "$*"`
-	        print_info 2 "TEMP: $TEMP"
+	      --tempdir=*)
+		      TEMP=`parse_opt "$*"`
+		      print_info 2 "TEMP: $TEMP"
 	      ;; 
-	      --arch-override*)
+	      --arch-override=*)
 		      CMD_ARCHOVERRIDE=`parse_opt "$*"`
 		      print_info 2 "CMD_ARCHOVERRIDE: $CMD_ARCHOVERRIDE"
 	      ;;
@@ -301,31 +302,35 @@ parse_cmdline() {
 		      CMD_USECOLOR=0
 		      print_info 2 "CMD_USECOLOR: $CMD_USECOLOR"
 	      ;;
-	      --debugfile*)
+	      --debugfile=*)
 		      CMD_DEBUGFILE=`parse_opt "$*"`
 		      DEBUGFILE=`parse_opt "$*"`
 		      print_info 2 "CMD_DEBUGFILE: $CMD_DEBUGFILE"
 		      print_info 2 "DEBUGFILE: $CMD_DEBUGFILE"
 	      ;;
-	      --kerneldir*)
+	      --kerneldir=*)
 		      CMD_KERNELDIR=`parse_opt "$*"`
 		      print_info 2 "CMD_KERNELDIR: $CMD_KERNELDIR"
 	      ;;
-	      --kernel-config*)
+	      --kernel-config=*)
 		      CMD_KERNEL_CONFIG=`parse_opt "$*"`
 		      print_info 2 "CMD_KERNEL_CONFIG: $CMD_KERNEL_CONFIG"
 	      ;;
-	      --module-prefix*)
+	      --module-prefix=*)
 		      CMD_INSTALL_MOD_PATH=`parse_opt "$*"`
 		      print_info 2 "CMD_INSTALL_MOD_PATH: $CMD_INSTALL_MOD_PATH"
 	      ;;
-	      --cachedir*)
+	      --cachedir=*)
 		      CACHE_DIR=`parse_opt "$*"`
 		      print_info 2 "CACHE_DIR: $CACHE_DIR"
 	      ;;
-	      --minkernpackage*)
+	      --minkernpackage=*)
 		      CMD_MINKERNPACKAGE=`parse_opt "$*"`
 		      print_info 2 "MINKERNPACKAGE: $CMD_MINKERNPACKAGE"
+	      ;;
+	      --linuxrc=*)
+	      		CMD_LINUXRC=`parse_opt "$*"`
+			print_info 2 "CMD_LINUXRC: $CMD_LINUXRC"
 	      ;;
 	      all)
 		      BUILD_KERNEL=1

@@ -184,11 +184,17 @@ create_initrd_modules() {
 }
 
 create_initrd_aux() {
-	if [ -f "${GK_SHARE}/${ARCH}/linuxrc" ]
+	if [ -f "${CMD_LINUXRC}" ]
 	then
-		cp "${GK_SHARE}/${ARCH}/linuxrc" "${TEMP}/initrd-temp/linuxrc"
-	else
-		cp "${GK_SHARE}/generic/linuxrc" "${TEMP}/initrd-temp/linuxrc"
+		cp "${CMD_LINUXRC}" "${TEMP}/initrd-temp/linuxrc"
+		print_info 2 "        >> Copying user specified linuxrc: ${CMD_LINUXRC}"
+	else	
+		if [ -f "${GK_SHARE}/${ARCH}/linuxrc" ]
+		then
+			cp "${GK_SHARE}/${ARCH}/linuxrc" "${TEMP}/initrd-temp/linuxrc"
+		else
+			cp "${GK_SHARE}/generic/linuxrc" "${TEMP}/initrd-temp/linuxrc"
+		fi
 	fi
 
 	if [ -f "${GK_SHARE}/${ARCH}/initrd.scripts" ]
