@@ -1,0 +1,246 @@
+.TH GENKERNEL "8" "November 2004" "genkernel 3.1.0c" "Gentoo Linux"
+.SH NAME
+genkernel \- the Gentoo Linux automatic kernel compiler.
+.SH SYNOPSIS
+genkernel [options...] action
+.SH INTRODUCTION
+Genkernel is designed to allow users who are not previously used to
+compiling a kernel to use a similar setup to that one that is used on
+the Gentoo LiveCDs which auto-detects your hardware.
+.PP
+Some users may also be interested in using genkernel for hardware
+which requires initialization and a working kernel before it can be
+booted because genkernel also automatically compiles your kernel
+modules, allowing hardware which needs to be loaded with module
+parameters to be used.
+.SH USAGE
+All that is needed to run genkernel is just ``genkernel'' with an action
+and any flags you might need:
+.PP
+# genkernel --menuconfig --no-clean --no-install --bootsplash all
+.PP
+This would produce a kernel, asking you what how to configure it
+to your desire, leaving alone any existing compiled object files, enabling
+bootsplash support but not installing anything.
+.SH ACTIONS
+An action tells Genkernel what you want it to do - the following
+actions are supported:
+.PP
+.I \fBall\fR
+.RS
+Build all steps - the kernel, modules, and the initrd.
+.RE
+.I \fBkernel\fR
+.RS
+Build only the kernel and the modules.
+.RE
+.I \fBinitrd\fR
+.RS
+Build only the initrd.
+.RE
+.SH OPTIONS
+Genkernel supports the following options which alter its
+behaviour. Certain options have ``\fB--no-\fR'' variants which
+do the opposite thing. You can specify your options in any order.
+.PP
+.BR Debugging \ Options
+.TP
+\fB\-\-debuglevel=\fR<0-5>
+This controls the out verbosity level of genkernel output - if this is set
+to 0, minimal debugging is done; if this is set to 5 as much output as
+possible is given.
+.TP
+\fB\-\-debugfile=\fR<outfile>
+This outputs full debugging data; regardless of --debuglevel to the file 
+<outfile>. By default this is
+.I /var/log/genkernel.log\fR.
+.TP
+\fB\-\-\fR[no\-]\fBcolor\fR
+Turns on, or off, output in color using escape sequences.
+.PP
+.BR Kernel \ Configuration
+.TP
+\fB\-\-\fR[no\-]\fBmenuconfig\fR
+Runs, or does not run "make menuconfig" after running "make oldconfig".
+.TP
+\fB\-\-\fR[no\-]\fBsave\-config\fR
+Saves, or does not save the kernel configuration to
+.I /etc/kernels
+if the kernel is successfully compiled.
+.TP
+\fB\-\-gconfig\fR
+Run "make gconfig" after "make oldconfig".
+.TP
+\fB\-\-xconfig\fR
+Run "make xconfig" after "make oldconfig".
+.PP
+.BR Kernel \ Compilation
+.TP
+\fB\-\-\fR[no\-]\fBclean\fR
+Runs, or does not run, "make clean" before compilation - this erases any
+compiled object files in the kernel source tree but does not have an impact
+on the kernel configuration. Specifying \fB\-\-no\-clean\fR implies
+\fB\-\-no\-mrproper\fR.
+.TP
+\fB\-\-\fR[no\-]\fBmrproper\fR
+Runs, or does not run, "make mrproper" before compilation - this erases both
+any compiled object files in the kernel source tree as well as the kernel
+configuration.
+.TP
+\fB\-\-\fR[no\-]\fBinstall\fR
+Installs, or does not install the kernel to
+.I /boot
+after building. If MOUNTBOOT is set in
+.I /etc/genkernel.conf
+then
+.I /boot
+will be automatically mounted if it is
+not already mounted before the initrd and kernel image is copied over.
+.TP
+\fB\-\-no\-initrdmodules\fR
+Don't copy any modules to the initrd.
+.TP
+\fB\-\-oldconfig\fR
+Implies \fB\-\-no\-clean\fR, and thus \fB\-\-no\-mrproper\fR, running a
+"make oldconfig".
+.TP
+\fB\-\-callback=\fR<...>
+Run the specified arguments in the current environment after the kernel and
+modules have been compiled.
+.TP
+\fB\-\-postconf=\fR<...>
+Run the specified arguments in the current environment after the kernel has
+been configured, and "make dep" or "make prepare" has been run.
+.TP
+\fB\-\-udev\fR
+Add in udev support to the initrd.
+.PP
+.BR Kernel \ Locations
+.TP
+\fB\-\-kerneldir=\fR<dir>
+This specifies the location of the kernel sources; the default is
+/usr/src/linux.
+.TP
+\fB\-\-kernel\-config=\fR<file>
+This specifies a kernel configuration file to use for compilation; by default
+.config in the kernel source tree is used.
+.PP
+.BR Low-Level \ Compilation \ Options
+.TP
+\fB\-\-kernel\-cc=\fR<compiler>
+Compiler to use for the kernel compilation (e.g. distcc).
+.TP
+\fB\-\-kernel\-as=\fR<assembler>
+Assembler to use for the kernel compilation.
+.TP
+\fB\-\-kernel\-ld=\fR<linker>
+Linker to use for the kernel compilation.
+.TP
+\fB\-\-kernel\-make=\fR<makeprg>
+GNU Make to use for the kernel compilation.
+.TP
+\fB\-\-utils\-cc=\fR<compiler>
+Compiler to use for utilities.
+.TP
+\fB\-\-utils\-as=\fR<assembler>
+Assembler to use for utilities.
+.TP
+\fB\-\-utils\-ld=\fR<linker>
+Linker to use for utilities.
+.TP
+\fB\-\-utils\-make=\fR<makeprog>
+GNU Make to use for utilities.
+.TP
+\fB\-\-makeopts=\fR<makeopts>
+GNU Make options such as \fB\-j2\fR, etc. \fB\-j\fRX is filtered during the
+module compilation stage of 2.4 series kernels to avoid bottlenecks; the
+2.6 build system does not have this issue and \fB\-j\fRX is not filtered for it.
+.PP
+.BR Initialization
+.TP
+\fB\-\-do\-keymap\-auto\fR
+Force keymap selection at boot.
+.TP
+\fB\-\-\fR[no\-]\fBbootsplash=\fR<theme>
+If the extra argument is specified, bootsplash is forced using <theme>
+rather than the default theme specified in your bootsplash
+configuration. If \fB\-\-no-bootsplash\fR is specified, then
+bootsplash is disabled.
+.TP
+\fB\-\-\fR[no\-]\fBgensplash=\fR<theme>
+If the extra argument is specified, gensplash is forced using <theme>
+rather than the default theme specified in your gensplash
+configuration. If \fB\-\-no-gensplash\fR is specified, then
+gensplash is disabled.
+.TP
+\fB\-\-lvm2\fR
+.RS
+Add in LVM2 support from static binaries if they exist on the system,
+or compile static LVM2 binaries if static ones do not exist.
+.RE
+.TP
+\fB\-\-no\-evms2\fR
+Don't add in EVMS2 support if it is available on the system.
+.PP
+.BR Internals
+.TP
+\fB\-\-arch\-override=\fR<arch>
+Force the architecture settings described by the <arch> profile
+instead of autodetecting the running architecture.
+.TP
+\fB\-\-busybox\-config=\fR<file>
+Busybox configuration file to use when compiling busybox.
+.TP
+\fB\-\-busybox\-bin=\fR<file>
+Don't compile busybox, and use this static .bz2 binary instead.
+.PP
+.BR Output \ Settings
+.TP
+\fB\-\-minkernpackage=\fR<tbz2>
+File to output a .tar.bz2'd kernel and initrd: no modules outside of the
+initrd will be included...
+.SH INITRD OPTIONS
+The following options can be passed as kernel parameters from the
+bootloader, which the initrd scripts would recognize.
+.TP
+\fBreal_root=\fR<...>
+Specifies the device node of the root filesystem to mount.
+.TP
+\fBdevfs\fR
+.RS
+Turns on devfs support.
+.RE
+.TP
+\fBnodevfs\fR
+Turns off devfs support.
+.TP
+\fBudev\fR
+.RS
+Turns on udev support.
+.RE
+.TP
+\fBnoudev\fR
+.RS
+Turns off udev support.
+.RE
+.TP
+\fBreal_init=\fR<...>
+Passes arguments to init on bootup.
+.TP
+\fBscandelay\fR
+Pauses for 10 seconds before running devfsd.
+.SH REPORTING BUGS
+If you believe you have found a bug in the genkernel scripts, then please
+file a bug on the Gentoo Linux Bugzilla: 
+.I http://bugs.gentoo.org\fR,
+assigning your bug to genkernel@gentoo.org. We cannot assist you
+with kernel compilation failures unless they are caused by a genkernel
+bug.
+.PP
+Kernel issues for Gentoo-supported kernels, including compilation
+failures should go to
+.I http://bugs.gentoo.org
+and should be assigned to kernel@gentoo.org. Please check if an
+existing bug documents the same issue before opening a new bug. Issues
+for kernel sources not supported by Gentoo should go to their relevant
+authors.
