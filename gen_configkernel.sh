@@ -28,7 +28,7 @@ config_kernel() {
 	if isTrue ${MRPROPER}
 	then
 		print_info 1 "kernel: running mrproper"
-		compile_generic "mrproper"
+		compile_generic "mrproper" kernel
 	fi
 
 	# If we're not cleaning, then we don't want to try to overwrite the configs there
@@ -39,7 +39,7 @@ config_kernel() {
 		cp "${KERNEL_CONFIG}" "${KERNEL_DIR}/.config" || gen_die "could not copy config file"
 
 		print_info 1 "kernel: running oldconfig"
-		yes "" | compile_generic "oldconfig"
+		yes "" | compile_generic "oldconfig" kernel
 
 		if isTrue ${MENUCONFIG}
 		then
@@ -48,7 +48,7 @@ config_kernel() {
 		fi
 
 		print_info 1 "kernel: running clean"
-		compile_generic "clean"
+		compile_generic "clean" kernel
 	else
 		print_info 1 "kernel: skipping copy of config. CLEAN is OFF"
 	fi

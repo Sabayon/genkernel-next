@@ -1,5 +1,5 @@
 #!/bin/bash
-# x86-config.sh
+# x86/config.sh
 
 KERNEL_MAKE="bzImage"
 KERNEL_BINARY="arch/i386/boot/bzImage"
@@ -8,9 +8,13 @@ KERNEL_BINARY="arch/i386/boot/bzImage"
 # can turn this flag on
 USE_DIETLIBC=0
 
-CC=gcc
-AS=as
-LD=ld
+KERNEL_CC=gcc
+KERNEL_AS=as
+KERNEL_LD=ld
+
+UTILS_CC=gcc
+UTILS_AS=as
+UTILS_LD=ld
 
 COMPRESS_INITRD=yes
 

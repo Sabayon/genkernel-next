@@ -28,19 +28,34 @@ determine_real_args() {
 
 	get_KV
 
-	if [ "${CMD_CC}" != "" ]
+	if [ "${CMD_KERNEL_CC}" != "" ]
 	then
-		CC="${CMD_CC}"
+		KERNEL_CC="${CMD_KERNEL_CC}"
 	fi
 
-	if [ "${CMD_LD}" != "" ]
+	if [ "${CMD_KERNEL_LD}" != "" ]
 	then
-		LD="${CMD_LD}"
+		KERNEL_LD="${CMD_KERNEL_LD}"
 	fi
 
-	if [ "${CMD_AS}" != "" ]
+	if [ "${CMD_KERNEL_AS}" != "" ]
 	then
-		AS="${CMD_AS}"
+		KERNEL_AS="${CMD_KERNEL_AS}"
+	fi
+
+	if [ "${CMD_UTILS_CC}" != "" ]
+	then
+		UTILS_CC="${CMD_UTILS_CC}"
+	fi
+
+	if [ "${CMD_UTILS_LD}" != "" ]
+	then
+		UTILS_LD="${CMD_UTILS_LD}"
+	fi
+
+	if [ "${CMD_UTILS_AS}" != "" ]
+	then
+		UTILS_AS="${CMD_UTILS_AS}"
 	fi
 
 	DEFAULT_KERNEL_CONFIG=`arch_replace "${DEFAULT_KERNEL_CONFIG}"`

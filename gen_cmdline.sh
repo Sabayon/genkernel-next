@@ -23,9 +23,12 @@ usage() {
   echo "	--kerneldir=<dir>	Location of kernel source"
   echo "	--kernel-config=<file>	Kernel configuration file to use for compilation"
   echo "  Low-Level Compile settings"
-  echo "	--cc=<compiler>		Compiler to use (e.g. distcc)"
-  echo "	--ld=<linker>		Linker to use"
-  echo "	--as=<assembler>	Assembler to use"
+  echo "	--kernel-cc=<compiler>	Compiler to use for kernel (e.g. distcc)"
+  echo "	--kernel-ld=<linker>	Linker to use for kernel"
+  echo "	--kernel-as=<assembler>	Assembler to use for kernel"
+  echo "	--utils-cc=<compiler>	Compiler to use for utils (e.g. busybox, modutils)"
+  echo "	--utils-ld=<linker>	Linker to use for utils"
+  echo "	--utils-as=<assembler>	Assembler to use for utils"
   echo "  Internals"
   echo "	--arch-override=<arch>	Force to arch instead of autodetect (cross-compile?)"
   echo "	--busybox-config=<file>	Busybox configuration file to use"
@@ -49,18 +52,31 @@ parse_cmdline() {
 	for x in $*
 	do
 		case "${x}" in
-			--cc*)
-				CMD_CC=`parse_opt "${x}"`
-				print_info 2 "CMD_CC: $CMD_CC"
+			--kernel-cc*)
+				CMD_KERNEL_CC=`parse_opt "${x}"`
+				print_info 2 "CMD_KERNEL_CC: $CMD_KERNEL_CC"
 			;;
-			--ld*)
-				CMD_LD=`parse_opt "${x}"`
-				print_info 2 "CMD_LD: $CMD_LD"
+			--kernel-ld*)
+				CMD_KERNEL_LD=`parse_opt "${x}"`
+				print_info 2 "CMD_KERNEL_LD: $CMD_KERNEL_LD"
 			;;
-			--as*)
-				CMD_AS=`parse_opt "${x}"`
-				print_info 2 "CMD_AS: $CMD_AS"
+			--kernel-as*)
+				CMD_KERNEL_AS=`parse_opt "${x}"`
+				print_info 2 "CMD_KERNEL_AS: $CMD_KERNEL_AS"
 			;;
+			--utils-cc*)
+				CMD_UTILS_CC=`parse_opt "${x}"`
+				print_info 2 "CMD_UTILS_CC: $CMD_UTILS_CC"
+			;;
+			--utils-ld*)
+				CMD_UTILS_LD=`parse_opt "${x}"`
+				print_info 2 "CMD_UTILS_LD: $CMD_UTILS_LD"
+			;;
+			--utils-as*)
+				CMD_UTILS_AS=`parse_opt "${x}"`
+				print_info 2 "CMD_UTILS_AS: $CMD_UTILS_AS"
+			;;
+			
 			--debuglevel*)
 				CMD_DEBUGLEVEL=`parse_opt "${x}"`
 				DEBUGLEVEL="${CMD_DEBUGLEVEL}"

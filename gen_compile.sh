@@ -1,35 +1,63 @@
 #!/bin/bash
 
-compile_args()
+compile_kernel_args()
 {
 	local ARGS
 
 	ARGS=""
-	if [ "${CC}" != "" ]
+	if [ "${KERNEL_CC}" != "" ]
 	then
-		ARGS="CC=\"${CC}\""
+		ARGS="CC=\"${KERNEL_CC}\""
 	fi
-	if [ "${LD}" != "" ]
+	if [ "${KERNEL_LD}" != "" ]
 	then
-		ARGS="${ARGS} LD=\"${LD}\""
+		ARGS="${ARGS} LD=\"${KERNEL_LD}\""
 	fi
 
-	if [ "${AS}" != "" ]
+	if [ "${KERNEL_AS}" != "" ]
 	then
-		ARGS="${ARGS} AS=\"${AS}\""
+		ARGS="${ARGS} AS=\"${KERNEL_AS}\""
 	fi
-	
+
+	echo -n "${ARGS}"
+}
+
+compile_utils_args()
+{
+	local ARGS
+
+	ARGS=""
+	if [ "${UTILS_CC}" != "" ]
+	then
+		ARGS="CC=\"${UTILS_CC}\""
+	fi
+	if [ "${UTILS_LD}" != "" ]
+	then
+		ARGS="${ARGS} LD=\"${UTILS_LD}\""
+	fi
+
+	if [ "${UTILS_AS}" != "" ]
+	then
+		ARGS="${ARGS} AS=\"${UTILS_AS}\""
+	fi
+
 	echo -n "${ARGS}"
 }
 
 compile_generic() {
 	local RET
-	if [ "$#" -lt "1" ]
+	if [ "$#" -lt "2" ]
 	then
 		gen_die "compile_generic(): improper usage"
 	fi
 
-	ARGS=`compile_args`
+	if [ "${2}" = "kernel" ]
+	then
+		ARGS=`compile_kernel_args`
+	elif [ "${2}" = "utils" ]
+	then
+		ARGS=`compile_utils_args`
+	fi
 
 	if [ "${DEBUGLEVEL}" -gt "1" ]
 	then
@@ -54,22 +82,22 @@ compile_dep() {
 	else
 		print_info 1 "kernel: Making dependancies for linux ${KV}"
 		cd ${KERNEL_DIR}
-		compile_generic "dep"
+		compile_generic "dep" kernel
 	fi
 }
 
 compile_modules() {
 	print_info 1 "kernel: Starting compile of linux ${KV} modules"
 	cd ${KERNEL_DIR}
-	compile_generic "modules"
-	compile_generic "modules_install"
+	compile_generic "modules" kernel
+	compile_generic "modules_install" kernel
 }
 
 compile_kernel() {
 	[ "${KERNEL_MAKE}" = "" ] && gen_die "KERNEL_MAKE undefined. Don't know how to compile kernel for arch."
 	cd ${KERNEL_DIR}
 	print_info 1 "kernel: Starting compile of linux ${KV} ${KERNEL_MAKE}"
-	compile_generic "${KERNEL_MAKE}"
+	compile_generic "${KERNEL_MAKE}" kernel
 	cp "${KERNEL_BINARY}" "/boot/kernel-${KV}" || gen_die "Could not copy kernel binary to boot"
 }
 
@@ -86,16 +114,16 @@ compile_busybox() {
 		cd "${BUSYBOX_DIR}"
 		if [ "${USE_DIETLIBC}" -eq "1" ]
 		then
-			OLD_CC="${CC}"
-			CC="${TEMP}/diet/bin/diet ${CC}"
+			OLD_CC="${UTILS_CC}"
+			UTILS_CC="${TEMP}/diet/bin/diet ${CC}"
 		fi
 		print_info 1 "Busybox: make oldconfig"
-		compile_generic "oldconfig"
+		compile_generic "oldconfig" utils
 		print_info 1 "Busybox: make all"
-		compile_generic "all"
+		compile_generic "all" utils
 		if [ "${USE_DIETLIBC}" -eq "1" ]
 		then
-			CC="${OLD_CC}"
+			UTILS_CC="${OLD_CC}"
 		fi
 		print_info 1 "Busybox: copying to bincache"
 		[ ! -f "${TEMP}/${BUSYBOX_DIR}/busybox" ] && gen_die "busybox executable does not exist after compile, error"
@@ -118,9 +146,10 @@ compile_modutils() {
 		[ ! -d "${MODUTILS_DIR}" ] && gen_die "Modutils directory ${MODUTILS_DIR} invalid"
 		cd "${MODUTILS_DIR}"
 		print_info 1 "modutils: configure"
+		ARGS=`compile_utils_args`
 		${ARGS} ./configure --disable-combined --enable-insmod-static >> ${DEBUGFILE} 2>&1 || gen_die "Configure of modutils failed"
 		print_info 1 "modutils: make all"
-		compile_generic "all"
+		compile_generic "all" utils
 		print_info 1 "modutils: copying to bincache"
 		[ ! -f "${TEMP}/${MODUTILS_DIR}/insmod/insmod.static" ] && gen_die "insmod.static does not exist after compilation of modutils"
 		strip "${TEMP}/${MODUTILS_DIR}/insmod/insmod.static" || gen_die "could not strip insmod.static"
@@ -142,9 +171,10 @@ compile_module_init_tools() {
 		[ ! -d "${MODULE_INIT_TOOLS_DIR}" ] && gen_die "Module-init-tools directory ${MODULE_INIT_TOOLS_DIR} invalid"
 		cd "${MODULE_INIT_TOOLS_DIR}"
 		print_info 1 "module-init-tools: configure"
+		ARGS=`compile_utils_args`
 		${ARGS} ./configure >> ${DEBUGFILE} 2>&1 || gen_die "Configure of module-init-tools failed"
 		print_info 1 "module-init-tools: make all"
-		compile_generic "all"
+		compile_generic "all" utils
 		print_info 1 "module-init-tools: copying to bincache"
 		[ ! -f "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static" ] && gen_die "insmod.static does not exist after compilation of module-init-tools"
 		strip "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static" || gen_die "could not strip insmod.static"
@@ -182,9 +212,9 @@ compile_dietlibc() {
 		[ ! -d "${DIETLIBC_DIR}" ] && gen_die "Dietlibc directory ${DIETLIBC_DIR} invalid"
 		cd "${DIETLIBC_DIR}"
 		print_info 1 "Dietlibc: make"
-		compile_generic "prefix=${TEMP}/diet"
+		compile_generic "prefix=${TEMP}/diet" utils
 		print_info 1 "Dietlibc: installing"
-		compile_generic "prefix=${TEMP}/diet install"
+		compile_generic "prefix=${TEMP}/diet install" utils
 		print_info 1 "Dietlibc: copying to bincache"
 		cd ${TEMP}
 		tar -jcpf "${DIETLIBC_BINCACHE}" diet || gen_die "Could not tar up dietlibc bin"
