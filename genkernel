@@ -77,23 +77,28 @@ then
 fi
 
 # Check /boot is mounted
-if ! egrep -q ' /boot ' /proc/mounts
+if isTrue ${CMD_NOINSTALL}
 then
-	if egrep -q '^[^#].+	/boot	' /etc/fstab
+	isTrue ${MOUNTBOOT} && print_info 2 'Skipping automatic mount of boot'
+else
+	if ! egrep -q ' /boot ' /proc/mounts
 	then
-		if isTrue ${MOUNTBOOT}
+		if egrep -q '^[^#].+	/boot	' /etc/fstab
 		then
-			if ! mount /boot
+			if isTrue ${MOUNTBOOT}
 			then
-				print_warning 1 "${BOLD}WARNING${NORMAL}: Failed to mount /boot!"
-				echo
+				if ! mount /boot
+				then
+					print_warning 1 "${BOLD}WARNING${NORMAL}: Failed to mount /boot!"
+					echo
+				else
+					print_info 1 'mount: /boot mounted successfully!'
+				fi
 			else
-				print_info 1 'mount: /boot mounted successfully!'
+				print_warning 1 "${BOLD}WARNING${NORMAL}: No mounted /boot partition detected!"
+				print_warning 1 '         Run ``mount /boot`` to mount it!'
+				echo
 			fi
-		else
-			print_warning 1 "${BOLD}WARNING${NORMAL}: No mounted /boot partition detected!"
-			print_warning 1 '         Run ``mount /boot`` to mount it!'
-			echo
 		fi
 	elif isBootRO
 	then
