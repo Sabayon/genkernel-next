@@ -2,6 +2,7 @@
 # x86/config.sh
 
 KERNEL_MAKE="bzImage"
+KERNEL_MAKE_2=""
 KERNEL_BINARY="arch/i386/boot/bzImage"
 
 # The dietlibc portion of busybox is commented out right now

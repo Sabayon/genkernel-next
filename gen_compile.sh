@@ -190,6 +190,10 @@ compile_kernel() {
 	cd ${KERNEL_DIR}
 	print_info 1 "kernel: Starting compile of linux ${KV} ${KERNEL_MAKE}"
 	compile_generic "${KERNEL_MAKE}" kernel
+	if [ "${KERNEL_MAKE_2}" != "" ]
+	then
+		compile_generic "${KERNEL_MAKE_2}" kernel
+	fi
 	cp "${KERNEL_BINARY}" "/boot/kernel-${KV}" || gen_die "Could not copy kernel binary to boot"
 }
 
