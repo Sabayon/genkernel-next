@@ -215,4 +215,11 @@ determine_real_args() {
 		UDEV=0
 		DEVFS=1
 	fi
+
+	if isTrue "${CMD_LVM2}"
+	then
+		LVM2=1
+	else
+		LVM2=0
+	fi
 }

@@ -93,7 +93,7 @@ create_base_initrd_sys() {
 #		gen_die "could not uncompress devfsd.conf"
 
 	# LVM2
-	if [ "${CMD_LVM2}" -eq '1' ]
+	if [ "${LVM2}" -eq '1' ]
 	then
 		if [ -e '/sbin/lvm' ] && ldd /sbin/lvm|grep -q 'not a dynamic executable';
 		then
@@ -130,7 +130,7 @@ create_base_initrd_sys() {
 	# EVMS2
 	if [ -e '/sbin/evms_activate' ]
 	then
-		if [ "${CMD_NOEVMS2}" -ne '1' ]
+		if [ "${CMD_NOEVMS2}" != '1' ]
 		then
 			print_info 1 'EVMS2: Adding support...'	
 			mkdir -p ${TEMP}/initrd-temp/lib
