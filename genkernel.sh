@@ -71,12 +71,16 @@ fi
 # Compile Busybox
 compile_busybox
 
-if [ "${PAT}" -gt "4" ]
+# Only compile insmod if we're installing modules onto the initrd
+if [ "${NOINITRDMODULES}" = "" ]
 then
-	# Compile module-init-tools
-	compile_module_init_tools
-else
-	compile_modutils
+	if [ "${PAT}" -gt "4" ]
+	then
+		# Compile module-init-tools
+		compile_module_init_tools
+	else
+		compile_modutils
+	fi
 fi
 
 compile_devfsd

@@ -53,13 +53,17 @@ do
 	done
 done
 
-echo "STEP 2: Module loading"
-
-# Load appropriate kernel modules
-for x in $MY_HWOPTS
-do
-	modules_scan $x
-done
+if [ -d "/lib/modules" ]
+then
+	echo "STEP 2: Module loading"
+	# Load appropriate kernel modules
+	for x in $MY_HWOPTS
+	do
+		modules_scan $x
+	done
+else
+	echo "STEP 2: Skipping module load. No modules in initrd"
+fi
 
 echo "STEP 3: Mounting necessary filesystems per boot options"
 

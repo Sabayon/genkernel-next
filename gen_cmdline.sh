@@ -26,7 +26,8 @@ usage() {
   echo "	--no-install		Do not install kernel after building"
   echo "	--kerneldir=<dir>	Location of kernel source"
   echo "	--kernel-config=<file>	Kernel configuration file to use for compilation"
-  echo "  Low-Level Compile settings"
+  echo "        --no-initrdmodules      Don't copy modules to initrd" 
+ echo "  Low-Level Compile settings"
   echo "	--kernel-cc=<compiler>	Compiler to use for kernel (e.g. distcc)"
   echo "	--kernel-ld=<linker>	Linker to use for kernel"
   echo "	--kernel-as=<assembler>	Assembler to use for kernel"
@@ -141,6 +142,10 @@ parse_cmdline() {
 			--no-install)
 				CMD_NOINSTALL=1
 				print_info 2 "CMD_NOINSTALL: $CMD_NOINSTALL"
+			;;
+			--no-initrdmodules)
+				CMD_NOINITRDMODULES=1
+				print_info 2 "CMD_NOINITRDMODULES: $CMD_NOINITRDMODULES"
 			;;
 			--arch-override*)
 				CMD_ARCHOVERRIDE=`parse_opt "${x}"`

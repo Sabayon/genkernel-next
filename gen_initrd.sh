@@ -53,16 +53,19 @@ create_base_initrd_sys() {
 	bunzip2 "${TEMP}/initrd-temp/bin/busybox.bz2" || gen_die "could not uncompress busybox"
 	chmod +x "${TEMP}/initrd-temp/bin/busybox"
 
-	if [ "${PAT}" -gt "4" ]
+	if [ "${NOINITRDMODULES}" = "" ]
 	then
-		cp "${MODULE_INIT_TOOLS_BINCACHE}" "${TEMP}/initrd-temp/bin/insmod.static.bz2" || gen_die "could not copy insmod.static from bincache"
-	else
-		cp "${MODUTILS_BINCACHE}" "${TEMP}/initrd-temp/bin/insmod.static.bz2" || gen_die "could not copy insmod.static from bincache"
-	fi
+		if [ "${PAT}" -gt "4" ]
+		then
+			cp "${MODULE_INIT_TOOLS_BINCACHE}" "${TEMP}/initrd-temp/bin/insmod.static.bz2" || gen_die "could not copy insmod.static from bincache"
+		else
+			cp "${MODUTILS_BINCACHE}" "${TEMP}/initrd-temp/bin/insmod.static.bz2" || gen_die "could not copy insmod.static from bincache"
+		fi
 
-	bunzip2 "${TEMP}/initrd-temp/bin/insmod.static.bz2" || gen_die "could not uncompress insmod.static"
-	mv "${TEMP}/initrd-temp/bin/insmod.static" "${TEMP}/initrd-temp/bin/insmod"
-	chmod +x "${TEMP}/initrd-temp/bin/insmod"
+		bunzip2 "${TEMP}/initrd-temp/bin/insmod.static.bz2" || gen_die "could not uncompress insmod.static"
+		mv "${TEMP}/initrd-temp/bin/insmod.static" "${TEMP}/initrd-temp/bin/insmod"
+		chmod +x "${TEMP}/initrd-temp/bin/insmod"
+	fi
 
 	cp "${DEVFSD_BINCACHE}" "${TEMP}/initrd-temp/bin/devfsd.bz2" || gen_die "could not copy devfsd executable from bincache"
 	bunzip2 "${TEMP}/initrd-temp/bin/devfsd.bz2" || gen_die "could not uncompress devfsd"
@@ -98,36 +101,20 @@ create_initrd_modules() {
 	else
 		MOD_EXT=".o"
 	fi
-#	local modc i mods mymod
-#	for modc in storage firewire ataraid pcmcia usb
-#	do
-#	for 
-#		mkdir -p ${TEMP}/initrd-temp/lib/modules/${modc}
-#		mods=`echo $modc | tr [:lower:] [:upper:]`_MODULES
-#		eval mymods=\$$mods
-#		for i in ${mymods}
-		for i in `gen_dep_list`
-		do
-			print_info 2 "$i : module searching" 1 0
-			mymod=`find /lib/modules/${KV} -name "${i}${MOD_EXT}"`
-			if [ -z "${mymod}" ]
-			then
-				print_info 2 "Warning : ${i}${MOD_EXT} not found; skipping..."
-				continue;
-			fi
-			print_info 2 "copying ${mymod} to initrd"
-			cp -ax --parents "${mymod}" "${TEMP}/initrd-temp"
-		done
-#	done
+	for i in `gen_dep_list`
+	do
+		print_info 2 "$i : module searching" 1 0
+		mymod=`find /lib/modules/${KV} -name "${i}${MOD_EXT}"`
+		if [ -z "${mymod}" ]
+		then
+			print_info 2 "Warning : ${i}${MOD_EXT} not found; skipping..."
+			continue;
+		fi
+		print_info 2 "copying ${mymod} to initrd"
+		cp -ax --parents "${mymod}" "${TEMP}/initrd-temp"
+	done
 
 	cp -ax --parents /lib/modules/${KV}/modules* ${TEMP}/initrd-temp
-
-#	cat ${GK_SHARE}/${ARCH}/linuxrc | sed 	-e "s/%%STORAGE_MODULES%%/${STORAGE_MODULES}/" \
-#						-e "s/%%FIREWIRE_MODULES%%/${FIREWIRE_MODULES}/" \
-#						-e "s/%%ATARAID_MODULES%%/${ATARAID_MODULES}/" \
-#						-e "s/%%PCMCIA_MODULES%%/${PCMCIA_MODULES}/" \
-#						-e "s/%%USB_MODULES%%/${USB_MODULES}/" \
-#						> ${TEMP}/initrd-temp/linuxrc
 
 	mkdir -p "${TEMP}/initrd-temp/etc/modules"
 	print_list ${SCSI_MODULES} > "${TEMP}/initrd-temp/etc/modules/scsi"
@@ -135,7 +122,9 @@ create_initrd_modules() {
 	print_list ${ATARAID_MODULES} > "${TEMP}/initrd-temp/etc/modules/ataraid"
 	print_list ${PCMCIA_MODULES} > "${TEMP}/initrd-temp/etc/modules/pcmcia"
 	print_list ${USB_MODULES} > "${TEMP}/initrd-temp/etc/modules/usb"
+}
 
+create_initrd_aux() {
 	if [ -f "${GK_SHARE}/${ARCH}/linuxrc" ]
 	then
 		cp "${GK_SHARE}/${ARCH}/linuxrc" "${TEMP}/initrd-temp/linuxrc"
@@ -167,6 +156,7 @@ create_initrd_modules() {
 	chmod +x "${TEMP}/initrd-temp/etc/initrd.scripts"
 	chmod +x "${TEMP}/initrd-temp/etc/initrd.defaults"
 	chmod +x "${TEMP}/initrd-temp/sbin/modprobe"
+
 }
 
 calc_initrd_size() {
@@ -182,8 +172,16 @@ create_initrd() {
 	print_info 1 "initrd: creating base system"
 	create_base_initrd_sys
 
-	print_info 1 "initrd: copying modules"
-	create_initrd_modules
+	if [ "${NOINITRDMODULES}" = "" ]
+	then
+		print_info 1 "initrd: copying modules"
+		create_initrd_modules
+	else
+		print_info 1 "initrd: not copying modules"
+	fi
+
+	print_info 1 "initrd: copying auxilary files"
+	create_initrd_aux
 
 	print_info 1 "initrd: calculating initrd size"
 	INITRD_CALC_SIZE=`calc_initrd_size`
