@@ -81,9 +81,7 @@ then
 	[ ! -e /newroot/dev/.devfsd ] && mount -t devfs devfs /newroot/dev
 	devfsd /newroot/dev
 	sleep 1
-	# Bind our mounted dev to /dev  otherwise we may not be able to mount
-	# our loop device later on
-#	mount -o bind /newroot/dev /dev
+
 	findcdmount /newroot/dev/cdroms/*
 	# not in /dev/cdroms try /dev/ide/cd
 	if [ "${REAL_ROOT}" = "" ]
@@ -205,6 +203,10 @@ then
 	if [ "${LOOPTYPE}" = "normal" ]
 	then
 		check_loop
+		
+		# bind-mount /dev/ so that loop devices can be found
+		mount -o bind /newroot/dev /dev
+
 		echo "STEP 5a1: mounting loop filesystem"
 		mount -t ext2 -o loop,ro /newroot/mnt/cdrom/${LOOP} /newroot/mnt/loop
 		if [ "$?" != "0" ]
@@ -213,6 +215,7 @@ then
 			/bin/ash
 		fi
 		FS_LOCATION="mnt/loop"
+		umount /dev
 	elif [ "${LOOPTYPE}" = "zisofs" ]
 	then
 		check_loop
