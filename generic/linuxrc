@@ -175,7 +175,7 @@ then
 	if [ "${LOOP}" != "" ]
 	then
 		echo "STEP 5a1: mounting loop filesystem"
-		mount -t ext3 -o loop,ro /newroot/mnt/cdrom/${LOOP} /newroot/mnt/loop
+		mount -t ext2 -o loop,ro /newroot/mnt/cdrom/${LOOP} /newroot/mnt/loop
 		if [ "$?" != 0 ]
 		then
 			echo "FAILED TO MOUNT LOOP FILESYSTEM, barfing out to shell"
