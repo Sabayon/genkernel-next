@@ -4,7 +4,7 @@ ncr53c8xx NCR53c406a \
 initio advansys  aha1740  aha1542  aha152x  \
 dtc fdomain gdth pas16 pci2220i pci2000 psi240i \
 qlogicfas qlogicfc qlogicisp \
-seagate t128  tmscsim u14-34f ultrastor wd7000  \
+seagate t128  u14-34f ultrastor wd7000  \
 NCR53c406a sym53c8xx dmx3191d imm in2000 ips qla1280 \
 sim710 sym53c416"
 
