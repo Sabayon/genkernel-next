@@ -166,4 +166,9 @@ determine_real_args() {
 	then
 		INSTALL_MOD_PATH="${CMD_INSTALL_MOD_PATH}"
 	fi
+
+	if [ "${CMD_BOOTLOADER}" != '' ]
+	then
+		BOOTLOADER="${CMD_BOOTLOADER}"
+	fi
 }

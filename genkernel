@@ -20,6 +20,7 @@ source ${GK_BIN}/gen_configkernel.sh || gen_die "Could not read ${GK_BIN}/gen_co
 source ${GK_BIN}/gen_initrd.sh || gen_die "Could not read ${GK_BIN}/gen_initrd.sh"
 source ${GK_BIN}/gen_moddeps.sh || gen_die "Could not read ${GK_BIN}/gen_moddeps.sh"
 source ${GK_BIN}/gen_package.sh || gen_die "Could not read ${GK_BIN}/gen_package.sh"
+source ${GK_BIN}/gen_bootloader.sh || gen_die "Could not read ${GK_BIN}/gen_bootloader.sh"
 
 BUILD_KERNEL=0
 BUILD_INITRD=0
@@ -222,6 +223,7 @@ fi
 
 if [ "${BUILD_KERNEL}" -eq '1' ]
 then
+	set_bootloader
 	print_info 1 ''
 	print_info 1 "Kernel compiled successfully!"
 	print_info 1 ''
