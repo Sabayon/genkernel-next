@@ -91,14 +91,16 @@ create_base_initrd_sys() {
 #		gen_die "could not uncompress devfsd.conf"
 
 	# LVM2
-	if [ -e '/sbin/vgscan.static' -a -e '/sbin/vgchange.static' ]
+	if [ -e '/sbin/lvm' ] && ldd /sbin/lvm|grep -q 'not a dynamic executable';
 	then
 		if [ "${CMD_NOLVM2}" != '1' ]
 		then
-			cp /sbin/vgscan.static "${TEMP}/initrd-temp/bin/vgscan" ||
-				gen_die 'Could not copy over vgscan!'
-			cp /sbin/vgchange.static "${TEMP}/initrd-temp/bin/vgchange" ||
-				gen_die 'Could not copy over vgchange!'
+			cp /sbin/lvm "${TEMP}/initrd-temp/bin/lvm" ||
+				gen_die 'Could not copy over lvm!'
+			ln -sf "${TEMP}/initrd-temp/bin/lvm" "${TEMP}/initrd-temp/bin/vgscan" ||
+				gen_die 'Could not symlink lvm -> vgscan!'
+			ln -sf "${TEMP}/initrd-temp/bin/lvm" "${TEMP}/initrd-temp/bin/vgchange" ||
+				gen_die 'Could not symlink lvm -> vgchange!'
 		fi
 #	else
 #		print_warning 1 "initrd: No LVM2 static binaries found; skipping support..."
