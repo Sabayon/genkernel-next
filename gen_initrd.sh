@@ -144,6 +144,12 @@ create_base_initrd_sys() {
 			cp -a /lib/evms/* "${TEMP}/initrd-temp/lib/evms" || gen_die 'Could not copy files for EVMS2!'
 			cp -a /etc/evms.conf "${TEMP}/initrd-temp/etc" || gen_die 'Could not copy files for EVMS2!'
 			cp /sbin/evms_activate "${TEMP}/initrd-temp/bin/evms_activate" || gen_die 'Could not copy over vgscan!'
+			# Fix EVMS2 complaining that it cant find the swap utilities.
+			# These are not required in the initrd
+			for swap_libs in "${TEMP}/initrd-temp/lib/evms/*/swap*.so"
+			do
+				rm $swap_libs
+			done
 		fi
 	fi	
 
