@@ -332,6 +332,7 @@ parse_cmdline() {
 	      ;;
 	      kernel)
 		      BUILD_KERNEL=1
+		      BUILD_INITRD=0
 	      ;;
 	      --help)
 		      longusage
