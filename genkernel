@@ -216,6 +216,7 @@ then
 	fi
 
 	compile_devfsd
+	[ "${VER}" -lt '2' ] || [ "${VER}" -eq '2' -a "${PAT}" -lt '6' -a "${UDEV}" -eq '1' ] && UDEV=0 && print_info 1 'udev: Target is a 2.4 kernel, support disabled.'
 	[ "${VER}" -gt '2' ] || [ "${VER}" -eq '2' -a "${PAT}" -ge '6' ] && UDEV=1 && print_info 1 'udev: Target is a 2.6 kernel, support enabled.'
 	[ "${UDEV}" -eq '1' ] && compile_udev
 
