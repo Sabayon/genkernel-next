@@ -28,6 +28,7 @@ config_kernel() {
 	determine_config_file
 	cd "${KERNEL_DIR}" || gen_die 'Could not switch to the kernel directory!'
 
+	isTrue "${CLEAN}" && cp "${KERNEL_DIR}/.config" "${KERNEL_DIR}/.config.bak" > /dev/null 2>&1
 	if isTrue ${MRPROPER}
 	then
 		print_info 1 'kernel: >> Running mrproper...'
@@ -41,7 +42,6 @@ config_kernel() {
 	then
 		print_info 1 "config: Using config from ${KERNEL_CONFIG}"
 		print_info 1 '        Previous config backed up to .config.bak'
-		cp "${KERNEL_DIR}/.config" "${KERNEL_DIR}/.config.bak" > /dev/null 2>&1
 		cp "${KERNEL_CONFIG}" "${KERNEL_DIR}/.config" || gen_die 'Could not copy configuration file!'
 	fi
 	if isTrue "${CLEAN}" || isTrue "${OLDCONFIG}"
