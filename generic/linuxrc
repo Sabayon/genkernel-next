@@ -211,12 +211,13 @@ then
 		then
 			mount -t devfs devfs /newroot/dev
 			devfsd /newroot/dev -np
-			if [ -n "${SDELAY}" ]; then
-				sleep ${SDELAY}
-			else
-				sleep 1
-			fi
 		fi
+	fi
+	
+	if [ -n "${SDELAY}" ]; then
+		sleep ${SDELAY}
+	else
+		sleep 1
 	fi
 
 bootstrapCD() {
