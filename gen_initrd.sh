@@ -117,7 +117,7 @@ create_initrd_modules() {
 	print_info 2 "initrd: >> Searching for modules..."
 	for i in `gen_dep_list`
 	do
-		mymod=`find /lib/modules/${KV} -name "${i}${MOD_EXT}"`
+		mymod=`find /lib/modules/${KV} -name "${i}${MOD_EXT}" | head -n 1`
 		if [ -z "${mymod}" ]
 		then
 			print_warning 2 "Warning :: ${i}${MOD_EXT} not found; skipping..."

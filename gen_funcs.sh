@@ -211,3 +211,15 @@ has_loop() {
 		return 1
 	fi
 }
+
+isBootRO()
+{
+	for mo in `grep ' /boot ' /proc/mounts | cut -d ' ' -f 4 | sed -e 's/,/ /'`
+	do
+		if [ "x${mo}x" == "xrox" ]
+		then
+			return 0
+		fi
+	done
+	return 1
+}
