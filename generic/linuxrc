@@ -427,10 +427,10 @@ then
 		mount -t ext2 -o ro /newroot/dev/loop0 /newroot/mnt/livecd
 		FS_LOCATION='mnt/livecd'
 		umount /dev
-	elif /tmp/.initrd/bin/[ "${LOOPTYPE}" = 'zisofs' ]
+	elif [ "${LOOPTYPE}" = 'zisofs' ]
 	then
 		FS_LOCATION="mnt/cdrom/${LOOPEXT}${LOOP}"
-	elif /tmp/.initrd/bin/[ "${LOOPTYPE}" = 'noloop' ]
+	elif [ "${LOOPTYPE}" = 'noloop' ]
 	then
 		FS_LOCATION='mnt/cdrom'
 	fi
@@ -447,7 +447,7 @@ else
 	mkdir -p /newroot/tmp/.initrd
 fi
 
-/tmp/.initrd/bin/[ ! -e /newroot/dev/console ] && mknod /newroot/dev/console c 5 1
+[ ! -e /newroot/dev/console ] && mknod /newroot/dev/console c 5 1
 echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting"
 
 cd /newroot
