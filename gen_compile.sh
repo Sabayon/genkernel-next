@@ -341,7 +341,7 @@ compile_dmraid() {
 			CPPFLAGS="-I${TEMP}/device-mapper/include" \
 			./configure --enable-static_link --prefix=${TEMP}/dmraid >> ${DEBUGFILE} 2>&1 ||
 				gen_die 'Configure of dmraid failed!'
-		mkdir "${TEMP}/dmraid"
+		mkdir -p "${TEMP}/dmraid"
 		print_info 1 'dmraid: >> Compiling...'
 			compile_generic '' utils
 			#compile_generic 'install' utils
