@@ -7,11 +7,11 @@ get_KV() {
 #	local PAT
 	local SUB
 	local EXV
-
+	
 	VER=`grep ^VERSION\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
 	PAT=`grep ^PATCHLEVEL\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
 	SUB=`grep ^SUBLEVEL\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
-	EXV=`grep ^EXTRAVERSION\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
+	EXV=`grep ^EXTRAVERSION\ \= ${KERNEL_DIR}/Makefile | sed -e "s/EXTRAVERSION =//" -e "s/ //g"`
 	KV=${VER}.${PAT}.${SUB}${EXV}
 }
 
