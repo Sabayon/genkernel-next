@@ -131,6 +131,7 @@ chooseKeymap() {
 		if [ "$?" -eq '0'  ]; then
 			xkeymap=`tail -n 7 /lib/keymaps/keymapList | grep ${keymap} | sed -r "s/.*\s+${keymap}\s+([a-z-]+).*/\1/g" | egrep -v 1`
 		fi
+		mkdir -p /etc/sysconfig
 		echo "XKEYBOARD=${xkeymap}" > /etc/sysconfig/keyboard
 	elif [ "$keymap" = '' ]
 	then
