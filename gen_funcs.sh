@@ -170,11 +170,21 @@ print_warning()
 
 var_replace()
 {
-  echo "${3}" | sed -e "s/%%${1}%%/${2}/g" -
+  # Escape '\' and '.' in $2 to make it safe to use
+  # in the later sed expression
+  local SAFE_VAR
+  SAFE_VAR=`echo "${2}" | sed -e 's/\([\/\.]\)/\\\\\\1/g'`
+  
+  echo "${3}" | sed -e "s/%%${1}%%/${SAFE_VAR}/g" -
+  echo "${3}" | sed -e "s/%%${1}%%/${SAFE_VAR}/g" >> /tmp/out
 }
 
 arch_replace() {
   var_replace "ARCH" "${ARCH}" "${1}"
+}
+
+cache_replace() {
+  var_replace "CACHE" "${CACHE_DIR}" "${1}"
 }
 
 clear_log() {

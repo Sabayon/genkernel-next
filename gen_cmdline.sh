@@ -61,8 +61,9 @@ longusage() {
   echo "	--no-lvm2		Don't add in LVM2 support."
   echo "        --bootloader=grub       Add new kernel to GRUB configuration"
   echo "  Internals"
-  echo "	--tempdir=<dir>		Location of Genkernel's temporary directory"
   echo "	--arch-override=<arch>	Force to arch instead of autodetect"
+  echo "	--cachedir=<dir>	Override the default cache location"
+  echo "	--tempdir=<dir>		Location of Genkernel's temporary directory"
   echo "  Output Settings"
   echo "        --minkernpackage=<tbz2> File to output a .tar.bz2'd kernel and initrd:"
   echo "                                No modules outside of the initrd will be"
@@ -277,6 +278,10 @@ parse_cmdline() {
 	      --module-prefix*)
 		      CMD_INSTALL_MOD_PATH=`parse_opt "$*"`
 		      print_info 2 "CMD_INSTALL_MOD_PATH: $CMD_INSTALL_MOD_PATH"
+	      ;;
+	      --cachedir*)
+		      CACHE_DIR=`parse_opt "$*"`
+		      print_info 2 "CACHE_DIR: $CACHE_DIR"
 	      ;;
 	      --minkernpackage*)
 		      CMD_MINKERNPACKAGE=`parse_opt "$*"`

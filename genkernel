@@ -50,6 +50,7 @@ source ${ARCH_CONFIG} || gen_die "Could not read ${ARCH_CONFIG}"
 source ${GK_SHARE}/${ARCH}/modules_load || gen_die "Could not read ${GK_SHARE}/${ARCH}/modules_load"
 
 [ ! -f "${TEMP}" ] && mkdir -p "${TEMP}"
+[ ! -f "${CACHE_DIR}" ] && mkdir -p "${CACHE_DIR}"
 
 # Based on genkernel.conf, arch-specific configs, and commandline options,
 # get the real arguments for usage...
