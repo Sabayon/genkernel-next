@@ -240,7 +240,7 @@ then
 		check_loop
 		mount -o bind /newroot/dev /dev
 		echo "STEP 5a1: mounting gcloop (ext2) filesystem"
-		echo " " | losetup -e ucl-0 /newroot/dev/loop0 /newroot/mnt/cdrom/${LOOP}
+		echo " " | losetup -e ucl-0 -p0 /newroot/dev/loop0 /newroot/mnt/cdrom/${LOOP}
 		if [ "$?" != "0" ]
 		then
 			echo "FAILED TO losetup THE LOOP DEVICE"
