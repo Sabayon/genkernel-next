@@ -40,6 +40,9 @@ print_info 1 "ARCH: ${ARCH}"
 # Configure kernel
 config_kernel
 
+# Make deps
+compile_dep
+
 # Compile modules
 compile_modules
 
@@ -55,8 +58,13 @@ fi
 # Compile Busybox
 compile_busybox
 
-# Compile module-init-tools
-compile_module_init_tools
+if [ "${PAT}" -gt "4" ]
+then
+	# Compile module-init-tools
+	compile_module_init_tools
+else
+	compile_modutils
+fi
 
 # Create initrd
 create_initrd

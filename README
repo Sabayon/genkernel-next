@@ -2,8 +2,13 @@ VERY EXPERIMENTAL
 seems to work so far on amd64 and x86
 I've only tested with 2.6 kernels, it's possible that
 the module-init-tools we use doesn't work with 2.4 in
-which case we need to compile modutils as well and 
+which case we need to compile modutils as well and
 provide a static binary for that....
+
+DEPENDANCIES:
+- bootsplash
+- gcc/binutils
+- bash
 
 INSTALLATION:
 

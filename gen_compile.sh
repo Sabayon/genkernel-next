@@ -20,6 +20,18 @@ compile_generic() {
 	[ "${RET}" -ne "0" ] && gen_die "compile of failed"
 }
 
+compile_dep() {
+	# Only make dep for 2.4 kernels
+	if [ "${PAT}" -gt "4" ]
+	then
+		print_info 1 "kernel: skipping make dep for non 2.4 kernels"
+	else
+		print_info 1 "kernel: Making dependancies for linux ${KV}"
+		cd ${KERNEL_DIR}
+		compile_generic "dep"
+	fi
+}
+
 compile_modules() {
 	print_info 1 "kernel: Starting compile of linux ${KV} modules"
 	cd ${KERNEL_DIR}
@@ -61,11 +73,36 @@ compile_busybox() {
 		fi
 		print_info 1 "Busybox: copying to bincache"
 		[ ! -f "${TEMP}/${BUSYBOX_DIR}/busybox" ] && gen_die "busybox executable does not exist after compile, error"
+		strip "${TEMP}/${BUSYBOX_DIR}/busybox" || gen_die "could not strip busybox"
 		bzip2 "${TEMP}/${BUSYBOX_DIR}/busybox" || gen_die "bzip2 compression of busybox failed"
 		[ ! -f "${TEMP}/${BUSYBOX_DIR}/busybox.bz2" ] && gen_die "could not find compressed busybox binary"
 		mv "${TEMP}/${BUSYBOX_DIR}/busybox.bz2" "${BUSYBOX_BINCACHE}" || gen_die "could not copy busybox binary to arch package directory, does the directory exist?"
 	else
 		print_info 1 "Busybox: Found bincache at ${BUSYBOX_BINCACHE}"
+	fi
+}
+
+compile_modutils() {
+	if [ ! -f "${MODUTILS_BINCACHE}" ]
+	then
+		[ ! -f "${MODUTILS_SRCTAR}" ] && gen_die "Could not find modutils source tarball: ${MODUTILS_BINCACHE}"
+		cd ${TEMP}
+		rm -rf "${MODUTILS_DIR}"
+		tar -jxpf "${MODUTILS_SRCTAR}"
+		[ ! -d "${MODUTILS_DIR}" ] && gen_die "Modutils directory ${MODUTILS_DIR} invalid"
+		cd "${MODUTILS_DIR}"
+		print_info 1 "modutils: configure"
+		CC="${CC}" LD="${LD}" AS="${AS}" ./configure --disable-combined --enable-insmod-static >> ${DEBUGFILE} 2>&1 || gen_die "Configure of modutils failed"
+		print_info 1 "modutils: make all"
+		compile_generic "all"
+		print_info 1 "modutils: copying to bincache"
+		[ ! -f "${TEMP}/${MODUTILS_DIR}/insmod/insmod.static" ] && gen_die "insmod.static does not exist after compilation of modutils"
+		strip "${TEMP}/${MODUTILS_DIR}/insmod/insmod.static" || gen_die "could not strip insmod.static"
+		bzip2 "${TEMP}/${MODUTILS_DIR}/insmod/insmod.static" || gen_die "compression of insmod.static failed"
+		[ ! -f "${TEMP}/${MODUTILS_DIR}/insmod/insmod.static.bz2" ] && gen_die "could not find compressed insmod.static.bz2 binary"
+		mv "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static.bz2" "${MODUTILS_BINCACHE}"
+	else
+		print_info 1 "modutils: Found bincache at ${MODUTILS_BINCACHE}"
 	fi
 }
 
@@ -79,12 +116,13 @@ compile_module_init_tools() {
 		[ ! -d "${MODULE_INIT_TOOLS_DIR}" ] && gen_die "Module-init-tools directory ${MODULE_INIT_TOOLS_DIR} invalid"
 		cd "${MODULE_INIT_TOOLS_DIR}"
 		print_info 1 "module-init-tools: configure"
-		./configure >> ${DEBUGFILE} 2>&1 || gen_die "Configure of module-init-tools failed"
+		CC="${CC}" LD="${LD}" AS="${AS}" ./configure >> ${DEBUGFILE} 2>&1 || gen_die "Configure of module-init-tools failed"
 		print_info 1 "module-init-tools: make all"
 		compile_generic "all"
 		print_info 1 "module-init-tools: copying to bincache"
 		[ ! -f "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static" ] && gen_die "insmod.static does not exist after compilation of module-init-tools"
-		bzip2 "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static" || gen_die "compression of busybox failed"
+		strip "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static" || gen_die "could not strip insmod.static"
+		bzip2 "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static" || gen_die "compression of insmod.static failed"
 		[ ! -f "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static.bz2" ] && gen_die "could not find compressed insmod.static.bz2 binary"
 		mv "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static.bz2" "${MODULE_INIT_TOOLS_BINCACHE}"
 	else
