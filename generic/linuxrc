@@ -74,7 +74,7 @@ mkdir /newroot
 if [ "${CDROOT}" -eq "1" ]
 then
 	mount -t tmpfs tmpfs /newroot
-	mkdir /newroot/dev /newroot/mnt /newroot/mnt/cdrom /newroot/mnt/loop /newroot/tmp/.initrd /newroot/mnt/gentoo
+	mkdir /newroot/dev /newroot/mnt /newroot/mnt/cdrom /newroot/mnt/loop /newroot/tmp /newroot/tmp/.initrd /newroot/mnt/gentoo
 	[ ! -e /newroot/dev/.devfsd ] && mount -t devfs devfs /newroot/dev
 	devfsd /newroot/dev
 	sleep 1

@@ -33,7 +33,7 @@ modules_scan() {
 }
 
 findcdmount() {
-	if [ "$#" -gt "1" ]
+	if [ "$#" -gt "0" ]
 	then
 		for x in $*
 		do
