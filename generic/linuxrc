@@ -126,6 +126,12 @@ chooseKeymap() {
 	then
 		echo -e "${GOOD}>>${NORMAL}${BOLD} Loading the ''${keymap}'' keymap...${NORMAL}"
 		loadkmap < /lib/keymaps/${keymap}.map
+		xkeymap=${keymap}
+		echo ${keymap} | egrep -e "[0-9]+" >/dev/null 2>&1
+		if [ "$?" -eq '0'  ]; then
+			xkeymap=`tail -n 7 /lib/keymaps/keymapList | grep ${keymap} | sed -r "s/.*\s+${keymap}\s+([a-z-]+).*/\1/g" | egrep -v 1`
+		fi
+		echo "XKEYBOARD=${xkeymap}" > /etc/sysconfig/keyboard
 	elif [ "$keymap" = '' ]
 	then
 		echo -e "${GOOD}>>${NORMAL}${BOLD} Keeping default keymap...${NORMAL}"
@@ -189,6 +195,7 @@ bootstrapCD() {
 		# Not in /dev/cdroms: try /dev/ide/cd
 		[ "${REAL_ROOT}" = '' ] && findcdmount /newroot/dev/ide/cd/*
 		[ "${REAL_ROOT}" = '' ] && findcdmount /newroot/dev/sr0
+		[ "${REAL_ROOT}" = '' ] && findcdmount /newroot/dev/sd* # USB Keychain
 	else
 		# Device specified on command line
 		findcdmount /newroot/${CDROOT_DEV}
