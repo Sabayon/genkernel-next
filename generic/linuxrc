@@ -273,6 +273,7 @@ fi
 
 echo "STEP 5c: redirect console"
 console=/newroot/dev/console
+[ ! -e "$console" ] && mknod $console c 5 1
 exec < $console > $console 2>&1 || echo "CONSOLE REDIRECTION FAILED, /dev ON ROOT DOES NOT CONTAIN console !!!"
 
 echo "STEP 6: pivot_root and exec/chroot real init"
