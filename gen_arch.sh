@@ -1,7 +1,7 @@
 #!/bin/bash
 
 get_official_arch() {
-	if [ "${CMD_ARCHOVERRIDE}" != "" ]
+	if [ "${CMD_ARCHOVERRIDE}" != '' ]
 	then
 		ARCH=${CMD_ARCHOVERRIDE}
 	else
@@ -16,5 +16,5 @@ get_official_arch() {
 	fi
 
 	ARCH_CONFIG="${GK_SHARE}/${ARCH}/config.sh"
-	[ ! -f "${ARCH_CONFIG}" ] && gen_die "ARCH: ${ARCH} not yet supported by genkernel. Please add arch-specific config file ${ARCH_CONFIG}"
+	[ -f "${ARCH_CONFIG}" ] || gen_die "${ARCH} not yet supported by genkernel. Please add the arch-specific config file, ${ARCH_CONFIG}"
 }

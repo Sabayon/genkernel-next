@@ -1,7 +1,7 @@
-SCSI_MODULES="3w-xxxx dpt_i2o mptscsih mptctl aic79xx"
-#SCSI_MODULES="3w-xxxx sata_sil"
+MODULES_SCSI="3w-xxxx dpt_i2o mptscsih mptctl aic79xx"
+#MODULES_SCSI="3w-xxxx sata_sil"
 #sata_sil sata_promise sata_via \
-#SCSI_MODULES="sd_mod sg sr_mod  \
+#MODULES_SCSI="sd_mod sg sr_mod  \
 #aic7xxx aic7xxx_old BusLogic \
 #ncr53c8xx NCR53c406a \
 #initio advansys  aha1740  aha1542  aha152x  \
@@ -15,11 +15,7 @@ SCSI_MODULES="3w-xxxx dpt_i2o mptscsih mptctl aic79xx"
 #dmx3191d dpt_i2o imm in2000 ips qla1280 \
 #qlogicfas qlogicfc qlogicisp \
 
-FIREWIRE_MODULES="ieee1394 ohci1394 sbp2"
-
-ATARAID_MODULES="ataraid pdcraid hptraid"
-
-PCMCIA_MODULES="ide-cs"
-
-USB_MODULES="ehci-hcd uhci usb-ohci hid usb-storage"
-
+MODULES_FIREWIRE="ieee1394 ohci1394 sbp2"
+MODULES_ATARAID="ataraid pdcraid hptraid"
+MODULES_PCMCIA="ide-cs"
+MODULES_USB="ehci-hcd uhci usb-ohci hid usb-storage"

@@ -1,27 +1,26 @@
 #!/bin/bash
 # Genkernel v3
 
-GK_V="3.0.2"
-TEMP="/var/tmp/genkernel"
+GK_V='3.0.2b'
+TEMP='/var/tmp/genkernel'
 
 small_die() {
   echo $1
   exit 1
 }
 
-source /etc/genkernel.conf || small_die "could not read /etc/genkernel.conf"
-source ${GK_BIN}/gen_funcs.sh || small_die "could not read ${GK_BIN}/gen_funcs.sh"
+source /etc/genkernel.conf || small_die "Could not read /etc/genkernel.conf"
+source ${GK_BIN}/gen_funcs.sh || small_die "Could not read ${GK_BIN}/gen_funcs.sh"
 clear_log
-source ${GK_BIN}/gen_cmdline.sh || gen_die "could not read ${GK_BIN}/gen_cmdline.sh"
-source ${GK_BIN}/gen_arch.sh || gen_die "could not read ${GK_BIN}/gen_arch.sh"
-source ${GK_BIN}/gen_determineargs.sh || gen_die "could not read ${GK_BIN}/gen_determineargs.sh"
-source ${GK_BIN}/gen_compile.sh || gen_die "could not read ${GK_BIN}/gen_compile.sh"
-source ${GK_BIN}/gen_configkernel.sh || gen_die "could not read ${GK_BIN}/gen_configkernel.sh"
-source ${GK_BIN}/gen_initrd.sh || gen_die "could not read ${GK_BIN}/gen_initrd.sh"
-source ${GK_BIN}/gen_moddeps.sh || gen_die "could not read ${GK_BIN}/gen_moddeps.sh"
-source ${GK_BIN}/gen_package.sh || gen_die "could not read ${GK_BIN}/gen_package.sh"
+source ${GK_BIN}/gen_cmdline.sh || gen_die "Could not read ${GK_BIN}/gen_cmdline.sh"
+source ${GK_BIN}/gen_arch.sh || gen_die "Could not read ${GK_BIN}/gen_arch.sh"
+source ${GK_BIN}/gen_determineargs.sh || gen_die "Could not read ${GK_BIN}/gen_determineargs.sh"
+source ${GK_BIN}/gen_compile.sh || gen_die "Could not read ${GK_BIN}/gen_compile.sh"
+source ${GK_BIN}/gen_configkernel.sh || gen_die "Could not read ${GK_BIN}/gen_configkernel.sh"
+source ${GK_BIN}/gen_initrd.sh || gen_die "Could not read ${GK_BIN}/gen_initrd.sh"
+source ${GK_BIN}/gen_moddeps.sh || gen_die "Could not read ${GK_BIN}/gen_moddeps.sh"
+source ${GK_BIN}/gen_package.sh || gen_die "Could not read ${GK_BIN}/gen_package.sh"
 
-BUILD_ALL=0
 BUILD_KERNEL=0
 BUILD_INITRD=0
 
@@ -32,7 +31,8 @@ do
 	parse_cmdline $Option
 done
 
-if [ "${BUILD_ALL}" -eq 0 -a "${BUILD_KERNEL}" -eq 0 -a "${BUILD_INITRD}" -eq 0 ]
+# Check if no action is specified...
+if [ "${BUILD_KERNEL}" -eq 0 -a "${BUILD_INITRD}" -eq 0 ]
 then
 	usage
 	exit 1
@@ -44,86 +44,96 @@ NORMAL=${GOOD} print_info 1 "Gentoo Linux Genkernel; Version ${GK_V}${NORMAL}"
 get_official_arch
 
 # Read arch-specific config
-source ${ARCH_CONFIG} || gen_die "could not read ${ARCH_CONFIG}"
-source ${GK_SHARE}/${ARCH}/modules_load || gen_die "could not read ${GK_SHARE}/${ARCH}/modules_load"
+source ${ARCH_CONFIG} || gen_die "Could not read ${ARCH_CONFIG}"
+source ${GK_SHARE}/${ARCH}/modules_load || gen_die "Could not read ${GK_SHARE}/${ARCH}/modules_load"
 
 [ ! -f "${TEMP}" ] && mkdir -p "${TEMP}"
 
 # Based on genkernel.conf, arch-specific configs, and commandline options,
-# get the real args for use.
+# get the real arguments for usage...
 determine_real_args
 
 NORMAL=${BOLD} print_info 1 "Compiling Linux Kernel ${BOLD}${KV}${NORMAL} for ${BOLD}${ARCH}${NORMAL}..."
 echo
 
-if ! has_loop
+if [ "${BUILD_INITRD}" -ne '0' ]
 then
-	modprobe loop 2>/dev/null
 	if ! has_loop
 	then
-		print_error 1 "Your kernel does not appear to have loop device support. "
-		print_error 1 "Please load loop support before running genkernel!"
-		gen_die "Load loop support!"
-	else
-		print_info 1 'loop: "loop" module loaded successfully...'
+		modprobe loop 2>/dev/null
+		if ! has_loop
+		then
+			print_error 1 'Your kernel does not appear to have loop device support.'
+			print_error 1 'Please load loop support before running genkernel!'
+			gen_die 'Load loop support!'
+		else
+			print_info 1 'loop: "loop" module loaded successfully...'
+		fi
 	fi
 fi
 
 # Check /boot is mounted
-if ! grep -q "/boot" /proc/mounts
+if ! egrep -q ' /boot ' /proc/mounts
 then
-	if isTrue ${MOUNTBOOT}
+	if egrep -q '^[^#].+	/boot	' /etc/fstab
 	then
-		if ! mount /boot
+		if isTrue ${MOUNTBOOT}
 		then
-			print_warning 1 "${BOLD}WARNING${NORMAL}: Failed to mount /boot!"
-			echo
+			if ! mount /boot
+			then
+				print_warning 1 "${BOLD}WARNING${NORMAL}: Failed to mount /boot!"
+				echo
+			else
+				print_info 1 'mount: /boot mounted successfully!'
+			fi
 		else
-			print_info 1 "mount: /boot mounted successfully!"
+			print_warning 1 "${BOLD}WARNING${NORMAL}: No mounted /boot partition detected!"
+			print_warning 1 '         Run ``mount /boot`` to mount it!'
+			echo
 		fi
-	else
-		print_warning 1 "${BOLD}WARNING${NORMAL}: No mounted /boot partition detected!"
-		print_warning 1 '         Run ``mount /boot`` to mount it!'
-		echo
 	fi
 fi
 
 # Check whether another Genkernel is running
 GENPIDS="`ps -C genkernel --no-headers -o pid | wc -l`"
-if [ "${GENPIDS}" -gt "3" ]
+if [ "${GENPIDS}" -gt '3' ]
 then
-	[ "${GENPIDS}" -gt "4" ] && EX='s'
+	[ "${GENPIDS}" -gt '4' ] && EX='s'
 	print_warning 1 "${BOLD}WARNING${NORMAL}: Another Genkernel instance is running under"
 	print_warning 1 "         process ID${EX} " 0
 	GENPIDS=`ps -C genkernel --no-headers -o pid`
-	echo -n ${GENPIDS} | sed -e "s/$$//; s/ /, /g"
-	echo "halting..."
+	echo -n "${GENPIDS}" | sed -e "s/$$//; s/ /, /g"
+	echo 'halting...'
 	echo
-	print_warning 1 "Running multiple genkernels on the same source tree will cause data loss!"
+	print_warning 1 'Running multiple genkernels on the same source tree will cause data loss!'
 	print_info 1 "Press ^C to halt; ^D to continue [ ${BOLD}if${NORMAL} you know what you're doing! ]"
 	cat
 	echo
-	TEMP="/var/tmp/genkernel-`date | md5sum | cut -d\  -f1`"
-	print_info 1 "thread: Running multiple genkernels may cause problems!"
+	CTEMP="${TEMP}"
+	TEMP="/var/tmp/genkernel-`dd if=/dev/random count=1 2>/dev/null | md5sum | cut -d\  -f1`"
+	print_info 1 'thread: Running multiple genkernels may cause problems!'
 	print_info 1 "thread: Temporary files reallocated to ${TEMP}..."
 	echo
 fi
 
-# Configure kernel
-config_kernel
+if [ ${BUILD_KERNEL} -eq 1 ]
+then
+	# Configure kernel
+	config_kernel
 
-# Make deps
-compile_dep
+	# Make deps
+	compile_dep
 
-# Compile kernel
-compile_kernel
+	# Compile kernel
+	compile_kernel
 
-# Compile modules
-compile_modules
+	# Compile modules
+	compile_modules
 
-print_info 1 "Copying config for successful build to /etc/kernels/kernel-config-${ARCH}-${KV}"
-[ ! -e "/etc/kernels" ] && mkdir -p /etc/kernels
-cp "${KERNEL_DIR}/.config" "/etc/kernels/kernel-config-${ARCH}-${KV}"
+	print_info 1 "Copying config for successful build to /etc/kernels/kernel-config-${ARCH}-${KV}"
+	[ ! -e "/etc/kernels" ] && mkdir -p /etc/kernels
+	cp "${KERNEL_DIR}/.config" "/etc/kernels/kernel-config-${ARCH}-${KV}"
+fi
 
 # Run callback
 if [ "${CMD_CALLBACK}" != "" ]
@@ -156,51 +166,74 @@ then
 	print_info 1 "" 1 0
 fi
 
-# Compile dietlibc
-if [ "${USE_DIETLIBC}" = "1" ]
+if [ "${BUILD_INITRD}" -eq '1' ]
 then
-	compile_dietlibc
-fi
-
-# Compile Busybox
-compile_busybox
-
-# Only compile insmod if we're installing modules onto the initrd
-if [ "${NOINITRDMODULES}" = "" ]
-then
-	if [ "${PAT}" -gt "4" ]
+	# Compile dietlibc
+	if [ "${USE_DIETLIBC}" = '1' ]
 	then
-		# Compile module-init-tools
-		compile_module_init_tools
-	else
-		compile_modutils
+		compile_dietlibc
 	fi
+
+	# Compile Busybox
+	compile_busybox
+
+	# Only compile insmod if we're installing modules onto the initrd
+	if [ "${NOINITRDMODULES}" = '' ]
+	then
+		if [ "${PAT}" -gt '4' ]
+		then
+			# Compile module-init-tools
+			compile_module_init_tools
+		else
+			compile_modutils
+		fi
+	fi
+
+	compile_devfsd
+
+	# Create initrd
+	create_initrd
+else
+	print_info 1 'initrd: Not building since only the kernel was requested...'
 fi
+[ "${MINKERNPACKAGE}" != "" ] && gen_minkernpackage
 
-compile_devfsd
+# Clean up...
+[ -n "${CTEMP}" ] && rm -rf "${TEMP}"
 
-# Create initrd
-create_initrd
-
-if [ "${MINKERNPACKAGE}" != "" ]
+if [ "${BUILD_KERNEL}" -eq '1' ]
 then
-	gen_minkernpackage
+	print_info 1 ''
+	print_info 1 "Kernel compiled successfully!"
+	print_info 1 ''
+	print_info 1 'Required Kernel Parameters:'
+	if [ "${BUILD_INITRD}" -eq '0' ]
+	then
+		print_info 1 '    root=/dev/$ROOT'
+		print_info 1 '    [ And "vga=0x317 splash=verbose" if you use a framebuffer ]'
+		print_info 1 ''
+		print_info 1 '    Where $ROOT is the device node for your root partition as the'
+		print_info 1 '    one specified in /etc/fstab'
+	else	
+		print_info 1 '    root=/dev/ram0 real_root=/dev/$ROOT init=/linuxrc'
+		[ "${INITRD_SIZE}" -ge 4096 ] && print_info 1 "    ramdisk=8192"
+		print_info 1 '    [ And "vga=0x317 splash=verbose" if you use a framebuffer ]'
+		print_info 1 ''
+		print_info 1 '    Where $ROOT is the device node for your root partition as the'
+		print_info 1 '    one specified in /etc/fstab'
+		print_info 1 ''
+		print_info 1 "If you require Genkernel's hardware detection features; you MUST"
+		print_info 1 'tell your bootloader to use the provided initrd file. Otherwise;'
+		print_info 1 'substitute the root argument for the real_root argument if you are'
+		print_info 1 'not planning to use the initrd...'
+	fi
+else
+	print_info 1 ''
+	print_info 1 'initrd compiled successfully!'
 fi
 
 print_info 1 ''
-print_info 1 "Kernel compiled successfully!"
+print_info 1 'Do NOT report kernel bugs as genkernel bugs unless your bug'
+print_info 1 'is about the default genkernel configuration...'
 print_info 1 ''
-print_info 1 "Required Kernel Parameters:"
-print_info 1 '    root=/dev/ram0 real_root=/dev/$ROOT init=/linuxrc'
-[ "${INITRD_SIZE}" -gt 4096 ] && print_info 1 "    ramdisk_size=${INITRD_SIZE}"
-print_info 1 '    [ And "vga=0x317 splash=verbose" if you use a framebuffer ]'
-print_info 1 ''
-print_info 1 '    Where $ROOT is the device node for your root partition as the'
-print_info 1 '    one specified in /etc/fstab'
-print_info 1 ''
-print_info 1 "You MUST also tell your bootloader to use the generated initrd."
-print_info 1 ''
-print_info 1 "Do NOT report kernel bugs (configs included) as genkernel bugs."
-print_info 1 "Make sure you have the latest genkernel before reporting bugs."
-print_info 1 ""
-print_info 1 "For more information please see /usr/share/genkernel/README..."
+print_info 1 'Make sure you have the latest genkernel before reporting bugs.'

@@ -12,72 +12,72 @@ get_KV() {
 }
 
 determine_real_args() {
-	if [ "${CMD_DEBUGFILE}" != "" ]
+	if [ "${CMD_DEBUGFILE}" != '' ]
 	then
 		DEBUGFILE="${CMD_DEBUGFILE}"
 	fi
 
-	if [ "${CMD_MAKEOPTS}" != "" ]
+	if [ "${CMD_MAKEOPTS}" != '' ]
 	then
 		MAKEOPTS="${CMD_MAKEOPTS}"
 	fi
 
-	if [ "${CMD_KERNELDIR}" != "" ]
+	if [ "${CMD_KERNELDIR}" != '' ]
 	then
 		KERNEL_DIR=${CMD_KERNELDIR}
 	else
 		KERNEL_DIR=${DEFAULT_KERNEL_SOURCE}
 	fi
-	[ "${KERNEL_DIR}" = "" ] && gen_die "No kernel source directory!"
+	[ "${KERNEL_DIR}" = '' ] && gen_die 'No kernel source directory!'
 
 	get_KV
 
-	if [ "${CMD_KERNEL_MAKE}" != "" ]
+	if [ "${CMD_KERNEL_MAKE}" != '' ]
 	then
 		KERNEL_MAKE="${CMD_KERNEL_MAKE}"
 	fi
 
-	if [ "${KERNEL_MAKE}" = "" ]
+	if [ "${KERNEL_MAKE}" = '' ]
 	then
-		KERNEL_MAKE="make"
+		KERNEL_MAKE='make'
 	fi
 
-	if [ "${CMD_UTILS_MAKE}" != "" ]
+	if [ "${CMD_UTILS_MAKE}" != '' ]
 	then
 		UTILS_MAKE="${CMD_UTILS_MAKE}"
 	fi
 
-	if [ "${UTILS_MAKE}" = "" ]
+	if [ "${UTILS_MAKE}" = '' ]
 	then
-		UTILS_MAKE="make"
+		UTILS_MAKE='make'
 	fi
 
-	if [ "${CMD_KERNEL_CC}" != "" ]
+	if [ "${CMD_KERNEL_CC}" != '' ]
 	then
 		KERNEL_CC="${CMD_KERNEL_CC}"
 	fi
 
-	if [ "${CMD_KERNEL_LD}" != "" ]
+	if [ "${CMD_KERNEL_LD}" != '' ]
 	then
 		KERNEL_LD="${CMD_KERNEL_LD}"
 	fi
 
-	if [ "${CMD_KERNEL_AS}" != "" ]
+	if [ "${CMD_KERNEL_AS}" != '' ]
 	then
 		KERNEL_AS="${CMD_KERNEL_AS}"
 	fi
 
-	if [ "${CMD_UTILS_CC}" != "" ]
+	if [ "${CMD_UTILS_CC}" != '' ]
 	then
 		UTILS_CC="${CMD_UTILS_CC}"
 	fi
 
-	if [ "${CMD_UTILS_LD}" != "" ]
+	if [ "${CMD_UTILS_LD}" != '' ]
 	then
 		UTILS_LD="${CMD_UTILS_LD}"
 	fi
 
-	if [ "${CMD_UTILS_AS}" != "" ]
+	if [ "${CMD_UTILS_AS}" != '' ]
 	then
 		UTILS_AS="${CMD_UTILS_AS}"
 	fi
@@ -92,7 +92,7 @@ determine_real_args() {
 	DEVFSD_BINCACHE=`arch_replace "${DEVFSD_BINCACHE}"`
 	DEVFSD_CONF_BINCACHE=`arch_replace "${DEVFSD_CONF_BINCACHE}"`
 	
-	if [ "${CMD_BOOTSPLASH}" != "" ]
+	if [ "${CMD_BOOTSPLASH}" != '' ]
 	then
 		BOOTSPLASH=${CMD_BOOTSPLASH}
 	fi
@@ -111,15 +111,15 @@ determine_real_args() {
 		COMPRESS_INITRD=0
 	fi
 
-	if [ "${CMD_MRPROPER}" != "" ]
+	if [ "${CMD_MRPROPER}" != '' ]
 	then
 		MRPROPER="${CMD_MRPROPER}"
 	fi
-	if [ "${CMD_MENUCONFIG}" != "" ]
+	if [ "${CMD_MENUCONFIG}" != '' ]
 	then
 		MENUCONFIG="${CMD_MENUCONFIG}"
 	fi
-	if [ "${CMD_CLEAN}" != "" ]
+	if [ "${CMD_CLEAN}" != '' ]
 	then
 		CLEAN="${CMD_CLEAN}"
 		if ! isTrue ${CLEAN}
@@ -128,12 +128,12 @@ determine_real_args() {
 		fi
 	fi
 
-	if [ "${CMD_MINKERNPACKAGE}" != "" ]
+	if [ "${CMD_MINKERNPACKAGE}" != '' ]
 	then
 		MINKERNPACKAGE="${CMD_MINKERNPACKAGE}"
 	fi
 
-	if [ "${CMD_NOINITRDMODULES}" != "" ]
+	if [ "${CMD_NOINITRDMODULES}" != '' ]
 	then
 		NOINITRDMODULES="${CMD_NOINITRDMODULES}"
 	fi

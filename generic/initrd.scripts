@@ -22,12 +22,6 @@ modules_scan() {
 	do
 		echo -ne "${BOLD}   ::${NORMAL} Scanning for ${x}..."
 		modprobe ${x} -n
-		if [ $? -eq 0 ]
-		then
-			backup
-			echo -e "${GOOD}   ::${NORMAL} Detected ${x} hardware..."
-			continue
-		fi
 		backup
 		echo -ne "${NORMAL}"
 	done

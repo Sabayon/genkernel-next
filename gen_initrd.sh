@@ -3,17 +3,17 @@
 # create_initrd_loop(size)
 create_initrd_loop() {
 	local inodes
-	[ "$#" -ne "1" ] && gen_die "invalid use of create_initrd_loop"
-	mkdir -p ${TEMP}/initrd-mount || gen_die "could not create loopback mount dir"
-	dd if=/dev/zero of=${TEMP}/initrd-loop bs=1k count=${1} >> "${DEBUGFILE}" 2>&1 || gen_die "could not zero initrd-loop"
-	mke2fs -F -N500 -q "${TEMP}/initrd-loop" >> "${DEBUGFILE}" 2>&1 || gen_die "could not format initrd-loop"
-	mount -t ext2 -o loop "${TEMP}/initrd-loop" "${TEMP}/initrd-mount" >> "${DEBUGFILE}" 2>&1 || gen_die "could not mount initrd filesystem"
+	[ "$#" -ne '1' ] && gen_die 'create_initrd_loop(): Not enough arguments!'
+	mkdir -p ${TEMP}/initrd-mount || gen_die 'Could not create loopback mount directory!'
+	dd if=/dev/zero of=${TEMP}/initrd-${KV} bs=1k count=${1} >> "${DEBUGFILE}" 2>&1 || gen_die "Could not zero initrd-${KV}"
+	mke2fs -F -N500 -q "${TEMP}/initrd-${KV}" >> "${DEBUGFILE}" 2>&1 || gen_die "Could not format initrd-${KV}!"
+	mount -t ext2 -o loop "${TEMP}/initrd-${KV}" "${TEMP}/initrd-mount" >> "${DEBUGFILE}" 2>&1 || gen_die 'Could not mount the initrd filesystem!'
 }
 
 create_initrd_unmount_loop()
 {
 	cd ${TEMP}
-	umount "${TEMP}/initrd-mount" || gen_die "could not unmount initrd system"
+	umount "${TEMP}/initrd-mount" || gen_die 'Could not unmount initrd system!'
 }
 
 move_initrd_to_loop()
@@ -50,7 +50,7 @@ create_base_initrd_sys() {
 	bunzip2 "${TEMP}/initrd-temp/bin/busybox.bz2" || gen_die "could not uncompress busybox"
 	chmod +x "${TEMP}/initrd-temp/bin/busybox"
 
-	if [ "${NOINITRDMODULES}" = "" ]
+	if [ "${NOINITRDMODULES}" = '' ]
 	then
 		if [ "${PAT}" -gt "4" ]
 		then
@@ -73,6 +73,18 @@ create_base_initrd_sys() {
 #	cp "${DEVFSD_CONF_BINCACHE}" "${TEMP}/initrd-temp/etc/devfsd.conf.bz2" || gen_die "could not copy devfsd.conf from bincache"
 #	bunzip2 "${TEMP}/initrd-temp/etc/devfsd.conf.bz2" || gen_die "could not uncompress devfsd.conf"
 
+	# LVM2
+	if [ -e '/sbin/vgscan.static' -a -e '/sbin/vgchange.static' ]
+	then
+		if [ "${CMD_NOLVM2}" -ne '1' ]
+		then
+			cp /sbin/vgscan.static "${TEMP}/initrd-temp/bin/vgscan" || gen_die 'Could not copy over vgscan!'
+			cp /sbin/vgchange.static "${TEMP}/initrd-temp/bin/vgchange" || gen_die 'Could not copy over vgchange!'
+		fi
+#	else
+#		print_warning 1 "initrd: No LVM2 static binaries found; skipping support..."
+	fi
+
 	for i in '[' ash basename cat chroot clear cp dirname echo env false find \
 	grep gunzip gzip ln ls loadkmap losetup lsmod mkdir mknod more mount mv \
 	pivot_root ps awk pwd rm rmdir rmmod sed sh sleep tar test touch true umount uname \
@@ -92,6 +104,9 @@ print_list()
 }
 
 create_initrd_modules() {
+	local group
+	local group_modules
+	
 	if [ "${PAT}" -gt "4" ]
 	then
 		MOD_EXT=".ko"
@@ -115,11 +130,10 @@ create_initrd_modules() {
 	cp -ax --parents /lib/modules/${KV}/modules* ${TEMP}/initrd-temp
 
 	mkdir -p "${TEMP}/initrd-temp/etc/modules"
-	print_list ${SCSI_MODULES} > "${TEMP}/initrd-temp/etc/modules/scsi"
-	print_list ${FIREWIRE_MODULES} > "${TEMP}/initrd-temp/etc/modules/firewire"
-	print_list ${ATARAID_MODULES} > "${TEMP}/initrd-temp/etc/modules/ataraid"
-	print_list ${PCMCIA_MODULES} > "${TEMP}/initrd-temp/etc/modules/pcmcia"
-	print_list ${USB_MODULES} > "${TEMP}/initrd-temp/etc/modules/usb"
+	for group_modules in ${!MODULES_*}; do
+		group="$(echo $group_modules | cut -d_ -f2 | tr "[:upper:]" "[:lower:]")"
+		print_list ${!group_modules} > "${TEMP}/initrd-temp/etc/modules/${group}"
+	done
 }
 
 create_initrd_aux() {
@@ -143,6 +157,14 @@ create_initrd_aux() {
 	else
 		cp "${GK_SHARE}/generic/initrd.defaults" "${TEMP}/initrd-temp/etc/initrd.defaults"
 	fi
+	
+	echo -n 'HWOPTS="$HWOPTS ' >> "${TEMP}/initrd-temp/etc/initrd.defaults"	
+	for group_modules in ${!MODULES_*}; do
+		group="$(echo $group_modules | cut -d_ -f2 | tr "[:upper:]" "[:lower:]")"
+		echo -n "${group} " >> "${TEMP}/initrd-temp/etc/initrd.defaults"
+	done
+	echo "\"" >> "${TEMP}/initrd-temp/etc/initrd.defaults"	
+
 	if [ -f "${GK_SHARE}/${ARCH}/modprobe" ]
 	then
 		cp "${GK_SHARE}/${ARCH}/modprobe" "${TEMP}/initrd-temp/sbin/modprobe"
@@ -177,7 +199,7 @@ create_initrd() {
 	print_info 1 "initrd: >> Initializing..."
 	create_base_initrd_sys
 
-	if [ "${NOINITRDMODULES}" = "" ]
+	if [ "${NOINITRDMODULES}" = '' ]
 	then
 		print_info 1 "        >> Copying modules..."
 		create_initrd_modules
@@ -203,8 +225,8 @@ create_initrd() {
 
 	if [ "${COMPRESS_INITRD}" ]
 	then
-		gzip -f -9 ${TEMP}/initrd-loop
-		mv ${TEMP}/initrd-loop.gz ${TEMP}/initrd-loop
+		gzip -f -9 ${TEMP}/initrd-${KV}
+		mv ${TEMP}/initrd-${KV}.gz ${TEMP}/initrd-${KV}
 	fi
 
 	if [ "${BOOTSPLASH}" -eq "1" ]
@@ -219,9 +241,9 @@ create_initrd() {
 			do
 				if [ -f "/etc/bootsplash/${BOOTSPLASH_THEME}/config/bootsplash-${bootRes}.cfg" ]
 				then
-					/sbin/splash -s -f /etc/bootsplash/${BOOTSPLASH_THEME}/config/bootsplash-${bootRes}.cfg >> ${TEMP}/initrd-loop || gen_die "Error: could not copy ${bootRes} bootsplash!"
+					/sbin/splash -s -f /etc/bootsplash/${BOOTSPLASH_THEME}/config/bootsplash-${bootRes}.cfg >> ${TEMP}/initrd-${KV} || gen_die "Error: could not copy ${bootRes} bootsplash!"
 				else
-					print_info 1 "splash: Did not find a bootsplash for the ${bootRes} resolution..."
+					print_warning 1 "splash: Did not find a bootsplash for the ${bootRes} resolution..."
 				fi
 			done
 		else
@@ -230,8 +252,6 @@ create_initrd() {
 	fi
 	if ! isTrue "${CMD_NOINSTALL}"
 	then
-		cp ${TEMP}/initrd-loop /boot/initrd-${KV} || gen_die "Could not copy the initrd to /boot!"
-	else
-		mv ${TEMP}/initrd-loop ${TEMP}/initrd-${KV} || gen_die "Could not move the initrd to ${TEMP}/initrd-${KV}!"
+		cp ${TEMP}/initrd-${KV} /boot/initrd-${KV} || gen_die 'Could not copy the initrd to /boot!'
 	fi
 }

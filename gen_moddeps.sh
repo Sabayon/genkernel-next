@@ -51,12 +51,12 @@ gen_deps()
 
 gen_dep_list()
 {
+	local group_modules	
 	rm -f ${TEMP}/moddeps > /dev/null
-	gen_deps ${SCSI_MODULES}
-	gen_deps ${FIREWIRE_MODULES}
-	gen_deps ${ATARAID_MODULES}
-	gen_deps ${PCMCIA_MODULES}
-	gen_deps ${USB_MODULES}
+	
+	for group_modules in ${!MODULES_*}; do
+		gen_deps ${!group_modules}
+	done
 
 	# Only list each module once
 	cat ${TEMP}/moddeps | sort | uniq

@@ -3,12 +3,12 @@
 longusage() {
   echo "Gentoo Linux Genkernel ${GK_V}"
   echo "Usage: "
-  echo "	genkernel [options] action"
+  echo "  genkernel [options] action"
   echo
   echo "Available Actions: "
   echo "  all				Build all steps"
-  echo "  kernel			Build only kernel and modules (not done yet)"
-  echo "  initrd			Build only initrd (not done yet)"
+  echo "  kernel			Build only the kernel and modules"
+  echo "  initrd			Build only the initrd"
   echo
   echo "Available Options: "
   echo "  Debug settings"
@@ -22,14 +22,15 @@ longusage() {
   echo "	--gconfig		Run gconfig after oldconfig"
   echo "	--xconfig		Run xconfig after oldconfig"
   echo "  Kernel Compile settings"
-  echo "	--mrproper		Run make mrproper before compilation"
   echo "	--clean			Run make clean before compilation"
+  echo "	--mrproper		Run make mrproper before compilation"
   echo "	--no-clean		Do not run make clean before compilation"
   echo "	--no-mrproper		Do not run make mrproper before compilation"
-  echo "	--bootsplash		Install bootsplash to initrd"
+  echo "	--oldconfig		Implies --no-clean and runs a 'make oldconfig'"
+  echo "	--bootsplash		Install bootsplash support to the initrd"
   echo "	--no-bootsplash		Do not use bootsplash"
-  echo "	--install		Install kernel after building"
-  echo "	--no-install		Do not install kernel after building"
+  echo "	--install		Install the kernel after building"
+  echo "	--no-install		Do not install the kernel after building"
   echo "	--no-initrdmodules	Don't copy any modules to the initrd"
   echo "	--callback=<...>	Run the specified arguments after"
   echo "				the kernel and modules have been"
@@ -48,22 +49,18 @@ longusage() {
   echo "	--utils-make=<makeprog>	GNU Make to use for utils"
   echo "	--makeopts=<makeopts>	Make options such as -j2, etc."
   echo "  Initialization"
+  echo "	--bootsplash=<theme>	Force bootsplash using <theme>."
   echo "	--do-keymap-auto	Forces keymap selection at boot."
+  echo "	--no-lvm2		Don't add in LVM2 support."
   echo "  Internals"
   echo "	--arch-override=<arch>	Force to arch instead of autodetect"
   echo "	--busybox-config=<file>	Busybox configuration file to use"
   echo "	--busybox-bin=<file>	Don't compile busybox, use this _static_"
   echo "				bzip2'd binary"
-#  echo "  Misc Settings"
-#  echo "	--max-kernel-size=<k>	Maximum kernel size"
-#  echo "	--max-initrd-size=<k>	Maximum initrd size"
-#  echo "	--max-kernel-and-initrd-size=<k>	Maximum combined initrd + kernel size"
   echo "  Output Settings"
-  echo "        --minkernpackage=<tbz2> File to output a .tar.bz2'd kernel and initrd to"
-  echo "                                These will be renamed to simply 'kernel' and"
-  echo "				'initrd' inside the package without any path"
-  echo "                                information. No modules outside of the initrd"
-  echo "                                will be included."
+  echo "        --minkernpackage=<tbz2> File to output a .tar.bz2'd kernel and initrd:"
+  echo "                                No modules outside of the initrd will be"
+  echo "                                included..."
 }
 
 usage() {
@@ -71,13 +68,14 @@ usage() {
   echo "Usage: "
   echo "	genkernel [options] all"
   echo
-  echo "Some useful options:"
-  echo "	--menuconfig		Run menuconfig after oldconfig"
-  echo "	--no-clean		Do not run make clean before compilation"
-  echo "	--no-mrproper		Do not run make mrproper before compilation"
+  echo 'Some useful options:'
+  echo '	--menuconfig		Run menuconfig after oldconfig'
+  echo '	--no-clean		Do not run make clean before compilation'
+  echo '	--no-mrproper		Do not run make mrproper before compilation,'
+  echo '				this is implied by --no-clean.'
   echo
-  echo "For a detailed list of supported options and flags; issue:"
-  echo "	genkernel --help"
+  echo 'For a detailed list of supported options and flags; issue:'
+  echo '	genkernel --help'
 }
 
 parse_opt() {
@@ -130,6 +128,10 @@ parse_cmdline() {
 		      CMD_DOKEYMAPAUTO=1
 		      print_info 2 "CMD_DOKEYMAPAUTO: $CMD_DOKEYMAPAUTO"
 	      ;;
+	      --no-lvm-2)
+		      CMD_NOLVM2=1
+		      print_info 2 'CMD_NOLVM2: 1'
+	      ;;
 	      --debuglevel*)
 		      CMD_DEBUGLEVEL=`parse_opt "$*"`
 		      DEBUGLEVEL="${CMD_DEBUGLEVEL}"
@@ -175,6 +177,18 @@ parse_cmdline() {
 	      --no-clean)
 		      CMD_CLEAN=0
 		      print_info 2 "CMD_CLEAN: $CMD_CLEAN"
+	      ;;
+	      --oldconfig)
+		      CMD_CLEAN=0
+		      CMD_OLDCONFIG=1
+		      print_info 2 "CMD_CLEAN: $CMD_CLEAN"
+		      print_info 2 "CMD_OLDCONFIG: $CMD_OLDCONFIG"
+	      ;;
+	      --bootsplash=*)
+		      CMD_BOOTSPLASH=1
+		      BOOTSPLASH_THEME=`parse_opt "$*"`
+		      print_info 2 "CMD_BOOTSPLASH: $CMD_BOOTSPLASH"
+		      print_info 2 "BOOTSPLASH_THEME: $BOOTSPLASH_THEME"
 	      ;;
 	      --bootsplash)
 		      CMD_BOOTSPLASH=1
@@ -232,24 +246,13 @@ parse_cmdline() {
 		      CMD_BUSYBOX_BIN=`parse_opt "$*"`
 		      print_info 2 "CMD_BUSYBOX_BIN: $CMD_BUSYBOX_BIN"
 	      ;;
-	      --max-kernel-size*)
-		      CMD_MAX_KERNEL_SIZE=`parse_opt "$*"`
-		      print_info 2 "MAX_KERNEL_SIZE: $CMD_MAX_KERNEL_SIZE"
-	      ;;
-	      --max-initrd-size*)
-		      CMD_MAX_INITRD_SIZE=`parse_opt "$*"`
-		      print_info 2 "MAX_INITRD_SIZE: $CMD_MAX_INITRD_SIZE"
-	      ;;
-	      --max-kernel-and-initrd-size*)
-		      CMD_MAX_KERNEL_AND_INITRD_SIZE=`parse_opt "$*"`
-		      print_info 2 "MAX_KERNEL_AND_INITRD_SIZE: $CMD_MAX_KERNEL_AND_INITRD_SIZE"
-	      ;;
 	      --minkernpackage*)
 		      CMD_MINKERNPACKAGE=`parse_opt "$*"`
 		      print_info 2 "MINKERNPACKAGE: $CMD_MINKERNPACKAGE"
 	      ;;
 	      all)
-		      BUILD_ALL=1
+		      BUILD_KERNEL=1
+		      BUILD_INITRD=1
 	      ;;
 	      initrd)
 		      BUILD_INITRD=1
@@ -261,11 +264,13 @@ parse_cmdline() {
 		      longusage
 		      exit 1
 	      ;;
+	      --version)
+		      echo "${GK_V}"
+		      exit 0
+	      ;;
 	      *)
 		      echo "Error: Unknown option '$*'!"
 		      exit 1
 	      ;;
-
 	esac
 }
-

@@ -12,19 +12,24 @@ KV="`uname -r`"
 KMAJOR=`echo $KV | cut -f1 -d.`
 KMINOR=`echo $KV | cut -f2 -d.`
 KVER="${KMAJOR}.${KMINOR}"
-MISCOPTS="cdcache idebug detect"
-HWOPTS="scsi firewire ataraid pcmcia usb keymap cache"
-MY_HWOPTS="usb firewire"
+MISCOPTS='idebug detect'
+
+# Only sections that are in by default or those that
+# are not module groups need to be defined here...
+
+HWOPTS="usb firewire keymap cache lvm2"
+MY_HWOPTS="usb firewire lvm2"
+
 QUIET=1
-ROOT_LINKS="bin sbin lib lib64 boot usr opt"
-ROOT_TREES="etc root home var"
-INSMOD="insmod"
-if [ "${KMINOR}" -gt "4" ]
+ROOT_LINKS='bin sbin lib lib64 boot usr opt'
+ROOT_TREES='etc root home var'
+INSMOD='insmod'
+if [ "${KMINOR}" -gt '4' ]
 then
-	KSUFF=".ko"
+	KSUFF='.ko'
 else
-	KSUFF=".o"
+	KSUFF='.o'
 fi
 
-REAL_ROOT=""
+REAL_ROOT=''
 CDROOT=0
