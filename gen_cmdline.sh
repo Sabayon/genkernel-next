@@ -81,7 +81,7 @@ usage() {
 parse_opt() {
 	case "$1" in
 		*\=*)
-			echo "$1" | cut -f2 -d=
+			echo "$1" | cut -f2- -d=
 		;;
 	esac
 }

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Genkernel v3
 
-GK_V='3.0.2c'
+GK_V='3.0.2d'
 TEMP='/var/tmp/genkernel'
 
 small_die() {
