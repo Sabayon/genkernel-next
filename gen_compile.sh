@@ -196,7 +196,7 @@ compile_modules() {
 	if [ "${VER}" -eq '2' -a "${PAT}" -le '4' ]
 	then
 		MAKEOPTS_SAVE="${MAKEOPTS}"
-		MAKEOPTS="${MAKEOPTS_SAVE/-j?/j0}"
+		MAKEOPTS="${MAKEOPTS_SAVE/-j?/-j0}"
 	fi
 	[ "${INSTALL_MOD_PATH}" != '' ] && export INSTALL_MOD_PATH
 	compile_generic "modules_install" kernel
