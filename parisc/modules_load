@@ -1,0 +1,10 @@
+SCSI_MODULES=""
+
+FIREWIRE_MODULES=""
+
+ATARAID_MODULES=""
+
+PCMCIA_MODULES=""
+
+USB_MODULES="usb-ohci hid usb-storage"
+
