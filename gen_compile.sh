@@ -371,7 +371,7 @@ compile_module_init_tools() {
 
 compile_devfsd() {
 	local ARGS
-	if [ ! -f "${DEVFSD_BINCACHE}" -o ! -f "${DEVFSD_CONF_BINCACHE}" ]
+	if [ ! -f "${DEVFSD_BINCACHE}" ]
 	then
 		[ ! -f "${DEVFSD_SRCTAR}" ] &&
 			gen_die "Could not find devfsd source tarball: ${DEVFSD_SRCTAR}"

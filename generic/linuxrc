@@ -146,6 +146,11 @@ then
 	fi
 fi
 
+# Check udev is on...
+[ "${KMAJOR}" -ge 2 ] && USE_UDEV_SUPPORT=1
+[ "${KMAJOR}" -eq 2 -a "${KMINOR}" -ge '6' ] && USE_UDEV_SUPPORT=1
+[ "${USE_UDEV_SUPPORT}" -eq '1' -a -f /sbin/udev -a "${USE_UDEV_NORMAL}" -ne 0 ] && USE_UDEV_NORMAL=1
+
 # Disable udev support if /dev is already mounted as devfs
 [ -e /dev/.devfsd ] && USE_UDEV_NORMAL=0
 
@@ -160,14 +165,10 @@ then
 	[ "$?" -eq "0" ] || USE_UDEV_NORMAL=0
 fi
 
-# Check udev is on...
-[ "${KMAJOR}" -ge 2 ] && USE_UDEV_SUPPORT=1
-[ "${KMAJOR}" -eq 2 -a "${KMINOR}" -ge '6' ] && USE_UDEV_SUPPORT=1
-[ "${USE_UDEV_SUPPORT}" -eq '1' -a -f /sbin/udev -a "${USE_UDEV_NORMAL}" -ne 0 ] && USE_UDEV_NORMAL=1
-
 # Don't do else b/c we set CDROOT=0 if it fails to detect
 if [ "${USE_UDEV_NORMAL}" -eq '1' -a "${CDROOT}" -eq '0' ]
 then
+	USE_DEVFS_NORMAL=0
 	export ACTION=add
 	export UDEV_NO_SLEEP=1
 
