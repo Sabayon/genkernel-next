@@ -186,7 +186,12 @@ compile_modules() {
 	cd ${KERNEL_DIR}
 	compile_generic "modules" kernel
 	export UNAME_MACHINE="${ARCH}"
+	# On 2.4 kernels, if MAKEOPTS > -j1 it can cause failures
+	MAKEOPTS_SAVE="${MAKEOPTS}"
+	MAKEOPTS="-j1"
 	compile_generic "modules_install" kernel
+	MAKEOPTS="${MAKEOPTS_SAVE}"
+	export MAKEOPTS
 	unset UNAME_MACHINE
 }
 
