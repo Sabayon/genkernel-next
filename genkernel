@@ -1,7 +1,7 @@
 #!/bin/bash
 # Genkernel v3
 
-GK_V='3.0.2f'
+GK_V='3.0.2g'
 TEMP='/var/tmp/genkernel'
 TODEBUGCACHE=1 # Until an error occurs or DEBUGFILE is fully qualified.
 

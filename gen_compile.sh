@@ -268,6 +268,9 @@ compile_busybox() {
 }
 
 compile_modutils() {
+	# I've disabled dietlibc support for the time being since the
+	# version we use misses a few needed system calls.
+
 	local ARGS
 	if [ ! -f "${MODUTILS_BINCACHE}" ]
 	then
@@ -281,12 +284,12 @@ compile_modutils() {
 		cd "${MODUTILS_DIR}"
 		print_info 1 "modutils: >> Configuring..."
 
-		if [ "${USE_DIETLIBC}" -eq '1' ]
-		then
-			extract_dietlibc_bincache
-			OLD_CC="${UTILS_CC}"
-			UTILS_CC="${TEMP}/diet/bin/diet ${UTILS_CC}"
-		fi
+#		if [ "${USE_DIETLIBC}" -eq '1' ]
+#		then
+#			extract_dietlibc_bincache
+#			OLD_CC="${UTILS_CC}"
+#			UTILS_CC="${TEMP}/diet/bin/diet ${UTILS_CC}"
+#		fi
 
 		export_utils_args
 		export ARCH=${ARCH}
@@ -297,11 +300,11 @@ compile_modutils() {
 		print_info 1 'modutils: >> Compiling...'
 		compile_generic all utils
 
-		if [ "${USE_DIETLIBC}" -eq '1' ]
-		then
-			clean_dietlibc_bincache
-			UTILS_CC="${OLD_CC}"
-		fi
+#		if [ "${USE_DIETLIBC}" -eq '1' ]
+#		then
+#			clean_dietlibc_bincache
+#			UTILS_CC="${OLD_CC}"
+#		fi
 
 		print_info 1 'modutils: >> Copying to cache...'
 		[ -f "${TEMP}/${MODUTILS_DIR}/insmod/insmod.static" ] ||
@@ -370,6 +373,9 @@ compile_module_init_tools() {
 }
 
 compile_devfsd() {
+	# I've disabled dietlibc support for the time being since the
+	# version we use misses a few needed system calls.
+
 	local ARGS
 	if [ ! -f "${DEVFSD_BINCACHE}" ]
 	then
@@ -382,26 +388,26 @@ compile_devfsd() {
 			gen_die "Devfsd directory ${DEVFSD_DIR} invalid"
 		cd "${DEVFSD_DIR}"
 
-		if [ "${USE_DIETLIBC}" -eq '1' ]
-		then
-			extract_dietlibc_bincache
-			OLD_CC="${UTILS_CC}"
-			UTILS_CC="${TEMP}/diet/bin/diet ${UTILS_CC}"
-		fi
+#		if [ "${USE_DIETLIBC}" -eq '1' ]
+#		then
+#			extract_dietlibc_bincache
+#			OLD_CC="${UTILS_CC}"
+#			UTILS_CC="${TEMP}/diet/bin/diet ${UTILS_CC}"
+#		fi
 
 		print_info 1 'devfsd: >> Compiling...'
-		if [ "${USE_DIETLIBC}" -eq '1' ]
-		then
-			compile_generic 'has_dlopen=0 has_rpcsvc=0' utils
-		else
+#		if [ "${USE_DIETLIBC}" -eq '1' ]
+#		then
+#			compile_generic 'has_dlopen=0 has_rpcsvc=0' utils
+#		else
 			compile_generic 'LDFLAGS=-static' utils
-		fi
+#		fi
 
- 		if [ "${USE_DIETLIBC}" -eq '1' ]
-		then
-			clean_dietlibc_bincache
-			UTILS_CC="${OLD_CC}"
-		fi
+#		if [ "${USE_DIETLIBC}" -eq '1' ]
+#		then
+#			clean_dietlibc_bincache
+#			UTILS_CC="${OLD_CC}"
+#		fi
 
 		print_info 1 '        >> Copying to cache...'
 		[ -f "${TEMP}/${DEVFSD_DIR}/devfsd" ] || gen_die 'The devfsd executable does not exist after the compilation of devfsd!'
