@@ -4,6 +4,12 @@ determine_config_file() {
 	if [ "${CMD_KERNEL_CONFIG}" != "" ]
 	then
 		KERNEL_CONFIG="${CMD_KERNEL_CONFIG}"
+	elif [ -f "/etc/kernels/kernel-config-${ARCH}-${KV}" ]
+	then
+		KERNEL_CONFIG="/etc/kernels/kernel-config-${ARCH}-${KV}"
+	elif [ -f "${GK_SHARE}/${ARCH}/kernel-config-${KV}" ]
+	then
+		KERNEL_CONFIG="${GK_SHARE}/${ARCH}/kernel-config-${KV}"
 	elif [ "${DEFAULT_KERNEL_CONFIG}" != "" -a -f "${DEFAULT_KERNEL_CONFIG}" ]
 	then
 		KERNEL_CONFIG="${DEFAULT_KERNEL_CONFIG}"
@@ -35,22 +41,24 @@ config_kernel() {
 	# or we might screw up something someone is trying to test.
 	if isTrue ${CLEAN}
 	then
-		print_info 1 "kernel: using config from ${KERNEL_CONFIG}"
+		print_info 1 "kernel: using config from ${KERNEL_CONFIG} -- prev backed up to .config.bak"
 		cp "${KERNEL_CONFIG}" "${KERNEL_DIR}/.config" || gen_die "could not copy config file"
+		cp "${KERNEL_DIR}/.config" "${KERNEL_DIR}/.config.bak" > /dev/null 2>&1
 
 		print_info 1 "kernel: running oldconfig"
 		yes "" | compile_generic "oldconfig" kernel
-
-		if isTrue ${MENUCONFIG}
-		then
-			print_info 1 "kernel: running menuconfig"
-			make menuconfig
-		fi
 
 		print_info 1 "kernel: running clean"
 		compile_generic "clean" kernel
 	else
 		print_info 1 "kernel: skipping copy of config. CLEAN is OFF"
+	fi
+	
+	if isTrue ${MENUCONFIG}
+	then
+		print_info 1 "kernel: running menuconfig"
+		make menuconfig
+		[ "$?" != "0" ] && gen_die "menuconfig failed"
 	fi
 
 }
