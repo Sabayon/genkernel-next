@@ -86,6 +86,11 @@ real_mod_path()
 modprobe2()
 {
 	local x
+	local deps
+	local real_path
+	local modlist
+	local ret
+
 	if [ "$#" != "1" ]
 	then
 		echo "modprobe(): improper usage"
@@ -104,28 +109,32 @@ modprobe2()
 	else
 		deps=""
 	fi
-#	echo ""
 #	echo "$1 -- DEPS='${deps}'"
 	# Make sure we don't do any endless loops!
 
 	LOADED_MODULES="${LOADED_MODULES} ${1}"
-
 	for x in ${deps}
 	do
 		if ! is_module_already_loaded ${x}
 		then
 			if [ "${x}" != "" -a "${x}" != " " ]
 			then
+#				echo "loading dep: ${x}"
 				modprobe2 "${x}"
 			fi
 		else
-			echo "skipping ${x}, module already loaded by us"
+			filler=1
+#			echo "skipping ${x}, module already loaded by us"
 		fi
 	done
 #	echo "running insmod on '${real_path}'"
 	${INSMOD} ${real_path} > /dev/null 2>&1
-
-	return $?
+	ret=$?
+	if [ "$ret" -eq "0" ]
+	then
+		echo "module ${real_path} loaded"
+	fi
+	return $ret
 }
 
 
@@ -134,6 +143,18 @@ then
 	usage
 fi
 
+for x in `cat /modules.cache`
+do
+	LOADED_MODULES="${LOADED_MODULES} ${x}"
+done
+
 modprobe2 ${1}
+
+[ -f "/modules.cache" ] && rm -f /modules.cache > /dev/null 2>&1
+for x in ${LOADED_MODULES}
+do
+	echo $x >> /modules.cache
+done
+
 exit $?
 
