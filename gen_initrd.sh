@@ -209,10 +209,10 @@ create_initrd() {
 	if [ "${BOOTSPLASH}" -eq "1" ]
 	then
 		print_info 1 "initrd: copying bootsplash"
-		/sbin/splash -s -f /etc/bootsplash/gentoo/config/bootsplash-800x600.cfg >> ${TEMP}/initrd-loop || gen_die "could not copy 800x600 bootsplash"
-		/sbin/splash -s -f /etc/bootsplash/gentoo/config/bootsplash-1024x768.cfg >> ${TEMP}/initrd-loop || gen_die "could not copy 1024x768 bootsplash"
-		/sbin/splash -s -f /etc/bootsplash/gentoo/config/bootsplash-1280x1024.cfg >> ${TEMP}/initrd-loop || gen_die "could not copy 1280x1024 bootsplash"
-		/sbin/splash -s -f /etc/bootsplash/gentoo/config/bootsplash-1600x1200.cfg >> ${TEMP}/initrd-loop || gen_die "could not copy 1600x1200 bootsplash"
+		/sbin/splash -s -f /etc/bootsplash/default/config/bootsplash-800x600.cfg >> ${TEMP}/initrd-loop || gen_die "could not copy 800x600 bootsplash"
+		/sbin/splash -s -f /etc/bootsplash/default/config/bootsplash-1024x768.cfg >> ${TEMP}/initrd-loop || gen_die "could not copy 1024x768 bootsplash"
+		/sbin/splash -s -f /etc/bootsplash/default/config/bootsplash-1280x1024.cfg >> ${TEMP}/initrd-loop || gen_die "could not copy 1280x1024 bootsplash"
+		/sbin/splash -s -f /etc/bootsplash/default/config/bootsplash-1600x1200.cfg >> ${TEMP}/initrd-loop || gen_die "could not copy 1600x1200 bootsplash"
 	fi
 	cp ${TEMP}/initrd-loop /boot/initrd-${KV} || gen_die "could not copy initrd to boot"
 }
