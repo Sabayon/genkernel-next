@@ -94,6 +94,7 @@ determine_real_args() {
 	UDEV_BINCACHE=`cache_replace "${UDEV_BINCACHE}"`
 	DEVICE_MAPPER_BINCACHE=`cache_replace "${DEVICE_MAPPER_BINCACHE}"`
 	LVM2_BINCACHE=`cache_replace "${LVM2_BINCACHE}"`
+	DMRAID_BINCACHE=`cache_replace "${DMRAID_BINCACHE}"`
   
 	DEFAULT_KERNEL_CONFIG=`arch_replace "${DEFAULT_KERNEL_CONFIG}"`
 	BUSYBOX_CONFIG=`arch_replace "${BUSYBOX_CONFIG}"`
@@ -107,6 +108,7 @@ determine_real_args() {
 	UDEV_BINCACHE=`arch_replace "${UDEV_BINCACHE}"`
 	DEVICE_MAPPER_BINCACHE=`arch_replace "${DEVICE_MAPPER_BINCACHE}"`
 	LVM2_BINCACHE=`arch_replace "${LVM2_BINCACHE}"`
+	DMRAID_BINCACHE=`arch_replace "${DMRAID_BINCACHE}"`
 	
 	if [ "${CMD_BOOTSPLASH}" != '' ]
 	then
@@ -221,5 +223,12 @@ determine_real_args() {
 		LVM2=1
 	else
 		LVM2=0
+	fi
+	
+	if isTrue "${CMD_DMRAID}"
+	then
+		DMRAID=1
+	else
+		DMRAID=0
 	fi
 }

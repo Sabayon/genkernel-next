@@ -66,6 +66,7 @@ longusage() {
   echo "	--evms2			Include EVMS2 support"
   echo "				 --> 'emerge evms' in the host operating system first"
   echo "	--lvm2			Include LVM2 support"
+  echo "	--dmraid		Include DMRAID support"
   echo "	--bootloader=grub	Add new kernel to GRUB configuration"
   echo "	--linuxrc=<file>	Specifies a user created linuxrc"
   echo "  Internals"
@@ -158,6 +159,10 @@ parse_cmdline() {
 	      --lvm2)
 		      CMD_LVM2=1
 		      print_info 2 'CMD_LVM2: 1'
+	      ;;
+	      --dmraid)
+		      CMD_DMRAID=1
+		      print_info 2 'CMD_DMRAID: 1'
 	      ;;
 	      --bootloader=*)
 		      CMD_BOOTLOADER=`parse_opt "$*"`

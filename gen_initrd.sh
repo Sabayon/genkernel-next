@@ -37,6 +37,7 @@ create_base_initrd_sys() {
 	mkdir -p ${TEMP}/initrd-temp/temp
 	mkdir -p ${TEMP}/initrd-temp/sys
 	mkdir -p ${TEMP}/initrd-temp/.initrd
+	mkdir -p ${TEMP}/initrd-temp/var/lock/dmraid
 	ln -s bin ${TEMP}/initrd-temp/sbin
 	ln -s ../bin ${TEMP}/initrd-temp/usr/bin
 	ln -s ../bin ${TEMP}/initrd-temp/usr/sbin
@@ -92,6 +93,14 @@ create_base_initrd_sys() {
 #	bunzip2 "${TEMP}/initrd-temp/etc/devfsd.conf.bz2" ||
 #		gen_die "could not uncompress devfsd.conf"
 
+	# DMRAID 
+	if [ "${DMRAID}" = '1' ]
+	then
+		print_info 1 'DMRAID: Adding support (compiling binaries)...'
+		compile_dmraid
+		tar -jxpf "${DMRAID_BINCACHE}" -C "${TEMP}/initrd-temp" ||
+			gen_die "Could not extract dmraid binary cache!";
+	fi
 	# LVM2
 	if [ "${LVM2}" = '1' ]
 	then
@@ -294,7 +303,6 @@ create_initrd() {
 	INITRD_CALC_SIZE=`calc_initrd_size`
 	INITRD_SIZE=`expr ${INITRD_CALC_SIZE} + 100`
 	print_info 1 "        :: Size is at ${INITRD_SIZE}K"
-
 	print_info 1 "        >> Creating loopback filesystem..."
 	create_initrd_loop ${INITRD_SIZE}
 

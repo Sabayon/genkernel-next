@@ -317,6 +317,47 @@ compile_lvm2() {
 	fi
 }
 
+compile_dmraid() {
+	compile_device_mapper
+	if [ ! -f "${DMRAID_BINCACHE}" ]
+	then
+		[ -f "${DMRAID_SRCTAR}" ] ||
+			gen_die "Could not find DMRAID source tarball: ${DMRAID_SRCTAR}! Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
+		cd "${TEMP}"
+		rm -rf ${DMRAID_DIR} > /dev/null
+		tar -jxpf ${DMRAID_SRCTAR} ||
+			gen_die 'Could not extract DMRAID source tarball!'
+		[ -d "${DMRAID_DIR}" ] ||
+			gen_die 'DMRAID directory ${DMRAID_DIR} is invalid!'
+		rm -rf "${TEMP}/device-mapper" > /dev/null
+		tar -jxpf "${DEVICE_MAPPER_BINCACHE}" -C "${TEMP}" ||
+			gen_die "Could not extract device-mapper binary cache!";
+		
+		cd "${DMRAID_DIR}"
+		print_info 1 'dmraid: >> Configuring...'
+		
+			LDFLAGS="-L${TEMP}/device-mapper/lib" \
+			CFLAGS="-I${TEMP}/device-mapper/include" \
+			CPPFLAGS="-I${TEMP}/device-mapper/include" \
+			./configure --enable-static_link --prefix=${TEMP}/dmraid >> ${DEBUGFILE} 2>&1 ||
+				gen_die 'Configure of dmraid failed!'
+		mkdir "${TEMP}/dmraid"
+		print_info 1 'dmraid: >> Compiling...'
+			compile_generic '' utils
+			#compile_generic 'install' utils
+			mkdir ${TEMP}/dmraid/sbin
+			install -m 0755 -s tools/dmraid "${TEMP}/dmraid/sbin/dmraid"
+		print_info 1 '      >> Copying to bincache...'
+		cd "${TEMP}/dmraid"
+		tar -cjf "${DMRAID_BINCACHE}" sbin/dmraid ||
+			gen_die 'Could not create binary cache'
+
+		cd "${TEMP}"
+		rm -rf "${TEMP}/device-mapper" > /dev/null
+		rm -rf "${DMRAID_DIR}" dmraid
+	fi
+}
+
 compile_modutils() {
 	# I've disabled dietlibc support for the time being since the
 	# version we use misses a few needed system calls.
