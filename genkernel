@@ -50,7 +50,7 @@ determine_real_args
 print_info 1 "ARCH: ${ARCH}"
 print_info 1 "KERNEL VER: ${KV}"
 
-if !has_loop
+if ! has_loop
 then
 	print_info 1 "Your kernel does not appear to have loop device support. "
 	print_info 1 "Please 'modprobe loop' if it is a module before running genkernel"
