@@ -50,8 +50,10 @@ set_grub_bootloader() {
 		touch $GRUB_CONF
 		echo 'default 0' >> $GRUB_CONF
 		echo 'timeout 5' >> $GRUB_CONF
+		echo "" >> $GRUB_CONF
 
 		# Add grub configuration to grub.conf	
+		echo "# Genkernel generated entry, see GRUB documentation for details" >> $GRUB_CONF
 		echo "title=Gentoo Linux ($KV)" >> $GRUB_CONF
 		echo -e "\troot (hd$GRUB_ROOT_DISK,$GRUB_ROOT_PARTITION)" >> $GRUB_CONF
 		if [ "${BUILD_INITRD}" -eq '0' ]
@@ -61,16 +63,19 @@ set_grub_bootloader() {
 			echo -e "\tkernel /kernel-$KV root=/dev/ram0 init=/linuxrc real_root=$GRUB_ROOTFS" >> $GRUB_CONF
 			echo -e "\tinitrd /initrd-$KV" >> $GRUB_CONF
 		fi
+		echo "" >> $GRUB_CONF
 	else
 		# grub.conf already exists; so...
-		# * Copy the first boot definition and change the version.
+		# ... Clone the first boot definition and change the version.
 		cp $GRUB_CONF $GRUB_CONF.bak
-		awk 'BEGIN { RS="title=";FS="\n";OFS="\n";ORS=""} 
-			NR == 2 { 
-				sub(/\(.+\)/,"(" ch KV ch ")",$1);
+		awk 'BEGIN { RS="" ; FS="\n" ; OFS="\n" ; ORS="\n\n" } 
+			NR == 2 {
+				ORIG=$0;
+				sub(/\(.+\)/,"(" KV ")",$1);
 				sub(/kernel-[[:alnum:][:punct:]]+/, "kernel-" KV, $3);
 				sub(/initrd-[[:alnum:][:punct:]]+/, "initrd-" KV, $4);
-				print RS ch $0 }' \
-			KV=$KV $GRUB_CONF.bak >> $GRUB_CONF
+				print RS $0; 
+				print RS ORIG;}
+			NR != 2 { print RS $0; }' KV=$KV $GRUB_CONF.bak > $GRUB_CONF
 	fi
 }
