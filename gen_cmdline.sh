@@ -228,7 +228,9 @@ parse_cmdline() {
 	      ;;
 	      --debugfile*)
 		      CMD_DEBUGFILE=`parse_opt "$*"`
+		      DEBUGFILE=`parse_opt "$*"`
 		      print_info 2 "CMD_DEBUGFILE: $CMD_DEBUGFILE"
+		      print_info 2 "DEBUGFILE: $CMD_DEBUGFILE"
 	      ;;
 	      --kerneldir*)
 		      CMD_KERNELDIR=`parse_opt "$*"`

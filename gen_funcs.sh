@@ -38,6 +38,11 @@ else
 	UNDER=''
 fi
 
+dump_debugcache() {
+	TODEBUGCACHE=0
+	echo "${DEBUGCACHE}" >> ${DEBUGFILE}
+}
+
 # print_info(debuglevel, print [, newline [, prefixline [, forcefile ] ] ])
 print_info() {
 	local NEWLINE=1
@@ -131,9 +136,17 @@ print_info() {
 
 		if [ "${NEWLINE}" = '0' ]
 		then
-			echo -ne "${STR}" >> ${DEBUGFILE}
+			if [ "${TODEBUGCACHE}" -eq 1 ]; then
+				DEBUGCACHE="${DEBUGCACHE}${STR}"
+			else
+				echo -ne "${STR}" >> ${DEBUGFILE}
+			fi	
 		else
-			echo "${STR}" >> ${DEBUGFILE}
+			if [ "${TODEBUGCACHE}" -eq 1 ]; then
+				DEBUGCACHE="${DEBUGCACHE}${STR}"$'\n'
+			else
+				echo "${STR}" >> ${DEBUGFILE}
+			fi
 		fi
 	fi
 
@@ -165,11 +178,12 @@ arch_replace() {
 }
 
 clear_log() {
-  rm -f ${DEBUGFILE}
-  touch ${DEBUGFILE}
+	[ -f "${DEBUGFILE}" ] && echo > "${DEBUGFILE}"
 }
 
 gen_die() {
+	dump_debugcache
+
 	if [ "$#" -gt '0' ]
 	then
 		print_error 1 "ERROR: ${1}"
