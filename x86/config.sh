@@ -9,7 +9,8 @@ KERNEL_BINARY="arch/i386/boot/bzImage"
 # other stuff seems to compile fine though
 USE_DIETLIBC=1
 
-MAKE=make
+KERNEL_MAKE=make
+UTILS_MAKE=make
 
 KERNEL_CC=gcc
 KERNEL_AS=as

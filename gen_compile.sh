@@ -118,9 +118,11 @@ compile_generic() {
 	if [ "${2}" = "kernel" ]
 	then
 		export_kernel_args
+		MAKE=${KERNEL_MAKE}
 	elif [ "${2}" = "utils" ]
 	then
 		export_utils_args
+		MAKE=${UTILS_MAKE}
 	fi
 
 	if [ "${DEBUGLEVEL}" -gt "1" ]
@@ -137,6 +139,7 @@ compile_generic() {
 	fi
 	[ "${RET}" -ne "0" ] && gen_die "compile of failed"
 
+	unset MAKE
 	if [ "${2}" = "kernel" ]
 	then
 		unset_kernel_args

@@ -16,7 +16,6 @@ get_KV() {
 }
 
 determine_real_args() {
-	MAKE="make"
 	MAKEOPTS="-j2"
 	if [ "${CMD_KERNELDIR}" != "" ]
 	then
@@ -28,14 +27,24 @@ determine_real_args() {
 
 	get_KV
 
-	if [ "${CMD_MAKE}" != "" ]
+	if [ "${CMD_KERNEL_MAKE}" != "" ]
 	then
-		MAKE="${CMD_MAKE}"
+		KERNEL_MAKE="${CMD_KERNEL_MAKE}"
 	fi
 
-	if [ "${MAKE}" = "" ]
+	if [ "${KERNEL_MAKE}" = "" ]
 	then
-		MAKE="make"
+		KERNEL_MAKE="make"
+	fi
+
+	if [ "${CMD_UTILS_MAKE}" != "" ]
+	then
+		UTILS_MAKE="${CMD_UTILS_MAKE}"
+	fi
+
+	if [ "${UTILS_MAKE}" = "" ]
+	then
+		UTILS_MAKE="make"
 	fi
 
 	if [ "${CMD_KERNEL_CC}" != "" ]

@@ -26,10 +26,11 @@ usage() {
   echo "	--kernel-cc=<compiler>	Compiler to use for kernel (e.g. distcc)"
   echo "	--kernel-ld=<linker>	Linker to use for kernel"
   echo "	--kernel-as=<assembler>	Assembler to use for kernel"
+  echo "	--kernel-make=<makeprg> GNU Make to use for kernel"
   echo "	--utils-cc=<compiler>	Compiler to use for utils (e.g. busybox, modutils)"
   echo "	--utils-ld=<linker>	Linker to use for utils"
   echo "	--utils-as=<assembler>	Assembler to use for utils"
-  echo "	--make=<make prog>	GNU Make to use"
+  echo "	--utils-make=<makeprog>	GNU Make to use for utils"
   echo "  Internals"
   echo "	--arch-override=<arch>	Force to arch instead of autodetect (cross-compile?)"
   echo "	--busybox-config=<file>	Busybox configuration file to use"
@@ -65,6 +66,10 @@ parse_cmdline() {
 				CMD_KERNEL_AS=`parse_opt "${x}"`
 				print_info 2 "CMD_KERNEL_AS: $CMD_KERNEL_AS"
 			;;
+			--kernel-make*)
+				CMD_KERNEL_MAKE=`parse_opt "${x}"`
+				print_info 2 "CMD_KERNEL_MAKE: $CMD_KERNEL_MAKE"
+			;;
 			--utils-cc*)
 				CMD_UTILS_CC=`parse_opt "${x}"`
 				print_info 2 "CMD_UTILS_CC: $CMD_UTILS_CC"
@@ -77,9 +82,9 @@ parse_cmdline() {
 				CMD_UTILS_AS=`parse_opt "${x}"`
 				print_info 2 "CMD_UTILS_AS: $CMD_UTILS_AS"
 			;;
-			--make*)
-				CMD_MAKE=`parse_opt "${x}"`
-				print_info 2 "CMD_MAKE: $CMD_MAKE"
+			--utils-make*)
+				CMD_UTILS_MAKE=`parse_opt "${x}"`
+				print_info 2 "CMD_UTILS_MAKE: $CMD_UTILS_MAKE"
 			;;
 			
 			--debuglevel*)
