@@ -65,45 +65,15 @@ kill_devfsd() {
 }
 
 runUdev() {
-	export ACTION=add
-	export UDEV_NO_SLEEP=1
 
-	# Add block devices and their partitions to /dev,
-	# using information from /sys, and only those
-	# devices (since other are not needed for boot).
+	mount -t tmpfs -o size=100k udev /dev
+	mkdir /dev/pts
+	mkdir /dev/shm
+	/sbin/udevstart
+	ln -snf /proc/self/fd /dev/fd
+	ln -snf /proc/self/fd/0 /dev/stdin
+	ln -snf /proc/self/fd/1 /dev/stdout
+	ln -snf /proc/self/fd/2 /dev/stderr
+	ln -snf /proc/kcore /dev/core
 
-	# We also do VC's for keymap support.
-
-	for x in block/*
-	do
-		export DEVPATH="/${x}"
-		/sbin/udev block
-
-		for y in ${x}/*
-		do
-			if [ -f "${y}/dev" ]
-			then
-				export DEVPATH="/${y}"
-				/sbin/udev block
-			fi
-		done
-	done
-	for x in class/tty
-	do
-		export DEVPATH="/${x}"
-		/sbin/udev class
-
-		for y in ${x}/*
-		do
-			if [ -f "${y}/dev" ]
-			then
-				export DEVPATH="/${y}"
-				/sbin/udev class
-			fi
-		done
-	done
-	
-	cd /
-
-	unset -v ACTION DEVPATH UDEV_NO_SLEEP
 }

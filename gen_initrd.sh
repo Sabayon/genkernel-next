@@ -82,6 +82,8 @@ create_base_initrd_sys() {
 
 	[ "${UDEV}" -eq '1' ] && { tar -jxpf "${UDEV_BINCACHE}" -C "${TEMP}/initrd-temp" ||
 		gen_die "Could not extract udev binary cache!"; }
+		ln -sf "./udev" "${TEMP}/initrd-temp/bin/udevstart" ||
+			gen_die 'Could not symlink udev -> udevstart!'
 
 # We make our own devfsd.conf these days, the default one doesn't work with the stripped
 # down devfsd we use with dietlibc
