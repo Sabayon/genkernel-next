@@ -36,6 +36,9 @@ do
 		loop\=*)
 			LOOP=`parse_opt "${x}"`
 		;;
+		looptype\=*)
+			LOOPTYPE=`parse_opt "${x}"`
+		;;
 		*)
 		;;
 	esac
@@ -80,7 +83,7 @@ then
 	sleep 1
 	# Bind our mounted dev to /dev  otherwise we may not be able to mount
 	# our loop device later on
-	mount -o bind /newroot/dev /dev
+#	mount -o bind /newroot/dev /dev
 	findcdmount /newroot/dev/cdroms/*
 	# not in /dev/cdroms try /dev/ide/cd
 	if [ "${REAL_ROOT}" = "" ]
@@ -168,23 +171,57 @@ done
 [ -n "$QUIET" ] && echo "6" > /proc/sys/kernel/printk
 echo "STEP 5: Finishing up"
 
+check_loop() {
+	if [ "${LOOP}" = "" -o ! -e "mnt/cdrom/${LOOP}" ]
+	then
+		echo "Invalid loop location: ${LOOP}"
+		echo "please export LOOP with a valid location, or reboot and pass a proper loop="
+		echo "kernel command line"
+		/bin/ash
+	fi
+}
+
 if [ "${CDROOT}" = "1" ]
 then
 	echo "STEP 5a: filling tmpfs filesystem"
 	cd /newroot
-	if [ "${LOOP}" != "" ]
+
+	# Failsafe if some idiot didn't set loop type
+	if [ "${LOOPTYPE}" = "" ]
 	then
+		echo "YOU FORGOT TO SPECIFY LOOPTYPE TRYING TO AUTODETECT"
+		if [ "${LOOP}" = "/livecd.loop" ]
+		then
+			LOOPTYPE="normal"
+		elif [ "${LOOP}" = "/zisofs" ]
+		then
+			LOOPTYPE="zisofs"
+		else
+			LOOPTYPE="noloop"
+		fi
+		echo "DETECTED LOOPTYPE: $LOOPTYPE"
+	fi
+
+	if [ "${LOOPTYPE}" = "normal" ]
+	then
+		check_loop
 		echo "STEP 5a1: mounting loop filesystem"
 		mount -t ext2 -o loop,ro /newroot/mnt/cdrom/${LOOP} /newroot/mnt/loop
-		if [ "$?" != 0 ]
+		if [ "$?" != "0" ]
 		then
 			echo "FAILED TO MOUNT LOOP FILESYSTEM, barfing out to shell"
 			/bin/ash
 		fi
 		FS_LOCATION="mnt/loop"
-	else
+	elif [ "${LOOPTYPE}" = "zisofs" ]
+	then
+		check_loop
+		FS_LOCATION="mnt/cdrom/${LOOP}"
+	elif [ "${LOOPTYPE}" = "noloop" ]
+	then
 		FS_LOCATION="mnt/cdrom"
 	fi
+
 	echo "STEP 5a2: filling filesystem"
 	for x in ${ROOT_LINKS}
 	do
@@ -195,7 +232,7 @@ then
 	(cd /newroot/${FS_LOCATION}; cp -a ${ROOT_TREES} /newroot)
 	
 	# Unmount the -o bind /dev and kill devfsd
-	umount /dev
+#	umount /dev
 	kill_devfsd
 else
 	echo "STEP 5b: setting up stuff for pivot_root"
@@ -232,6 +269,16 @@ then
 	# asking questions!
 	umount /dev
 	umount /proc
+elif test "${CDROOT}" -eq "1"
+then
+	# If automount at boot was on with devfs, we'll want to umount it
+	# also umount proc
+	echo "STEP 6a: clean up mounts"
+	sleep 1
+	umount /tmp/.initrd/dev > /dev/null 2>&1
+	sleep 1
+	umount /tmp/.initrd/proc > /dev/null 2>&1
+	sleep 1
 fi
 
 # why chroot ??  /usr/src/linux/Documentation/initrd.txt 
