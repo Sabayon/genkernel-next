@@ -175,7 +175,7 @@ compile_dep() {
 	then
 		print_info 1 "kernel: skipping make dep for non 2.4 kernels"
 	else
-		print_info 1 "kernel: Making dependancies for linux ${KV}"
+		print_info 1 "kernel: Making dependencies for linux ${KV}"
 		cd ${KERNEL_DIR}
 		compile_generic "dep" kernel
 	fi
@@ -424,7 +424,7 @@ compile_dietlibc() {
 		[ ! -f "${DIETLIBC_BINCACHE}" ] && gen_die "bincache not created"
 		echo "${TEMP}" > "${DIETLIBC_BINCACHE_TEMP}"
 
-		print_info 1 "dietlibc: cleaning up"
+		print_info 1 "Dietlibc: cleaning up"
 		cd "${TEMP}"
 		rm -rf "${DIETLIBC_DIR}" > /dev/null
 		rm -rf "${TEMP}/diet" > /dev/null
