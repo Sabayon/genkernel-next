@@ -211,7 +211,8 @@ create_initrd() {
 	then
 		if [ -x /sbin/splash ]
 		then
-			[ -z "${BOOTSPLASH_THEME}" ] && source /etc/conf.d/bootsplash.conf
+			[ -z "${BOOTSPLASH_THEME}" ] && [ -e /etc/conf.d/bootplash.conf ] && source /etc/conf.d/bootsplash.conf
+			[ -z "${BOOTSPLASH_THEME}" ] && [ -e /etc/conf.d/bootplash ] && source /etc/conf.d/bootsplash
 			[ -z "${BOOTSPLASH_THEME}" ] && BOOTSPLASH_THEME=default
 			print_info 1 "        >> Installing bootsplash [ using the ${BOOTSPLASH_THEME} theme ]..."
 			for bootRes in '800x600' '1024x768' '1280x1024' '1600x1200'

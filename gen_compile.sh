@@ -158,7 +158,6 @@ compile_generic() {
 }
 
 extract_dietlibc_bincache() {
-	print_info 1 "dietlibc: >> Extracting cache..."
 	cd "${TEMP}"
 	rm -rf "${TEMP}/diet" > /dev/null
 	tar -jxpf "${DIETLIBC_BINCACHE}" || gen_die "Could not extract dietlibc bincache!"
@@ -252,8 +251,6 @@ compile_busybox() {
 
 		cd "${TEMP}"
 		rm -rf "${BUSYBOX_DIR}" > /dev/null
-	else
-		print_info 1 "busybox: Found cache at ${BUSYBOX_BINCACHE}"
 	fi
 }
 
@@ -299,8 +296,6 @@ compile_modutils() {
 
 		cd "${TEMP}"
 		rm -rf "${MODULE_INIT_TOOLS_DIR}" > /dev/null
-	else
-		print_info 1 "modutils: Found cache at ${MODUTILS_BINCACHE}"
 	fi
 }
 
@@ -344,8 +339,6 @@ compile_module_init_tools() {
 
 		cd "${TEMP}"
 		rm -rf "${MODULE_INIT_TOOLS_DIR}" > /dev/null
-	else
-		print_info 1 "module-init-tools: Found cache at ${MODULE_INIT_TOOLS_BINCACHE}"
 	fi
 }
 
@@ -396,8 +389,6 @@ compile_devfsd() {
 
 		cd "${TEMP}"
 	#	rm -rf "${DEVFSD_DIR}" > /dev/null
-	else
-		print_info 1 "devfsd: Found cache at ${DEVFSD_BINCACHE} and ${DEVFSD_CONF_BINCACHE}..."
 	fi
 }
 
@@ -440,7 +431,5 @@ compile_dietlibc() {
 		cd "${TEMP}"
 		rm -rf "${DIETLIBC_DIR}" > /dev/null
 		rm -rf "${TEMP}/diet" > /dev/null
-	else
-		print_info 1 "dietlibc: Found cache at ${DIETLIBC_BINCACHE}"
 	fi
 }

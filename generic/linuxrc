@@ -230,15 +230,31 @@ then
 		fi
 	fi
 
+	if [ "${LOOPTYPE}" != "noloop" ]
+	then
+	    check_loop
+	    if [ "${DO_cache}" ]
+	    then
+		echo "${GOOD}>>${NORMAL}${BOLD} Copying loop file for caching...${NORMAL}"
+		cp /newroot/mnt/cdrom/${LOOP} /newroot/mnt/${LOOP}
+		if [ $? -ne 0 ]
+		then
+			echo "${BAD}!!${NORMAL}${BOLD} Failed to cache the loop file! Lack of space?"
+			rm /newroot/mnt/livecd.* 2>/dev/null
+			rm /newroot/mnt/zisofs 2>/dev/null
+		else
+			LOOPEXT="../"
+		fi
+	    fi
+	fi
+
 	if [ "${LOOPTYPE}" = "normal" ]
 	then
-		check_loop
-		
 		# bind-mount /dev/ so that loop devices can be found
 		mount -o bind /newroot/dev /dev
 
 		echo -e "${GOOD}>>${NORMAL}${BOLD} Mounting loop filesystem...${NORMAL}"
-		mount -t ext2 -o loop,ro /newroot/mnt/cdrom/${LOOP} /newroot/mnt/livecd
+		mount -t ext2 -o loop,ro /newroot/mnt/cdrom/${LOOPEXT}${LOOP} /newroot/mnt/livecd
 		if [ "$?" != "0" ]
 		then
 			echo "FAILED TO MOUNT LOOP FILESYSTEM, barfing out to shell"
@@ -248,10 +264,9 @@ then
 		umount /dev
 	elif [ "${LOOPTYPE}" = "squashfs" ]
 	then
-		check_loop
 		mount -o bind /newroot/dev /dev
 		echo -e "${GOOD}>>${NORMAL}${BOLD} Mounting squashfs filesystem...${NORMAL}"
-		mount -t squashfs -o loop,ro /newroot/mnt/cdrom/${LOOP} /newroot/mnt/livecd
+		mount -t squashfs -o loop,ro /newroot/mnt/cdrom/${LOOPEXT}${LOOP} /newroot/mnt/livecd
 		if [ "$?" != "0" ]
 		then
 			echo "FAILED TO MOUNT LOOP FILESYSTEM, barfing out to shell"
@@ -261,10 +276,9 @@ then
 		umount /dev
 	elif [ "${LOOPTYPE}" = "gcloop" ]
 	then
-		check_loop
 		echo -e "${GOOD}>>${NORMAL}${BOLD} Mounting gcloop filesystem...${NORMAL}"
 		mount -o bind /newroot/dev /dev
-		echo " " | losetup -E 19 -e ucl-0 -p0 /newroot/dev/loop0 /newroot/mnt/cdrom/${LOOP}
+		echo " " | losetup -E 19 -e ucl-0 -p0 /newroot/dev/loop0 /newroot/mnt/cdrom/${LOOPEXT}${LOOP}
 		if [ "$?" != "0" ]
 		then
 			echo "FAILED TO losetup THE LOOP DEVICE"
@@ -275,8 +289,7 @@ then
 		umount /dev
 	elif [ "${LOOPTYPE}" = "zisofs" ]
 	then
-		check_loop
-		FS_LOCATION="mnt/cdrom/${LOOP}"
+		FS_LOCATION="mnt/cdrom/${LOOPEXT}${LOOP}"
 	elif [ "${LOOPTYPE}" = "noloop" ]
 	then
 		FS_LOCATION="mnt/cdrom"
