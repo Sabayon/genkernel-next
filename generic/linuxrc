@@ -175,8 +175,7 @@ startVolumes() {
 echo -e "${GOOD}>>${NORMAL}${BOLD} Mounting filesystems${NORMAL}"
 
 # Check udev is on...
-# [ "${KMAJOR}" -ge 2 ] && USE_UDEV_SUPPORT=1
-# [ "${KMAJOR}" -eq 2 -a "${KMINOR}" -ge '6' -a ! "${USE_UDEV_SUPPORT}" -eq '0' ] && USE_UDEV_SUPPORT=1
+[ "${KMAJOR}" -eq 2 -a "${KMINOR}" -ge '6' -a ! "${USE_UDEV_SUPPORT}" -eq '0' ] && USE_UDEV_SUPPORT=1
 [ "${USE_UDEV_NORMAL}" -eq '1' -a ! -x /sbin/udev ] && USE_UDEV_NORMAL=0
 
 # If using 2.4 and udev; back off...
