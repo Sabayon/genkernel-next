@@ -35,7 +35,7 @@ modules_dep_list()
 		echo "modules_dep_list(): improper usage"
 		exit 1
 	fi
-	cat /lib/modules/${KV}/modules.dep | grep ${1}${KEXT}\: | cut -d\:  -f2
+	cat /lib/modules/${KV}/modules.dep | grep ${1}${KSUFF}\: | cut -d\:  -f2
 }
 
 
@@ -68,7 +68,7 @@ is_module_already_loaded()
 
 	for x in ${LOADED_MODULES}
 	do
-		if [ "${x}" == "${1}" ]
+		if [ "${x}" = "${1}" ]
 		then
 			# Yep, module is loaded
 			return 0
@@ -79,7 +79,8 @@ is_module_already_loaded()
 
 real_mod_path()
 {
-	find /lib/modules/${KV}/ -path "*${1}${KEXT}"
+	# find doesn't work like we expect, let's add a grep to it
+	find /lib/modules | grep "${1}${KSUFF}"
 }
 
 modprobe2()
@@ -88,8 +89,14 @@ modprobe2()
 	if [ "$#" != "1" ]
 	then
 		echo "modprobe(): improper usage"
+		exit 1
 	fi
-
+	real_path=`real_mod_path ${1}`
+	if [ "${real_path}" = "" -o "${real_path}" = " " ]
+	then
+		echo "no such module found"
+		exit 1
+	fi
 	modlist=`modules_dep_list ${1}`
 	if [ "${modlist}" != "" -a "${modlist}" != " " ]
 	then
@@ -97,8 +104,8 @@ modprobe2()
 	else
 		deps=""
 	fi
-
-	echo "$1 -- DEPS=${deps}"
+#	echo ""
+#	echo "$1 -- DEPS='${deps}'"
 	# Make sure we don't do any endless loops!
 
 	LOADED_MODULES="${LOADED_MODULES} ${1}"
@@ -107,15 +114,17 @@ modprobe2()
 	do
 		if ! is_module_already_loaded ${x}
 		then
-			modprobe2 "${x}"
+			if [ "${x}" != "" -a "${x}" != " " ]
+			then
+				modprobe2 "${x}"
+			fi
 		else
 			echo "skipping ${x}, module already loaded by us"
 		fi
 	done
+#	echo "running insmod on '${real_path}'"
+	${INSMOD} ${real_path} > /dev/null 2>&1
 
-	real_path=`real_mod_path ${1}`
-	echo "running insmod on ${real_path}"
-	${INSMOD} ${real_path}	
 	return $?
 }
 
@@ -126,5 +135,5 @@ then
 fi
 
 modprobe2 ${1}
-return $?
+exit $?
 

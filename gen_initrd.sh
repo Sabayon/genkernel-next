@@ -74,7 +74,7 @@ create_base_initrd_sys() {
 #	bunzip2 "${TEMP}/initrd-temp/etc/devfsd.conf.bz2" || gen_die "could not uncompress devfsd.conf"
 
 	for i in '[' ash basename cat chroot clear cp dirname echo env false find \
-	grep gunzip gzip insmod ln ls loadkmap losetup lsmod mkdir mknod more mount mv \
+	grep gunzip gzip ln ls loadkmap losetup lsmod mkdir mknod more mount mv \
 	pivot_root ps awk pwd rm rmdir rmmod sh sleep tar test touch true umount uname \
 	xargs yes zcat chmod chown cut kill killall; do
 		rm -f ${TEMP}/initrd-temp/bin/$i > /dev/null

@@ -13,11 +13,14 @@ parse_opt() {
 }
 
 modules_scan() {
-	for x in "`cat /etc/modules/${1}`"
+	local MODS
+	MODS=`cat /etc/modules/${1}`
+	for x in ${MODS}
 	do
 		echo -ne "${HILITE}---- Scanning for ${x}..."
-		MODULE=`find /lib/modules -name "${x}.$KSUFF"`
-		/sbin/modprobe -f ${MODULE} > /dev/null 2>&1
+#		MODULE=`find /lib/modules -name "${x}.$KSUFF"`
+		modprobe ${x}
+# > /dev/null 2>&1
 		if [ $? -eq 0 ]
 		then
 			backup

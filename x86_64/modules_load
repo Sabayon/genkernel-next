@@ -11,7 +11,7 @@ aacraid sym53c8xx a100u2w cpqfc \
 dmx3191d dpt_i2o imm in2000 ips qla1280 \
 sim710 sym53c416"
 
-FIREWIRE_MODULES="ieee1394 ohci1394 eth1394 sbp2"
+FIREWIRE_MODULES="ieee1394 ohci1394 sbp2"
 
 ATARAID_MODULES="ataraid pdcraid hptraid"
 

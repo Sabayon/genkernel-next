@@ -129,7 +129,7 @@ do
 	else
 		echo "STEP 4a: Mounting root"
 
-		mount -o ro ${REAL_ROOT} /newroot
+		mount -o rw ${REAL_ROOT} /newroot
 		if [ "$?" = "0" ]
 		then
 			break
@@ -174,8 +174,8 @@ then
 	mount -t proc proc /proc
 	mount -t devfs devfs /dev
 	kill_devfsd
-	umount /initrd/proc
-	umount /initrd/dev
+	umount /tmp/.initrd/proc
+	umount /tmp/.initrd/dev
 
 	# Uhh, initrd is wasting memory ... let's
 	# kill the sucker here and now!

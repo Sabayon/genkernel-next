@@ -52,7 +52,7 @@ gen_deps()
 gen_dep_list()
 {
 	rm -f ${TEMP}/moddeps > /dev/null
-	gen_deps ${STORAGE_MODULES}
+	gen_deps ${SCSI_MODULES}
 	gen_deps ${FIREWIRE_MODULES}
 	gen_deps ${ATARAID_MODULES}
 	gen_deps ${PCMCIA_MODULES}
