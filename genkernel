@@ -38,7 +38,7 @@ then
 	exit 1
 fi
 
-NORMAL=${GOOD} print_info 1 "Gentoo Linux Genkernel; Version ${GK_V}"
+NORMAL=${GOOD} print_info 1 "Gentoo Linux Genkernel; Version ${GK_V}${NORMAL}"
 
 # Set ${ARCH}
 get_official_arch
@@ -53,14 +53,20 @@ source ${GK_SHARE}/${ARCH}/modules_load || gen_die "could not read ${GK_SHARE}/$
 # get the real args for use.
 determine_real_args
 
-NORMAL=${BOLD} print_info 1 "Compiling Linux Kernel ${WARN}${KV}${BOLD} for ${WARN}${ARCH}${BOLD}..."
+NORMAL=${BOLD} print_info 1 "Compiling Linux Kernel ${BOLD}${KV}${NORMAL} for ${BOLD}${ARCH}${NORMAL}..."
 echo
 
 if ! has_loop
 then
-	print_error print_info 1 "Your kernel does not appear to have loop device support. "
-	print_error print_info 1 "Please 'modprobe loop' if it is a module before running genkernel"
-	gen_die "Load loop support!"
+	modprobe loop 2>/dev/null
+	if ! has_loop
+	then
+		print_error 1 "Your kernel does not appear to have loop device support. "
+		print_error 1 "Please load loop support before running genkernel!"
+		gen_die "Load loop support!"
+	else
+		print_info 1 'loop: "loop" module loaded successfully...'
+	fi
 fi
 
 # Check /boot is mounted
@@ -72,6 +78,8 @@ then
 		then
 			print_warning 1 "${BOLD}WARNING${NORMAL}: Failed to mount /boot!"
 			echo
+		else
+			print_info 1 "mount: /boot mounted successfully!"
 		fi
 	else
 		print_warning 1 "${BOLD}WARNING${NORMAL}: No mounted /boot partition detected!"
@@ -184,6 +192,7 @@ print_info 1 "Kernel compiled successfully!"
 print_info 1 ''
 print_info 1 "Required Kernel Parameters:"
 print_info 1 '    root=/dev/ram0 real_root=/dev/$ROOT init=/linuxrc'
+[ "${INITRD_SIZE}" -gt 4096 ] && print_info 1 "    ramdisk_size=${INITRD_SIZE}"
 print_info 1 '    [ And "vga=0x317 splash=verbose" if you use a framebuffer ]'
 print_info 1 ''
 print_info 1 '    Where $ROOT is the device node for your root partition as the'

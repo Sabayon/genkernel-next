@@ -326,6 +326,8 @@ then
 	mount -t proc proc /proc
 	umount /tmp/.initrd/proc > /dev/null 2>&1 || echo "*: Failed to unmount /tmp/.initrd/proc!"
 	umount /dev > /dev/null 2>&1
+	mount -n --move /tmp/.initrd/dev dev || echo '*: Failed to move over the /dev tree!'
+	rm /tmp/.initrd/dev -rf || '*: Failed to remove the initrd /dev!'
 	umount /proc > /dev/null 2>&1
 fi
 echo -n '.'

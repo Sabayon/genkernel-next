@@ -207,7 +207,8 @@ gen_die() {
 }
 
 has_loop() {
-	if [ -e "/dev/loop0" -o -e "/dev/loop/0" ]
+	dmesg | egrep -q '^loop:'
+	if [ -e "/dev/loop0" -o -e "/dev/loop/0" -a $? ]
 	then
 		# We found devfs or standard dev loop device, assume
 		# loop is compiled into the kernel or the module is loaded
