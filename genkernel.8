@@ -199,6 +199,9 @@ Don't compile busybox, and use this static .bz2 binary instead.
 \fB\-\-minkernpackage=\fR<tbz2>
 File to output a .tar.bz2'd kernel and initrd: no modules outside of the
 initrd will be included...
+.TP
+\fB\-\-maxkernpackage=\fR<tbz2>
+File to output a .tar.bz2'd kernel, initrd, contents of /lib/modules/ and the kernel config"
 .SH INITRD OPTIONS
 The following options can be passed as kernel parameters from the
 bootloader, which the initrd scripts would recognize.

@@ -284,6 +284,7 @@ else
 	print_info 1 'initrd: Not building since only the kernel was requested...'
 fi
 [ "${MINKERNPACKAGE}" != "" ] && gen_minkernpackage
+[ "${MAXKERNPACKAGE}" != "" ] && gen_maxkernpackage
 
 # Clean up...
 [ -n "${CTEMP}" ] && rm -rf "${TEMP}"

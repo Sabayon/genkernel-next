@@ -163,6 +163,11 @@ determine_real_args() {
 		MINKERNPACKAGE="${CMD_MINKERNPACKAGE}"
 	fi
 
+	if [ "${CMD_MAXKERNPACKAGE}" != '' ]
+	then
+		MAXKERNPACKAGE="${CMD_MAXKERNPACKAGE}"
+	fi
+	
 	if [ "${CMD_NOINITRDMODULES}" != '' ]
 	then
 		NOINITRDMODULES="${CMD_NOINITRDMODULES}"

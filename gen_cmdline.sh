@@ -77,6 +77,8 @@ longusage() {
   echo "        --minkernpackage=<tbz2> File to output a .tar.bz2'd kernel and initrd:"
   echo "                                No modules outside of the initrd will be"
   echo "                                included..."
+  echo "        --maxkernpackage=<tbz2> File to output a .tar.bz2'd kernel,initrd,"
+  echo "                                contents of /lib/modules/ and the kernel config"
 }
 
 usage() {
@@ -334,6 +336,10 @@ parse_cmdline() {
 	      --minkernpackage=*)
 		      CMD_MINKERNPACKAGE=`parse_opt "$*"`
 		      print_info 2 "MINKERNPACKAGE: $CMD_MINKERNPACKAGE"
+	      ;;
+	      --maxkernpackage=*)
+		      CMD_MAXKERNPACKAGE=`parse_opt "$*"`
+		      print_info 2 "MAXKERNPACKAGE: $CMD_MAXKERNPACKAGE"
 	      ;;
 	      --linuxrc=*)
 	      		CMD_LINUXRC=`parse_opt "$*"`
