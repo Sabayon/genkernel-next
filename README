@@ -10,7 +10,7 @@ INSTALLATION:
 
 put genkernel.conf in /etc
 
-put genkernel.sh in /usr/bin
+put genkernel executable in /usr/bin
 
 put the rest of the files and directories in /usr/share/genkernel
 
