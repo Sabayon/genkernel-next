@@ -1,0 +1,8 @@
+- add LVM2 support, so people that have their root partitions
+  LVM2-ized can boot.
+- bump busybox version to _pre5 which has initial 2.6 insmod
+  and devfsd support.  Provide configurable options to allow
+  building real devfsd or using busybox devfsd, and likewise
+  for insmod.
+- need configs for other arches
+
