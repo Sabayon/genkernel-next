@@ -2,20 +2,28 @@
 
 # create_initrd_loop(size)
 create_initrd_loop() {
+	local inodes
 	[ "$#" -ne "1" ] && gen_die "invalid use of create_initrd_loop"
-	mkdir -p ${TEMP}/initrd-temp || gen_die "could not create loopback dir"
+	mkdir -p ${TEMP}/initrd-mount || gen_die "could not create loopback mount dir"
 	dd if=/dev/zero of=${TEMP}/initrd-loop bs=1k count=${1} >> "${DEBUGFILE}" 2>&1 || gen_die "could not zero initrd-loop"
-	mke2fs -F -q -N${1} "${TEMP}/initrd-loop" >> "${DEBUGFILE}" 2>&1 || gen_die "could not format initrd-loop"
-	mount -t ext2 -o loop "${TEMP}/initrd-loop" "${TEMP}/initrd-temp" >> "${DEBUGFILE}" 2>&1 || gen_die "could not mount initrd filesystem"
+	mke2fs -F -N500 -q "${TEMP}/initrd-loop" >> "${DEBUGFILE}" 2>&1 || gen_die "could not format initrd-loop"
+	mount -t ext2 -o loop "${TEMP}/initrd-loop" "${TEMP}/initrd-mount" >> "${DEBUGFILE}" 2>&1 || gen_die "could not mount initrd filesystem"
 }
 
 create_initrd_unmount_loop()
 {
 	cd ${TEMP}
-	umount "${TEMP}/initrd-temp" || gen_die "could not unmount initrd system"
+	umount "${TEMP}/initrd-mount" || gen_die "could not unmount initrd system"
+}
+
+move_initrd_to_loop()
+{
+	cd "${TEMP}/initrd-temp"
+	mv * "${TEMP}/initrd-mount" > ${DEBUGFILE}
 }
 
 create_base_initrd_sys() {
+	rm -rf "${TEMP}/initrd-temp" > /dev/null
 	mkdir -p ${TEMP}/initrd-temp/dev
 	mkdir -p ${TEMP}/initrd-temp/bin
 	mkdir -p ${TEMP}/initrd-temp/etc
@@ -38,8 +46,8 @@ create_base_initrd_sys() {
 
 
 	cd ${TEMP}/initrd-temp/dev
-	MAKEDEV generic-i386
-	MAKEDEV scd
+	MAKEDEV std
+	MAKEDEV console
 
 	cp "${BUSYBOX_BINCACHE}" "${TEMP}/initrd-temp/bin/busybox.bz2" || gen_die "could not copy busybox from bincache"
 	bunzip2 "${TEMP}/initrd-temp/bin/busybox.bz2" || gen_die "could not uncompress busybox"
@@ -65,7 +73,7 @@ create_base_initrd_sys() {
 #	bunzip2 "${TEMP}/initrd-temp/etc/devfsd.conf.bz2" || gen_die "could not uncompress devfsd.conf"
 
 	for i in '[' ash basename cat chroot clear cp dirname echo env false find \
-	grep gunzip gzip insmod ln ls loadkmap losetup lsmod mkdir mknod modprobe more mount mv \
+	grep gunzip gzip insmod ln ls loadkmap losetup lsmod mkdir mknod more mount mv \
 	pivot_root ps awk pwd rm rmdir rmmod sh sleep tar test touch true umount uname \
 	xargs yes zcat chmod chown cut kill killall; do
 		rm -f ${TEMP}/initrd-temp/bin/$i > /dev/null
@@ -80,13 +88,15 @@ create_initrd_modules() {
 	else
 		MOD_EXT=".o"
 	fi
-	local modc i mods mymod
-	for modc in storage firewire ataraid pcmcia usb
-	do
-		mkdir -p ${TEMP}/initrd-temp/lib/modules/${modc}
-		mods=`echo $modc | tr [:lower:] [:upper:]`_MODULES
-		eval mymods=\$$mods
-		for i in ${mymods}
+#	local modc i mods mymod
+#	for modc in storage firewire ataraid pcmcia usb
+#	do
+#	for 
+#		mkdir -p ${TEMP}/initrd-temp/lib/modules/${modc}
+#		mods=`echo $modc | tr [:lower:] [:upper:]`_MODULES
+#		eval mymods=\$$mods
+#		for i in ${mymods}
+		for i in `gen_dep_list`
 		do
 			print_info 2 "$i : module searching" 1 0
 			mymod=`find /lib/modules/${KV} -name "${i}${MOD_EXT}"`
@@ -98,28 +108,57 @@ create_initrd_modules() {
 			print_info 2 "copying ${mymod} to initrd"
 			cp -ax --parents "${mymod}" "${TEMP}/initrd-temp"
 		done
-	done
+#	done
 
 	cp -ax --parents /lib/modules/${KV}/modules* ${TEMP}/initrd-temp
-	cat ${GK_SHARE}/${ARCH}/linuxrc | sed 	-e "s/%%STORAGE_MODULES%%/${STORAGE_MODULES}/" \
-						-e "s/%%FIREWIRE_MODULES%%/${FIREWIRE_MODULES}/" \
-						-e "s/%%ATARAID_MODULES%%/${ATARAID_MODULES}/" \
-						-e "s/%%PCMCIA_MODULES%%/${PCMCIA_MODULES}/" \
-						-e "s/%%USB_MODULES%%/${USB_MODULES}/" \
-						> ${TEMP}/initrd-temp/linuxrc
-	chmod +x ${TEMP}/initrd-temp/linuxrc
+
+	print_info 1 "WARNING WARNING: Brad, Dont forget to output modules files to autoload"
+#	cat ${GK_SHARE}/${ARCH}/linuxrc | sed 	-e "s/%%STORAGE_MODULES%%/${STORAGE_MODULES}/" \
+#						-e "s/%%FIREWIRE_MODULES%%/${FIREWIRE_MODULES}/" \
+#						-e "s/%%ATARAID_MODULES%%/${ATARAID_MODULES}/" \
+#						-e "s/%%PCMCIA_MODULES%%/${PCMCIA_MODULES}/" \
+#						-e "s/%%USB_MODULES%%/${USB_MODULES}/" \
+#						> ${TEMP}/initrd-temp/linuxrc
+
+	cp "${GK_SHARE}/${ARCH}/linuxrc" "${TEMP}/initrd-temp/linuxrc"
+	cp "${GK_SHARE}/${ARCH}/initrd.scripts" "${TEMP}/initrd-temp/etc/initrd.scripts"
+	cp "${GK_SHARE}/${ARCH}/initrd.defaults" "${TEMP}/initrd-temp/etc/initrd.defaults"
+	cp "${GK_SHARE}/${ARCH}/modprobe" "${TEMP}/initrd-temp/sbin/modprobe"
+	chmod +x "${TEMP}/initrd-temp/linuxrc"
+	chmod +x "${TEMP}/initrd-temp/etc/initrd.scripts"
+	chmod +x "${TEMP}/initrd-temp/etc/initrd.defaults"
+	chmod +x "${TEMP}/initrd-temp/sbin/modprobe"
+}
+
+calc_initrd_size() {
+	local TEST
+	cd ${TEMP}/initrd-temp/
+	TEST=`du -sk 2> /dev/null` 
+	echo $TEST | cut "-d " -f1
 }
 
 create_initrd() {
 	local MOD_EXT
-	print_info 1 "initrd: creating loopback filesystem"
-	create_initrd_loop 5000
 
 	print_info 1 "initrd: creating base system"
 	create_base_initrd_sys
 
 	print_info 1 "initrd: copying modules"
 	create_initrd_modules
+
+	print_info 1 "initrd: calculating initrd size"
+	INITRD_CALC_SIZE=`calc_initrd_size`
+
+	print_info 1 "initrd: calculated size ${INITRD_CALC_SIZE} + 100k slop for fs overhead"
+	INITRD_SIZE=`expr ${INITRD_CALC_SIZE} + 100`
+
+	print_info 1 "initrd: real size ${INITRD_SIZE}"
+
+	print_info 1 "initrd: creating loopback filesystem"
+	create_initrd_loop ${INITRD_SIZE}
+
+	print_info 1 "initrd: moving initrd fs to loopback"
+	move_initrd_to_loop
 
 	print_info 1 "initrd: cleaning up and compressing initrd"
 	create_initrd_unmount_loop

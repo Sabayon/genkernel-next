@@ -1,0 +1,53 @@
+#!/bin/ash
+
+backup() {
+	echo -ne "\033[0G\033[0K"
+}
+
+parse_opt() {
+	case "$1" in
+		*\=*)
+			echo "$1" | cut -f2 -d=
+		;;
+	esac
+}
+
+modules_scan() {
+	for x in "`cat /etc/modules/${1}`"
+	do
+		echo -ne "${HILITE}---- Scanning for ${x}..."
+		MODULE=`find /lib/modules -name "${x}.$KSUFF"`
+		/sbin/modprobe -f ${MODULE} > /dev/null 2>&1
+		if [ $? -eq 0 ]
+		then
+			backup
+			echo -e "${GOOD}---- Detected ${x} hardware${NORMAL}"
+			continue
+		fi
+		backup
+		echo -ne "${NORMAL}"
+	done
+}
+
+findcdmount() {
+	if [ "$#" -gt "1" ]
+	then
+		for x in "$*"
+		do
+			mount -t iso9660 -r ${x} /newroot/mnt/cdrom > /dev/null 2>&1
+			if [ "$?" = "0" ]
+			then
+				REAL_ROOT="${x}"
+				break
+			fi
+		done
+		if [ "${REAL_ROOT}" != "" ]
+		then
+			echo -e "${HILITE}---- CD medium found on $1${NORMAL}"
+		fi
+	fi
+}
+
+kill_devfsd() {
+	killall devfsd > /dev/null 2>&1
+}

@@ -18,6 +18,7 @@ source ${GK_BIN}/gen_determineargs.sh || gen_die "could not read ${GK_BIN}/gen_d
 source ${GK_BIN}/gen_compile.sh || gen_die "could not read ${GK_BIN}/gen_compile.sh"
 source ${GK_BIN}/gen_configkernel.sh || gen_die "could not read ${GK_BIN}/gen_configkernel.sh"
 source ${GK_BIN}/gen_initrd.sh || gen_die "could not read ${GK_BIN}/gen_initrd.sh"
+source ${GK_BIN}/gen_moddeps.sh || gen_die "could not read ${GK_BIN}/gen_moddeps.sh"
 
 # Parse all command line options, and load into memory
 parse_cmdline $*

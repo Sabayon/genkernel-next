@@ -3,187 +3,196 @@
 # Copyright 2003 Gentoo Technologies, Inc.
 # Distributed under the GPL
 
-PATH=/usr/sbin:/usr/bin:/sbin:/bin
-BACK_UP="\033[1K\033[0G"
-HILITE="\033[1m"
-NORMAL="\033[0m"
-WARN="\033[1m"
-BAD="\033[1m"
-#mount -o remount,rw /
+. /etc/initrd.defaults
+. /etc/initrd.scripts
+
+USE_DEVFS_NORMAL=1
+
+mount -o remount,rw /
 mount /proc
-INITRD="true"
-SCSI="yes"
-CDCACHE="no"
-IDEBUG="no"
-FIREWIRE="no"
-ATARAID="no"
-PCMCIA="no"
-DETECT="no"
-USB="yes"
-KEYMAP="no"
-if [ ! -e /dev/.devfsd ]
-then
-        #mount devfs
-        mount -t devfs devfs /dev
-fi
 
-CMDLINE="`cat /proc/cmdline`"
-for x in $CMDLINE
+[ -n "$QUIET" ] && echo "0" > /proc/sys/kernel/printk
+
+echo "${GOOD} Gentoo initrd startup..."
+echo "STEP 1: Command-line parsing"
+CMDLINE=`cat /proc/cmdline`
+# Scan CMDLINE for any specified real_root= or cdroot arguments
+for x in ${CMDLINE}
 do
-	if [ "$x" = "doscsi" ]
-	then
-		SCSI="yes"
-	elif [ "$x" = "cdcache" ]
-	then
-		CDCACHE="yes"
-	elif [ "$x" = "idebug" ]
-	then
-		IDEBUG="yes"
-	fi
+	case "${x}" in
+		real_root\=*)
+			REAL_ROOT=`parse_opt "${x}"`
+		;;
+		cdroot)
+			CDROOT=1
+			REAL_ROOT=""
+		;;
+		devfs)
+			USE_DEVFS_NORMAL=1
+		;;
+		nodevfs)
+			USE_DEVFS_NORMAL=0
+		;;
+		*)
+		;;
+	esac
 done
 
-for x in $CMDLINE
+# Scan CMDLINE for any "doscsi" or "noscsi"-type arguments
+for x in $HWOPTS
 do
-	if [ "$x" = "dofirewire" ]
-        then
-                FIREWIRE="yes"
-	fi
-done
-for x in $CMDLINE
-do
-        if [ "$x" = "nousb" ]
-        then
-                USB="no"
-        fi
-done
-
-for x in $CMDLINE
-do
-	if [ "$x" = "doataraid" ]
-        then
-                ATARAID="yes"
-	fi
-done
-for x in $CMDLINE
-do
-        if [ "$x" = "dopcmcia" ]
-        then
-                PCMCIA="yes"
-        fi
-done
-
-for x in $CMDLINE
-do
-        if [ "$x" = "dokeymap" ]
-        then
-                KEYMAP="yes"
-        fi
-done
-
-blurb() {
-	echo -ne ${HILITE}${1}
-}
-
-backup() {
-	echo -ne "\033[0G\033[0K"
-}
-if [ -e /dev/.devfsd ]
-        then
-                RAM_DEVICE="rd"
-        else
-                RAM_DEVICE="ram0"
-fi
-
-
-# Create the new root FS
-
-mounted=""
-
-initmsg() {
-	echo -e "${HILITE}${*}${NORMAL}"
-}
-
-getkeymap() {
-	local mykeymap
-	echo -ne ${HILITE}
-	cat /keymaps/key.lst
-	echo -ne ${NORMAL}
-	read -p "Keymap selection: " mykeymap
-	if [ -e /keymaps/${mykeymap}.map ]
-	then
-		echo -e "${HILITE}---- Loading ${mykeymap} keymap${NORMAL}"
-		loadkmap < /keymaps/${mykeymap}.map
-	elif [ "$mykeymap" = "" ]
-	then
-		#default keymap is "us"
-		echo -e "${HILITE}---- Loading default (US) keymap${NORMAL}"
-		loadkmap < /keymaps/us.map
-	else	
-		getkeymap
-	fi
-}
-
-modules_scan() {
-	local type
-	type=${1}; shift
-	for x in "$@"
+	for y in $CMDLINE
 	do
-		blurb "---- Scanning for ${x}..."
-		insmod.static -f /modules/${type}/${x}.o > /dev/null 2>&1
-		if [ $? -eq 0 ]
+		if [ "$y" = "do${x}" ] 
 		then
-			backup
-			echo -e "${GOOD}---- Detected ${x} hardware${NORMAL}"
-		else
-			backup
-			echo -ne "${NORMAL}"
+			MY_HWOPTS="MY_HWOPTS $x"
+		elif [ "$y" = "no${x}" ] 
+		then
+			MY_HWOPTS="`echo ${MY_HWOPTS} | sed -e 's/${x}//g' -`"
 		fi
 	done
-}
-echo "${GOOD} Initial RAMDISK Loading Starting..."
-# Mount the CD
+done
 
-if [ "$SCSI" = "yes" ]
-then
-DEVICE=SCSI
-	echo -e "${HILITE} ---- Beginning storage detection${NORMAL}"
-	# This next "%% %%" gets sed tweaked:
-	modules_scan storage %%STORAGE_MODULES%%
-fi
+echo "STEP 2: Module loading"
 
-if [ "$FIREWIRE" = "yes" ]
-then
-DEVICE=FIREWIRE
-        echo -e "${HILITE} ---- Beginning firewire detection${NORMAL}"
-        # This next "%% %%" gets sed tweaked:
-        modules_scan firewire %%FIREWIRE_MODULES%%
-fi
-if [ "$ATARAID" = "yes" ]
-then
-DEVICE=ATARAID
-        echo -e "${HILITE} ---- Beginning ata detection${NORMAL}"
-        # This next "%% %%" gets sed tweaked:
-        modules_scan ataraid %%ATARAID_MODULES%%
-fi
+# Load appropriate kernel modules
+for x in $MY_HWOPTS
+do
+	modules_scan $x
+done
 
-if [ "$PCMCIA" = "yes" ]
+echo "STEP 3: Mounting necessary filesystems per boot options"
+
+mkdir /newroot
+if [ "${CDROOT}" -eq "1" ]
 then
-DEVICE=PCMCIA
-        echo -e "${HILITE} ---- Beginning pcmcia detection${NORMAL}"
-        # This next "%% %%" gets sed tweaked:
-        modules_scan %%PCMCIA_MODULES%%
-fi
-if [ "$USB" = "yes" ]
-then
-DEVICE=USB
-        echo -e "${HILITE} ---- Beginning usb detection${NORMAL}"
-        # This next "%% %%" gets sed tweaked:
-        modules_scan usb %%USB_MODULES%%
+	mount -t tmpfs tmpfs /newroot
+	mkdir /newroot/dev /newroot/mnt /newroot/mnt/cdrom /newroot/mnt/.init.d /newroot/mnt/gentoo
+	[ ! -e /newroot/dev/.devfsd ] && mount -t devfs devfs /newroot/dev
+	devfsd /newroot/dev
+	findcdmount /newroot/dev/cdroms/*
+	if [ "${REAL_ROOT}" = "" ]
+	then
+		kill_devfsd
+		umount /newroot/dev/
+		umount /newroot
+		# shouldn't be anything in here b/c it was on tmpfs
+		rm -rf /newroot/*
+		CDROOT=0
+		echo "Could not find CD to boot, gonna need something else"
+	fi
 fi
 
-if [ "$KEYMAP" = "yes" ]
+# Don't do else b/c we set CDROOT=0 if it fails to detect
+if [ "${CDROOT}" -eq "0" -a "${USE_DEVFS_NORMAL}" -eq "1" ]
 then
-getkeymap
+	[ ! -e /dev/.devfsd ] && mount -t devfs devfs /dev
+	devfsd /dev
 fi
 
-exit
+echo "STEP 4: Determining root device"
+
+while true
+do
+	while [ "${got_good_root}" != "1" ]
+	do
+		
+		if [ "${REAL_ROOT}" = "shell" ]
+		then
+			/bin/ash
+
+			#set REAL_ROOT to "" so we get a prompt for the real root after the shell exits.
+			REAL_ROOT=""
+			got_good_root=0
+			continue
+		elif [ "${REAL_ROOT}" = "" ]
+		then
+			#no REAL_ROOT determined/specified. Prompt user for root block device.
+			echo "Root block device unspecified or not detected."
+			echo "Please specify a device to boot, or \"shell\" for a shell."
+			echo -n ": "
+			read REAL_ROOT
+			got_good_root=0
+		elif [ -b "${REAL_ROOT}" ]
+		then
+			got_good_root=1
+		else
+			REAL_ROOT=""
+			got_good_root=0
+		fi
+	done
+
+
+	if [ "${CDROOT}" -eq "1" -a "${got_good_root}" = "1" ]
+	then
+		break
+	else
+		echo "STEP 4a: Mounting root"
+
+		mount -o ro ${REAL_ROOT} /newroot
+		if [ "$?" = "0" ]
+		then
+			break
+		else
+			echo "Could not mount specified ROOT, try again"
+			got_good_root=0
+			REAL_ROOT=""
+		fi
+	fi
+done
+
+[ -n "$QUIET" ] && echo "6" > /proc/sys/kernel/printk
+echo "STEP 5: Finishing up"
+
+if [ "${CDROOT}" = "1" ]
+then
+	echo "STEP 5a: filling tmpfs filesystem"
+	cd /newroot
+	for x in ${ROOT_LINKS}
+	do
+		ln -s "mnt/cdrom/${x}" "${x}"
+	done
+	mkdir initrd proc tmp sys
+	chmod 1777 tmp
+	(cd /newroot/mnt/cdrom; cp -a ${ROOT_TREES} /newroot)
+	kill_devfsd
+else
+	echo "STEP 5b: setting up stuff for pivot_root"
+	mkdir /newroot/initrd
+fi
+
+echo "STEP 6: pivot_root and exec/chroot real init"
+
+
+cd /newroot
+pivot_root . initrd
+
+if [ "${USE_DEVFS_NORMAL}" -eq "1" -a "${CDROOT}" -eq "0" ]
+then
+	# must mount a new devfs before we can
+	# umount the old one for some reason
+	mount -t proc proc /proc
+	mount -t devfs devfs /dev
+	kill_devfsd
+	umount /initrd/proc
+	umount /initrd/dev
+
+	# Uhh, initrd is wasting memory ... let's
+	# kill the sucker here and now!
+	umount /initrd
+	blockdev --flushbufs /dev/ram0
+
+	# at this point it lets us umount the new
+	# devfs, don't know why, just does, stop
+	# asking questions!
+	umount /dev
+	umount /proc
+fi
+
+# why chroot ??  /usr/src/linux/Documentation/initrd.txt 
+# says to, but I see no reason to do this .... very odd...
+# here's the line it says we should do:
+#       exec chroot . /sbin/init </dev/console >/dev/console 2>&1
+# not gonna though ....
+exec /sbin/init
+
