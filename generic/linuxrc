@@ -240,7 +240,7 @@ then
 		check_loop
 		mount -o bind /newroot/dev /dev
 		echo "STEP 5a1: mounting gcloop (ext2) filesystem"
-		echo " " | losetup -e ucl-0 -p0 /newroot/dev/loop0 /newroot/mnt/cdrom/${LOOP}
+		echo " " | losetup -E 19 -e ucl-0 -p0 /newroot/dev/loop0 /newroot/mnt/cdrom/${LOOP}
 		if [ "$?" != "0" ]
 		then
 			echo "FAILED TO losetup THE LOOP DEVICE"
@@ -291,26 +291,25 @@ then
 	umount /tmp/.initrd/proc || echo "COULD NOT UMOUNT tmp/.initrd/proc !!!"
 	umount /tmp/.initrd/dev || echo "COULD NOT UMOUNT tmp/.initrd/dev !!!"
 
-	# Uhh, initrd is wasting memory ... let's
-	# kill the sucker here and now!
-	# umount tmp/.initrd
-	# blockdev --flushbufs /dev/ram0
-
 	# at this point it lets us umount the new
 	# devfs, don't know why, just does, stop
 	# asking questions!
 	umount /dev
 	umount /proc
+	cp -f /etc/mtab /etc/mtab.initrd-here
+
 elif [ "${CDROOT}" -eq "1" ]
 then
 	# If automount at boot was on with devfs, we'll want to umount it
 	# also umount proc
 	echo "STEP 6a: clean up mounts"
-	sleep 1
-	umount /tmp/.initrd/dev || echo "COULD NOT UMOUNT tmp/.initrd/dev !!!"
-	sleep 1
-	umount /tmp/.initrd/proc || echo "COULD NOT UMOUNT tmp/.initrd/proc !!!"
-	sleep 1
+	mount -t proc proc /proc
+	mount -t devfs devfs /dev
+	umount /tmp/.initrd/dev || echo "COULD NOT UMOUNT /tmp/.initrd/dev !!!"
+	umount /tmp/.initrd/proc || echo "COULD NOT UMOUNT /tmp/.initrd/proc !!!"
+
+	umount /dev
+	umount /proc
 fi
 
 # /usr/src/linux/Documentation/initrd.txt 
