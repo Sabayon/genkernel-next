@@ -93,7 +93,7 @@ create_base_initrd_sys() {
 #		gen_die "could not uncompress devfsd.conf"
 
 	# LVM2
-	if [ "${LVM2}" -eq '1' ]
+	if [ "${LVM2}" = '1' ]
 	then
 		if [ -e '/sbin/lvm' ] && ldd /sbin/lvm|grep -q 'not a dynamic executable';
 		then
@@ -128,7 +128,7 @@ create_base_initrd_sys() {
 	fi
 	
 	# EVMS2
-	if [ "${CMD_EVMS2}" -eq '1' ]
+	if [ "${CMD_EVMS2}" = '1' ]
 	then
 		if [ -e '/sbin/evms_activate' ]
 		then
