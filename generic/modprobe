@@ -149,6 +149,7 @@ do
 done
 
 modprobe2 ${1}
+modprobe_ret=$?
 
 [ -f "/modules.cache" ] && rm -f /modules.cache > /dev/null 2>&1
 for x in ${LOADED_MODULES}
@@ -156,5 +157,4 @@ do
 	echo $x >> /modules.cache
 done
 
-exit $?
-
+exit $modprobe_ret

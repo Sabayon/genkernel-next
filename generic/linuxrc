@@ -296,7 +296,7 @@ then
 	# asking questions!
 	umount /dev
 	umount /proc
-	cp -f /etc/mtab /etc/mtab.initrd-here
+	cp -f /etc/mtab /etc/mtab.initrd-here > /dev/null 2>&1
 
 elif [ "${CDROOT}" -eq "1" ]
 then
@@ -304,12 +304,9 @@ then
 	# also umount proc
 	echo "STEP 6a: clean up mounts"
 	mount -t proc proc /proc
-	mount -t devfs devfs /dev
-	umount /tmp/.initrd/dev || echo "COULD NOT UMOUNT /tmp/.initrd/dev !!!"
-	umount /tmp/.initrd/proc || echo "COULD NOT UMOUNT /tmp/.initrd/proc !!!"
-
-	umount /dev
-	umount /proc
+	umount /tmp/.initrd/proc > /dev/null 2>&1 || echo "COULD NOT UMOUNT /tmp/.initrd/proc !!!"
+	umount /dev > /dev/null 2>&1
+	umount /proc > /dev/null 2>&1
 fi
 
 # /usr/src/linux/Documentation/initrd.txt 
@@ -317,7 +314,6 @@ fi
 #       exec chroot . /sbin/init </dev/console >/dev/console 2>&1
 
 exec chroot . /bin/sh <<- EOF
-	echo "UMOUNTING /tmp/.initrd"
 	umount /tmp/.initrd || echo "UMOUNT of /tmp/.initrd FAILED!!!" && /sbin/blockdev --flushbufs /dev/ram0
 	echo "INIT: starting /sbin/init ${CMDLINE}"
 	exec /sbin/init ${CMDLINE}
