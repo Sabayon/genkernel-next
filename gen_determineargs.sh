@@ -137,4 +137,33 @@ determine_real_args() {
 	then
 		NOINITRDMODULES="${CMD_NOINITRDMODULES}"
 	fi
+
+	if [ "${CMD_MOUNTBOOT}" != '' ]
+	then
+		MOUNTBOOT="${CMD_MOUNTBOOT}"
+	fi
+
+	if isTrue ${MOUNTBOOT}
+	then
+		MOUNTBOOT=1
+	else
+		MOUNTBOOT=0
+	fi
+
+	if [ "${CMD_SAVE_CONFIG}" != '' ]
+	then
+		SAVE_CONFIG="${CMD_SAVE_CONFIG}"
+	fi
+
+	if isTrue ${SAVE_CONFIG}
+	then
+		${SAVE_CONFIG}=1
+	else
+		${SAVE_CONFIG}=0
+	fi
+  
+	if [ "${CMD_INSTALL_MOD_PATH}" != '' ]
+	then
+		INSTALL_MOD_PATH="${CMD_INSTALL_MOD_PATH}"
+	fi
 }

@@ -8,7 +8,7 @@ modules_dep_list()
 	else
 		KEXT=".o"
 	fi
-        cat /lib/modules/${KV}/modules.dep | grep ${1}${KEXT}\: | cut -d\:  -f2
+	cat ${INSTALL_MOD_PATH}/lib/modules/${KV}/modules.dep | grep ${1}${KEXT}\: | cut -d\:  -f2
 }
 
 # Pass module deps list

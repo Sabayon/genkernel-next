@@ -146,9 +146,12 @@ then
 	# Compile modules
 	compile_modules
 
-	print_info 1 "Copying config for successful build to /etc/kernels/kernel-config-${ARCH}-${KV}"
-	[ ! -e "/etc/kernels" ] && mkdir -p /etc/kernels
-	cp "${KERNEL_DIR}/.config" "/etc/kernels/kernel-config-${ARCH}-${KV}"
+	if [ ${SAVE_CONFIG} -eq 1 ]
+	then
+		print_info 1 "Copying config for successful build to /etc/kernels/kernel-config-${ARCH}-${KV}"
+		[ ! -e '/etc/kernels' ] && mkdir -p /etc/kernels
+		cp "${KERNEL_DIR}/.config" "/etc/kernels/kernel-config-${ARCH}-${KV}"
+	fi
 fi
 
 # Run callback

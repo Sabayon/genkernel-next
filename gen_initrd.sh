@@ -115,9 +115,15 @@ create_initrd_modules() {
 	fi
 
 	print_info 2 "initrd: >> Searching for modules..."
+	if [ "${INSTALL_MOD_PATH}" != '' ]
+	then
+	  cd ${INSTALL_MOD_PATH}
+	else
+	  cd /
+	fi
 	for i in `gen_dep_list`
 	do
-		mymod=`find /lib/modules/${KV} -name "${i}${MOD_EXT}" | head -n 1`
+		mymod=`find ./lib/modules/${KV} -name "${i}${MOD_EXT}" | head -n 1`
 		if [ -z "${mymod}" ]
 		then
 			print_warning 2 "Warning :: ${i}${MOD_EXT} not found; skipping..."
@@ -127,7 +133,7 @@ create_initrd_modules() {
 		cp -ax --parents "${mymod}" "${TEMP}/initrd-temp"
 	done
 
-	cp -ax --parents /lib/modules/${KV}/modules* ${TEMP}/initrd-temp
+	cp -ax --parents ./lib/modules/${KV}/modules* ${TEMP}/initrd-temp
 
 	mkdir -p "${TEMP}/initrd-temp/etc/modules"
 	for group_modules in ${!MODULES_*}; do

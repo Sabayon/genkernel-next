@@ -21,6 +21,8 @@ longusage() {
   echo "	--no-menuconfig		Do not run menuconfig after oldconfig"
   echo "	--gconfig		Run gconfig after oldconfig"
   echo "	--xconfig		Run xconfig after oldconfig"
+  echo "	--save-config		Save the configuration to /etc/kernels"
+  echo "	--no-save-config	Don't save the configuration to /etc/kernels"
   echo "  Kernel Compile settings"
   echo "	--clean			Run make clean before compilation"
   echo "	--mrproper		Run make mrproper before compilation"
@@ -38,6 +40,8 @@ longusage() {
   echo "  Kernel settings"
   echo "	--kerneldir=<dir>	Location of the kernel sources"
   echo "	--kernel-config=<file>	Kernel configuration file to use for compilation"
+  echo "	--module-prefix=<dir>	Prefix to kernel module destination, modules will"
+  echo "				be installed in <prefix>/lib/modules"
   echo "  Low-Level Compile settings"
   echo "	--kernel-cc=<compiler>	Compiler to use for kernel (e.g. distcc)"
   echo "	--kernel-as=<assembler>	Assembler to use for kernel"
@@ -48,11 +52,14 @@ longusage() {
   echo "	--utils-ld=<linker>	Linker to use for utils"
   echo "	--utils-make=<makeprog>	GNU Make to use for utils"
   echo "	--makeopts=<makeopts>	Make options such as -j2, etc."
+  echo "	--mountboot		Mount /boot automatically"
+  echo "	--no-mountboot		Don't mount /boot automatically"  
   echo "  Initialization"
   echo "	--bootsplash=<theme>	Force bootsplash using <theme>."
   echo "	--do-keymap-auto	Forces keymap selection at boot."
   echo "	--no-lvm2		Don't add in LVM2 support."
   echo "  Internals"
+  echo "	--tempdir=<dir>   Location of Genkernel's temporary directory"
   echo "	--arch-override=<arch>	Force to arch instead of autodetect"
   echo "	--busybox-config=<file>	Busybox configuration file to use"
   echo "	--busybox-bin=<file>	Don't compile busybox, use this _static_"
@@ -124,6 +131,14 @@ parse_cmdline() {
 		      CMD_MAKEOPTS=`parse_opt "$*"`
 		      print_info 2 "CMD_MAKEOPTS: $CMD_MAKEOPTS"
 	      ;;
+	      --mountboot)
+		      CMD_MOUNTBOOT=1
+		      print_info 2 "CMD_MOUNTBOOT: $CMD_MOUNTBOOT"
+	      ;;
+	      --no-mountboot)
+		      CMD_MOUNTBOOT=0
+		      print_info 2 "CMD_MOUNTBOOT: $CMD_MOUNTBOOT"
+	      ;;
 	      --do-keymap-auto)
 		      CMD_DOKEYMAPAUTO=1
 		      print_info 2 "CMD_DOKEYMAPAUTO: $CMD_DOKEYMAPAUTO"
@@ -161,6 +176,14 @@ parse_cmdline() {
 	      --xconfig)
 		      CMD_XCONFIG=1
 		      print_info 2 "CMD_XCONFIG: $CMD_XCONFIG"
+	      ;;
+	      --save-config)
+		      CMD_SAVE_CONFIG=1
+		      print_info 2 "CMD_SAVE_CONFIG: $CMD_SAVE_CONFIG"
+	      ;;
+	      --no-save-config)
+		      CMD_SAVE_CONFIG=0
+		      print_info 2 "CMD_SAVE_CONFIG: $CMD_SAVE_CONFIG"
 	      ;;
 	      --mrproper)
 		      CMD_MRPROPER=1
@@ -214,6 +237,10 @@ parse_cmdline() {
 		      CMD_CALLBACK=`parse_opt "$*"`
 		      print_info 2 "CMD_CALLBACK: $CMD_CALLBACK/$*"
 	      ;;
+	      --tempdir*)
+	        TEMP=`parse_opt "$*"`
+	        print_info 2 "TEMP: $TEMP"
+	      ;; 
 	      --arch-override*)
 		      CMD_ARCHOVERRIDE=`parse_opt "$*"`
 		      print_info 2 "CMD_ARCHOVERRIDE: $CMD_ARCHOVERRIDE"
@@ -239,6 +266,10 @@ parse_cmdline() {
 	      --kernel-config*)
 		      CMD_KERNEL_CONFIG=`parse_opt "$*"`
 		      print_info 2 "CMD_KERNEL_CONFIG: $CMD_KERNEL_CONFIG"
+	      ;;
+	      --module-prefix*)
+		      CMD_INSTALL_MOD_PATH=`parse_opt "$*"`
+		      print_info 2 "CMD_INSTALL_MOD_PATH: $CMD_INSTALL_MOD_PATH"
 	      ;;
 	      --busybox-config*)
 		      CMD_BUSYBOX_CONFIG=`parse_opt "$*"`

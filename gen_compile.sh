@@ -184,11 +184,9 @@ compile_modules() {
 		MAKEOPTS_SAVE="${MAKEOPTS}"
 		MAKEOPTS='-j1'
 	fi
+	[ "${INSTALL_MOD_PATH}" != '' ] && export INSTALL_MOD_PATH
 	compile_generic "modules_install" kernel
-	if [ "${VER}" -eq '2' -a "${PAT}" -le '4' ]
-	then
-		MAKEOPTS="${MAKEOPTS_SAVE}"
-	fi
+	[ "${VER}" -eq '2' -a "${PAT}" -le '4' ] && MAKEOPTS="${MAKEOPTS_SAVE}"
 	export MAKEOPTS
 	unset UNAME_MACHINE
 }
@@ -206,8 +204,10 @@ compile_kernel() {
 	if ! isTrue "${CMD_NOINSTALL}"
 	then
 		cp "${KERNEL_BINARY}" "/boot/kernel-${KV}" || gen_die 'Could not copy the kernel binary to /boot!'
+		cp "System.map" "/boot/System.map-${KV}" || gen_die 'Could not copy System.map to /boot!'
 	else
 		cp "${KERNEL_BINARY}" "${TEMP}/kernel-${KV}" || gen_die "Could not copy the kernel binary to ${TEMP}!"
+		cp "System.map" "${TEMP}/System.map-${KV}" || gen_die "Could not copy System.map to ${TEMP}!"
 	fi
 }
 
