@@ -70,7 +70,7 @@ set_grub_bootloader() {
 				sub(/\(.+\)/,"(" ch KV ch ")",$1);
 				sub(/kernel-[[:alnum:][:punct:]]+/, "kernel-" KV, $3);
 				sub(/initrd-[[:alnum:][:punct:]]+/, "initrd-" KV, $4);
-				print RS ch $0 }' 
+				print RS ch $0 }' \
 			KV=$KV $GRUB_CONF.bak >> $GRUB_CONF
 	fi
 }

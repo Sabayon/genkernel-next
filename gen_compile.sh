@@ -108,7 +108,8 @@ unset_kernel_args()
 
 compile_generic() {
 	local RET
-	[ "$#" -lt '2' ] && gen_die "compile_generic(): improper usage"
+	[ "$#" -lt '2' ] &&
+		gen_die 'compile_generic(): improper usage!'
 
 	if [ "${2}" = 'kernel' ] || [ "${2}" = 'runtask' ]
 	then
@@ -137,7 +138,8 @@ compile_generic() {
 		${MAKE} ${MAKEOPTS} ${1} >> ${DEBUGFILE} 2>&1
 		RET=$?
 	fi
-	[ "${RET}" -ne '0' ] && gen_die "Failed to compile the \"${1}\" target..."
+	[ "${RET}" -ne '0' ] &&
+		gen_die "Failed to compile the \"${1}\" target..."
 
 	unset MAKE
 	if [ "${2}" = 'kernel' ]
@@ -152,8 +154,10 @@ compile_generic() {
 extract_dietlibc_bincache() {
 	cd "${TEMP}"
 	rm -rf "${TEMP}/diet" > /dev/null
-	tar -jxpf "${DIETLIBC_BINCACHE}" || gen_die "Could not extract dietlibc bincache!"
-	[ ! -d "${TEMP}/diet" ] && gen_die "${TEMP}/diet directory not found!"
+	tar -jxpf "${DIETLIBC_BINCACHE}" ||
+		gen_die 'Could not extract dietlibc bincache!'
+	[ ! -d "${TEMP}/diet" ] &&
+		gen_die "${TEMP}/diet directory not found!"
 	cd - > /dev/null
 }
 
@@ -192,7 +196,8 @@ compile_modules() {
 }
 
 compile_kernel() {
-	[ "${KERNEL_MAKE}" = '' ] && gen_die "KERNEL_MAKE undefined - I don't know how to compile a kernel for this arch!"
+	[ "${KERNEL_MAKE}" = '' ] &&
+		gen_die "KERNEL_MAKE undefined - I don't know how to compile a kernel for this arch!"
 	cd ${KERNEL_DIR}
 	print_info 1 "        >> Compiling ${KV} ${KERNEL_MAKE_DIRECTIVE/_install/ [ install ]/}..."
 	compile_generic "${KERNEL_MAKE_DIRECTIVE}" kernel
@@ -203,23 +208,31 @@ compile_kernel() {
 	fi
 	if ! isTrue "${CMD_NOINSTALL}"
 	then
-		cp "${KERNEL_BINARY}" "/boot/kernel-${KV}" || gen_die 'Could not copy the kernel binary to /boot!'
-		cp "System.map" "/boot/System.map-${KV}" || gen_die 'Could not copy System.map to /boot!'
+		cp "${KERNEL_BINARY}" "/boot/kernel-${KV}" ||
+			gen_die 'Could not copy the kernel binary to /boot!'
+		cp "System.map" "/boot/System.map-${KV}" ||
+			gen_die 'Could not copy System.map to /boot!'
 	else
-		cp "${KERNEL_BINARY}" "${TEMP}/kernel-${KV}" || gen_die "Could not copy the kernel binary to ${TEMP}!"
-		cp "System.map" "${TEMP}/System.map-${KV}" || gen_die "Could not copy System.map to ${TEMP}!"
+		cp "${KERNEL_BINARY}" "${TEMP}/kernel-${KV}" ||
+			gen_die "Could not copy the kernel binary to ${TEMP}!"
+		cp "System.map" "${TEMP}/System.map-${KV}" ||
+			gen_die "Could not copy System.map to ${TEMP}!"
 	fi
 }
 
 compile_busybox() {
 	if [ ! -f "${BUSYBOX_BINCACHE}" ]
 	then
-		[ -f "${BUSYBOX_SRCTAR}" ] || gen_die "Could not find busybox source tarball: ${BUSYBOX_SRCTAR}!"
-		[ -f "${BUSYBOX_CONFIG}" ] || gen_die "Cound not find busybox config file: ${BUSYBOX_CONFIG}!"
+		[ -f "${BUSYBOX_SRCTAR}" ] ||
+			gen_die "Could not find busybox source tarball: ${BUSYBOX_SRCTAR}!"
+		[ -f "${BUSYBOX_CONFIG}" ] ||
+			gen_die "Cound not find busybox config file: ${BUSYBOX_CONFIG}!"
 		cd "${TEMP}"
 		rm -rf ${BUSYBOX_DIR} > /dev/null
-		tar -jxpf ${BUSYBOX_SRCTAR} || gen_die 'Could not extract busybox source tarball!'
-		[ -d "${BUSYBOX_DIR}" ] || gen_die 'Busybox directory ${BUSYBOX_DIR} is invalid!'
+		tar -jxpf ${BUSYBOX_SRCTAR} ||
+			gen_die 'Could not extract busybox source tarball!'
+		[ -d "${BUSYBOX_DIR}" ] ||
+			gen_die 'Busybox directory ${BUSYBOX_DIR} is invalid!'
 		cp "${BUSYBOX_CONFIG}" "${BUSYBOX_DIR}/.config"
 		cd "${BUSYBOX_DIR}"
 # Busybox and dietlibc don't play nice right now
@@ -240,10 +253,14 @@ compile_busybox() {
 #			UTILS_CC="${OLD_CC}"
 #		fi
 		print_info 1 'busybox: >> Copying to cache...'
-		[ -f "${TEMP}/${BUSYBOX_DIR}/busybox" ] || gen_die 'Busybox executable does not exist!'
-		strip "${TEMP}/${BUSYBOX_DIR}/busybox" || gen_die 'Could not strip busybox binary!'
-		bzip2 "${TEMP}/${BUSYBOX_DIR}/busybox" || gen_die 'bzip2 compression of busybox failed!'
-		mv "${TEMP}/${BUSYBOX_DIR}/busybox.bz2" "${BUSYBOX_BINCACHE}" || gen_die 'Could not copy the busybox binary to package directory, does the directory exist?'
+		[ -f "${TEMP}/${BUSYBOX_DIR}/busybox" ] ||
+			gen_die 'Busybox executable does not exist!'
+		strip "${TEMP}/${BUSYBOX_DIR}/busybox" ||
+			gen_die 'Could not strip busybox binary!'
+		bzip2 "${TEMP}/${BUSYBOX_DIR}/busybox" ||
+			gen_die 'bzip2 compression of busybox failed!'
+		mv "${TEMP}/${BUSYBOX_DIR}/busybox.bz2" "${BUSYBOX_BINCACHE}" ||
+			gen_die 'Could not copy the busybox binary to the package directory, does the directory exist?'
 
 		cd "${TEMP}"
 		rm -rf "${BUSYBOX_DIR}" > /dev/null
@@ -254,11 +271,13 @@ compile_modutils() {
 	local ARGS
 	if [ ! -f "${MODUTILS_BINCACHE}" ]
 	then
-		[ ! -f "${MODUTILS_SRCTAR}" ] && gen_die "Could not find modutils source tarball: ${MODUTILS_SRCTAR}!"
+		[ ! -f "${MODUTILS_SRCTAR}" ] &&
+			gen_die "Could not find modutils source tarball: ${MODUTILS_SRCTAR}!"
 		cd "${TEMP}"
 		rm -rf "${MODUTILS_DIR}"
 		tar -jxpf "${MODUTILS_SRCTAR}"
-		[ ! -d "${MODUTILS_DIR}" ] && gen_die "Modutils directory ${MODUTILS_DIR} invalid!"
+		[ ! -d "${MODUTILS_DIR}" ] &&
+			gen_die "Modutils directory ${MODUTILS_DIR} invalid!"
 		cd "${MODUTILS_DIR}"
 		print_info 1 "modutils: >> Configuring..."
 
@@ -271,7 +290,8 @@ compile_modutils() {
 
 		export_utils_args
 		export ARCH=${ARCH}
-		./configure --disable-combined --enable-insmod-static >> ${DEBUGFILE} 2>&1 || gen_die 'Configuring modutils failed!'
+		./configure --disable-combined --enable-insmod-static >> ${DEBUGFILE} 2>&1 ||
+			gen_die 'Configuring modutils failed!'
 		unset_utils_args
 
 		print_info 1 'modutils: >> Compiling...'
@@ -284,10 +304,14 @@ compile_modutils() {
 		fi
 
 		print_info 1 'modutils: >> Copying to cache...'
-		[ -f "${TEMP}/${MODUTILS_DIR}/insmod/insmod.static" ] || gen_die "insmod.static does not exist after the compilation of modutils!"
-		strip "${TEMP}/${MODUTILS_DIR}/insmod/insmod.static" || gen_die 'Could not strip insmod.static!'
-		bzip2 "${TEMP}/${MODUTILS_DIR}/insmod/insmod.static" || gen_die 'Compression of insmod.static failed!'
-		mv "${TEMP}/${MODUTILS_DIR}/insmod/insmod.static.bz2" "${MODUTILS_BINCACHE}" || gen_die 'Could not move the compressed insmod binary to the package cache!'
+		[ -f "${TEMP}/${MODUTILS_DIR}/insmod/insmod.static" ] ||
+			gen_die 'insmod.static does not exist after the compilation of modutils!'
+		strip "${TEMP}/${MODUTILS_DIR}/insmod/insmod.static" ||
+			gen_die 'Could not strip insmod.static!'
+		bzip2 "${TEMP}/${MODUTILS_DIR}/insmod/insmod.static" ||
+			gen_die 'Compression of insmod.static failed!'
+		mv "${TEMP}/${MODUTILS_DIR}/insmod/insmod.static.bz2" "${MODUTILS_BINCACHE}" ||
+			gen_die 'Could not move the compressed insmod binary to the package cache!'
 
 		cd "${TEMP}"
 		rm -rf "${MODULE_INIT_TOOLS_DIR}" > /dev/null
@@ -298,11 +322,13 @@ compile_module_init_tools() {
 	local ARGS
 	if [ ! -f "${MODULE_INIT_TOOLS_BINCACHE}" ]
 	then
-		[ ! -f "${MODULE_INIT_TOOLS_SRCTAR}" ] && gen_die "Could not find module-init-tools source tarball: ${MODULE_INIT_TOOLS_SRCTAR}"
+		[ ! -f "${MODULE_INIT_TOOLS_SRCTAR}" ] &&
+			gen_die "Could not find module-init-tools source tarball: ${MODULE_INIT_TOOLS_SRCTAR}"
 		cd "${TEMP}"
 		rm -rf "${MODULE_INIT_TOOLS_DIR}"
 		tar -jxpf "${MODULE_INIT_TOOLS_SRCTAR}"
-		[ ! -d "${MODULE_INIT_TOOLS_DIR}" ] && gen_die "Module-init-tools directory ${MODULE_INIT_TOOLS_DIR} invalid"
+		[ ! -d "${MODULE_INIT_TOOLS_DIR}" ] &&
+			gen_die "Module-init-tools directory ${MODULE_INIT_TOOLS_DIR} is invalid"
 		cd "${MODULE_INIT_TOOLS_DIR}"
 		print_info 1 'module-init-tools: >> Configuring'
 
@@ -314,7 +340,8 @@ compile_module_init_tools() {
 		fi
 
 		export_utils_args
-		./configure >> ${DEBUGFILE} 2>&1 || gen_die 'Configure of module-init-tools failed!'
+		./configure >> ${DEBUGFILE} 2>&1 ||
+			gen_die 'Configure of module-init-tools failed!'
 		unset_utils_args
 		print_info 1 '                   >> Compiling...'
 		compile_generic "all" utils
@@ -326,11 +353,16 @@ compile_module_init_tools() {
 		fi
 
 		print_info 1 '                   >> Copying to cache...'
-		[ -f "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static" ] || gen_die 'insmod.static does not exist after the compilation of module-init-tools!'
-		strip "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static" || gen_die 'Could not strip insmod.static!'
-		bzip2 "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static" || gen_die 'Compression of insmod.static failed!'
-		[ -f "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static.bz2" ] || gen_die 'Could not find compressed insmod.static.bz2 binary!'
-		mv "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static.bz2" "${MODULE_INIT_TOOLS_BINCACHE}" || gen_die 'Could not move the compressed insmod binary to the package cache!'
+		[ -f "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static" ] ||
+			gen_die 'insmod.static does not exist after the compilation of module-init-tools!'
+		strip "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static" ||
+			gen_die 'Could not strip insmod.static!'
+		bzip2 "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static" ||
+			gen_die 'Compression of insmod.static failed!'
+		[ -f "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static.bz2" ] ||
+			gen_die 'Could not find compressed insmod.static.bz2 binary!'
+		mv "${TEMP}/${MODULE_INIT_TOOLS_DIR}/insmod.static.bz2" "${MODULE_INIT_TOOLS_BINCACHE}" ||
+			gen_die 'Could not move the compressed insmod binary to the package cache!'
 
 		cd "${TEMP}"
 		rm -rf "${MODULE_INIT_TOOLS_DIR}" > /dev/null
@@ -341,11 +373,13 @@ compile_devfsd() {
 	local ARGS
 	if [ ! -f "${DEVFSD_BINCACHE}" -o ! -f "${DEVFSD_CONF_BINCACHE}" ]
 	then
-		[ ! -f "${DEVFSD_SRCTAR}" ] && gen_die "Could not find devfsd source tarball: ${DEVFSD_SRCTAR}"
+		[ ! -f "${DEVFSD_SRCTAR}" ] &&
+			gen_die "Could not find devfsd source tarball: ${DEVFSD_SRCTAR}"
 		cd "${TEMP}"
 		rm -rf "${DEVFSD_DIR}"
 		tar -jxpf "${DEVFSD_SRCTAR}"
-		[ ! -d "${DEVFSD_DIR}" ] && gen_die "Devfsd directory ${DEVFSD_DIR} invalid"
+		[ ! -d "${DEVFSD_DIR}" ] &&
+			gen_die "Devfsd directory ${DEVFSD_DIR} invalid"
 		cd "${DEVFSD_DIR}"
 
 		if [ "${USE_DIETLIBC}" -eq '1' ]
@@ -376,9 +410,9 @@ compile_devfsd() {
 		[ -f "${TEMP}/${DEVFSD_DIR}/devfsd.bz2" ] || gen_die 'Could not find compressed devfsd.bz2 binary!'
 		mv "${TEMP}/${DEVFSD_DIR}/devfsd.bz2" "${DEVFSD_BINCACHE}" || gen_die 'Could not move compressed binary to the package cache!'
 
-		[ -f "${TEMP}/${DEVFSD_DIR}/devfsd.conf" ] || gen_die 'devfsd.conf does not exist after the compilation of devfsd!'
-		bzip2 "${TEMP}/${DEVFSD_DIR}/devfsd.conf" || gen_die 'Compression of devfsd.conf failed!'
-		mv "${TEMP}/${DEVFSD_DIR}/devfsd.conf.bz2" "${DEVFSD_CONF_BINCACHE}" || gen_die 'Could not move the compressed configuration to the package cache!'
+#		[ -f "${TEMP}/${DEVFSD_DIR}/devfsd.conf" ] || gen_die 'devfsd.conf does not exist after the compilation of devfsd!'
+#		bzip2 "${TEMP}/${DEVFSD_DIR}/devfsd.conf" || gen_die 'Compression of devfsd.conf failed!'
+#		mv "${TEMP}/${DEVFSD_DIR}/devfsd.conf.bz2" "${DEVFSD_CONF_BINCACHE}" || gen_die 'Could not move the compressed configuration to the package cache!'
 
 		cd "${TEMP}"
 		rm -rf "${DEVFSD_DIR}" > /dev/null
@@ -405,11 +439,14 @@ compile_dietlibc() {
 
 	if [ "${BUILD_DIETLIBC}" -eq '1' ]
 	then
-		[ -f "${DIETLIBC_SRCTAR}" ] || gen_die "Could not find dietlibc source tarball: ${DIETLIBC_SRCTAR}"
+		[ -f "${DIETLIBC_SRCTAR}" ] ||
+			gen_die "Could not find dietlibc source tarball: ${DIETLIBC_SRCTAR}"
 		cd "${TEMP}"
 		rm -rf "${DIETLIBC_DIR}" > /dev/null
-		tar -jxpf ${DIETLIBC_SRCTAR} || gen_die "Could not extract dietlibc source tarball"
-		[ -d "${DIETLIBC_DIR}" ] || gen_die "Dietlibc directory ${DIETLIBC_DIR} is invalid!"
+		tar -jxpf "${DIETLIBC_SRCTAR}" ||
+			gen_die 'Could not extract dietlibc source tarball'
+		[ -d "${DIETLIBC_DIR}" ] ||
+			gen_die "Dietlibc directory ${DIETLIBC_DIR} is invalid!"
 		cd "${DIETLIBC_DIR}"
 		print_info 1 "dietlibc: >> Compiling..."
 		compile_generic "prefix=${TEMP}/diet" utils
@@ -417,8 +454,10 @@ compile_dietlibc() {
 		compile_generic "prefix=${TEMP}/diet install" utils
 		print_info 1 "          >> Copying to bincache..."
 		cd ${TEMP}
-		tar -jcpf "${DIETLIBC_BINCACHE}" diet || gen_die "Could not tar up the dietlibc binary!"
-		[ -f "${DIETLIBC_BINCACHE}" ] || gen_die 'Dietlibc cache not created!'
+		tar -jcpf "${DIETLIBC_BINCACHE}" diet ||
+			gen_die 'Could not tar up the dietlibc binary!'
+		[ -f "${DIETLIBC_BINCACHE}" ] ||
+			gen_die 'Dietlibc cache not created!'
 		echo "${TEMP}" > "${DIETLIBC_BINCACHE_TEMP}"
 
 		cd "${TEMP}"
@@ -426,3 +465,42 @@ compile_dietlibc() {
 		rm -rf "${TEMP}/diet" > /dev/null
 	fi
 }
+
+compile_udev() {
+	if [ ! -f "${UDEV_BINCACHE}" ]
+	then
+		cd "${TEMP}"
+		rm -rf "${UDEV_DIR}" udev
+		[ ! -f "${UDEV_SRCTAR}" ] &&
+			gen_die "Could not find udev tarball: ${UDEV_SRCTAR}"
+		tar -jxpf "${UDEV_SRCTAR}" ||
+			gen_die 'Could not extract udev tarball'
+		[ ! -d "${UDEV_DIR}" ] &&
+			gen_die "Udev tarball ${UDEV_SRCTAR} is invalid"
+
+		cd "${UDEV_DIR}"
+		print_info 1 'udev: >> Compiling...'
+		ln -snf "${KERNEL_DIR}" klibc/linux ||
+			gen_die "Could not link to ${KERNEL_DIR}"
+		compile_generic 'USE_KLIBC=true USE_LOG=false DEBUG=false udevdir=/dev all etc/udev/udev.conf' utils
+		strip udev || gen_die 'Failed to strip the udev binary!'
+
+		print_info 1 '      >> Installing...'
+		install -d "${TEMP}/udev/etc/udev" "${TEMP}/udev/sbin" ||
+			gen_die 'Could not create directory hierarchy'
+		install -m 0755 udev "${TEMP}/udev/sbin" ||
+			gen_die 'Could not install udev binary'
+		install -m 0644 etc/udev/udev.conf "etc/udev/udev.rules" \
+			"etc/udev/udev.permissions" "${TEMP}/udev/etc/udev" ||
+				gen_die 'Could not install udev configuration'
+
+		cd "${TEMP}/udev"
+		print_info 1 '      >> Copying to bincache...'
+		tar -cjf "${UDEV_BINCACHE}" * ||
+			gen_die 'Could not create binary cache'
+
+		cd "${TEMP}"
+		rm -rf "${UDEV_DIR}" udev
+	fi
+}
+

@@ -4,16 +4,21 @@
 create_initrd_loop() {
 	local inodes
 	[ "$#" -ne '1' ] && gen_die 'create_initrd_loop(): Not enough arguments!'
-	mkdir -p ${TEMP}/initrd-mount || gen_die 'Could not create loopback mount directory!'
-	dd if=/dev/zero of=${TEMP}/initrd-${KV} bs=1k count=${1} >> "${DEBUGFILE}" 2>&1 || gen_die "Could not zero initrd-${KV}"
-	mke2fs -F -N500 -q "${TEMP}/initrd-${KV}" >> "${DEBUGFILE}" 2>&1 || gen_die "Could not format initrd-${KV}!"
-	mount -t ext2 -o loop "${TEMP}/initrd-${KV}" "${TEMP}/initrd-mount" >> "${DEBUGFILE}" 2>&1 || gen_die 'Could not mount the initrd filesystem!'
+	mkdir -p ${TEMP}/initrd-mount ||
+		gen_die 'Could not create loopback mount directory!'
+	dd if=/dev/zero of=${TEMP}/initrd-${KV} bs=1k count=${1} >> "${DEBUGFILE}" 2>&1 ||
+		gen_die "Could not zero initrd-${KV}"
+	mke2fs -F -N500 -q "${TEMP}/initrd-${KV}" >> "${DEBUGFILE}" 2>&1 ||
+		gen_die "Could not format initrd-${KV}!"
+	mount -t ext2 -o loop "${TEMP}/initrd-${KV}" "${TEMP}/initrd-mount" >> "${DEBUGFILE}" 2>&1 ||
+		gen_die 'Could not mount the initrd filesystem!'
 }
 
 create_initrd_unmount_loop()
 {
 	cd ${TEMP}
-	umount "${TEMP}/initrd-mount" || gen_die 'Could not unmount initrd system!'
+	umount "${TEMP}/initrd-mount" ||
+		gen_die 'Could not unmount initrd system!'
 }
 
 move_initrd_to_loop()
@@ -30,10 +35,12 @@ create_base_initrd_sys() {
 	mkdir -p ${TEMP}/initrd-temp/usr
 	mkdir -p ${TEMP}/initrd-temp/proc
 	mkdir -p ${TEMP}/initrd-temp/temp
+	mkdir -p ${TEMP}/initrd-temp/sys
 	mkdir -p ${TEMP}/initrd-temp/.initrd
 	ln -s bin ${TEMP}/initrd-temp/sbin
 	ln -s ../bin ${TEMP}/initrd-temp/usr/bin
 	ln -s ../bin ${TEMP}/initrd-temp/usr/sbin
+
 	echo "/dev/ram0     /           ext2    defaults" > ${TEMP}/initrd-temp/etc/fstab
 	echo "proc          /proc       proc    defaults    0 0" >> ${TEMP}/initrd-temp/etc/fstab
 
@@ -46,20 +53,25 @@ create_base_initrd_sys() {
 	MAKEDEV std
 	MAKEDEV console
 
-	cp "${BUSYBOX_BINCACHE}" "${TEMP}/initrd-temp/bin/busybox.bz2" || gen_die "could not copy busybox from bincache"
-	bunzip2 "${TEMP}/initrd-temp/bin/busybox.bz2" || gen_die "could not uncompress busybox"
+	cp "${BUSYBOX_BINCACHE}" "${TEMP}/initrd-temp/bin/busybox.bz2" ||
+		gen_die 'Could not copy busybox from bincache!'
+	bunzip2 "${TEMP}/initrd-temp/bin/busybox.bz2" ||
+		gen_die 'Could not uncompress busybox!'
 	chmod +x "${TEMP}/initrd-temp/bin/busybox"
 
 	if [ "${NOINITRDMODULES}" = '' ]
 	then
 		if [ "${PAT}" -gt "4" ]
 		then
-			cp "${MODULE_INIT_TOOLS_BINCACHE}" "${TEMP}/initrd-temp/bin/insmod.static.bz2" || gen_die "could not copy insmod.static from bincache"
+			cp "${MODULE_INIT_TOOLS_BINCACHE}" "${TEMP}/initrd-temp/bin/insmod.static.bz2" ||
+				gen_die 'Could not copy insmod.static from bincache!'
 		else
-			cp "${MODUTILS_BINCACHE}" "${TEMP}/initrd-temp/bin/insmod.static.bz2" || gen_die "could not copy insmod.static from bincache"
+			cp "${MODUTILS_BINCACHE}" "${TEMP}/initrd-temp/bin/insmod.static.bz2" ||
+				gen_die 'Could not copy insmod.static from bincache'
 		fi
 
-		bunzip2 "${TEMP}/initrd-temp/bin/insmod.static.bz2" || gen_die "could not uncompress insmod.static"
+		bunzip2 "${TEMP}/initrd-temp/bin/insmod.static.bz2" ||
+			gen_die 'Could not uncompress insmod.static!'
 		mv "${TEMP}/initrd-temp/bin/insmod.static" "${TEMP}/initrd-temp/bin/insmod"
 		chmod +x "${TEMP}/initrd-temp/bin/insmod"
 	fi
@@ -68,18 +80,25 @@ create_base_initrd_sys() {
 	bunzip2 "${TEMP}/initrd-temp/bin/devfsd.bz2" || gen_die "could not uncompress devfsd"
 	chmod +x "${TEMP}/initrd-temp/bin/devfsd"
 
+	[ "${CMD_UDEV}" ] && { tar -jxpf "${UDEV_BINCACHE}" -C "${TEMP}/initrd-temp" ||
+		gen_die "Could not extract udev binary cache!"; }
+
 # We make our own devfsd.conf these days, the default one doesn't work with the stripped
 # down devfsd we use with dietlibc
-#	cp "${DEVFSD_CONF_BINCACHE}" "${TEMP}/initrd-temp/etc/devfsd.conf.bz2" || gen_die "could not copy devfsd.conf from bincache"
-#	bunzip2 "${TEMP}/initrd-temp/etc/devfsd.conf.bz2" || gen_die "could not uncompress devfsd.conf"
+#	cp "${DEVFSD_CONF_BINCACHE}" "${TEMP}/initrd-temp/etc/devfsd.conf.bz2" ||
+#		gen_die "could not copy devfsd.conf from bincache"
+#	bunzip2 "${TEMP}/initrd-temp/etc/devfsd.conf.bz2" ||
+#		gen_die "could not uncompress devfsd.conf"
 
 	# LVM2
 	if [ -e '/sbin/vgscan.static' -a -e '/sbin/vgchange.static' ]
 	then
 		if [ "${CMD_NOLVM2}" -ne '1' ]
 		then
-			cp /sbin/vgscan.static "${TEMP}/initrd-temp/bin/vgscan" || gen_die 'Could not copy over vgscan!'
-			cp /sbin/vgchange.static "${TEMP}/initrd-temp/bin/vgchange" || gen_die 'Could not copy over vgchange!'
+			cp /sbin/vgscan.static "${TEMP}/initrd-temp/bin/vgscan" ||
+				gen_die 'Could not copy over vgscan!'
+			cp /sbin/vgchange.static "${TEMP}/initrd-temp/bin/vgchange" ||
+				gen_die 'Could not copy over vgchange!'
 		fi
 #	else
 #		print_warning 1 "initrd: No LVM2 static binaries found; skipping support..."
@@ -90,7 +109,8 @@ create_base_initrd_sys() {
 	pivot_root ps awk pwd rm rmdir rmmod sed sh sleep tar test touch true umount uname \
 	xargs yes zcat chmod chown cut kill killall; do
 		rm -f ${TEMP}/initrd-temp/bin/$i > /dev/null
-		ln  ${TEMP}/initrd-temp/bin/busybox ${TEMP}/initrd-temp/bin/$i || gen_die "Busybox error: could not link ${i}!"
+		ln  ${TEMP}/initrd-temp/bin/busybox ${TEMP}/initrd-temp/bin/$i ||
+			gen_die "Busybox error: could not link ${i}!"
 	done
 }
 
@@ -247,7 +267,8 @@ create_initrd() {
 			do
 				if [ -f "/etc/bootsplash/${BOOTSPLASH_THEME}/config/bootsplash-${bootRes}.cfg" ]
 				then
-					/sbin/splash -s -f /etc/bootsplash/${BOOTSPLASH_THEME}/config/bootsplash-${bootRes}.cfg >> ${TEMP}/initrd-${KV} || gen_die "Error: could not copy ${bootRes} bootsplash!"
+					/sbin/splash -s -f /etc/bootsplash/${BOOTSPLASH_THEME}/config/bootsplash-${bootRes}.cfg >> ${TEMP}/initrd-${KV} ||
+						gen_die "Error: could not copy ${bootRes} bootsplash!"
 				else
 					print_warning 1 "splash: Did not find a bootsplash for the ${bootRes} resolution..."
 				fi
@@ -258,6 +279,7 @@ create_initrd() {
 	fi
 	if ! isTrue "${CMD_NOINSTALL}"
 	then
-		cp ${TEMP}/initrd-${KV} /boot/initrd-${KV} || gen_die 'Could not copy the initrd to /boot!'
+		cp ${TEMP}/initrd-${KV} /boot/initrd-${KV} ||
+			gen_die 'Could not copy the initrd to /boot!'
 	fi
 }

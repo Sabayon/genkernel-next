@@ -91,6 +91,7 @@ determine_real_args() {
 	DIETLIBC_BINCACHE_TEMP=`arch_replace "${DIETLIBC_BINCACHE_TEMP}"`
 	DEVFSD_BINCACHE=`arch_replace "${DEVFSD_BINCACHE}"`
 	DEVFSD_CONF_BINCACHE=`arch_replace "${DEVFSD_CONF_BINCACHE}"`
+	UDEV_BINCACHE=`arch_replace "${UDEV_BINCACHE}"`
 	
 	if [ "${CMD_BOOTSPLASH}" != '' ]
 	then
@@ -155,11 +156,11 @@ determine_real_args() {
 		SAVE_CONFIG="${CMD_SAVE_CONFIG}"
 	fi
 
-	if isTrue ${SAVE_CONFIG}
+	if isTrue "${SAVE_CONFIG}"
 	then
-		${SAVE_CONFIG}=1
+		SAVE_CONFIG=1
 	else
-		${SAVE_CONFIG}=0
+		SAVE_CONFIG=0
 	fi
   
 	if [ "${CMD_INSTALL_MOD_PATH}" != '' ]
@@ -170,5 +171,12 @@ determine_real_args() {
 	if [ "${CMD_BOOTLOADER}" != '' ]
 	then
 		BOOTLOADER="${CMD_BOOTLOADER}"
+	fi
+
+	if isTrue "${CMD_OLDCONFIG}"
+	then
+		OLDCONFIG=1
+	else
+		OLDCONFIG=0
 	fi
 }

@@ -34,6 +34,7 @@ longusage() {
   echo "	--install		Install the kernel after building"
   echo "	--no-install		Do not install the kernel after building"
   echo "	--no-initrdmodules	Don't copy any modules to the initrd"
+  echo "	--udev			Add in udev support."
   echo "	--callback=<...>	Run the specified arguments after"
   echo "				the kernel and modules have been"
   echo "				compiled."
@@ -58,13 +59,10 @@ longusage() {
   echo "	--bootsplash=<theme>	Force bootsplash using <theme>."
   echo "	--do-keymap-auto	Forces keymap selection at boot."
   echo "	--no-lvm2		Don't add in LVM2 support."
-  echo "        --bootloader=grub       Add new kernel to grub configuration"
+  echo "        --bootloader=grub       Add new kernel to GRUB configuration"
   echo "  Internals"
-  echo "	--tempdir=<dir>   Location of Genkernel's temporary directory"
+  echo "	--tempdir=<dir>		Location of Genkernel's temporary directory"
   echo "	--arch-override=<arch>	Force to arch instead of autodetect"
-  echo "	--busybox-config=<file>	Busybox configuration file to use"
-  echo "	--busybox-bin=<file>	Don't compile busybox, use this _static_"
-  echo "				bzip2'd binary"
   echo "  Output Settings"
   echo "        --minkernpackage=<tbz2> File to output a .tar.bz2'd kernel and initrd:"
   echo "                                No modules outside of the initrd will be"
@@ -238,6 +236,10 @@ parse_cmdline() {
 		      CMD_NOINITRDMODULES=1
 		      print_info 2 "CMD_NOINITRDMODULES: $CMD_NOINITRDMODULES"
 	      ;;
+	      --udev)
+		      CMD_UDEV=0
+		      print_info 2 "CMD_UDEV: $CMD_UDEV"
+	      ;;
 	      --callback*)
 		      CMD_CALLBACK=`parse_opt "$*"`
 		      print_info 2 "CMD_CALLBACK: $CMD_CALLBACK/$*"
@@ -275,14 +277,6 @@ parse_cmdline() {
 	      --module-prefix*)
 		      CMD_INSTALL_MOD_PATH=`parse_opt "$*"`
 		      print_info 2 "CMD_INSTALL_MOD_PATH: $CMD_INSTALL_MOD_PATH"
-	      ;;
-	      --busybox-config*)
-		      CMD_BUSYBOX_CONFIG=`parse_opt "$*"`
-		      print_info 2 "CMD_BUSYBOX_CONFIG: $CMD_BUSYBOX_CONFIG"
-	      ;;
-	      --busybox-bin*)
-		      CMD_BUSYBOX_BIN=`parse_opt "$*"`
-		      print_info 2 "CMD_BUSYBOX_BIN: $CMD_BUSYBOX_BIN"
 	      ;;
 	      --minkernpackage*)
 		      CMD_MINKERNPACKAGE=`parse_opt "$*"`
