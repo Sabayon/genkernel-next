@@ -23,4 +23,3 @@ UTILS_AS=as
 UTILS_LD=ld
 
 COMPRESS_INITRD=yes
-

@@ -92,4 +92,6 @@ config_kernel() {
 		[ "$?" ] || gen_die 'Error: xconfig failed!'
 	fi
 
+	# Make sure Ext2 support is on...
+	sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_EXT2_FS[ =].*/CONFIG_EXT2_FS=y/g'
 }
