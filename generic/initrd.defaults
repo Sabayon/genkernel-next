@@ -11,14 +11,14 @@ KMINOR=`echo $KV | cut -f2 -d.`
 KVER="${KMAJOR}.${KMINOR}"
 MISCOPTS="cdcache idebug detect"
 HWOPTS="scsi firewire ataraid pcmcia usb"
-MY_HWOPTS="usb"
+MY_HWOPTS="usb firewire"
 QUIET=1
 ROOT_LINKS="bin sbin lib lib64 boot usr opt"
 ROOT_TREES="etc root home var"
 if [ "$KMVER" = "2.6" ]
 then
 	KSUFF=".ko"
-	INSMOD="insmod.static"
+	INSMOD="insmod"
 else
 	KSUFF=".o"
 	INSMOD="insmod"

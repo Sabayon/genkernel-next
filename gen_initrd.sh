@@ -61,7 +61,8 @@ create_base_initrd_sys() {
 	fi
 
 	bunzip2 "${TEMP}/initrd-temp/bin/insmod.static.bz2" || gen_die "could not uncompress insmod.static"
-	chmod +x "${TEMP}/initrd-temp/bin/insmod.static"
+	mv "${TEMP}/initrd-temp/bin/insmod.static" "${TEMP}/initrd-temp/bin/insmod"
+	chmod +x "${TEMP}/initrd-temp/bin/insmod"
 
 	cp "${DEVFSD_BINCACHE}" "${TEMP}/initrd-temp/bin/devfsd.bz2" || gen_die "could not copy devfsd executable from bincache"
 	bunzip2 "${TEMP}/initrd-temp/bin/devfsd.bz2" || gen_die "could not uncompress devfsd"
@@ -120,10 +121,10 @@ create_initrd_modules() {
 #						-e "s/%%USB_MODULES%%/${USB_MODULES}/" \
 #						> ${TEMP}/initrd-temp/linuxrc
 
-	cp "${GK_SHARE}/${ARCH}/linuxrc" "${TEMP}/initrd-temp/linuxrc"
-	cp "${GK_SHARE}/${ARCH}/initrd.scripts" "${TEMP}/initrd-temp/etc/initrd.scripts"
-	cp "${GK_SHARE}/${ARCH}/initrd.defaults" "${TEMP}/initrd-temp/etc/initrd.defaults"
-	cp "${GK_SHARE}/${ARCH}/modprobe" "${TEMP}/initrd-temp/sbin/modprobe"
+	cp "${GK_SHARE}/generic/linuxrc" "${TEMP}/initrd-temp/linuxrc"
+	cp "${GK_SHARE}/generic/initrd.scripts" "${TEMP}/initrd-temp/etc/initrd.scripts"
+	cp "${GK_SHARE}/generic/initrd.defaults" "${TEMP}/initrd-temp/etc/initrd.defaults"
+	cp "${GK_SHARE}/generic/modprobe" "${TEMP}/initrd-temp/sbin/modprobe"
 	chmod +x "${TEMP}/initrd-temp/linuxrc"
 	chmod +x "${TEMP}/initrd-temp/etc/initrd.scripts"
 	chmod +x "${TEMP}/initrd-temp/etc/initrd.defaults"
