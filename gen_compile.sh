@@ -625,7 +625,7 @@ compile_udev() {
 			gen_die 'Could not install udev binary!'
 		install -m 0644 etc/udev/udev.conf "${TEMP}/udev/etc/udev" ||
 				gen_die 'Could not install udev configuration!'
-		install -m 0644 etc/udev/udev.rules.gentoo "${TEMP}/udev/etc/udev/rules.d/50-udev.rules" ||
+		install -m 0644 etc/udev/gentoo/udev.rules "${TEMP}/udev/etc/udev/rules.d/50-udev.rules" ||
 				gen_die 'Could not install udev rules!'
 		install -m 0644 etc/udev/udev.permissions "${TEMP}/udev/etc/udev/permissions.d/50-udev.permissions" ||
 				gen_die 'Could not install udev permissions!'
