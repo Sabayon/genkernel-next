@@ -100,9 +100,9 @@ create_base_initrd_sys() {
 			print_info 1 'LVM2: Adding support (using local static binaries)...'
 			cp /sbin/lvm "${TEMP}/initrd-temp/bin/lvm" ||
 				gen_die 'Could not copy over lvm!'
-			ln -sf "${TEMP}/initrd-temp/bin/lvm" "${TEMP}/initrd-temp/bin/vgscan" ||
+			ln "${TEMP}/initrd-temp/bin/lvm" "${TEMP}/initrd-temp/bin/vgscan" ||
 				gen_die 'Could not symlink lvm -> vgscan!'
-			ln -sf "${TEMP}/initrd-temp/bin/lvm" "${TEMP}/initrd-temp/bin/vgchange" ||
+			ln "${TEMP}/initrd-temp/bin/lvm" "${TEMP}/initrd-temp/bin/vgchange" ||
 				gen_die 'Could not symlink lvm -> vgchange!'
 		else
 			print_info 1 'LVM2: Adding support (compiling binaries)...'
