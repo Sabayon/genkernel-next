@@ -235,13 +235,13 @@ then
 	    check_loop
 	    if [ "${DO_cache}" ]
 	    then
-		echo "${GOOD}>>${NORMAL}${BOLD} Copying loop file for caching...${NORMAL}"
-		cp /newroot/mnt/cdrom/${LOOP} /newroot/mnt/${LOOP}
+		echo -e "${GOOD}>>${NORMAL}${BOLD} Copying loop file for caching...${NORMAL}"
+		cp -a /newroot/mnt/cdrom/${LOOP} /newroot/mnt/${LOOP}
 		if [ $? -ne 0 ]
 		then
-			echo "${BAD}!!${NORMAL}${BOLD} Failed to cache the loop file! Lack of space?"
-			rm /newroot/mnt/livecd.* 2>/dev/null
-			rm /newroot/mnt/zisofs 2>/dev/null
+			echo -e "${BAD}!!${NORMAL}${BOLD} Failed to cache the loop file! Lack of space?"
+			rm -rf /newroot/mnt/livecd.* 2>/dev/null
+			rm -rf /newroot/mnt/zisofs 2>/dev/null
 		else
 			LOOPEXT="../"
 		fi
@@ -295,7 +295,7 @@ then
 		FS_LOCATION="mnt/cdrom"
 	fi
 
-	echo "${GOOD}>>${NORMAL}${BOLD} Filling filesystem...${NORMAL}"
+	echo -e "${GOOD}>>${NORMAL}${BOLD} Filling filesystem...${NORMAL}"
 	for x in ${ROOT_LINKS}
 	do
 		ln -s "${FS_LOCATION}/${x}" "${x}"
