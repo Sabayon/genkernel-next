@@ -117,4 +117,9 @@ determine_real_args() {
 		fi
 	fi
 
+	if [ "${CMD_MINKERNPACKAGE}" != "" ]
+	then
+		MINKERNPACKAGE="${CMD_MINKERNPACKAGE}"
+	fi
+
 }

@@ -19,9 +19,20 @@ source ${GK_BIN}/gen_compile.sh || gen_die "could not read ${GK_BIN}/gen_compile
 source ${GK_BIN}/gen_configkernel.sh || gen_die "could not read ${GK_BIN}/gen_configkernel.sh"
 source ${GK_BIN}/gen_initrd.sh || gen_die "could not read ${GK_BIN}/gen_initrd.sh"
 source ${GK_BIN}/gen_moddeps.sh || gen_die "could not read ${GK_BIN}/gen_moddeps.sh"
+source ${GK_BIN}/gen_package.sh || gen_die "could not read ${GK_BIN}/gen_package.sh"
+
+BUILD_ALL=0
+BUILD_KERNEL=0
+BUILD_INITRD=0
 
 # Parse all command line options, and load into memory
 parse_cmdline $*
+
+if [ "${BUILD_ALL}" -eq 0 -a "${BUILD_KERNEL}" -eq 0 -a "${BUILD_INITRD}" -eq 0 ]
+then
+	usage
+	exit 1
+fi
 
 print_info 1 "GenKernel v${GK_V}" 1 0
 
@@ -37,6 +48,7 @@ source ${GK_SHARE}/${ARCH}/modules_load || gen_die "could not read ${GK_SHARE}/$
 determine_real_args
 
 print_info 1 "ARCH: ${ARCH}"
+print_info 1 "KERNEL VER: ${KV}"
 
 # Configure kernel
 config_kernel
@@ -71,5 +83,10 @@ compile_devfsd
 
 # Create initrd
 create_initrd
+
+if [ "${MINKERNPACKAGE}" != "" ]
+then
+	gen_minkernpackage
+fi
 
 print_info 1 "DONE"

@@ -1,9 +1,13 @@
 #!/bin/bash
 
 usage() {
-  echo "GenKernel ${GK_V} Options"
+  echo "GenKernel ${GK_V} [options] command"
+  echo "Available Commands: "
+  echo "	all			Build all steps"
+  echo "	kernel			Build only kernel and modules (not done yet)"
+  echo "	initrd			Build only initrd (not done yet)"
+  echo ""
   echo "Available Options: "
-
   echo "  Debug settings"
   echo "	--debuglevel=<0-5>	Debug Verbosity Level"
   echo "	--debugfile=<outfile>	Output file for debug info"
@@ -39,6 +43,11 @@ usage() {
   echo "	--max-kernel-size=<k>	Maximum kernel size"
   echo "	--max-initrd-size=<k>	Maximum initrd size"
   echo "	--max-kernel-and-initrd-size=<k>	Maximum combined initrd + kernel size"
+  echo "  Output Settings"
+  echo "        --minkernpackage=<tbz2> File to output a .tar.bz2'd kernel and initrd to."
+  echo "                                These will be renamed to simply 'kernel' and 'initrd'"
+  echo "                                inside the package without any path information."
+  echo "                                No modules outside of the initrd will be included"
   echo ""
 }
 
@@ -176,6 +185,19 @@ parse_cmdline() {
 			--max-kernel-and-initrd-size*)
 				CMD_MAX_KERNEL_AND_INITRD_SIZE=`parse_opt "${x}"`
 				print_info 2 "MAX_KERNEL_AND_INITRD_SIZE: $CMD_MAX_KERNEL_AND_INITRD_SIZE"
+			;;
+			--minkernpackage*)
+				CMD_MINKERNPACKAGE=`parse_opt "${x}"`
+				print_info 2 "MINKERNPACKAGE: $CMD_MINKERNPACKAGE"
+			;;
+			all)
+				BUILD_ALL=1
+			;;
+			initrd)
+				BUILD_INITRD=1
+			;;
+			kernel)
+				BUILD_KERNEL=1
 			;;
 			--help)
 				usage
