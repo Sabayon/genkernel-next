@@ -104,7 +104,8 @@ then
 	gen_minkernpackage
 fi
 
-
+print_info 1 " "
+print_info 1 " "
 print_info 1 "Kernel compiled successfully!"
 print_info 1 "Required Kernel Params:"
 print_info 1 "  : root=/dev/ram0 init=/linuxrc real_root=/dev/\$ROOT"
