@@ -56,11 +56,11 @@ config_kernel
 # Make deps
 compile_dep
 
-# Compile modules
-compile_modules
-
 # Compile kernel
 compile_kernel
+
+# Compile modules
+compile_modules
 
 # Compile dietlibc
 if [ "${USE_DIETLIBC}" = "1" ]
