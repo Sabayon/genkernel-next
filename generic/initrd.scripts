@@ -35,8 +35,9 @@ modules_scan() {
 findcdmount() {
 	if [ "$#" -gt "1" ]
 	then
-		for x in "$*"
+		for x in $*
 		do
+			echo -e "${HILITE}---- Attempting to mount CD -- ${x}${NORMAL}"
 			mount -t iso9660 -r ${x} /newroot/mnt/cdrom > /dev/null 2>&1
 			if [ "$?" = "0" ]
 			then
