@@ -274,7 +274,7 @@ create_initrd() {
 				fi
 			done
 		else
-			print_warning 1 "      >> No bootsplash detected; skipping!"
+			print_warning 1 '        >> No bootsplash detected; skipping!'
 		fi
 	fi
 	if ! isTrue "${CMD_NOINSTALL}"
