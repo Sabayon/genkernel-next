@@ -392,7 +392,7 @@ compile_dietlibc() {
 	BUILD_DIETLIBC=0
 	[ ! -f "${DIETLIBC_BINCACHE}" ] && BUILD_DIETLIBC=1
 	[ ! -f "${DIETLIBC_BINCACHE_TEMP}" ] && BUILD_DIETLIBC=1
-	if [ "${BUILD_DIETLIBC}" ]
+	if ! isTrue "${BUILD_DIETLIBC}"
 	then
 		ORIGTEMP=`cat "${DIETLIBC_BINCACHE_TEMP}"`
 		if [ "${TEMP}" != "${ORIGTEMP}" ]
