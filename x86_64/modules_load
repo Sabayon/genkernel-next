@@ -1,6 +1,6 @@
-MODULES_SCSI="3w-xxxx dpt_i2o mptscsih mptctl aic79xx sd_mod sata_nv sata_sis sata_via sata_sil sata_promise"
+MODULES_SCSI="3w-xxxx dpt_i2o mptscsih mptctl aic79xx sd_mod"
 MODULES_FIREWIRE="ieee1394 ohci1394 sbp2"
 MODULES_ATARAID="ataraid pdcraid hptraid"
 MODULES_PCMCIA="ide-cs"
 MODULES_USB="ehci-hcd uhci-hcd ohci-hcd hid usb-storage"
-
+MODULES_SATA="sata_promise sata_sil sata_svw sata_via sata_nv sata_sx4 sata_sis sata_uli sata_vitesse ahci"

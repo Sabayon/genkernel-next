@@ -612,9 +612,14 @@ compile_udev() {
 
 		cd "${UDEV_DIR}"
 		print_info 1 'udev: >> Compiling...'
-		ln -snf "${KERNEL_DIR}" klibc/linux ||
-			gen_die "Could not link to ${KERNEL_DIR}"
-		compile_generic "KERNEL_DIR=$KERNEL_DIR USE_KLIBC=true USE_LOG=false DEBUG=false udevdir=/dev all etc/udev/udev.conf" utils
+
+		if [ "${ARCH}" = 'x86' ]
+		then
+			ln -snf "${KERNEL_DIR}" klibc/linux || gen_die "Could not link to ${KERNEL_DIR}"
+			compile_generic "KERNEL_DIR=$KERNEL_DIR USE_KLIBC=true USE_LOG=false DEBUG=false udevdir=/dev all etc/udev/udev.conf" utils
+		else
+			LDFLAGS='--static' compile_generic "-e KERNEL_DIR=$KERNEL_DIR USE_LOG=false DEBUG=false udevdir=/dev all etc/udev/udev.conf" utils
+		fi
 		strip udev || gen_die 'Failed to strip the udev binary!'
 
 		print_info 1 '      >> Installing...'

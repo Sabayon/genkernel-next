@@ -6,10 +6,11 @@ dtc fdomain gdth pas16 pci2220i pci2000 psi240i \
 qlogicfas qlogicfc qlogicisp \
 seagate t128  u14-34f ultrastor wd7000  \
 NCR53c406a sym53c8xx dmx3191d imm in2000 ips qla1280 \
-sim710 sym53c416"
+sim710 sym53c416 dc395x"
 
 MODULES_FIREWIRE="ieee1394 ohci1394 sbp2"
 MODULES_ATARAID="ataraid pdcraid hptraid"
 MODULES_PCMCIA="pcmcia_core yenta_socket i82365 ds ide-cs"
 MODULES_USB="ehci-hcd uhci usb-ohci hid usb-storage uhci-hcd ohci-hcd usbhid sl811-hcd"
 MODULES_LVM2="dm-mod dm-snapshot dm-mirror"
+MODULES_SATA="sata_promise sata_sil sata_svw sata_via sata_nv sata_sx4 sata_sis sata_uli sata_vitesse ahci"
