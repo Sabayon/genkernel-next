@@ -45,6 +45,9 @@ do
 		looptype\=*)
 			LOOPTYPE=`parse_opt "${x}"`
 		;;
+		real_init\=*)
+			REAL_INIT=`parse_opt "${x}"`
+		;;
 		*)
 		;;
 	esac
@@ -351,7 +354,7 @@ echo '.'
 exec chroot . /bin/sh <<- EOF
  	umount /tmp/.initrd || echo "*: Failed to unmount the initrd!"
 	/sbin/blockdev --flushbufs /dev/ram0 >/dev/null 2>&1
- 	exec /sbin/init
+ 	exec /sbin/init ${REAL_INIT}
 EOF
 
 echo 'A fatal error has probably occured since /sbin/init did not'
