@@ -16,6 +16,11 @@ get_KV() {
 }
 
 determine_real_args() {
+	if [ "${CMD_DEBUGFILE}" != "" ]
+	then
+		DEBUGFILE="${CMD_DEBUGFILE}"
+	fi
+
 	if [ "${CMD_MAKEOPTS}" != "" ]
 	then
 		MAKEOPTS="${CMD_MAKEOPTS}"
