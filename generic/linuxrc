@@ -254,7 +254,7 @@ then
 	devfsd /dev -np
 fi
 
-if [ "${DO_lvm2}" -a "{USE_LVM2_NORMAL}" -eq '1' ]
+if [ "${DO_lvm2}" -a "${USE_LVM2_NORMAL}" -eq '1' ]
 then
 	if [ -e '/sbin/vgscan' -a -e '/sbin/vgchange' ]
 	then
@@ -265,7 +265,7 @@ then
 	fi
 fi
 
-if [ "${DO_evms2}" -a "{USE_LVM2_NORMAL}" -eq '1' ]
+if [ "${DO_evms2}" -a "${USE_LVM2_NORMAL}" -eq '1' ]
 then
        if [ -e '/sbin/evms_activate' ]
        then
