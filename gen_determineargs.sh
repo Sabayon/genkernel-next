@@ -92,6 +92,8 @@ determine_real_args() {
 	DEVFSD_BINCACHE=`cache_replace "${DEVFSD_BINCACHE}"`
 	DEVFSD_CONF_BINCACHE=`cache_replace "${DEVFSD_CONF_BINCACHE}"`
 	UDEV_BINCACHE=`cache_replace "${UDEV_BINCACHE}"`
+	DEVICE_MAPPER_BINCACHE=`cache_replace "${DEVICE_MAPPER_BINCACHE}"`
+	LVM2_BINCACHE=`cache_replace "${LVM2_BINCACHE}"`
   
 	DEFAULT_KERNEL_CONFIG=`arch_replace "${DEFAULT_KERNEL_CONFIG}"`
 	BUSYBOX_CONFIG=`arch_replace "${BUSYBOX_CONFIG}"`
@@ -103,6 +105,8 @@ determine_real_args() {
 	DEVFSD_BINCACHE=`arch_replace "${DEVFSD_BINCACHE}"`
 	DEVFSD_CONF_BINCACHE=`arch_replace "${DEVFSD_CONF_BINCACHE}"`
 	UDEV_BINCACHE=`arch_replace "${UDEV_BINCACHE}"`
+	DEVICE_MAPPER_BINCACHE=`arch_replace "${DEVICE_MAPPER_BINCACHE}"`
+	LVM2_BINCACHE=`arch_replace "${LVM2_BINCACHE}"`
 	
 	if [ "${CMD_BOOTSPLASH}" != '' ]
 	then

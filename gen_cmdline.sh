@@ -63,7 +63,7 @@ longusage() {
   echo "	--bootsplash=<theme>	Force bootsplash using <theme>"
   echo "	--gensplash=<theme>	Force gensplash using <theme>"
   echo "	--do-keymap-auto	Forces keymap selection at boot"
-  echo "	--no-lvm2		Don't include LVM2 support"
+  echo "	--lvm2			Include LVM2 support"
   echo "	--bootloader=grub	Add new kernel to GRUB configuration"
   echo "	--linuxrc=<file>	Specifies a user created linuxrc"
   echo "  Internals"
@@ -153,9 +153,9 @@ parse_cmdline() {
 		      CMD_NOEVMS2=1
 		      print_info 2 'CMD_NOEVMS2: 1'
 	      ;;
-	      --no-lvm2)
-		      CMD_NOLVM2=1
-		      print_info 2 'CMD_NOLVM2: 1'
+	      --lvm2)
+		      CMD_LVM2=1
+		      print_info 2 'CMD_LVM2: 1'
 	      ;;
 	      --bootloader=*)
 		      CMD_BOOTLOADER=`parse_opt "$*"`

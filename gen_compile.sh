@@ -277,6 +277,46 @@ compile_busybox() {
 	fi
 }
 
+compile_lvm2() {
+	compile_device_mapper
+	if [ ! -f "${LVM2_BINCACHE}" ]
+	then
+		[ -f "${LVM2_SRCTAR}" ] ||
+			gen_die "Could not find LVM2 source tarball: ${LVM2_SRCTAR}! Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
+		cd "${TEMP}"
+		rm -rf ${LVM2_DIR} > /dev/null
+		tar -zxpf ${LVM2_SRCTAR} ||
+			gen_die 'Could not extract LVM2 source tarball!'
+		[ -d "${LVM2_DIR}" ] ||
+			gen_die 'LVM2 directory ${LVM2_DIR} is invalid!'
+		rm -rf "${TEMP}/device-mapper" > /dev/null
+		tar -jxpf "${DEVICE_MAPPER_BINCACHE}" -C "${TEMP}" ||
+			gen_die "Could not extract device-mapper binary cache!";
+		
+		cd "${LVM2_DIR}"
+		print_info 1 'lvm2: >> Configuring...'
+			LDFLAGS="-L${TEMP}/device-mapper/lib" \
+			CFLAGS="-I${TEMP}/device-mapper/include" \
+			CPPFLAGS="-I${TEMP}/device-mapper/include" \
+			./configure --enable-static_link --prefix=${TEMP}/lvm2 >> ${DEBUGFILE} 2>&1 ||
+				gen_die 'Configure of lvm2 failed!'
+		print_info 1 'lvm2: >> Compiling...'
+			compile_generic '' utils
+			compile_generic 'install' utils
+
+		cd "${TEMP}/lvm2"
+		print_info 1 '      >> Copying to bincache...'
+		strip "sbin/lvm.static" ||
+			gen_die 'Could not strip lvm.static!'
+		tar -cjf "${LVM2_BINCACHE}" sbin/lvm.static ||
+			gen_die 'Could not create binary cache'
+
+		cd "${TEMP}"
+		rm -rf "${TEMP}/device-mapper" > /dev/null
+		rm -rf "${LVM2_DIR}" lvm2
+	fi
+}
+
 compile_modutils() {
 	# I've disabled dietlibc support for the time being since the
 	# version we use misses a few needed system calls.
@@ -435,6 +475,38 @@ compile_devfsd() {
 
 		cd "${TEMP}"
 		rm -rf "${DEVFSD_DIR}" > /dev/null
+	fi
+}
+
+compile_device_mapper() {
+	if [ ! -f "${DEVICE_MAPPER_BINCACHE}" ]
+	then
+		[ ! -f "${DEVICE_MAPPER_SRCTAR}" ] &&
+			gen_die "Could not find device-mapper source tarball: ${DEVICE_MAPPER_SRCTAR}. Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
+		cd "${TEMP}"
+		rm -rf "${DEVICE_MAPPER_DIR}"
+		tar -zxpf "${DEVICE_MAPPER_SRCTAR}"
+		[ ! -d "${DEVICE_MAPPER_DIR}" ] &&
+			gen_die "device-mapper directory ${DEVICE_MAPPER_DIR} invalid"
+		cd "${DEVICE_MAPPER_DIR}"
+		./configure  --prefix=${TEMP}/device-mapper --enable-static_link >> ${DEBUGFILE} 2>&1 ||
+			gen_die 'Configuring device-mapper failed!'
+		print_info 1 'device-mapper: >> Compiling...'
+		compile_generic '' utils
+		compile_generic 'install' utils
+		print_info 1 '        >> Copying to cache...'
+		cd "${TEMP}"
+		rm -r "${TEMP}/device-mapper/man" ||
+			gen_die 'Could not remove manual pages!'
+		strip "${TEMP}/device-mapper/sbin/dmsetup" ||
+			gen_die 'Could not strip dmsetup binary!'
+		tar -jcpf "${DEVICE_MAPPER_BINCACHE}" device-mapper ||
+			gen_die 'Could not tar up the device-mapper binary!'
+		[ -f "${DEVICE_MAPPER_BINCACHE}" ] ||
+			gen_die 'device-mapper cache not created!'
+		cd "${TEMP}"
+		rm -rf "${DEVICE_MAPPER_DIR}" > /dev/null
+		rm -rf "${TEMP}/device-mapper" > /dev/null
 	fi
 }
 

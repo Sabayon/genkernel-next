@@ -265,8 +265,6 @@ then
 	fi
 
 	compile_devfsd
-	#UDEV=0
-	#[ "${VER}" -gt '2' ] || [ "${VER}" -eq '2' -a "${PAT}" -ge '6' -a "${NOUDEV}" -eq '0' ] && UDEV=1 && print_info 1 'udev: Target is a 2.6 kernel, support enabled.'
 	[ "${UDEV}" -eq '1' ] && compile_udev
 
 	# Create initrd

@@ -93,26 +93,46 @@ create_base_initrd_sys() {
 #		gen_die "could not uncompress devfsd.conf"
 
 	# LVM2
-	if [ -e '/sbin/lvm' ] && ldd /sbin/lvm|grep -q 'not a dynamic executable';
+	if [ "${CMD_LVM2}" -eq '1' ]
 	then
-		if [ "${CMD_NOLVM2}" != '1' ]
+		if [ -e '/sbin/lvm' ] && ldd /sbin/lvm|grep -q 'not a dynamic executable';
 		then
-			print_info 1 'lvm2: Adding support...'
+			print_info 1 'LVM2: Adding support (using local static binaries)...'
 			cp /sbin/lvm "${TEMP}/initrd-temp/bin/lvm" ||
 				gen_die 'Could not copy over lvm!'
-			ln -sf "./lvm" "${TEMP}/initrd-temp/bin/vgscan" ||
+			ln -sf "${TEMP}/initrd-temp/bin/lvm" "${TEMP}/initrd-temp/bin/vgscan" ||
 				gen_die 'Could not symlink lvm -> vgscan!'
-			ln -sf "./lvm" "${TEMP}/initrd-temp/bin/vgchange" ||
+			ln -sf "${TEMP}/initrd-temp/bin/lvm" "${TEMP}/initrd-temp/bin/vgchange" ||
 				gen_die 'Could not symlink lvm -> vgchange!'
+		else
+			print_info 1 'LVM2: Adding support (compiling binaries)...'
+			compile_lvm2
+
+			tar -jxpf "${LVM2_BINCACHE}" -C "${TEMP}/initrd-temp" ||
+				gen_die "Could not extract lvm2 binary cache!";
+			mv ${TEMP}/initrd-temp/bin/lvm.static ${TEMP}/initrd-temp/bin/lvm ||
+				gen_die 'LVM2 error: Could not move lvm.static to lvm!'
+			for i in vgchange vgscan; do
+				ln  ${TEMP}/initrd-temp/bin/lvm ${TEMP}/initrd-temp/bin/$i ||
+					gen_die "LVM2 error: Could not link ${i}!"
+			done
+		fi	
+	else # Deprecation warning; remove in a few versions.
+		if [ -e '/sbin/lvm' ]
+		then
+			if ldd /sbin/lvm|grep -q 'not a dynamic executable';
+			then
+				print_warning 1 'LVM2: For support, use --lvm2!'
+			fi
 		fi
 	fi
 	
-	#EVMS2
+	# EVMS2
 	if [ -e '/sbin/evms_activate' ]
 	then
 		if [ "${CMD_NOEVMS2}" -ne '1' ]
 		then
-			print_info 1 'evms2: Adding support...'	
+			print_info 1 'EVMS2: Adding support...'	
 			mkdir -p ${TEMP}/initrd-temp/lib
 			cp -a /lib/ld-* "${TEMP}/initrd-temp/lib" || gen_die 'Could not copy files for EVMS2!'
 			cp -a /lib/libc-* /lib/libc.* "${TEMP}/initrd-temp/lib" || gen_die 'Could not copy files for EVMS2!'
