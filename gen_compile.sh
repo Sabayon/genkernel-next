@@ -147,7 +147,7 @@ compile_modutils() {
 		cd "${MODUTILS_DIR}"
 		print_info 1 "modutils: configure"
 		ARGS=`compile_utils_args`
-		${ARGS} ./configure --disable-combined --enable-insmod-static >> ${DEBUGFILE} 2>&1 || gen_die "Configure of modutils failed"
+		env ${ARGS} ./configure --disable-combined --enable-insmod-static >> ${DEBUGFILE} 2>&1 || gen_die "Configure of modutils failed"
 		print_info 1 "modutils: make all"
 		compile_generic "all" utils
 		print_info 1 "modutils: copying to bincache"
@@ -172,7 +172,7 @@ compile_module_init_tools() {
 		cd "${MODULE_INIT_TOOLS_DIR}"
 		print_info 1 "module-init-tools: configure"
 		ARGS=`compile_utils_args`
-		${ARGS} ./configure >> ${DEBUGFILE} 2>&1 || gen_die "Configure of module-init-tools failed"
+		env ${ARGS} ./configure >> ${DEBUGFILE} 2>&1 || gen_die "Configure of module-init-tools failed"
 		print_info 1 "module-init-tools: make all"
 		compile_generic "all" utils
 		print_info 1 "module-init-tools: copying to bincache"
