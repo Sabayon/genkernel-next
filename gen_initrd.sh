@@ -211,8 +211,8 @@ create_initrd() {
 	then
 		if [ -x /sbin/splash ]
 		then
-			[ -z "${BOOTSPLASH_THEME}" ] && [ -e /etc/conf.d/bootplash.conf ] && source /etc/conf.d/bootsplash.conf
-			[ -z "${BOOTSPLASH_THEME}" ] && [ -e /etc/conf.d/bootplash ] && source /etc/conf.d/bootsplash
+			[ -z "${BOOTSPLASH_THEME}" ] && [ -e /etc/conf.d/bootsplash.conf ] && source /etc/conf.d/bootsplash.conf
+			[ -z "${BOOTSPLASH_THEME}" ] && [ -e /etc/conf.d/bootsplash ] && source /etc/conf.d/bootsplash
 			[ -z "${BOOTSPLASH_THEME}" ] && BOOTSPLASH_THEME=default
 			print_info 1 "        >> Installing bootsplash [ using the ${BOOTSPLASH_THEME} theme ]..."
 			for bootRes in '800x600' '1024x768' '1280x1024' '1600x1200'
@@ -221,7 +221,7 @@ create_initrd() {
 				then
 					/sbin/splash -s -f /etc/bootsplash/${BOOTSPLASH_THEME}/config/bootsplash-${bootRes}.cfg >> ${TEMP}/initrd-loop || gen_die "Error: could not copy ${bootRes} bootsplash!"
 				else
-					print_info 1 "splash: Did not find a bootplash for the ${bootRes} resolution..."
+					print_info 1 "splash: Did not find a bootsplash for the ${bootRes} resolution..."
 				fi
 			done
 		else
