@@ -295,7 +295,7 @@ then
 		print_info 1 '    one specified in /etc/fstab'
 	else	
 		print_info 1 '    root=/dev/ram0 real_root=/dev/$ROOT init=/linuxrc'
-		[ "${INITRD_SIZE}" -ge 4096 ] && print_info 1 "    ramdisk=8192"
+		[ "${INITRD_SIZE}" -ge 4096 ] && print_info 1 "    ramdisk_size=8192"
 		print_info 1 '    [ And "vga=0x317 splash=verbose" if you use a framebuffer ]'
 		print_info 1 ''
 		print_info 1 '    Where $ROOT is the device node for your root partition as the'
