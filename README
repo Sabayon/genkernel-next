@@ -1,0 +1,33 @@
+VERY EXPERIMENTAL
+seems to work so far on amd64 and x86
+I've only tested with 2.6 kernels, it's possible that
+the module-init-tools we use doesn't work with 2.4 in
+which case we need to compile modutils as well and 
+provide a static binary for that....
+
+INSTALLATION:
+
+put genkernel.conf in /etc
+
+put genkernel.sh in /usr/bin
+
+put the rest of the files and directories in /usr/share/genkernel
+
+
+
+PORTING:
+
+To port to other arches:
+
+cd /usr/share/genkernel
+cp -Rp x86 ${myarch}
+mkdir /usr/share/genkernel/pkg/${myarch}
+
+
+modify what is needed in the /usr/share/genkernel/${myarch}
+directory, this is all the arch-specific stuff, as well
+as a generic kernel-config 
+
+
+
+

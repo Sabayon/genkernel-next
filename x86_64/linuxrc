@@ -1,0 +1,189 @@
+#!/bin/sh
+# Daniel Robbins <drobbins@gentoo.org>
+# Copyright 2003 Gentoo Technologies, Inc.
+# Distributed under the GPL
+
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+BACK_UP="\033[1K\033[0G"
+HILITE="\033[1m"
+NORMAL="\033[0m"
+WARN="\033[1m"
+BAD="\033[1m"
+#mount -o remount,rw /
+mount /proc
+INITRD="true"
+SCSI="yes"
+CDCACHE="no"
+IDEBUG="no"
+FIREWIRE="no"
+ATARAID="no"
+PCMCIA="no"
+DETECT="no"
+USB="yes"
+KEYMAP="no"
+if [ ! -e /dev/.devfsd ]
+then
+        #mount devfs
+        mount -t devfs devfs /dev
+fi
+
+CMDLINE="`cat /proc/cmdline`"
+for x in $CMDLINE
+do
+	if [ "$x" = "doscsi" ]
+	then
+		SCSI="yes"
+	elif [ "$x" = "cdcache" ]
+	then
+		CDCACHE="yes"
+	elif [ "$x" = "idebug" ]
+	then
+		IDEBUG="yes"
+	fi
+done
+
+for x in $CMDLINE
+do
+	if [ "$x" = "dofirewire" ]
+        then
+                FIREWIRE="yes"
+	fi
+done
+for x in $CMDLINE
+do
+        if [ "$x" = "nousb" ]
+        then
+                USB="no"
+        fi
+done
+
+for x in $CMDLINE
+do
+	if [ "$x" = "doataraid" ]
+        then
+                ATARAID="yes"
+	fi
+done
+for x in $CMDLINE
+do
+        if [ "$x" = "dopcmcia" ]
+        then
+                PCMCIA="yes"
+        fi
+done
+
+for x in $CMDLINE
+do
+        if [ "$x" = "dokeymap" ]
+        then
+                KEYMAP="yes"
+        fi
+done
+
+blurb() {
+	echo -ne ${HILITE}${1}
+}
+
+backup() {
+	echo -ne "\033[0G\033[0K"
+}
+if [ -e /dev/.devfsd ]
+        then
+                RAM_DEVICE="rd"
+        else
+                RAM_DEVICE="ram0"
+fi
+
+
+# Create the new root FS
+
+mounted=""
+
+initmsg() {
+	echo -e "${HILITE}${*}${NORMAL}"
+}
+
+getkeymap() {
+	local mykeymap
+	echo -ne ${HILITE}
+	cat /keymaps/key.lst
+	echo -ne ${NORMAL}
+	read -p "Keymap selection: " mykeymap
+	if [ -e /keymaps/${mykeymap}.map ]
+	then
+		echo -e "${HILITE}---- Loading ${mykeymap} keymap${NORMAL}"
+		loadkmap < /keymaps/${mykeymap}.map
+	elif [ "$mykeymap" = "" ]
+	then
+		#default keymap is "us"
+		echo -e "${HILITE}---- Loading default (US) keymap${NORMAL}"
+		loadkmap < /keymaps/us.map
+	else	
+		getkeymap
+	fi
+}
+
+modules_scan() {
+	local type
+	type=${1}; shift
+	for x in "$@"
+	do
+		blurb "---- Scanning for ${x}..."
+		insmod.static -f /modules/${type}/${x}.o > /dev/null 2>&1
+		if [ $? -eq 0 ]
+		then
+			backup
+			echo -e "${GOOD}---- Detected ${x} hardware${NORMAL}"
+		else
+			backup
+			echo -ne "${NORMAL}"
+		fi
+	done
+}
+echo "${GOOD} Initial RAMDISK Loading Starting..."
+# Mount the CD
+
+if [ "$SCSI" = "yes" ]
+then
+DEVICE=SCSI
+	echo -e "${HILITE} ---- Beginning storage detection${NORMAL}"
+	# This next "%% %%" gets sed tweaked:
+	modules_scan storage %%STORAGE_MODULES%%
+fi
+
+if [ "$FIREWIRE" = "yes" ]
+then
+DEVICE=FIREWIRE
+        echo -e "${HILITE} ---- Beginning firewire detection${NORMAL}"
+        # This next "%% %%" gets sed tweaked:
+        modules_scan firewire %%FIREWIRE_MODULES%%
+fi
+if [ "$ATARAID" = "yes" ]
+then
+DEVICE=ATARAID
+        echo -e "${HILITE} ---- Beginning ata detection${NORMAL}"
+        # This next "%% %%" gets sed tweaked:
+        modules_scan ataraid %%ATARAID_MODULES%%
+fi
+
+if [ "$PCMCIA" = "yes" ]
+then
+DEVICE=PCMCIA
+        echo -e "${HILITE} ---- Beginning pcmcia detection${NORMAL}"
+        # This next "%% %%" gets sed tweaked:
+        modules_scan %%PCMCIA_MODULES%%
+fi
+if [ "$USB" = "yes" ]
+then
+DEVICE=USB
+        echo -e "${HILITE} ---- Beginning usb detection${NORMAL}"
+        # This next "%% %%" gets sed tweaked:
+        modules_scan usb %%USB_MODULES%%
+fi
+
+if [ "$KEYMAP" = "yes" ]
+then
+getkeymap
+fi
+
+exit
