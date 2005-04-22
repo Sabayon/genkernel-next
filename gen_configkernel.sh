@@ -52,7 +52,7 @@ config_kernel() {
 		else
 			print_info 1 '        >> Running oldconfig...'
 		fi
-		yes '' 2>/dev/null | compile_generic oldconfig kernel
+		yes '' 2>/dev/null | compile_generic oldconfig kernel 2>/dev/null # Nullify to stop broken pipe messages
 	fi
 	if isTrue "${CLEAN}"
 	then

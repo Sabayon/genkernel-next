@@ -36,12 +36,10 @@ longusage() {
   echo "	--install		Install the kernel after building"
   echo "	--no-install		Do not install the kernel after building"
   echo "	--no-initrdmodules	Don't copy any modules to the initrd"
-  echo "	--udev			Enables udev support in your initrd"
   echo "	--no-udev		Disable udev support"
+  echo "	--no-devfs		Disable devfs support"
   echo "	--callback=<...>	Run the specified arguments after the"
   echo "				kernel and modules have been compiled"
-  echo "	--postconf=<...>	Run the specified arguments after"
-  echo "				the kernel has been configured"
   echo "  Kernel settings"
   echo "	--kerneldir=<dir>	Location of the kernel sources"
   echo "	--kernel-config=<file>	Kernel configuration file to use for compilation"
@@ -74,11 +72,22 @@ longusage() {
   echo "	--cachedir=<dir>	Override the default cache location"
   echo "	--tempdir=<dir>		Location of Genkernel's temporary directory"
   echo "  Output Settings"
+  echo "        --kernname=<...> 	tag the kernel and initrd with a name"
+  echo "        	 		if not defined the option defaults to genkernel"
   echo "        --minkernpackage=<tbz2> File to output a .tar.bz2'd kernel and initrd:"
   echo "                                No modules outside of the initrd will be"
   echo "                                included..."
-  echo "        --maxkernpackage=<tbz2> File to output a .tar.bz2'd kernel,initrd,"
+  echo "        --modulespackage=<tbz2> File to output a .tar.bz2'd modules after the callbacks have run"
+  echo "        --kerncache=<tbz2> 	File to output a .tar.bz2'd kernel,"
   echo "                                contents of /lib/modules/ and the kernel config"
+  echo "                                NOTE: This is created before the callbacks are run,"
+  echo "        --no-kernel-sources	This option is only valid if kerncache is defined"
+  echo "        			If there is a valid kerncache no checks will be made"
+  echo "        			against a kernel source tree"
+  echo "        --initramfs-overlay=<dir>	directory structure to include in the initramfs"
+  echo "        			Only available on 2.6 kernels that dont use bootsplash"
+
+
 }
 
 usage() {
@@ -156,15 +165,19 @@ parse_cmdline() {
 	      ;;
 	      --evms2)
 		      CMD_EVMS2=1
-		      print_info 2 'CMD_EVMS2: 1'
+		      print_info 2 "CMD_EVMS2: $CMD_EVMS2"
 	      ;;
 	      --lvm2)
 		      CMD_LVM2=1
-		      print_info 2 'CMD_LVM2: 1'
+		      print_info 2 "CMD_LVM2: $CMD_LVM2"
+	      ;;
+	      --no-busybox)
+		      CMD_NO_BUSYBOX=1
+		      print_info 2 "CMD_NO_BUSYBOX: $CMD_NO_BUSYBOX"
 	      ;;
 	      --dmraid)
 		      CMD_DMRAID=1
-		      print_info 2 'CMD_DMRAID: 1'
+		      print_info 2 "CMD_DMRAID: $CMD_DMRAID"
 	      ;;
 	      --bootloader=*)
 		      CMD_BOOTLOADER=`parse_opt "$*"`
@@ -280,20 +293,25 @@ parse_cmdline() {
 		      print_info 2 "CMD_NOINITRDMODULES: $CMD_NOINITRDMODULES"
 	      ;;
 	      --udev)
-		      CMD_UDEV=1
+	      	      echo
+		      echo
+		      print_info 1 "--udev is deprecated and no longer necessary as udev is on by default"
+		      sleep 3
+		      echo
+		      echo
 		      print_info 2 "CMD_UDEV: $CMD_UDEV"
 	      ;;
 	      --no-udev)
-		      CMD_UDEV=0
-		      print_info 2 "CMD_UDEV: $CMD_UDEV"
+		      CMD_NO_UDEV=1
+		      print_info 2 "CMD_NO_UDEV: $CMD_NO_UDEV"
+	      ;;
+	      --no-devfs)
+		      CMD_NO_DEVFS=1
+		      print_info 2 "CMD_NO_DEVFS: $CMD_NO_DEVFS"
 	      ;;
 	      --callback=*)
 		      CMD_CALLBACK=`parse_opt "$*"`
 		      print_info 2 "CMD_CALLBACK: $CMD_CALLBACK/$*"
-	      ;;
-	      --postconf=*)
-		      CMD_POSTCONF=`parse_opt "$*"`
-		      print_info 2 "CMD_POSTCONF: $CMD_POSTCONF/$*"
 	      ;;
 	      --tempdir=*)
 		      TEMP=`parse_opt "$*"`
@@ -337,13 +355,33 @@ parse_cmdline() {
 		      CMD_MINKERNPACKAGE=`parse_opt "$*"`
 		      print_info 2 "MINKERNPACKAGE: $CMD_MINKERNPACKAGE"
 	      ;;
-	      --maxkernpackage=*)
-		      CMD_MAXKERNPACKAGE=`parse_opt "$*"`
-		      print_info 2 "MAXKERNPACKAGE: $CMD_MAXKERNPACKAGE"
+	      --modulespackage=*)
+		      CMD_MODULESPACKAGE=`parse_opt "$*"`
+		      print_info 2 "MODULESPACKAGE: $CMD_MODULESPACKAGE"
+	      ;;
+	      --kerncache=*)
+		      CMD_KERNCACHE=`parse_opt "$*"`
+		      print_info 2 "KERNCACHE: $CMD_KERNCACHE"
+	      ;;
+	      --kernname=*)
+		      CMD_KERNNAME=`parse_opt "$*"`
+		      print_info 2 "KERNNAME: $CMD_KERNNAME"
+	      ;;
+	      --no-kernel-sources)
+		      CMD_NO_KERNEL_SOURCES=1
+		      print_info 2 "CMD_NO_KERNEL_SOURCES: $CMD_NO_KERNEL_SOURCES"
+	      ;;
+	      --initramfs-overlay=*)
+		      CMD_INITRAMFS_OVERLAY=`parse_opt "$*"`
+		      print_info 2 "CMD_INITRAMFS_OVERLAY: $CMD_INITRAMFS_OVERLAY"
 	      ;;
 	      --linuxrc=*)
 	      		CMD_LINUXRC=`parse_opt "$*"`
 			print_info 2 "CMD_LINUXRC: $CMD_LINUXRC"
+	      ;;
+              --genzimage)
+			GENERATE_Z_IMAGE=1
+			print_info 2 "GENERATE_Z_IMAGE: $GENERATE_Z_IMAGE"
 	      ;;
 	      all)
 		      BUILD_KERNEL=1

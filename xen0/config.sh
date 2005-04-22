@@ -1,18 +1,17 @@
 #!/bin/bash
-# ppc/config.sh
+# x86/config.sh
 
-KERNEL_MAKE_DIRECTIVE="vmlinux"
-KERNEL_MAKE_DIRECTIVE_2="zImage.initrd"
-KERNEL_BINARY="vmlinux"
-KERNEL_BINARY_2=""
+KERNEL_MAKE_DIRECTIVE=""
+KERNEL_MAKE_DIRECTIVE_2=""
+KERNEL_BINARY="vmlinuz"
 
 # The dietlibc portion of busybox is commented out right now
 # other stuff seems to compile fine though
-USE_DIETLIBC=1
+USE_DIETLIBC=0
 
 MAKEOPTS="-j2"
 
-KERNEL_MAKE=make
+KERNEL_MAKE="make ARCH=xen"
 UTILS_MAKE=make
 
 KERNEL_CC=gcc
@@ -24,4 +23,3 @@ UTILS_AS=as
 UTILS_LD=ld
 
 COMPRESS_INITRD=yes
-

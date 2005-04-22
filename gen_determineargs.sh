@@ -1,14 +1,33 @@
 #!/bin/bash
 
 get_KV() {
-	local SUB
-	local EXV
-	
-	VER=`grep ^VERSION\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
-	PAT=`grep ^PATCHLEVEL\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
-	SUB=`grep ^SUBLEVEL\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
-	EXV=`grep ^EXTRAVERSION\ \= ${KERNEL_DIR}/Makefile | sed -e "s/EXTRAVERSION =//" -e "s/ //g"`
-	KV=${VER}.${PAT}.${SUB}${EXV}
+	if [ "${CMD_NO_KERNEL_SOURCES}" = '1' -a -e "${CMD_KERNCACHE}" ]
+	then
+		[ -d ${tmp} ] && gen_die "temporary directory already exists! Exiting."
+		(umask 077 && mkdir ${tmp}) || {
+			gen_die "Could not create temporary directory! Exiting."
+		}
+		tar -xj -C ${tmp} -f ${CMD_KERNCACHE} kerncache.config 
+		if [ -e ${tmp}/kerncache.config ]
+		then
+			VER=`grep ^VERSION\ \= ${tmp}/kerncache.config | awk '{ print $3 };'`
+			PAT=`grep ^PATCHLEVEL\ \= ${tmp}/kerncache.config | awk '{ print $3 };'`
+			SUB=`grep ^SUBLEVEL\ \= ${tmp}/kerncache.config | awk '{ print $3 };'`
+			EXV=`grep ^EXTRAVERSION\ \= ${tmp}/kerncache.config | sed -e "s/EXTRAVERSION =//" -e "s/ //g"`
+			KV=${VER}.${PAT}.${SUB}${EXV}
+		else
+			rm -r ${tmp}
+			gen_die "Could not find kerncache.config in the kernel cache! Exiting."
+		fi
+		rm -r ${tmp}
+
+	else
+		VER=`grep ^VERSION\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
+		PAT=`grep ^PATCHLEVEL\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
+		SUB=`grep ^SUBLEVEL\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
+		EXV=`grep ^EXTRAVERSION\ \= ${KERNEL_DIR}/Makefile | sed -e "s/EXTRAVERSION =//" -e "s/ //g"`
+		KV=${VER}.${PAT}.${SUB}${EXV}
+	fi
 }
 
 determine_real_args() {
@@ -28,8 +47,31 @@ determine_real_args() {
 	else
 		KERNEL_DIR=${DEFAULT_KERNEL_SOURCE}
 	fi
-	[ "${KERNEL_DIR}" = '' ] && gen_die 'No kernel source directory!'
 
+	if [ "${CMD_KERNCACHE}" != "" ]
+	then	
+		if [ "${KERNEL_DIR}" = '' -a "${CMD_NO_KERNEL_SOURCES}" != "1" ]
+		then
+			gen_die 'No kernel source directory!'
+		fi
+		if [ ! -e "${KERNEL_DIR}" -a "${CMD_NO_KERNEL_SOURCES}" != "1" ]
+		then
+			gen_die 'No kernel source directory!'
+		fi
+	else	
+		if [ "${KERNEL_DIR}" = '' ]
+		then
+			gen_die 'Kernel Cache specified but no kernel tree to verify against!'
+		fi
+	fi
+	
+	if [ "${CMD_KERNNAME}" != "" ]
+	then
+		KNAME=${CMD_KERNNAME}
+	else
+		KNAME="genkernel"
+	fi
+	
 	get_KV
 
 	if [ "${CMD_KERNEL_MAKE}" != '' ]
@@ -162,15 +204,25 @@ determine_real_args() {
 	then
 		MINKERNPACKAGE="${CMD_MINKERNPACKAGE}"
 	fi
-
-	if [ "${CMD_MAXKERNPACKAGE}" != '' ]
+	
+	if [ "${CMD_MODULESPACKAGE}" != '' ]
 	then
-		MAXKERNPACKAGE="${CMD_MAXKERNPACKAGE}"
+		MODULESPACKAGE="${CMD_MODULESPACKAGE}"
+	fi
+
+	if [ "${CMD_KERNCACHE}" != '' ]
+	then
+		KERNCACHE="${CMD_KERNCACHE}"
 	fi
 	
 	if [ "${CMD_NOINITRDMODULES}" != '' ]
 	then
 		NOINITRDMODULES="${CMD_NOINITRDMODULES}"
+	fi
+	
+	if [ "${CMD_INITRAMFS_OVERLAY}" != '' ]
+	then
+		INITRAMFS_OVERLAY="${CMD_INITRAMFS_OVERLAY}"
 	fi
 
 	if [ "${CMD_MOUNTBOOT}" != '' ]
@@ -214,13 +266,23 @@ determine_real_args() {
 		OLDCONFIG=0
 	fi
 
-	if isTrue "${CMD_UDEV}"
+	if isTrue "${CMD_NO_UDEV}"
 	then
+		UDEV=0
+		if isTrue "${CMD_NO_DEVFS}"
+		then
+		    DEVFS=0
+		else
+		    DEVFS=1
+		fi
+	else
 		UDEV=1
 		DEVFS=0
-	else
-		UDEV=0
-		DEVFS=1
+	fi
+	
+	if isTrue "${CMD_NO_DEVFS}"
+	then
+		DEVFS=0
 	fi
 
 	if isTrue "${CMD_LVM2}"
@@ -228,6 +290,20 @@ determine_real_args() {
 		LVM2=1
 	else
 		LVM2=0
+	fi
+	
+	if isTrue "${CMD_EVMS2}"
+	then
+		EVMS2=1
+	else
+		EVMS2=0
+	fi
+	
+	if isTrue "${CMD_NO_BUSYBOX}"
+	then
+		BUSYBOX=0
+	else
+		BUSYBOX=1
 	fi
 	
 	if isTrue "${CMD_DMRAID}"

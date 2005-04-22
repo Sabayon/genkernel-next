@@ -45,10 +45,13 @@ create_base_initrd_sys() {
 	echo "/dev/ram0     /           ext2    defaults" > ${TEMP}/initrd-temp/etc/fstab
 	echo "proc          /proc       proc    defaults    0 0" >> ${TEMP}/initrd-temp/etc/fstab
 
-	echo "REGISTER        .*           MKOLDCOMPAT" > ${TEMP}/initrd-temp/etc/devfsd.conf
-	echo "UNREGISTER      .*           RMOLDCOMPAT" >> ${TEMP}/initrd-temp/etc/devfsd.conf
-	echo "REGISTER        .*           MKNEWCOMPAT" >> ${TEMP}/initrd-temp/etc/devfsd.conf
-	echo "UNREGISTER      .*           RMNEWCOMPAT" >> ${TEMP}/initrd-temp/etc/devfsd.conf
+	if [ "${NODEVFSD}" = '' ]
+	then
+		echo "REGISTER        .*           MKOLDCOMPAT" > ${TEMP}/initrd-temp/etc/devfsd.conf
+		echo "UNREGISTER      .*           RMOLDCOMPAT" >> ${TEMP}/initrd-temp/etc/devfsd.conf
+		echo "REGISTER        .*           MKNEWCOMPAT" >> ${TEMP}/initrd-temp/etc/devfsd.conf
+		echo "UNREGISTER      .*           RMNEWCOMPAT" >> ${TEMP}/initrd-temp/etc/devfsd.conf
+	fi
 
 	cd ${TEMP}/initrd-temp/dev
 	MAKEDEV std
@@ -77,21 +80,20 @@ create_base_initrd_sys() {
 		chmod +x "${TEMP}/initrd-temp/bin/insmod"
 	fi
 
-	cp "${DEVFSD_BINCACHE}" "${TEMP}/initrd-temp/bin/devfsd.bz2" || gen_die "could not copy devfsd executable from bincache"
-	bunzip2 "${TEMP}/initrd-temp/bin/devfsd.bz2" || gen_die "could not uncompress devfsd"
-	chmod +x "${TEMP}/initrd-temp/bin/devfsd"
+	# devfsd
+	if [ "${NODEVFSD}" = '' ]
+	then
+		cp "${DEVFSD_BINCACHE}" "${TEMP}/initrd-temp/bin/devfsd.bz2" || gen_die 'Could not copy devfsd executable from bincache!'
+		bunzip2 "${TEMP}/initrd-temp/bin/devfsd.bz2" || gen_die 'Could not uncompress devfsd!'
+		chmod +x "${TEMP}/initrd-temp/bin/devfsd"
+	fi
 
-	[ "${UDEV}" -eq '1' ] && { tar -jxpf "${UDEV_BINCACHE}" -C "${TEMP}/initrd-temp" ||
-		gen_die "Could not extract udev binary cache!"; }
-		ln -sf "./udev" "${TEMP}/initrd-temp/bin/udevstart" ||
-			gen_die 'Could not symlink udev -> udevstart!'
-
-# We make our own devfsd.conf these days, the default one doesn't work with the stripped
-# down devfsd we use with dietlibc
-#	cp "${DEVFSD_CONF_BINCACHE}" "${TEMP}/initrd-temp/etc/devfsd.conf.bz2" ||
-#		gen_die "could not copy devfsd.conf from bincache"
-#	bunzip2 "${TEMP}/initrd-temp/etc/devfsd.conf.bz2" ||
-#		gen_die "could not uncompress devfsd.conf"
+	# udev
+	if [ "${UDEV}" -eq '1' ]
+	then
+		tar -jxpf "${UDEV_BINCACHE}" -C "${TEMP}/initrd-temp" || gen_die 'Could not extract udev binary cache!'
+		ln -sf "./udev" "${TEMP}/initrd-temp/bin/udevstart" || 	gen_die 'Could not symlink udev -> udevstart!'
+	fi
 
 	# DMRAID 
 	if [ "${DMRAID}" = '1' ]
@@ -101,6 +103,7 @@ create_base_initrd_sys() {
 		tar -jxpf "${DMRAID_BINCACHE}" -C "${TEMP}/initrd-temp" ||
 			gen_die "Could not extract dmraid binary cache!";
 	fi
+
 	# LVM2
 	if [ "${LVM2}" = '1' ]
 	then
@@ -126,18 +129,10 @@ create_base_initrd_sys() {
 					gen_die "LVM2 error: Could not link ${i}!"
 			done
 		fi	
-	else # Deprecation warning; remove in a few versions.
-		if [ -e '/sbin/lvm' ]
-		then
-			if ldd /sbin/lvm|grep -q 'not a dynamic executable';
-			then
-				print_warning 1 'LVM2: For support, use --lvm2!'
-			fi
-		fi
 	fi
 	
 	# EVMS2
-	if [ "${CMD_EVMS2}" = '1' ]
+	if [ "${EVMS2}" = '1' ]
 	then
 		if [ -e '/sbin/evms_activate' ]
 		then
@@ -193,12 +188,14 @@ create_initrd_modules() {
 	fi
 
 	print_info 2 "initrd: >> Searching for modules..."
+
 	if [ "${INSTALL_MOD_PATH}" != '' ]
 	then
-	  cd ${INSTALL_MOD_PATH}
+		cd ${INSTALL_MOD_PATH}
 	else
-	  cd /
+		cd /
 	fi
+												 	
 	for i in `gen_dep_list`
 	do
 		mymod=`find ./lib/modules/${KV} -name "${i}${MOD_EXT}" | head -n 1`
@@ -342,7 +339,10 @@ create_initrd() {
 	fi
 	if ! isTrue "${CMD_NOINSTALL}"
 	then
-		cp ${TEMP}/initrd-${KV} /boot/initrd-${KV} ||
+		cp ${TEMP}/initrd-${KV} /boot/initrd-${KNAME}-${ARCH}-${KV} ||
 			gen_die 'Could not copy the initrd to /boot!'
 	fi
+	[ "${KERNEL_MAKE_DIRECTIVE}" == 'zImage.initrd' ] ||
+		[ "${KERNEL_MAKE_DIRECTIVE_2}" == 'zImage.initrd' ] &&
+		cp ${TEMP}/initrd-${KV} ${KERNEL_DIR}/arch/${ARCH}/boot/images/ramdisk.image.gz
 }

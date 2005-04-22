@@ -108,10 +108,6 @@ Implies \fB\-\-no\-clean\fR, and thus \fB\-\-no\-mrproper\fR, running a
 Run the specified arguments in the current environment after the kernel and
 modules have been compiled.
 .TP
-\fB\-\-postconf=\fR<...>
-Run the specified arguments in the current environment after the kernel has
-been configured, and "make dep" or "make prepare" has been run.
-.TP
 \fB\-\-udev\fR
 Add in udev support to the initrd.
 .PP
@@ -196,12 +192,29 @@ Don't compile busybox, and use this static .bz2 binary instead.
 .PP
 .BR Output \ Settings
 .TP
+\fB\-\-kernname=\fR<...>
+Tag the kernel and initrd with a name, if not defined this option defaults to genkernel
+.TP
 \fB\-\-minkernpackage=\fR<tbz2>
 File to output a .tar.bz2'd kernel and initrd: no modules outside of the
 initrd will be included...
 .TP
-\fB\-\-maxkernpackage=\fR<tbz2>
-File to output a .tar.bz2'd kernel, initrd, contents of /lib/modules/ and the kernel config"
+\fB\-\-modulespackage=\fR<tbz2>
+File to output a .tar.bz2'd modules after the callbacks have run
+.TP
+\fB\-\-kerncache=\fR<tbz2>
+File to output a .tar.bz2'd kernel, contents of /lib/modules/ and the kernel config
+NOTE: This is created before the callbacks are run,"
+.TP
+\fB\-\-no\-kernel\-sources=\fR<tbz2>
+This option is only valid if kerncache is defined
+If there is a valid kerncache no checks will be made
+against a kernel source tree
+.TP
+\fB\-\-initramfs\-overlay=\fR<dir>
+Directory structure to inject into the initramfs
+Only available on 2.6 kernels that don't use bootsplash; use a CPIO
+archive as a parameter.
 .SH INITRD OPTIONS
 The following options can be passed as kernel parameters from the
 bootloader, which the initrd scripts would recognize.
@@ -216,11 +229,6 @@ Turns on devfs support.
 .TP
 \fBnodevfs\fR
 Turns off devfs support.
-.TP
-\fBudev\fR
-.RS
-Turns on udev support.
-.RE
 .TP
 \fBnoudev\fR
 .RS

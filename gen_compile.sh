@@ -218,15 +218,25 @@ compile_kernel() {
 	fi
 	if ! isTrue "${CMD_NOINSTALL}"
 	then
-		cp "${KERNEL_BINARY}" "/boot/kernel-${KV}" ||
+		cp "${KERNEL_BINARY}" "/boot/kernel-${KNAME}-${ARCH}-${KV}" ||
 			gen_die 'Could not copy the kernel binary to /boot!'
-		cp "System.map" "/boot/System.map-${KV}" ||
+		cp "System.map" "/boot/System.map-${KNAME}-${ARCH}-${KV}" ||
 			gen_die 'Could not copy System.map to /boot!'
+		if [ "${KERNEL_BINARY_2}" != '' ]
+		then
+			cp "${KERNEL_BINARY_2}" "/boot/kernelz-${KV}" ||
+				gen_die 'Could not copy the kernelz binary to /boot!'
+		fi
 	else
-		cp "${KERNEL_BINARY}" "${TEMP}/kernel-${KV}" ||
+		cp "${KERNEL_BINARY}" "${TEMP}/kernel-${KNAME}-${ARCH}-${KV}" ||
 			gen_die "Could not copy the kernel binary to ${TEMP}!"
-		cp "System.map" "${TEMP}/System.map-${KV}" ||
+		cp "System.map" "${TEMP}/System.map-${KNAME}-${ARCH}-${KV}" ||
 			gen_die "Could not copy System.map to ${TEMP}!"
+		if [ "${KERNEL_BINARY_2}" != '' ]
+		then
+			cp "${KERNEL_BINARY_2}" "${TEMP}/kernelz-${KV}" ||
+				gen_die "Could not copy the kernelz binary to ${TEMP}!"
+		fi
 	fi
 }
 
@@ -244,24 +254,12 @@ compile_busybox() {
 		[ -d "${BUSYBOX_DIR}" ] ||
 			gen_die 'Busybox directory ${BUSYBOX_DIR} is invalid!'
 		cp "${BUSYBOX_CONFIG}" "${BUSYBOX_DIR}/.config"
+		sed -i ${BUSYBOX_DIR}/.config -e 's/#\? \?CONFIG_FEATURE_INSTALLER[ =].*/CONFIG_FEATURE_INSTALLER=y/g'
 		cd "${BUSYBOX_DIR}"
-# Busybox and dietlibc don't play nice right now
-#		if [ "${USE_DIETLIBC}" -eq "1" ]
-#		then
-#			extract_dietlibc_bincache
-#			OLD_CC="${UTILS_CC}"
-#			UTILS_CC="${TEMP}/diet/bin/diet ${UTILS_CC}"
-#		fi
 		print_info 1 'busybox: >> Configuring...'
 		yes '' 2>/dev/null | compile_generic oldconfig utils
 		print_info 1 'busybox: >> Compiling...'
 		compile_generic all utils
-# Busybox and dietlibc don't play nice right now
-# 		if [ "${USE_DIETLIBC}" -eq "1" ]
-#		then
-#			clean_dietlibc_bincache
-#			UTILS_CC="${OLD_CC}"
-#		fi
 		print_info 1 'busybox: >> Copying to cache...'
 		[ -f "${TEMP}/${BUSYBOX_DIR}/busybox" ] ||
 			gen_die 'Busybox executable does not exist!'
