@@ -486,6 +486,16 @@ else
 	mkdir -p /newroot/tmp/.initrd
 fi
 
+if [ -x /newroot/mnt/cdrom/cdupdate.sh ]
+then
+    /newroot/mnt/cdrom/cdupdate.sh
+    if [ "$?" != '0' ]
+    then
+	echo "FAILED TO EXECUTE cdupdate.sh"
+	/bin/ash
+    fi
+fi
+
 if [ "$0" = '/linuxrc' ]
 then
 	[ ! -e /newroot/dev/console ] && mknod /newroot/dev/console c 5 1
