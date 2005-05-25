@@ -94,4 +94,12 @@ config_kernel() {
 
 	# Make sure Ext2 support is on...
 	sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_EXT2_FS[ =].*/CONFIG_EXT2_FS=y/g'
+
+	# Make sure lvm2 modules are on if --lvm2
+	if isTrue ${CMD_LVM2}
+	then
+		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_BLK_DEV_DM[ =].*/CONFIG_BLK_DEV_DM=m/g'
+		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_DM_SNAPSHOT[ =].*/CONFIG_DM_SNAPSHOT=m/g'
+		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_DM_SNAPSHOT[ =].*/CONFIG_DM_SNAPSHOT=m/g'
+	fi
 }
