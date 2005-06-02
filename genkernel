@@ -38,6 +38,7 @@ BUILD_KERNEL=0
 BUILD_INITRD=0
 
 # Parse all command line options...
+Options=$* # Save for later
 while [ $# -gt 0 ]
 do
 	Option=$1; shift
@@ -53,6 +54,8 @@ fi
 
 clear_log
 NORMAL=${GOOD} print_info 1 "Gentoo Linux Genkernel; Version ${GK_V}${NORMAL}"
+print_info 1 "Running with options: ${Options}"
+echo
 
 # Set ${ARCH}
 get_official_arch
@@ -71,7 +74,6 @@ determine_real_args
 dump_debugcache
 
 NORMAL=${BOLD} print_info 1 "Linux Kernel ${BOLD}${KV}${NORMAL} for ${BOLD}${ARCH}${NORMAL}..."
-echo
 
 if [ "${BUILD_INITRD}" -ne '0' ]
 then
@@ -145,7 +147,8 @@ then
 	cat
 	echo
 	CTEMP="${TEMP}"
-	TEMP="/var/tmp/genkernel-`dd if=/dev/random count=1 2>/dev/null | md5sum | cut -d\  -f1`"
+	TEMP=${TMPDIR-/tmp}
+	TEMP=${TEMP}/genkernel.$RANDOM.$RANDOM.$RANDOM.$$
 	print_info 1 'thread: Running multiple genkernels may cause problems!'
 	print_info 1 "thread: Temporary files reallocated to ${TEMP}..."
 	echo
@@ -169,26 +172,6 @@ then
 	then
 		[ "${VER}" -gt '2' ] || [ "${VER}" -eq '2' -a "${PAT}" -ge '6' ] && compile_generic prepare kernel
 	fi
-
-#	Replaced by initramfs
-
-#	if [ "${GENSPLASH}" -eq '1' ]
-#	then
-#		if [ -x /sbin/splash ]
-#		then
-#			[ -z "${GENSPLASH_THEME}" ] && [ -e /etc/conf.d/splash ] && source /etc/conf.d/splash
-#			[ -z "${GENSPLASH_THEME}" ] && GENSPLASH_THEME=default
-#			print_info 1 "	>> Installing gensplash [ using the ${GENSPLASH_THEME} theme ]..."
-#			# 2.6.9
-#			sed -i -e 's:$(obj)/gen_init_cpio $(initramfs-y) FORCE:$(if $(shell [ ! -f $(obj)/initramfs_data.cpio ] \&\& echo 1 ), $(obj)/gen_init_cpio $(initramfs-y)):' ${KERNEL_DIR}/usr/Makefile
-#			# 2.6.10
-#			sed -i -e 's:$(obj)/gen_init_cpio \\:$(if $(shell [ ! -f $(obj)/initramfs_data.cpio ] \&\& echo 1 ), $(obj)/gen_init_cpio $(initramfs-y) $(obj)/initramfs_list):' -e 's:$(initramfs-y) $(obj)/initramfs_list FORCE::' ${KERNEL_DIR}/usr/Makefile
-#			splash_geninitramfs -g ${KERNEL_DIR}/usr/initramfs_data.cpio.gz ${GENSPLASH_THEME}
-#			gunzip ${KERNEL_DIR}/usr/initramfs_data.cpio.gz
-#		else
-#			print_warning 1 '		>> No splash detected; skipping!'
-#		fi
-#	fi
 
 	# Compile kernel
 	[ "${GENERATE_Z_IMAGE}" = '' ] && compile_kernel
