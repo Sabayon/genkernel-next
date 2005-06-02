@@ -99,6 +99,16 @@ do
 			MLIST=`parse_opt "${x}"`
 			MLIST="`echo ${MLIST} | sed -e \"s/,/ /\"`"
 			export MLIST
+		;;       
+		ip\=*)
+			IP=`parse_opt "${x}"`
+			if [ "${REAL_ROOT}" = '' ]; then
+				CDROOT=1
+				NFSLIVECD=1
+			fi
+		;;
+		nfsroot\=*)
+			NFSROOT=`parse_opt "${x}"`
 		;;
 	esac
 done
@@ -164,6 +174,7 @@ startVolumes() {
 		then
 			echo -e "${GOOD}>>${NORMAL}${BOLD} Activating Device-Mapper raid(s)...${NORMAL}"
 			/sbin/dmraid -ay
+			[ "${USE_UDEV_NORMAL}" -eq '1' ] && /sbin/dmsetup mknodes
 		fi
 	fi
 
@@ -245,6 +256,7 @@ bootstrapCD() {
 		[ "${REAL_ROOT}" = '' ] && findcdmount /newroot/dev/ide/cd/*
 		[ "${REAL_ROOT}" = '' ] && findcdmount /newroot/dev/sr0
 		[ "${REAL_ROOT}" = '' ] && findcdmount /newroot/dev/sd* # USB Keychain
+		[ "${REAL_ROOT}" = '' ] && [ "{NFSLIVECD}" != '' ] && findnfsmount # NFS
 	else
 		# Device specified on command line
 		findcdmount /newroot/${CDROOT_DEV}
@@ -344,7 +356,7 @@ do
 			echo -n 'boot() :: '
 			read REAL_ROOT
 			got_good_root=0
-		elif [ -b "${REAL_ROOT}" ]
+		elif [ -b "${REAL_ROOT}" ] || [ "${REAL_ROOT}" = "/dev/nfs" ]
 		then
 			got_good_root=1
 		else
@@ -359,7 +371,11 @@ do
 		break
 	else
 		echo -e "${GOOD}>>${NORMAL}${BOLD} Mounting root...${NORMAL}"
-		mount -o rw ${REAL_ROOT} /newroot
+		if [ "${REAL_ROOT}" = '/dev/nfs' ]; then
+			findnfsmount
+		else
+			mount -o rw ${REAL_ROOT} /newroot
+		fi
 
 		if [ "$?" = '0' ]
 		then
@@ -387,6 +403,26 @@ if [ "${CDROOT}" = '1' ]
 then
 	echo -e "${GOOD}>>${NORMAL}${BOLD} Filling tmpfs...${NORMAL}"
 	cd /newroot
+
+	# Find loop and looptype if we have NFS-mounted a livecd
+	if  [ "${LOOP}" = '' ] && [ "${REAL_ROOT}" = "/dev/nfs" ]
+	then
+		if [ -e '/newroot/mnt/cdrom/livecd.loop' ]; then
+			LOOP='/livecd.loop'
+			LOOPTYPE='normal'
+                elif [ -e '/newroot/mnt/cdrom/zisofs' ]; then
+			LOOP='/zisofs'
+			LOOPTYPE='zisofs'
+                elif [ -e '/newroot/mnt/cdrom/livecd.squashfs' ]; then
+			LOOP='/livecd.squashfs'
+			LOOPTYPE='squashfs'
+                elif [ -e '/newroot/mnt/cdrom/livecd.gcloop' ]; then
+			LOOP='/livecd.gcloop'
+			LOOPTYPE='gcloop'
+                else
+			LOOPTYPE='noloop'
+		fi
+	fi
 
 	# Failsafe the loop type wasn't set
 	if [ "${LOOPTYPE}" = '' ]
@@ -475,13 +511,66 @@ then
 	fi
 
 	echo -e "${GOOD}>>${NORMAL}${BOLD} Filling filesystem...${NORMAL}"
+
+	# Copy over stuff that should be writable
+	(cd /newroot/${FS_LOCATION}; cp -a ${ROOT_TREES} /newroot)
+
+	# Unpacking additional packages from NFS mount
+	# This is useful for adding kernel modules to /lib
+	# We do this now, so that additional packages can add whereever they want.
+	if [ "${REAL_ROOT}" = '/dev/nfs' ]
+	then
+		if [ -e '/newroot/mnt/cdrom/add' ]
+		then
+			for targz in `ls /newroot/mnt/cdrom/add/*.tar.gz`
+			do	
+				tarname=`basename ${targz}`
+				echo -e "${GOOD}>>${NORMAL}${BOLD} Adding additional package ${tarname}${NORMAL}"
+				(cd /newroot ; tar -xzf ${targz})
+			done
+		fi
+	fi
+
+	# Now we do the links.
 	for x in ${ROOT_LINKS}
 	do
-		ln -s "${FS_LOCATION}/${x}" "${x}"
+		# List all subdirectories of x
+		for directory in `find "/newroot/${FS_LOCATION}/${x}" -type d`
+		do
+			## Strip the prefix of the FS_LOCATION
+			directory=${directory#/newroot/${FS_LOCATION}/}
+
+			## Skip this directory if we already linked a parent directory
+			if [ "${current_parrent}" != '' ]; then
+				var=`echo "${directory}" | grep "^${current_parrent}"`
+				if [ "${var}" != '' ]; then
+					continue
+				fi
+			fi
+			## Test if the directory exists already
+			if [ -e "/newroot/${directory}" ]
+			then
+				# It does exist, link all the individual files
+				for file in `ls /newroot/${FS_LOCATION}/${directory}`
+				do
+				if [ ! -d "/newroot/${FS_LOCATION}/${directory}/${file}" ] && [ ! -e "/newroot/${directory}/${file}" ]; then
+						ln -s "/${FS_LOCATION}/${directory}/${file}" "${directory}/${file}" 2> /dev/null
+					fi
+				done
+			else
+				# It does not exist, make a link to the livecd
+				ln -s "/${FS_LOCATION}/${directory}" "${directory}" 2> /dev/null
+				current_parrent=${directory}
+			fi
+		done
 	done
+
 	mkdir initrd proc tmp sys
 	chmod 1777 tmp
-	(cd /newroot/${FS_LOCATION}; cp -a ${ROOT_TREES} /newroot)
+
+	# Let Init scripts know that we booted from CD
+	export CDBOOT
+	CDBOOT=1
 else
 	mkdir -p /newroot/tmp/.initrd
 fi

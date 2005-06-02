@@ -241,6 +241,18 @@ Passes arguments to init on bootup.
 \fBscandelay\fR=<...>
 Pauses for 10 seconds before running devfsd if no argument is specified;
 otherwise pauses for the number of specified seconds.
+.TP 
+\fBip\fR=<...>
+Normally used to tell the kernel that it should start a network interface. If present, the initrd will try to mount a livecd over NFS.
+.TP 
+\fBnfsroot\fR=<...>
+If present, the initrd will try to mount a livecd from that location. Otherwise the location will be deduced from the DCHP request (option root\-path)
+
+.SH NETBOOTING
+The initrd scripts have limited support for network booting.
+This is activated if the ip=<...> kernel parameter was given. Please refer to the genkernel guide at http://www.gentoo.org/doc/en/genkernel.xml for more information.
+
+The initrd scripts will extract any *.tar.gz files found in the \fB/add\fR directory of the livecd into the root filesystem during boot. This way its easy to extend a netbooted livecd i.e. with custom tools, or other kernel modules.
 .SH REPORTING BUGS
 If you believe you have found a bug in the genkernel scripts, then please
 file a bug on the Gentoo Linux Bugzilla: 

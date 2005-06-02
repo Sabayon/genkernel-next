@@ -63,6 +63,57 @@ findcdmount() {
 	fi
 }
 
+findnfsmount() {
+	if [ "${IP}" != '' ]; then
+		if [ "${NFSROOT}" = '' ]; then
+			OPTIONS=`busybox dmesg | grep rootserver | sed -e "s/,/ /g"`
+			for OPTION in $OPTIONS
+			do
+				if [ `echo $OPTION | sed -e "s/=/ /g" | cut -d " " -f 1` = 'rootserver' ]; then
+					NFSIP=`echo $OPTION | sed -e "s/=/ /g" | cut -d " " -f 2`;
+				fi 
+			done
+	
+			OPTIONS=`busybox dmesg | grep rootpath | sed -e "s/,/ /g"`	
+			for OPTION in $OPTIONS
+			do
+				if [ `echo $OPTION | sed -e "s/=/ /g" | cut -d " " -f 1` = 'rootpath' ]; then
+					NFSPATH=`echo $OPTION | sed -e "s/=/ /g" | cut -d " " -f 2`;
+		 		fi 
+			done
+			if [ "${NFSIP}" != "" ] && [ "$NFSPATH" != "" ]
+			then
+				NFSROOT="${NFSIP}:${NFSPATH}"
+			else
+				echo -e "${BAD}>>${NORMAL} The DHCP Server did not send a valid root-path."
+				echo -e "${BAD}>>${NORMAL} Please check your DHCP setup, or provide a nfsroot=<...> parameter."
+			fi
+		fi
+		if [ "${NFSROOT}" != "" ]; then
+			if [ "${CDROOT}" != '' ]; then
+				echo -e "${GOOD}>>${NORMAL} Attempting to mount NFS CD image on ${NFSPATH}"
+	                        mount -t nfs -o ro,nolock,rsize=1024,wsize=1024 ${NFSROOT} /newroot/mnt/cdrom
+				if [ "$?" = '0' ]; then
+					REAL_ROOT="/dev/nfs"
+				else
+					echo -e "${BAD}>>${NORMAL} NFS Mounting failed. Is the path corrent ?"
+				fi
+			else	
+				echo -e "${GOOD}>>${NORMAL} Attemping to mount NFS root on ${NFSPATH}"
+				mount -t nfs -o ro,nolock,rsize=1024,wsize=1024 ${NFSROOT} /newroot
+                                if [ "$?" = '0' ]; then
+					REAL_ROOT="/dev/nfs"
+				else
+					echo -e "${BAD}>>${NORMAL} NFS Mounting failed. Is the path correct ?"
+				fi
+				# FIXME: Need to start portmap and the other rpc daemons in order to
+				# FIXME: remount rw.
+			fi
+
+		fi
+	fi
+}
+
 kill_devfsd() {
 	killall devfsd > /dev/null 2>&1
 }

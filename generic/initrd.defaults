@@ -18,7 +18,7 @@ MISCOPTS='idebug detect'
 # are not module groups need to be defined here...
 
 HWOPTS='usb firewire keymap cache lvm2 evms2 dmraid sata'
-MY_HWOPTS='usb firewire lvm2 evms2 dmraid sata'
+MY_HWOPTS='usb firewire dmraid sata'
 
 QUIET=1
 ROOT_LINKS='bin sbin lib lib64 boot usr opt'
