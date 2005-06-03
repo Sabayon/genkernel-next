@@ -48,8 +48,9 @@ set_grub_bootloader() {
 		# Check that $GRUB_ROOT_PARTITION is a single character
 		local GRUB_ROOT_PARTITION_TEST=$(printf $GRUB_ROOT_PARTITION | wc -c)
 		if [ "${GRUB_ROOT_PARTITION_TEST}" -ne '1' ]
+		then
 			# GRUB_ROOT_PARTITION is not a number; we can't work this out so... error
-			print_error 1 'Error! /boot/grub/grub.conf does not exist and the correct settings can't be automatically detected.'
+			print_error 1 'Error! /boot/grub/grub.conf does not exist and the correct settings can\'t be automatically detected.'
 			print_error 1 'Please manually create your /boot/grub/grub.conf file.'
 		else
 			# grub.conf doesn't exist - create it with standard defaults
