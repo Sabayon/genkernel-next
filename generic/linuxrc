@@ -535,7 +535,7 @@ then
 	for x in ${ROOT_LINKS}
 	do
 		# List all subdirectories of x
-		for directory in `find "/newroot/${FS_LOCATION}/${x}" -type d`
+		for directory in $(find "/newroot/${FS_LOCATION}/${x}" -type d 2>/dev/null)
 		do
 			## Strip the prefix of the FS_LOCATION
 			directory=${directory#/newroot/${FS_LOCATION}/}
