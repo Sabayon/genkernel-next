@@ -4,7 +4,7 @@
 KERNEL_MAKE_DIRECTIVE="vmlinux"
 KERNEL_MAKE_DIRECTIVE_2="zImage.initrd"
 KERNEL_BINARY="vmlinux"
-KERNEL_BINARY_2=""
+KERNEL_BINARY_2="arch/ppc/boot/images/zImage.initrd.chrp"
 
 # The dietlibc portion of busybox is commented out right now
 # other stuff seems to compile fine though
