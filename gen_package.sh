@@ -7,8 +7,8 @@ gen_minkernpackage()
 	mkdir "${TEMP}/minkernpackage" || gen_die 'Could not make a directory for the kernel package!'
 	if [ "${CMD_KERNCACHE}" != "" ]
 	then
-	    tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} kernel-${ARCH}-${KV}
-	    tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} config-${ARCH}-${KV}
+	    /bin/tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} kernel-${ARCH}-${KV}
+	    /bin/tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} config-${ARCH}-${KV}
 	else
 	    cd "${KERNEL_DIR}"
 	    cp "${KERNEL_BINARY}" "${TEMP}/minkernpackage/kernel-${KV}" || gen_die 'Could not the copy kernel for the min kernel package!'
@@ -21,7 +21,7 @@ gen_minkernpackage()
 		[ "${BUILD_INITRD}" -ne 0 ] && { cp "${TEMP}/initrd-${KV}" "${TEMP}/minkernpackage/initrd-${ARCH}-${KV}" || gen_die 'Could not copy the initrd for the kernel package!'; }
 	fi
 	cd "${TEMP}/minkernpackage" 
-	tar -jcpf ${MINKERNPACKAGE} * || gen_die 'Could not compress the kernel package!'
+	/bin/tar -jcpf ${MINKERNPACKAGE} * || gen_die 'Could not compress the kernel package!'
 	cd "${TEMP}" && rm -rf "${TEMP}/minkernpackage" > /dev/null 2>&1
 }
 gen_modulespackage()
@@ -35,7 +35,7 @@ gen_modulespackage()
 	    mkdir -p ${TEMP}/modulespackage/lib/modules
 	    cp -r "${INSTALL_MOD_PATH}/lib/modules/${KV}" "${TEMP}/modulespackage/lib/modules"
 	    cd "${TEMP}/modulespackage" 
-	    tar -jcpf ${MODULESPACKAGE} * || gen_die 'Could not compress the modules package!'
+	    /bin/tar -jcpf ${MODULESPACKAGE} * || gen_die 'Could not compress the modules package!'
 	else
 	    print_info 1 "Could not create a modules package ${INSTALL_MOD_PATH}/lib/modules/${KV} was not found"
 	fi
@@ -64,7 +64,7 @@ gen_kerncache()
 	fi
 	
 	cd "${TEMP}/kerncache" 
-	tar -jcpf ${KERNCACHE} * || gen_die 'Could not compress the kernel package!'
+	/bin/tar -jcpf ${KERNCACHE} * || gen_die 'Could not compress the kernel package!'
 	cd "${TEMP}" && rm -rf "${TEMP}/kerncache" > /dev/null 2>&1
 }
 
@@ -74,7 +74,7 @@ gen_kerncache_extract_kernel()
 	(umask 077 && mkdir ${tmp}) || {
 	    gen_die "Could not create temporary directory! Exiting."
 	}
-       	tar -f ${KERNCACHE} -C ${tmp} -xj 
+       	/bin/tar -f ${KERNCACHE} -C ${tmp} -xj 
 	cp "${tmp}/kernel-${ARCH}-${KV}" "/boot/kernel-${KNAME}-${ARCH}-${KV}" || {
 		rm -r ${tmp}
 		gen_die 'Could not copy the kernel binary to /boot!'
@@ -93,9 +93,9 @@ gen_kerncache_extract_modules()
 		print_info 1 'Extracting kerncache kernel modules'
         	if [ "${INSTALL_MOD_PATH}" != '' ]
 		then
-        		tar xjf ${KERNCACHE} -C ${INSTALL_MOD_PATH} lib
+        		/bin/tar -xjf ${KERNCACHE} -C ${INSTALL_MOD_PATH} lib
 		else
-        		tar xjf ${KERNCACHE} -C / lib
+        		/bin/tar -xjf ${KERNCACHE} -C / lib
 		fi
 	fi
 }
@@ -113,7 +113,7 @@ gen_kerncache_is_valid()
 		    gen_die "Could not create temporary directory! Exiting."
 		}
 		
-		tar -xj -f ${KERNCACHE} -C ${tmp}
+		/bin/tar -xj -f ${KERNCACHE} -C ${tmp}
 		if [ -e ${tmp}/config-${ARCH}-${KV} -a -e ${tmp}/kernel-${ARCH}-${KV} ] 
 		then 	
 			print_info 1 'Valid kernel cache found; no sources will be used'
@@ -129,7 +129,7 @@ gen_kerncache_is_valid()
 			    
 			}
 		
-			tar -xj -f ${KERNCACHE} -C ${tmp}
+			/bin/tar -xj -f ${KERNCACHE} -C ${tmp}
 			if [ -e ${tmp}/config-${ARCH}-${KV} -a -e /${KERNEL_DIR}/.config ]
 			then
 	

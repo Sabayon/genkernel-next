@@ -182,6 +182,10 @@ arch_replace() {
   var_replace "ARCH" "${ARCH}" "${1}"
 }
 
+kv_replace() {
+  var_replace "KV" "${KV}" "${1}"
+}
+
 cache_replace() {
   var_replace "CACHE" "${CACHE_DIR}" "${1}"
 }

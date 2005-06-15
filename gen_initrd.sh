@@ -91,16 +91,35 @@ create_base_initrd_sys() {
 	# udev
 	if [ "${UDEV}" -eq '1' ]
 	then
-		tar -jxpf "${UDEV_BINCACHE}" -C "${TEMP}/initrd-temp" || gen_die 'Could not extract udev binary cache!'
+		/bin/tar -jxpf "${UDEV_BINCACHE}" -C "${TEMP}/initrd-temp" || gen_die 'Could not extract udev binary cache!'
 		ln -sf "./udev" "${TEMP}/initrd-temp/bin/udevstart" || 	gen_die 'Could not symlink udev -> udevstart!'
 	fi
+	
+	#unionfs modules
+	if [ "${UNIONFS}" -eq '1' ]
+	then
+		print_info 1 'UNIONFS MODULES: Adding support (compiling)...'
+		compile_unionfs_modules
+		/bin/tar -jxpf "${UNIONFS_MODULES_BINCACHE}" -C "${TEMP}/initrd-temp" ||
+			gen_die "Could not extract unionfs modules binary cache!";
+	fi
+	
+	#unionfs utils
+	if [ "${UNIONFS}" -eq '1' ]
+	then
+		print_info 1 'UNIONFS TOOLS: Adding support (compiling)...'
+		compile_unionfs_utils
+		/bin/tar -jxpf "${UNIONFS_BINCACHE}" -C "${TEMP}/initrd-temp" ||
+			gen_die "Could not extract unionfs tools binary cache!";
+	fi
+
 
 	# DMRAID 
 	if [ "${DMRAID}" = '1' ]
 	then
 		print_info 1 'DMRAID: Adding support (compiling binaries)...'
 		compile_dmraid
-		tar -jxpf "${DMRAID_BINCACHE}" -C "${TEMP}/initrd-temp" ||
+		/bin/tar -jxpf "${DMRAID_BINCACHE}" -C "${TEMP}/initrd-temp" ||
 			gen_die "Could not extract dmraid binary cache!";
 	fi
 
@@ -120,7 +139,7 @@ create_base_initrd_sys() {
 			print_info 1 'LVM2: Adding support (compiling binaries)...'
 			compile_lvm2
 
-			tar -jxpf "${LVM2_BINCACHE}" -C "${TEMP}/initrd-temp" ||
+			/bin/tar -jxpf "${LVM2_BINCACHE}" -C "${TEMP}/initrd-temp" ||
 				gen_die "Could not extract lvm2 binary cache!";
 			mv ${TEMP}/initrd-temp/bin/lvm.static ${TEMP}/initrd-temp/bin/lvm ||
 				gen_die 'LVM2 error: Could not move lvm.static to lvm!'
@@ -263,7 +282,7 @@ create_initrd_aux() {
 		echo 'MY_HWOPTS="${MY_HWOPTS} keymap"' >> ${TEMP}/initrd-temp/etc/initrd.defaults
 	fi
 	mkdir -p "${TEMP}/initrd-temp/lib/keymaps"
-	tar -C "${TEMP}/initrd-temp/lib/keymaps" -zxf "${GK_SHARE}/generic/keymaps.tar.gz"
+	/bin/tar -C "${TEMP}/initrd-temp/lib/keymaps" -zxf "${GK_SHARE}/generic/keymaps.tar.gz"
 
 	cd ${TEMP}/initrd-temp/sbin && ln -s ../linuxrc init
 	cd ${OLDPWD}

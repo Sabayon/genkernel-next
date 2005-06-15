@@ -7,7 +7,7 @@ get_KV() {
 		(umask 077 && mkdir ${tmp}) || {
 			gen_die "Could not create temporary directory! Exiting."
 		}
-		tar -xj -C ${tmp} -f ${CMD_KERNCACHE} kerncache.config 
+		/bin/tar -xj -C ${tmp} -f ${CMD_KERNCACHE} kerncache.config 
 		if [ -e ${tmp}/kerncache.config ]
 		then
 			VER=`grep ^VERSION\ \= ${tmp}/kerncache.config | awk '{ print $3 };'`
@@ -137,6 +137,8 @@ determine_real_args() {
 	DEVICE_MAPPER_BINCACHE=`cache_replace "${DEVICE_MAPPER_BINCACHE}"`
 	LVM2_BINCACHE=`cache_replace "${LVM2_BINCACHE}"`
 	DMRAID_BINCACHE=`cache_replace "${DMRAID_BINCACHE}"`
+	UNIONFS_BINCACHE=`cache_replace "${UNIONFS_BINCACHE}"`
+	UNIONFS_MODULES_BINCACHE=`cache_replace "${UNIONFS_MODULES_BINCACHE}"`
   
 	DEFAULT_KERNEL_CONFIG=`arch_replace "${DEFAULT_KERNEL_CONFIG}"`
 	BUSYBOX_CONFIG=`arch_replace "${BUSYBOX_CONFIG}"`
@@ -151,6 +153,10 @@ determine_real_args() {
 	DEVICE_MAPPER_BINCACHE=`arch_replace "${DEVICE_MAPPER_BINCACHE}"`
 	LVM2_BINCACHE=`arch_replace "${LVM2_BINCACHE}"`
 	DMRAID_BINCACHE=`arch_replace "${DMRAID_BINCACHE}"`
+	UNIONFS_BINCACHE=`arch_replace "${UNIONFS_BINCACHE}"`
+	UNIONFS_MODULES_BINCACHE=`arch_replace "${UNIONFS_MODULES_BINCACHE}"`
+	
+	UNIONFS_MODULES_BINCACHE=`kv_replace "${UNIONFS_MODULES_BINCACHE}"`
 	
 	if [ "${CMD_BOOTSPLASH}" != '' ]
 	then
@@ -284,6 +290,12 @@ determine_real_args() {
 	then
 		DEVFS=0
 	fi
+	
+	if isTrue "${CMD_DEVFS}"
+	then
+		DEVFS=1
+		UDEV=0
+	fi
 
 	if isTrue "${CMD_LVM2}"
 	then
@@ -297,6 +309,13 @@ determine_real_args() {
 		EVMS2=1
 	else
 		EVMS2=0
+	fi
+	
+	if isTrue "${CMD_UNIONFS}"
+	then
+		UNIONFS=1
+	else
+		UNIONFS=0
 	fi
 	
 	if isTrue "${CMD_NO_BUSYBOX}"

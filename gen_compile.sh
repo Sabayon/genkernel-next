@@ -164,7 +164,7 @@ compile_generic() {
 extract_dietlibc_bincache() {
 	cd "${TEMP}"
 	rm -rf "${TEMP}/diet" > /dev/null
-	tar -jxpf "${DIETLIBC_BINCACHE}" ||
+	/bin/tar -jxpf "${DIETLIBC_BINCACHE}" ||
 		gen_die 'Could not extract dietlibc bincache!'
 	[ ! -d "${TEMP}/diet" ] &&
 		gen_die "${TEMP}/diet directory not found!"
@@ -240,6 +240,83 @@ compile_kernel() {
 	fi
 }
 
+compile_unionfs_modules() {
+	if [ ! -f "${UNIONFS_MODULES_BINCACHE}" ]
+	then
+		[ -f "${UNIONFS_SRCTAR}" ] ||
+			gen_die "Could not find unionfs source tarball: ${UNIONFS_SRCTAR}!"
+		cd "${TEMP}"
+		rm -rf ${UNIONFS_DIR} > /dev/null
+		rm -rf unionfs > /dev/null
+		mkdir -p unionfs
+		/bin/tar -zxpf ${UNIONFS_SRCTAR} ||
+			gen_die 'Could not extract unionfs source tarball!'
+		[ -d "${UNIONFS_DIR}" ] ||
+			gen_die 'Unionfs directory ${UNIONFS_DIR} is invalid!'
+		cd "${UNIONFS_DIR}"
+		print_info 1 'unionfs modules: >> Compiling...'
+		sed -i Makefile -e "s|LINUXSRC =.*|LINUXSRC =${KERNEL_DIR}|g"
+		if [ "${PAT}" -ge '6' ]
+		then
+			compile_generic unionfs2.6 kernel
+		else
+			compile_generic unionfs2.4 kernel
+		fi
+		print_info 1 'unionfs: >> Copying to cache...'
+
+		mkdir -p ${TEMP}/unionfs/lib/modules/${KV}/kernel/fs
+		
+		if [ -f unionfs.ko ]
+		then 
+			cp unionfs.ko ${TEMP}/unionfs/lib/modules/${KV}/kernel/fs 
+		else 
+			cp unionfs.o ${TEMP}/unionfs/lib/modules/${KV}/kernel/fs 
+	 	fi
+		
+		cd ${TEMP}/unionfs	
+		/bin/tar -cjf "${UNIONFS_MODULES_BINCACHE}" . ||
+			gen_die 'Could not create unionfs modules binary cache'
+		
+		cd "${TEMP}"
+		rm -rf "${UNIONFS_DIR}" > /dev/null
+		rm -rf unionfs > /dev/null
+	fi
+}
+
+compile_unionfs_utils() {
+	if [ ! -f "${UNIONFS_BINCACHE}" ]
+	then
+		[ -f "${UNIONFS_SRCTAR}" ] ||
+			gen_die "Could not find unionfs source tarball: ${UNIONFS_SRCTAR}!"
+		cd "${TEMP}"
+		rm -rf ${UNIONFS_DIR} > /dev/null
+		rm -rf unionfs > /dev/null
+		mkdir -p unionfs/sbin
+		/bin/tar -zxpf ${UNIONFS_SRCTAR} ||
+			gen_die 'Could not extract unionfs source tarball!'
+		[ -d "${UNIONFS_DIR}" ] ||
+			gen_die 'Unionfs directory ${UNIONFS_DIR} is invalid!'
+		cd "${UNIONFS_DIR}"
+		print_info 1 'unionfs tools: >> Compiling...'
+		sed -i Makefile -e 's|${CC} -o|${CC} -static -o|g'
+		compile_generic utils utils
+		
+		print_info 1 'unionfs: >> Copying to cache...'
+		strip uniondbg unionctl
+		cp uniondbg ${TEMP}/unionfs/sbin/ || 
+			gen_die 'Could not copy the uniondbg binary to the tmp directory'
+		cp unionctl ${TEMP}/unionfs/sbin/ ||
+			gen_die 'Could not copy the unionctl binary to the tmp directory'
+		cd ${TEMP}/unionfs	
+		/bin/tar -cjf "${UNIONFS_BINCACHE}" . ||
+			gen_die 'Could not create unionfs tools binary cache'
+		
+		cd "${TEMP}"
+		rm -rf "${UNIONFS_DIR}" > /dev/null
+		rm -rf unionfs > /dev/null
+	fi
+}
+
 compile_busybox() {
 	if [ ! -f "${BUSYBOX_BINCACHE}" ]
 	then
@@ -249,7 +326,7 @@ compile_busybox() {
 			gen_die "Cound not find busybox config file: ${BUSYBOX_CONFIG}!"
 		cd "${TEMP}"
 		rm -rf ${BUSYBOX_DIR} > /dev/null
-		tar -jxpf ${BUSYBOX_SRCTAR} ||
+		/bin/tar -jxpf ${BUSYBOX_SRCTAR} ||
 			gen_die 'Could not extract busybox source tarball!'
 		[ -d "${BUSYBOX_DIR}" ] ||
 			gen_die 'Busybox directory ${BUSYBOX_DIR} is invalid!'
@@ -283,12 +360,12 @@ compile_lvm2() {
 			gen_die "Could not find LVM2 source tarball: ${LVM2_SRCTAR}! Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
 		cd "${TEMP}"
 		rm -rf ${LVM2_DIR} > /dev/null
-		tar -zxpf ${LVM2_SRCTAR} ||
+		/bin/tar -zxpf ${LVM2_SRCTAR} ||
 			gen_die 'Could not extract LVM2 source tarball!'
 		[ -d "${LVM2_DIR}" ] ||
 			gen_die 'LVM2 directory ${LVM2_DIR} is invalid!'
 		rm -rf "${TEMP}/device-mapper" > /dev/null
-		tar -jxpf "${DEVICE_MAPPER_BINCACHE}" -C "${TEMP}" ||
+		/bin/tar -jxpf "${DEVICE_MAPPER_BINCACHE}" -C "${TEMP}" ||
 			gen_die "Could not extract device-mapper binary cache!";
 		
 		cd "${LVM2_DIR}"
@@ -306,7 +383,7 @@ compile_lvm2() {
 		print_info 1 '      >> Copying to bincache...'
 		strip "sbin/lvm.static" ||
 			gen_die 'Could not strip lvm.static!'
-		tar -cjf "${LVM2_BINCACHE}" sbin/lvm.static ||
+		/bin/tar -cjf "${LVM2_BINCACHE}" sbin/lvm.static ||
 			gen_die 'Could not create binary cache'
 
 		cd "${TEMP}"
@@ -323,12 +400,12 @@ compile_dmraid() {
 			gen_die "Could not find DMRAID source tarball: ${DMRAID_SRCTAR}! Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
 		cd "${TEMP}"
 		rm -rf ${DMRAID_DIR} > /dev/null
-		tar -jxpf ${DMRAID_SRCTAR} ||
+		/bin/tar -jxpf ${DMRAID_SRCTAR} ||
 			gen_die 'Could not extract DMRAID source tarball!'
 		[ -d "${DMRAID_DIR}" ] ||
 			gen_die 'DMRAID directory ${DMRAID_DIR} is invalid!'
 		rm -rf "${TEMP}/device-mapper" > /dev/null
-		tar -jxpf "${DEVICE_MAPPER_BINCACHE}" -C "${TEMP}" ||
+		/bin/tar -jxpf "${DEVICE_MAPPER_BINCACHE}" -C "${TEMP}" ||
 			gen_die "Could not extract device-mapper binary cache!";
 		
 		cd "${DMRAID_DIR}"
@@ -347,7 +424,7 @@ compile_dmraid() {
 			install -m 0755 -s tools/dmraid "${TEMP}/dmraid/sbin/dmraid"
 		print_info 1 '      >> Copying to bincache...'
 		cd "${TEMP}/dmraid"
-		tar -cjf "${DMRAID_BINCACHE}" sbin/dmraid ||
+		/bin/tar -cjf "${DMRAID_BINCACHE}" sbin/dmraid ||
 			gen_die 'Could not create binary cache'
 
 		cd "${TEMP}"
@@ -367,7 +444,7 @@ compile_modutils() {
 			gen_die "Could not find modutils source tarball: ${MODUTILS_SRCTAR}!"
 		cd "${TEMP}"
 		rm -rf "${MODUTILS_DIR}"
-		tar -jxpf "${MODUTILS_SRCTAR}"
+		/bin/tar -jxpf "${MODUTILS_SRCTAR}"
 		[ ! -d "${MODUTILS_DIR}" ] &&
 			gen_die "Modutils directory ${MODUTILS_DIR} invalid!"
 		cd "${MODUTILS_DIR}"
@@ -421,7 +498,7 @@ compile_module_init_tools() {
 			gen_die "Could not find module-init-tools source tarball: ${MODULE_INIT_TOOLS_SRCTAR}"
 		cd "${TEMP}"
 		rm -rf "${MODULE_INIT_TOOLS_DIR}"
-		tar -jxpf "${MODULE_INIT_TOOLS_SRCTAR}"
+		/bin/tar -jxpf "${MODULE_INIT_TOOLS_SRCTAR}"
 		[ ! -d "${MODULE_INIT_TOOLS_DIR}" ] &&
 			gen_die "Module-init-tools directory ${MODULE_INIT_TOOLS_DIR} is invalid"
 		cd "${MODULE_INIT_TOOLS_DIR}"
@@ -475,7 +552,7 @@ compile_devfsd() {
 			gen_die "Could not find devfsd source tarball: ${DEVFSD_SRCTAR}"
 		cd "${TEMP}"
 		rm -rf "${DEVFSD_DIR}"
-		tar -jxpf "${DEVFSD_SRCTAR}"
+		/bin/tar -jxpf "${DEVFSD_SRCTAR}"
 		[ ! -d "${DEVFSD_DIR}" ] &&
 			gen_die "Devfsd directory ${DEVFSD_DIR} invalid"
 		cd "${DEVFSD_DIR}"
@@ -524,7 +601,7 @@ compile_device_mapper() {
 			gen_die "Could not find device-mapper source tarball: ${DEVICE_MAPPER_SRCTAR}. Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
 		cd "${TEMP}"
 		rm -rf "${DEVICE_MAPPER_DIR}"
-		tar -zxpf "${DEVICE_MAPPER_SRCTAR}"
+		/bin/tar -zxpf "${DEVICE_MAPPER_SRCTAR}"
 		[ ! -d "${DEVICE_MAPPER_DIR}" ] &&
 			gen_die "device-mapper directory ${DEVICE_MAPPER_DIR} invalid"
 		cd "${DEVICE_MAPPER_DIR}"
@@ -539,7 +616,7 @@ compile_device_mapper() {
 			gen_die 'Could not remove manual pages!'
 		strip "${TEMP}/device-mapper/sbin/dmsetup" ||
 			gen_die 'Could not strip dmsetup binary!'
-		tar -jcpf "${DEVICE_MAPPER_BINCACHE}" device-mapper ||
+		/bin/tar -jcpf "${DEVICE_MAPPER_BINCACHE}" device-mapper ||
 			gen_die 'Could not tar up the device-mapper binary!'
 		[ -f "${DEVICE_MAPPER_BINCACHE}" ] ||
 			gen_die 'device-mapper cache not created!'
@@ -573,7 +650,7 @@ compile_dietlibc() {
 			gen_die "Could not find dietlibc source tarball: ${DIETLIBC_SRCTAR}"
 		cd "${TEMP}"
 		rm -rf "${DIETLIBC_DIR}" > /dev/null
-		tar -jxpf "${DIETLIBC_SRCTAR}" ||
+		/bin/tar -jxpf "${DIETLIBC_SRCTAR}" ||
 			gen_die 'Could not extract dietlibc source tarball'
 		[ -d "${DIETLIBC_DIR}" ] ||
 			gen_die "Dietlibc directory ${DIETLIBC_DIR} is invalid!"
@@ -584,7 +661,7 @@ compile_dietlibc() {
 		compile_generic "prefix=${TEMP}/diet install" utils
 		print_info 1 "          >> Copying to bincache..."
 		cd ${TEMP}
-		tar -jcpf "${DIETLIBC_BINCACHE}" diet ||
+		/bin/tar -jcpf "${DIETLIBC_BINCACHE}" diet ||
 			gen_die 'Could not tar up the dietlibc binary!'
 		[ -f "${DIETLIBC_BINCACHE}" ] ||
 			gen_die 'Dietlibc cache not created!'
@@ -603,7 +680,7 @@ compile_udev() {
 		rm -rf "${UDEV_DIR}" udev
 		[ ! -f "${UDEV_SRCTAR}" ] &&
 			gen_die "Could not find udev tarball: ${UDEV_SRCTAR}"
-		tar -jxpf "${UDEV_SRCTAR}" ||
+		/bin/tar -jxpf "${UDEV_SRCTAR}" ||
 			gen_die 'Could not extract udev tarball'
 		[ ! -d "${UDEV_DIR}" ] &&
 			gen_die "Udev tarball ${UDEV_SRCTAR} is invalid"
@@ -612,7 +689,7 @@ compile_udev() {
 		print_info 1 'udev: >> Compiling...'
 
 		ln -snf "${KERNEL_DIR}" klibc/linux || gen_die "Could not link to ${KERNEL_DIR}"
-		compile_generic "KERNEL_DIR=$KERNEL_DIR USE_KLIBC=true USE_LOG=false DEBUG=false udevdir=/dev all etc/udev/udev.conf" utils
+		compile_generic "ARCH=${ARCH} KERNEL_DIR=$KERNEL_DIR USE_KLIBC=true USE_LOG=false DEBUG=false udevdir=/dev all etc/udev/udev.conf" utils
 
 		strip udev || gen_die 'Failed to strip the udev binary!'
 
@@ -632,7 +709,7 @@ compile_udev() {
 
 		cd "${TEMP}/udev"
 		print_info 1 '      >> Copying to bincache...'
-		tar -cjf "${UDEV_BINCACHE}" * ||
+		/bin/tar -cjf "${UDEV_BINCACHE}" * ||
 			gen_die 'Could not create binary cache'
 
 		cd "${TEMP}"

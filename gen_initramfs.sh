@@ -91,7 +91,7 @@ create_udev_cpio(){
 	fi
 	cd ${TEMP}
 	mkdir -p "${TEMP}/initramfs-udev-temp/bin/"
-	[ "${UDEV}" -eq '1' ] && { tar -jxpf "${UDEV_BINCACHE}" -C "${TEMP}/initramfs-udev-temp" ||
+	[ "${UDEV}" -eq '1' ] && { /bin/tar -jxpf "${UDEV_BINCACHE}" -C "${TEMP}/initramfs-udev-temp" ||
 		gen_die "Could not extract udev binary cache!"; }
 	cd "${TEMP}/initramfs-udev-temp/"
 	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_DIR}/cpio/initramfs-udev-${UDEV_VER}.cpio.gz
@@ -115,6 +115,44 @@ create_devfs_cpio(){
 	rm -rf "${TEMP}/initramfs-devfs-temp" > /dev/null
 }
 
+create_unionfs_modules_cpio(){
+	#UNIONFS Modules
+	if [ "${UNIONFS}" -eq '1' ]
+	then
+		if [ -d "${TEMP}/initramfs-unionfs-modules-temp" ]
+		then
+			rm -r "${TEMP}/initramfs-unionfs-modules-temp/"
+		fi
+		print_info 1 'UNIONFS MODULES: Adding support (compiling)...'
+		compile_unionfs_modules
+		mkdir -p "${TEMP}/initramfs-unionfs-modules-temp/"
+		/bin/tar -jxpf "${UNIONFS_MODULES_BINCACHE}" -C "${TEMP}/initramfs-unionfs-modules-temp" ||
+			gen_die "Could not extract unionfs modules binary cache!";
+	cd "${TEMP}/initramfs-unionfs-modules-temp/"
+	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_DIR}/cpio/initramfs-unionfs-${UNIONFS_VER}-modules-${KV}.cpio.gz
+	rm -r "${TEMP}/initramfs-unionfs-modules-temp/"
+	fi
+}
+
+create_unionfs_tools_cpio(){
+	#UNIONFS Tools
+	if [ "${UNIONFS}" -eq '1' ]
+	then
+		if [ -d "${TEMP}/initramfs-unionfs-tools-temp" ]
+		then
+			rm -r "${TEMP}/initramfs-unionfs-tools-temp/"
+		fi
+		print_info 1 'UNIONFS TOOLS: Adding support (compiling)...'
+		compile_unionfs_utils
+		mkdir -p "${TEMP}/initramfs-unionfs-tools-temp/bin/"
+		/bin/tar -jxpf "${UNIONFS_BINCACHE}" -C "${TEMP}/initramfs-unionfs-tools-temp" ||
+			gen_die "Could not extract unionfs tools binary cache!";
+	cd "${TEMP}/initramfs-unionfs-tools-temp/"
+	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_DIR}/cpio/initramfs-unionfs-${UNIONFS_VER}-tools.cpio.gz
+	rm -r "${TEMP}/initramfs-unionfs-tools-temp/"
+	fi										        
+}
+
 create_dmraid_cpio(){
 	# DMRAID
 	if [ "${DMRAID}" = '1' ]
@@ -126,7 +164,7 @@ create_dmraid_cpio(){
 		print_info 1 'DMRAID: Adding support (compiling binaries)...'
 		compile_dmraid
 		mkdir -p "${TEMP}/initramfs-dmraid-temp/"
-		tar -jxpf "${DMRAID_BINCACHE}" -C "${TEMP}/initramfs-dmraid-temp" ||
+		/bin/tar -jxpf "${DMRAID_BINCACHE}" -C "${TEMP}/initramfs-dmraid-temp" ||
 			gen_die "Could not extract dmraid binary cache!";
 	cd "${TEMP}/initramfs-dmraid-temp/"
 	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_DIR}/cpio/initramfs-dmraid-${DMRAID_VER}.cpio.gz
@@ -152,7 +190,7 @@ create_lvm2_cpio(){
 		else
 			print_info 1 '		LVM2: Adding support (compiling binaries)...'
 			compile_lvm2
-			tar -jxpf "${LVM2_BINCACHE}" -C "${TEMP}/initramfs-lvm2-temp" ||
+			/bin/tar -jxpf "${LVM2_BINCACHE}" -C "${TEMP}/initramfs-lvm2-temp" ||
 				gen_die "Could not extract lvm2 binary cache!";
 			mv ${TEMP}/initramfs-lvm2-temp/sbin/lvm.static ${TEMP}/initramfs-lvm2-temp/bin/lvm ||
 				gen_die 'LVM2 error: Could not move lvm.static to lvm!'
@@ -327,7 +365,7 @@ create_initramfs_aux() {
 		echo 'MY_HWOPTS="${MY_HWOPTS} keymap"' >> ${TEMP}/initramfs-aux-temp/etc/initrd.defaults
 	fi
 	mkdir -p "${TEMP}/initramfs-aux-temp/lib/keymaps"
-	tar -C "${TEMP}/initramfs-aux-temp/lib/keymaps" -zxf "${GK_SHARE}/generic/keymaps.tar.gz"
+	/bin/tar -C "${TEMP}/initramfs-aux-temp/lib/keymaps" -zxf "${GK_SHARE}/generic/keymaps.tar.gz"
 
 	cd ${TEMP}/initramfs-aux-temp/sbin && ln -s ../init init
 	cd ${TEMP}
@@ -365,6 +403,14 @@ merge_initramfs_cpio_archives(){
 	if [ "${UDEV}" -eq '1' -a -e ${CACHE_DIR}/cpio/initramfs-udev-${UDEV_VER}.cpio.gz ]
 	then
 		MERGE_LIST="${MERGE_LIST} initramfs-udev-${UDEV_VER}.cpio.gz"
+	fi
+	if [ "${UNIONFS}" -eq '1' -a -e ${CACHE_DIR}/cpio/initramfs-unionfs-${UNIONFS_VER}-tools.cpio.gz ]
+	then
+		MERGE_LIST="${MERGE_LIST} initramfs-unionfs-${UNIONFS_VER}-tools.cpio.gz"
+	fi
+	if [ "${UNIONFS}" -eq '1' -a -e ${CACHE_DIR}/cpio/initramfs-unionfs-${UNIONFS_VER}-modules-${KV}.cpio.gz ]
+	then
+		MERGE_LIST="${MERGE_LIST} initramfs-unionfs-${UNIONFS_VER}-modules-${KV}.cpio.gz"
 	fi
 	if [ "${EVMS2}" -eq '1' -a -e "${CACHE_DIR}/cpio/initramfs-evms2.cpio.gz" ]
 	then
@@ -404,6 +450,10 @@ merge_initramfs_cpio_archives(){
 	done
 
     	cat ${MERGE_LIST} > ${TEMP}/initramfs-${KV}
+
+	[ "${KERNEL_MAKE_DIRECTIVE}" == 'zImage.initrd' ] ||
+		[ "${KERNEL_MAKE_DIRECTIVE_2}" == 'zImage.initrd' ] &&
+			cp ${TEMP}/initramfs-${KV} ${KERNEL_DIR}/arch/${ARCH}/boot/images/ramdisk.image.gz
 }
 
 clear_cpio_dir(){
@@ -443,6 +493,18 @@ create_initramfs() {
 	    create_udev_cpio
 	fi
 	
+	if [ "${UNIONFS}" -eq '1' ]
+	then
+	    print_info 1 "        >> Creating unionfs modules cpio archive..."
+	    create_unionfs_modules_cpio
+	fi
+	
+	if [ "${UNIONFS}" -eq '1' ]
+	then
+	    print_info 1 "        >> Creating unionfs tools cpio archive..."
+	    create_unionfs_tools_cpio
+	fi
+
 	if [ "${LVM2}" -eq '1' ]
 	then
 	    

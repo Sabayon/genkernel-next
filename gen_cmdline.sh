@@ -64,6 +64,7 @@ longusage() {
   echo "	--evms2			Include EVMS2 support"
   echo "				 --> 'emerge evms' in the host operating system first"
   echo "	--lvm2			Include LVM2 support"
+  echo "	--unionfs		Include UNIONFS support"
   echo "	--dmraid		Include DMRAID support"
   echo "	--bootloader=grub	Add new kernel to GRUB configuration"
   echo "	--linuxrc=<file>	Specifies a user created linuxrc"
@@ -166,6 +167,10 @@ parse_cmdline() {
 	      --evms2)
 		      CMD_EVMS2=1
 		      print_info 2 "CMD_EVMS2: $CMD_EVMS2"
+	      ;;
+	      --unionfs)
+		      CMD_UNIONFS=1
+		      print_info 2 "CMD_UNIONFS: $CMD_UNIONFS"
 	      ;;
 	      --lvm2)
 		      CMD_LVM2=1

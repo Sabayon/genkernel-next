@@ -6,11 +6,8 @@
 . /etc/initrd.defaults
 . /etc/initrd.scripts
 
-USE_DEVFS_NORMAL=1
-USE_UDEV_NORMAL=2
-USE_EVMS_NORMAL=1
-USE_LVM2_NORMAL=1
-USE_DMRAID_NORMAL=1
+# Clean input/output
+exec >/dev/console </dev/console 2>&1
 
 if [ "$$" != '1' ]
 then
@@ -23,256 +20,186 @@ fi
 mount -o remount,rw /
 mount -t proc proc /proc
 
+# Set up symlinks
 if [ "$0" = '/init' ]
 then
-	/bin/busybox --install -s
-	rm /linuxrc
-	if [ -e /sbin/udev ]
-	then
-		ln -s /sbin/udev /sbin/udevstart
-	fi
-	
-	if [ -e /bin/lvm ]
-	then
-		ln -s /bin/lvm /bin/vgscan
-		ln -s /bin/lvm /bin/vgchange
-	fi
-fi
-[ -n "$QUIET" ] && echo '0' > /proc/sys/kernel/printk
+    /bin/busybox --install -s
 
-CMDLINE=`cat /proc/cmdline`
+    [ -e /linuxrc ] && rm /linuxrc
+    [ -e /sbin/udev ] && ln -s /sbin/udev /sbin/udevstart
+
+    if [ -e /bin/lvm ]
+    then
+	ln -s /bin/lvm /bin/vgscan
+	ln -s /bin/lvm /bin/vgchange
+    fi
+fi
+
+quiet_kmsg
+
+CMDLINE="$(cat /proc/cmdline)"
 # Scan CMDLINE for any specified real_root= or cdroot arguments
 for x in ${CMDLINE}
 do
-	case "${x}" in
-		real_root\=*)
-			REAL_ROOT=`parse_opt "${x}"`
-		;;
-		cdroot)
-			CDROOT=1
-			REAL_ROOT=''
-		;;
-		cdroot\=*)
-			CDROOT=1
-			CDROOT_DEV=`parse_opt "${x}"`
-			REAL_ROOT=''
-		;;
-		devfs)
-			USE_DEVFS_NORMAL=1
-			USE_UDEV_NORMAL=0
-		;;
-		nodevfs)
-			USE_DEVFS_NORMAL=0
-		;;
-		nolvm2)
-			USE_LVM2_NORMAL=0
-		;;
-		nodmraid)
-			USE_DMRAID_NORMAL=0
-		;;
-		noevms)
-			USE_EVMS_NORMAL=0
-		;;
-		udev)
-			USE_UDEV_NORMAL=1
-			USE_DEVFS_NORMAL=0
-		;;
-		noudev)
-			USE_UDEV_NORMAL=0
-		;;
-		loop\=*)
-			LOOP=`parse_opt "${x}"`
-		;;
-		looptype\=*)
-			LOOPTYPE=`parse_opt "${x}"`
-		;;
-		real_init\=*)
-			REAL_INIT=`parse_opt "${x}"`
-		;;
-		scandelay=\*)
-			SDELAY=`parse_opt "${x}"`
-		;;
-		scandelay)
-			SDELAY=10
-		;;
-		noload\=*)
-			MLIST=`parse_opt "${x}"`
-			MLIST="`echo ${MLIST} | sed -e \"s/,/ /\"`"
-			export MLIST
-		;;       
-		ip\=*)
-			IP=`parse_opt "${x}"`
-			if [ "${REAL_ROOT}" = '' ]; then
-				CDROOT=1
-				NFSLIVECD=1
-			fi
-		;;
-		nfsroot\=*)
-			NFSROOT=`parse_opt "${x}"`
-		;;
-	esac
+  case "${x}" in
+      real_root\=*)
+	  REAL_ROOT=`parse_opt "${x}"`
+	  ;;
+      real_init\=*)
+	  REAL_INIT=`parse_opt "${x}"`
+	  ;;
+	    
+      # Livecd options
+      cdroot)
+	  CDROOT=1
+	  REAL_ROOT=''
+	  ;;
+      cdroot\=*)
+	  CDROOT=1
+	  CDROOT_DEV=`parse_opt "${x}"`
+	  REAL_ROOT=''
+	  ;;
+
+      # Start livecd loop and looptype options
+      loop\=*)
+	  LOOP=`parse_opt "${x}"`
+	  ;;
+      looptype\=*)
+	  LOOPTYPE=`parse_opt "${x}"`
+	  ;;
+
+      # Start Device Manager options 
+      devfs)
+	  USE_DEVFS_NORMAL=1
+	  USE_UDEV_NORMAL=0
+	  ;;
+      udev)
+	  USE_DEVFS_NORMAL=0
+	  USE_UDEV_NORMAL=1
+	  ;;
+      unionfs)
+	  if [ ! -x /sbin/unionctl ]
+	  then
+	      USE_UNIONFS_NORMAL=0
+	      bad_msg 'Unionctl not found: aborting use of unionfs!'
+	  else
+	      USE_UNIONFS_NORMAL=1
+	  fi
+	  ;;
+      unionfs\=*)
+	  if [ ! -x /sbin/unionctl ]
+	  then
+	      USE_UNIONFS_NORMAL=0
+	      bad_msg 'Unionctl not found: aborting use of unionfs!'
+	  else
+	      USE_UNIONFS_NORMAL=1
+	      UNIONFS=`parse_opt "${x}"`
+	  fi
+	  ;;
+
+      # Start Volume manager options 
+      dolvm2)
+	  USE_LVM2_NORMAL=1
+	  ;;
+      dodmraid)
+	  USE_DMRAID_NORMAL=1
+	  ;;
+      doevms)
+	  USE_EVMS_NORMAL=1
+	  ;;
+	    # Start Debug Option
+      debug)
+	  DEBUG='yes'
+	  ;;
+
+      # Scandelay options 
+      scandelay\=*)
+	  SDELAY=`parse_opt "${x}"`
+	  ;;
+      scandelay)
+	  SDELAY=10
+	  ;;
+
+      # Module no-loads
+      noload\=*)
+	  MLIST=`parse_opt "${x}"`
+	  MLIST="`echo ${MLIST} | sed -e \"s/,/ /\"`"
+	  export MLIST
+	  ;;
+  esac
 done
 
-[ -e /proc/scsi/scsi ] && echo 'scsi add-single-device 0 0 0 0' > /proc/scsi/scsi
+detect_sbp2_devices
+cmdline_hwopts
 
-# Scan CMDLINE for any "doscsi" or "noscsi"-type arguments
-for x in $HWOPTS
-do
-	for y in $CMDLINE
-	do
-		if [ "${y}" = "do${x}" ]
-		then
-			MY_HWOPTS="${MY_HWOPTS} $x"
-		elif [ "${y}" = "no${x}" ]
-		then
-			MY_HWOPTS="`echo ${MY_HWOPTS} | sed -e \"s/${x}//g\" -`"
-		fi
-	done
-done
-
+# Load modules listed in MY_HWOPTS if /lib/modules exists
+    
 if [ -d '/lib/modules' ]
 then
-	echo -e "${GOOD}>>${NORMAL}${BOLD} Loading modules...${NORMAL}"
-	# Load appropriate kernel modules
-	for modules in $MY_HWOPTS
-	do
-		modules_scan $modules
-		eval DO_`echo $modules | sed 's/-//'`=1
-	done
+    good_msg 'Loading modules'
+    # Load appropriate kernel modules
+    for modules in $MY_HWOPTS
+    do
+      modules_scan $modules
+      eval DO_`echo $modules | sed 's/-//'`=1
+    done
 else
-	echo -e "${GREEN}>>${NORMAL}${BOLD} Skipping module load; no modules in the initrd!${NORMAL}"
+    good_msg 'Skipping module load; no modules in the initrd!'
 fi
 
-chooseKeymap() {
-	echo -e "${GOOD}>>${NORMAL}${BOLD} Loading keymaps...${NORMAL}"
-	cat /lib/keymaps/keymapList
-	read -t 10 -p '<< Load keymap (Enter for default): ' keymap
-	if [ -e /lib/keymaps/${keymap}.map ]
-	then
-		echo -e "${GOOD}>>${NORMAL}${BOLD} Loading the ''${keymap}'' keymap...${NORMAL}"
-		loadkmap < /lib/keymaps/${keymap}.map
-		xkeymap=${keymap}
-		echo ${keymap} | egrep -e "[0-9]+" >/dev/null 2>&1
-		if [ "$?" -eq '0'  ]; then
-			xkeymap=`tail -n 7 /lib/keymaps/keymapList | grep ${keymap} | sed -r "s/.*\s+${keymap}\s+([a-z-]+).*/\1/g" | egrep -v 1`
-		fi
-		mkdir -p /etc/sysconfig
-		echo "XKEYBOARD=${xkeymap}" > /etc/sysconfig/keyboard
-	elif [ "$keymap" = '' ]
-	then
-		echo -e "${GOOD}>>${NORMAL}${BOLD} Keeping default keymap...${NORMAL}"
-	else
-		echo -e "${BAD}!! ${NORMAL}${BOLD}Sorry, but keymap ''${keymap}'' is invalid!${NORMAL}"
-		chooseKeymap
-	fi
-}
+# Mount sysfs
+mount_sysfs
 
-startVolumes() {
-	if [ "${DO_dmraid}" -a "${USE_DMRAID_NORMAL}" -eq '1' ]
-	then
-		if [ -e '/sbin/dmraid' ]
-		then
-			echo -e "${GOOD}>>${NORMAL}${BOLD} Activating Device-Mapper raid(s)...${NORMAL}"
-			/sbin/dmraid -ay
-			[ "${USE_UDEV_NORMAL}" -eq '1' ] && /sbin/dmsetup mknodes
-		fi
-	fi
+# Start udev/devfs
+start_dev_mgr
 
-	if [ "${DO_lvm2}" -a "${USE_LVM2_NORMAL}" -eq '1' ]
-	then
-		if [ -e '/bin/vgscan' -a -e '/bin/vgchange' ]
-		then
-			echo -e "${GOOD}>>${NORMAL}${BOLD} Scanning for Volume Groups...${NORMAL}"
-			/bin/vgscan --ignorelockingfailure --mknodes
-			echo -e "${GOOD}>>${NORMAL}${BOLD} Activating Volume Groups...${NORMAL}"
-			/bin/vgchange -ay --ignorelockingfailure
-		fi
-	fi
+# Start EVMS
+startVolumes
 
-	if [ "${DO_evms2}" -a "${USE_EVMS_NORMAL}" -eq '1' ]
-	then
-		if [ -e '/sbin/evms_activate' ]
-		then
-			echo -e "${GOOD}>>${NORMAL}${BOLD} Activating EVMS...${NORMAL}"
-			evms_activate
-		fi
-	fi
-}
+# Set up unionfs
+mkdir -p ${NEW_ROOT}
+setup_unionfs
 
-echo -e "${GOOD}>>${NORMAL}${BOLD} Mounting filesystems${NORMAL}"
+if [ "${USE_UNIONFS_NORMAL}" -eq '1' ]
+then
+	CHROOT=${UNION}
+else
+	CHROOT=${NEW_ROOT}
+fi
 
-# Check udev is on...
-[ "${KMAJOR}" -eq 2 -a "${KMINOR}" -ge '6' -a ! "${USE_UDEV_NORMAL}" -eq '0' ] && USE_UDEV_NORMAL=1
-[ "${USE_UDEV_NORMAL}" -eq '1' -a ! -x /sbin/udev ] && USE_UDEV_NORMAL=0
+# Run debug shell if requested
+rundebugshell
 
-# If using 2.4 and udev; back off...
-[ "${KMAJOR}" -eq 2 -a "${KMINOR}" -lt '6' -a "${USE_UDEV_NORMAL}" -eq 1 ] &&
-	USE_UDEV_NORMAL=0
-
-# Disable devfs if we want udev...
-[ -e /dev/.devfsd -a "${USE_UDEV_NORMAL}" -eq 1 ] && echo '>> Enabling devfsd in favour of udev; use "nodevfs" if this is not intended...' && USE_UDEV_NORMAL=0
-
-mkdir /newroot
 if [ "${CDROOT}" -eq '1' ]
 then
-	mount -t tmpfs tmpfs /newroot
-	mkdir /newroot/dev /newroot/mnt /newroot/mnt/cdrom /newroot/mnt/livecd /newroot/tmp /newroot/tmp/.initrd /newroot/mnt/gentoo /newroot/sys
-	if [ "${USE_UDEV_NORMAL}" -eq '1' ]
+	if [ ! "${USE_UNIONFS_NORMAL}" -eq '1' ]
 	then
-		# Udev is semi-broken on non /sys sysfs mount points.
-		mount -t sysfs none /sys
-		[ "$?" -eq '0' ] || USE_UDEV_NORMAL=0
-	fi
-
-	if [ "${USE_UDEV_NORMAL}" -eq '1' ]
-	then
-		cd /sys
-		kill_devfsd
-		echo -e "${GOOD}>>${NORMAL}${BOLD} Activating udev...${NORMAL}"
-		runUdev
-		startVolumes
-		mv /dev/* /newroot/dev
-		cd /
-	else
-		if [ ! -e /newroot/dev/.devfsd ]
-		then
-			mount -t devfs devfs /newroot/dev
-			devfsd /newroot/dev -np
-		fi
+		good_msg "Making tmpfs for ${NEW_ROOT}"
+		mount -t tmpfs tmpfs ${NEW_ROOT}
 	fi
 	
-	if [ -n "${SDELAY}" ]; then
-		sleep ${SDELAY}
-	else
-		sleep 1
-	fi
-
-bootstrapCD() {
-	if [ "${CDROOT_DEV}" = '' ]
-	then
-		findcdmount /newroot/dev/cdroms/*
-
-		# Not in /dev/cdroms: try /dev/ide/cd
-		[ "${REAL_ROOT}" = '' ] && findcdmount /newroot/dev/ide/cd/*
-		[ "${REAL_ROOT}" = '' ] && findcdmount /newroot/dev/sr0
-		[ "${REAL_ROOT}" = '' ] && findcdmount /newroot/dev/sd* # USB Keychain
-		[ "${REAL_ROOT}" = '' ] && [ "{NFSLIVECD}" != '' ] && findnfsmount # NFS
-	else
-		# Device specified on command line
-		findcdmount /newroot/${CDROOT_DEV}
-	fi
-}
+	for i in dev mnt mnt/cdrom mnt/livecd tmp tmp/.initrd mnt/gentoo sys
+	do
+		mkdir  ${NEW_ROOT}/$i
+		chown 755  ${NEW_ROOT}/$i
+	done
+	cp /dev/null ${NEW_ROOT}/dev
+	cp /dev/console ${NEW_ROOT}/dev
+	sdelay
 
 	bootstrapCD
+	
 	if [ "${REAL_ROOT}" = '' ]
 	then
 		echo -n -e "${WARN}>>${NORMAL}${BOLD} No bootable medium found. Waiting for new devices"
-		sleep 3
-		echo -n '.'
-		sleep 3
-		echo -n '.'
-		sleep 3
-		echo -n '.'
+		
+		COUNTER=0
+		while [ $COUNTER -lt 3 ]; do
+			sleep 3
+			echo -n '.'
+			let COUNTER=$COUNTER+1
+		done	
+		
 		sleep 1
 		echo -e "${NORMAL}"
 		bootstrapCD
@@ -281,142 +208,106 @@ bootstrapCD() {
 	if [ "${REAL_ROOT}" = '' ]
 	then
 		# Undo stuff
-		umount /newroot/dev 2>/dev/null
-		umount /newroot/sys 2>/dev/null
+		umount  ${NEW_ROOT}/dev 2>/dev/null
+		umount  ${NEW_ROOT}/sys 2>/dev/null
 		umount /sys 2>/dev/null
 
-		umount /newroot
-		rm -rf /newroot/*
+		umount  ${NEW_ROOT}
+		rm -rf  ${NEW_ROOT}/*
 
-		echo 'Could not find CD to boot, something else needed!'
+		bad_msg 'Could not find CD to boot, something else needed!'
 		CDROOT=0
 	fi
 fi
 
-if [ "${DO_keymap}" ]
-then
-	if [ ! -e /dev/vc/0 ]
-	then
-		DEVBIND=1
-		mount -o bind /newroot/dev /dev
-	fi
-	chooseKeymap
-	[ "${DEVBIND}" -eq '1' ] && umount /dev
-	
-	if [ -e /etc/sysconfig/keyboard -a "${CDROOT}" -eq '1' ]
-	then
-	    mkdir -p /newroot/etc/sysconfig/
-	    cp /etc/sysconfig/keyboard /newroot/etc/sysconfig/keyboard
-	fi
-fi
+setup_keymap
 
-# FIX: indent me in one $CDROOT -eq '0'
-
-# Try to mount sysfs, and if it fails, do not use udev
-if [ "${USE_UDEV_NORMAL}" -eq '1' -a "${CDROOT}" -eq '0' ]
-then
-	mount -t sysfs none /sys
-	[ "$?" -eq '0' ] || USE_UDEV_NORMAL=0
-fi
-
-# Don't merge these two blocks; ^^ USE_UDEV_NORMAL=0...
-if [ "${USE_UDEV_NORMAL}" -eq '1' -a "${CDROOT}" -eq '0' ]
-then
-	USE_DEVFS_NORMAL=0
-	cd /sys
-	echo -e "${GOOD}>>${NORMAL}${BOLD} Activating udev...${NORMAL}"
-	runUdev
-	cd /
-elif [ "${CDROOT}" -eq '0' -a "${USE_DEVFS_NORMAL}" -eq '1' ]
-then
-	[ ! -e /dev/.devfsd ] && mount -t devfs devfs /dev
-	devfsd /dev -np
-fi
-
-[ "${CDROOT}" -eq '0' ] && startVolumes
-
-echo -e "${GOOD}>>${NORMAL}${BOLD} Determining root device...${NORMAL}"
-
+# Determine root device
+good_msg 'Determining root device...'
 while true
 do
 	while [ "${got_good_root}" != '1' ]
 	do
+		
 		if [ "${REAL_ROOT}" = 'shell' ]
 		then
-			/bin/ash
+			run_shell
 
 			REAL_ROOT=''
 			got_good_root=0
 			continue
+		
 		elif [ "${REAL_ROOT}" = '' ]
 		then
 			# No REAL_ROOT determined/specified. Prompt user for root block device.
-			echo -e "${BAD}>>${NORMAL} The root block device is unspecified or not detected."
+			bad_msg "The root block device is unspecified or not detected."
 			echo '   Please specify a device to boot, or "shell" for a shell...'
 			echo -n 'boot() :: '
 			read REAL_ROOT
 			got_good_root=0
+
+		# Check for a block device or /dev/nfs
 		elif [ -b "${REAL_ROOT}" ] || [ "${REAL_ROOT}" = "/dev/nfs" ]
 		then
 			got_good_root=1
 		else
-			echo -e "${BAD}>>${NORMAL} Block device ${REAL_ROOT} is not a valid root device..."
+			bad_msg "Block device ${REAL_ROOT} is not a valid root device..."
 			REAL_ROOT=""
 			got_good_root=0
 		fi
 	done
 
+
 	if [ "${CDROOT}" -eq '1' -a "${got_good_root}" = '1' ]
 	then
+		# cdrom device already mounted no further checks necessary
 		break
 	else
-		echo -e "${GOOD}>>${NORMAL}${BOLD} Mounting root...${NORMAL}"
+		good_msg "Mounting root..."
+
+		# Try to mount the device as  ${NEW_ROOT}
 		if [ "${REAL_ROOT}" = '/dev/nfs' ]; then
 			findnfsmount
 		else
-			mount -o rw ${REAL_ROOT} /newroot
+			mount -o rw ${REAL_ROOT}  ${NEW_ROOT}
 		fi
+		
+		# If mount is successful break out of the loop 
+		# else not a good root and start over.
 
 		if [ "$?" = '0' ]
 		then
 			break
 		else
-			echo -e "${BAD}>> ${NORMAL}Could not mount specified ROOT, try again"
+			bad_msg "Could not mount specified ROOT, try again"
 			got_good_root=0
 			REAL_ROOT=''
 		fi
 	fi
 done
+# End determine root device
 
-[ -n "$QUIET" ] && echo '6' > /proc/sys/kernel/printk
-check_loop() {
-	if [ "${LOOP}" = '' -o ! -e "mnt/cdrom/${LOOP}" ]
-	then
-		echo "Invalid loop location: ${LOOP}"
-		echo 'Please export LOOP with a valid location, or reboot and pass a proper loop=...'
-		echo 'kernel command line!'
-		/bin/ash
-	fi
-}
+verbose_kmsg
 
+# If cdroot is set determine the looptype to boot
 if [ "${CDROOT}" = '1' ]
 then
-	echo -e "${GOOD}>>${NORMAL}${BOLD} Filling tmpfs...${NORMAL}"
-	cd /newroot
+	good_msg 'Determining looptype ...'
+	cd ${NEW_ROOT}
 
 	# Find loop and looptype if we have NFS-mounted a livecd
-	if  [ "${LOOP}" = '' ] && [ "${REAL_ROOT}" = "/dev/nfs" ]
+	if  [ "${LOOP}" = '' ] && [ "${REAL_ROOT}" = '/dev/nfs' ]
 	then
-		if [ -e '/newroot/mnt/cdrom/livecd.loop' ]; then
+		if [ -e "${NEW_ROOT}/mnt/cdrom/livecd.loop" ]; then
 			LOOP='/livecd.loop'
 			LOOPTYPE='normal'
-                elif [ -e '/newroot/mnt/cdrom/zisofs' ]; then
+                elif [ -e "${NEW_ROOT}/mnt/cdrom/zisofs" ]; then
 			LOOP='/zisofs'
 			LOOPTYPE='zisofs'
-                elif [ -e '/newroot/mnt/cdrom/livecd.squashfs' ]; then
+                elif [ -e "${NEW_ROOT}/mnt/cdrom/livecd.squashfs" ]; then
 			LOOP='/livecd.squashfs'
 			LOOPTYPE='squashfs'
-                elif [ -e '/newroot/mnt/cdrom/livecd.gcloop' ]; then
+                elif [ -e "${NEW_ROOT}/mnt/cdrom/livecd.gcloop" ]; then
 			LOOP='/livecd.gcloop'
 			LOOPTYPE='gcloop'
                 else
@@ -427,7 +318,7 @@ then
 	# Failsafe the loop type wasn't set
 	if [ "${LOOPTYPE}" = '' ]
 	then
-		echo -e "${WARN}** ${NORMAL}${BOLD}Warning: loop type unspecified!${NORMAL}"
+		warn_msg 'Warning: loop type unspecified!'
 		if [ "${LOOP}" = '/livecd.loop' ]
 		then
 			LOOPTYPE='normal'
@@ -445,153 +336,160 @@ then
 		fi
 	fi
 
-	if [ "${LOOPTYPE}" != 'noloop' ]
-	then
-	    check_loop
-	    if [ "${DO_cache}" ]
-	    then
-		echo -e "${GOOD}>>${NORMAL}${BOLD} Copying loop file for caching...${NORMAL}"
-		cp -a /newroot/mnt/cdrom/${LOOP} /newroot/mnt/${LOOP}
-		if [ $? -ne 0 ]
-		then
-			echo -e "${BAD}!!${NORMAL}${BOLD} Failed to cache the loop file! Lack of space?"
-			rm -rf /newroot/mnt/livecd.* 2>/dev/null
-			rm -rf /newroot/mnt/zisofs 2>/dev/null
-		else
-			LOOPEXT='../'
-		fi
-	    fi
-	fi
+	cache_cd_contents
+	# Setup the loopback mounts
 
 	if [ "${LOOPTYPE}" = 'normal' ]
 	then
-		# bind-mount /dev/ so that loop devices can be found
-		mount -o bind /newroot/dev /dev
-
-		echo -e "${GOOD}>>${NORMAL}${BOLD} Mounting loop filesystem...${NORMAL}"
-		mount -t ext2 -o loop,ro /newroot/mnt/cdrom/${LOOPEXT}${LOOP} /newroot/mnt/livecd
-		if [ "$?" != '0' ]
-		then
-			echo 'Failed to mount filesystem; failing back to the shell...'
-			/bin/ash
-		fi
+		good_msg 'Mounting loop filesystem'
+		mount -t ext2 -o loop,ro ${NEW_ROOT}/mnt/cdrom/${LOOPEXT}${LOOP} ${NEW_ROOT}/mnt/livecd
+		test_success 'Mount filesystem'
 		FS_LOCATION='mnt/livecd'
-		umount /dev
+
+
 	elif [ "${LOOPTYPE}" = 'squashfs' ]
 	then
-		mount -o bind /newroot/dev /dev
-		echo -e "${GOOD}>>${NORMAL}${BOLD} Mounting squashfs filesystem...${NORMAL}"
-		mount -t squashfs -o loop,ro /newroot/mnt/cdrom/${LOOPEXT}${LOOP} /newroot/mnt/livecd
-		if [ "$?" != '0' ]
-		then
-			echo 'Failed to mount filesystem; failing back to the shell...'
-			/bin/ash
-		fi
+		good_msg 'Mounting squashfs filesystem'
+		mount -t squashfs -o loop,ro ${NEW_ROOT}/mnt/cdrom/${LOOPEXT}${LOOP} ${NEW_ROOT}/mnt/livecd
+		
+		test_success 'Mount filesystem'
 		FS_LOCATION='mnt/livecd'
-		umount /dev
+	
 	elif [ "${LOOPTYPE}" = 'gcloop' ]
 	then
-		echo -e "${GOOD}>>${NORMAL}${BOLD} Mounting gcloop filesystem...${NORMAL}"
-		mount -o bind /newroot/dev /dev
-		echo ' ' | losetup -E 19 -e ucl-0 -p0 /newroot/dev/loop0 /newroot/mnt/cdrom/${LOOPEXT}${LOOP}
-		if [ "$?" != '0' ]
-		then
-			echo "FAILED TO losetup THE LOOP DEVICE"
-			/bin/ash
-		fi
-		mount -t ext2 -o ro /newroot/dev/loop0 /newroot/mnt/livecd
+		good_msg 'Mounting gcloop filesystem'
+		echo ' ' | losetup -E 19 -e ucl-0 -p0 ${NEW_ROOT}/dev/loop0 ${NEW_ROOT}/mnt/cdrom/${LOOPEXT}${LOOP}
+		test_success 'losetup the loop device'
+
+		mount -t ext2 -o ro ${NEW_ROOT}/dev/loop0 ${NEW_ROOT}/mnt/livecd
+		test_success 'Mount the losetup loop device'
 		FS_LOCATION='mnt/livecd'
-		umount /dev
+	
 	elif [ "${LOOPTYPE}" = 'zisofs' ]
 	then
 		FS_LOCATION="mnt/cdrom/${LOOPEXT}${LOOP}"
+	
 	elif [ "${LOOPTYPE}" = 'noloop' ]
 	then
 		FS_LOCATION='mnt/cdrom'
 	fi
 
-	echo -e "${GOOD}>>${NORMAL}${BOLD} Filling filesystem...${NORMAL}"
+#
+# End cdrom looptype determination and mounting if necessary
+#
 
-	# Copy over stuff that should be writable
-	(cd /newroot/${FS_LOCATION}; cp -a ${ROOT_TREES} /newroot)
+	if [ "${USE_UNIONFS_NORMAL}" -eq '1' ]
+	then
+		union_insert_dir $UNION /${NEW_ROOT}/${FS_LOCATION}
+		
+		# Make sure fstab notes livecd is mounted ro.  Makes system skip remount which fails on unionfs dirs.
+		cat /${UNION}/etc/fstab | sed -e 's|\(.*\s/\s*tmpfs\s*\)defaults\(.*\)|\1defaults,ro\2|' > /${UNION}/etc/fstab
+	fi
 
 	# Unpacking additional packages from NFS mount
 	# This is useful for adding kernel modules to /lib
 	# We do this now, so that additional packages can add whereever they want.
 	if [ "${REAL_ROOT}" = '/dev/nfs' ]
 	then
-		if [ -e '/newroot/mnt/cdrom/add' ]
+		if [ -e "${CHROOT}/mnt/cdrom/add" ]
 		then
-			for targz in `ls /newroot/mnt/cdrom/add/*.tar.gz`
-			do	
-				tarname=`basename ${targz}`
-				echo -e "${GOOD}>>${NORMAL}${BOLD} Adding additional package ${tarname}${NORMAL}"
-				(cd /newroot ; tar -xzf ${targz})
-			done
+				for targz in $(ls ${CHROOT}/mnt/cdrom/add/*.tar.gz)
+				do	
+					tarname=`basename ${targz}`
+					good_msg "Adding additional package ${tarname}"
+					(cd ${CHROOT} ; /bin/tar -xzf ${targz})
+				done
 		fi
 	fi
 
-	# Now we do the links.
-	for x in ${ROOT_LINKS}
-	do
-		# List all subdirectories of x
-		for directory in $(find "/newroot/${FS_LOCATION}/${x}" -type d 2>/dev/null)
+	
+	if [ ! "${USE_UNIONFS_NORMAL}" -eq '1' ]
+	then
+		good_msg "Copying read-write image contents to tmpfs"
+		# Copy over stuff that should be writable
+		(cd ${NEW_ROOT}/${FS_LOCATION}; cp -a ${ROOT_TREES} ${NEW_ROOT})
+
+		# Now we do the links.
+		for x in ${ROOT_LINKS}
 		do
-			## Strip the prefix of the FS_LOCATION
-			directory=${directory#/newroot/${FS_LOCATION}/}
+			# List all subdirectories of x
+			for directory in `find "${NEW_ROOT}/${FS_LOCATION}/${x}" -type d 2>/dev/null`
+			do
+				## Strip the prefix of the FS_LOCATION
+				directory=${directory#${NEW_ROOT}/${FS_LOCATION}/}
 
-			## Skip this directory if we already linked a parent directory
-			if [ "${current_parrent}" != '' ]; then
-				var=`echo "${directory}" | grep "^${current_parrent}"`
-				if [ "${var}" != '' ]; then
-					continue
-				fi
-			fi
-			## Test if the directory exists already
-			if [ -e "/newroot/${directory}" ]
-			then
-				# It does exist, link all the individual files
-				for file in `ls /newroot/${FS_LOCATION}/${directory}`
-				do
-				if [ ! -d "/newroot/${FS_LOCATION}/${directory}/${file}" ] && [ ! -e "/newroot/${directory}/${file}" ]; then
-						ln -s "/${FS_LOCATION}/${directory}/${file}" "${directory}/${file}" 2> /dev/null
+				## Skip this directory if we already linked a parent directory
+				if [ "${current_parrent}" != '' ]; then
+					var=`echo "${directory}" | grep "^${current_parrent}"`
+					if [ "${var}" != '' ]; then
+						continue
 					fi
-				done
-			else
-				# It does not exist, make a link to the livecd
-				ln -s "/${FS_LOCATION}/${directory}" "${directory}" 2> /dev/null
-				current_parrent=${directory}
-			fi
+				fi
+				## Test if the directory exists already
+				if [ -e "/${NEW_ROOT}/${directory}" ]
+				then
+					# It does exist, link all the individual files
+					for file in `ls /${NEW_ROOT}/${FS_LOCATION}/${directory}`
+					do
+					if [ ! -d "/${NEW_ROOT}/${FS_LOCATION}/${directory}/${file}" ] && [ ! -e "${NEW_ROOT}/${directory}/${file}" ]; then
+							ln -s "/${FS_LOCATION}/${directory}/${file}" "${directory}/${file}" 2> /dev/null
+						fi
+					done
+				else
+					# It does not exist, make a link to the livecd
+					ln -s "/${FS_LOCATION}/${directory}" "${directory}" 2> /dev/null
+					current_parrent=${directory}
+				fi
+			done
 		done
-	done
 
-	mkdir initrd proc tmp sys
-	chmod 1777 tmp
+		mkdir initrd proc tmp sys
+		chmod 1777 tmp
+	fi
+	
+	UML=$(cat /proc/cpuinfo|grep UML|sed -e 's|model name.*: ||')
+	if [ "${UML}" = 'UML' ]
+	then
+		# UML Fixes
+		good_msg 'Updating for uml system'
+
+		VC=$(cat ${CHROOT}/etc/securetty|grep 'vc/0'|sort|uniq)
+		if [ "${VC}" = 'vc/0' ]
+		then
+			echo 'vc/0 already exists, skipping'
+		else
+			echo 'vc/0' >> ${CHROOT}/etc/securetty
+		fi
+		TTY=$(cat ${CHROOT}/etc/securetty|grep 'tty0'|sort|uniq)
+		if [ "${TTY}" = 'vc/0' ]
+		then
+			echo 'tty0, already exists skipping'
+		else
+			echo tty0 >> ${CHROOT}/etc/securetty
+		fi
+		
+		# Setup console on 0 for uml
+		if [ -w /${CHROOT}/sbin/livecd-functions.sh ]
+		then
+			cat /${CHROOT}/sbin/livecd-functions.sh |sed -e 's|for x in 1 2 3 4 5 6|for x in 0 1 2 3 4 5 6|'> /${CHROOT}/sbin/livecd-functions.sh
+		fi
+
+	fi
 
 	# Let Init scripts know that we booted from CD
 	export CDBOOT
 	CDBOOT=1
 else
-	mkdir -p /newroot/tmp/.initrd
-fi
-
-if [ -x /newroot/mnt/cdrom/cdupdate.sh ]
-then
-    /newroot/mnt/cdrom/cdupdate.sh
-    if [ "$?" != '0' ]
-    then
-	echo "FAILED TO EXECUTE cdupdate.sh"
-	/bin/ash
-    fi
+	mkdir -p ${NEW_ROOT}/tmp/.initrd
 fi
 
 if [ "$0" = '/linuxrc' ]
 then
-	[ ! -e /newroot/dev/console ] && mknod /newroot/dev/console c 5 1
+	[ ! -e ${CHROOT}/dev/console ] && mknod ${CHROOT}/dev/console c 5 1
 	echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting"
 
-	cd /newroot
-	mkdir /newroot/proc /newroot/sys 2>/dev/null
+	cd ${CHROOT}
+	mkdir ${CHROOT}/proc ${CHROOT}/sys 2>/dev/null
 	pivot_root . tmp/.initrd
 	echo -n '.'
 
@@ -622,8 +520,7 @@ then
 	fi
 	echo -n '.'
 
-	# /usr/src/linux/Documentation/initrd.txt 
-	# here's the line it says we should do:
+	# /usr/src/linux/Documentation/initrd.txt:
 	#       exec chroot . /sbin/init </dev/console >/dev/console 2>&1
 
 	exec <dev/console >dev/console 2>&1
@@ -635,29 +532,15 @@ then
 EOF
 elif [ "$0" = '/init' ]
 then
-       [ ! -e /newroot/dev/console ] && mknod /newroot/dev/console c 5 1
-       echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting (initramfs method)"
+       [ ! -e /${CHROOT}/dev/console ] && mknod /${CHROOT}/dev/console c 5 1
+       echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting (initramfs)..."
 
-       cd /newroot
-       mkdir /newroot/proc /newroot/sys 2>/dev/null
+       cd ${CHROOT}
+       mkdir /${CHROOT}/proc /${CHROOT}/sys 2>/dev/null
        echo -n '.'
-
-       if [ "${USE_DEVFS_NORMAL}" -eq '1' -a "${CDROOT}" -eq '0' ]
-       then
                umount /dev || echo '*: Failed to unmount the initrd /dev!'
                umount /sys || echo '*: Failed to unmount the initrd /sys!'
                umount /proc || echo '*: Failed to unmount the initrd /proc!'
-       elif [ "${USE_UDEV_NORMAL}" -eq '1' ]
-       then
-               umount /dev || echo '*: Failed to unmount the initrd /dev!'
-               umount /sys || echo '*: Failed to unmount the initrd /sys!'
-               umount /proc || echo '*: Failed to unmount the initrd /proc!'
-       elif [ "${CDROOT}" -eq '1' ]
-       then
-               umount /dev 2>/dev/null
-               umount /sys 2>/dev/null
-               umount /proc || echo "*: Failed to unmount the initrd /proc!"
-       fi
        echo -n '.'
 
        exec <dev/console >dev/console 2>&1
@@ -665,11 +548,28 @@ then
 
        # Cleanup initramfs in the background
        # to reclaim initramfs tmpfs memoryspace
-       INITRAMFS_FILES=`ls /|grep -v newroot`
+       
+       
+       INITRAMFS_FILES=`ls /`
+       INITRAMFS_FILES=$(echo ${INITRAMFS_FILES}|sed -e "s|${CHROOT#/}||g")
+       
+       if [ -n "${MEMORY}" ]
+       then
+		INITRAMFS_FILES=$(echo ${INITRAMFS_FILES}|sed -e "s|${MEMORY#/}||g")
+       fi
+       
+       if [ -n "${UNION}" ]
+       then
+       INITRAMFS_FILES=$(echo ${INITRAMFS_FILES}|sed -e "s|${UNION#/}||g")
+       fi
+       
+       INITRAMFS_FILES=$(echo ${INITRAMFS_FILES}|sed -e "s|newroot||g")
        (sleep 10; cd /; rm -rf ${INITRAMFS_FILES}) &
+       
        # End initramfs cleanup
 
        # Start the real root init
+       
        exec chroot . /bin/sh <<- EOF
        exec /sbin/init ${REAL_INIT}
 EOF
