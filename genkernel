@@ -252,10 +252,9 @@ then
 	then
 		compile_udev 
 	else
-		if [ "${DEVFS}" -eq '1' ]
-		then
-		    compile_devfsd
-		fi
+		DEVFS=1
+		UDEV=0
+		compile_devfsd
 	fi
 
 	if [ "${PAT}" -gt '4' -a  "${CMD_BOOTSPLASH}" != '1' ]
