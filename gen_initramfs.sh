@@ -290,7 +290,7 @@ create_initramfs_modules() {
 	mkdir -p "${TEMP}/initramfs-modules-${KV}-temp/lib/modules/${KV}"	
 	for i in `gen_dep_list`
 	do
-		mymod=`find ./lib/modules/${KV} -name "${i}${MOD_EXT}" | head -n 1`
+		mymod=`find ./lib/modules/${KV} -name "${i}${MOD_EXT}" 2>/dev/null| head -n 1 `
 		if [ -z "${mymod}" ]
 		then
 			print_warning 2 "Warning :: ${i}${MOD_EXT} not found; skipping..."
@@ -300,8 +300,8 @@ create_initramfs_modules() {
 		print_info 2 "initramfs: >> Copying ${i}${MOD_EXT}..."
 		cp -ax --parents "${mymod}" "${TEMP}/initramfs-modules-${KV}-temp"
 	done
-
-	cp -ax --parents ./lib/modules/${KV}/modules* ${TEMP}/initramfs-modules-${KV}-temp
+	
+	cp -ax --parents ./lib/modules/${KV}/modules* ${TEMP}/initramfs-modules-${KV}-temp 2>/dev/null
 
 	mkdir -p "${TEMP}/initramfs-modules-${KV}-temp/etc/modules"
 	for group_modules in ${!MODULES_*}; do

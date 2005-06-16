@@ -80,9 +80,10 @@ then
 	if ! has_loop
 	then
 		modprobe loop 2>/dev/null
+		sleep 3
 		if ! has_loop
 		then
-			print_error 1 'Your kernel does not appear to have loop device support.'
+			print_error 1 'The build-host kernel does not appear to have loop device support.'
 			print_error 1 'Please load loop support before running genkernel!'
 			gen_die 'Load loop support!'
 		else
@@ -154,15 +155,20 @@ then
 	echo
 fi
 
+
 KERNCACHE_IS_VALID=0
 if [ "${KERNCACHE}" != "" ] 
 then
     gen_kerncache_is_valid
 fi
+
 if [ ${BUILD_KERNEL} -eq 1 -a "${KERNCACHE_IS_VALID}" == "0" ]
 then
 	# Configure kernel
 	config_kernel
+	
+	# KV may have changed due to the configuration
+	get_KV
 
 	# Make deps
 	compile_dep

@@ -14,7 +14,9 @@ get_KV() {
 			PAT=`grep ^PATCHLEVEL\ \= ${tmp}/kerncache.config | awk '{ print $3 };'`
 			SUB=`grep ^SUBLEVEL\ \= ${tmp}/kerncache.config | awk '{ print $3 };'`
 			EXV=`grep ^EXTRAVERSION\ \= ${tmp}/kerncache.config | sed -e "s/EXTRAVERSION =//" -e "s/ //g"`
-			KV=${VER}.${PAT}.${SUB}${EXV}
+			LOV=`grep ^CONFIG_LOCALVERSION\= ${tmp}/kerncache.config | sed -e "s/CONFIG_LOCALVERSION=\"\(.*\)\"/\1/"`
+			KV=${VER}.${PAT}.${SUB}${EXV}${LOV}
+
 		else
 			rm -r ${tmp}
 			gen_die "Could not find kerncache.config in the kernel cache! Exiting."
@@ -22,11 +24,23 @@ get_KV() {
 		rm -r ${tmp}
 
 	else
+		#configure the kernel
+			#if BUILD_KERNEL=0 then assume --no-clean, menuconfig is cleared, 
 		VER=`grep ^VERSION\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
 		PAT=`grep ^PATCHLEVEL\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
 		SUB=`grep ^SUBLEVEL\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
 		EXV=`grep ^EXTRAVERSION\ \= ${KERNEL_DIR}/Makefile | sed -e "s/EXTRAVERSION =//" -e "s/ //g"`
-		KV=${VER}.${PAT}.${SUB}${EXV}
+		cd ${KERNEL_DIR}
+		compile_generic prepare0 kernel > /dev/null 2>&1
+		cd - > /dev/null 2>&1
+		if [ -f ${KERNEL_DIR}/include/linux/version.h ]
+		then
+			UTS_RELEASE=`grep UTS_RELEASE ${KERNEL_DIR}/include/linux/version.h | sed -e 's/#define UTS_RELEASE "\(.*\)"/\1/'`
+			LOV=`echo ${UTS_RELEASE}|sed -e "s/${VER}.${PAT}.${SUB}${EXV}//"`
+			KV=${VER}.${PAT}.${SUB}${EXV}${LOV}
+		else
+			KV=${VER}.${PAT}.${SUB}${EXV}
+		fi
 	fi
 }
 
@@ -72,8 +86,6 @@ determine_real_args() {
 		KNAME="genkernel"
 	fi
 	
-	get_KV
-
 	if [ "${CMD_KERNEL_MAKE}" != '' ]
 	then
 		KERNEL_MAKE="${CMD_KERNEL_MAKE}"
@@ -331,4 +343,6 @@ determine_real_args() {
 	else
 		DMRAID=0
 	fi
+	#get_KV has to be last
+	get_KV
 }
