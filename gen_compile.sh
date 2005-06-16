@@ -689,7 +689,13 @@ compile_udev() {
 		print_info 1 'udev: >> Compiling...'
 
 		ln -snf "${KERNEL_DIR}" klibc/linux || gen_die "Could not link to ${KERNEL_DIR}"
-		compile_generic "ARCH=${ARCH} KERNEL_DIR=$KERNEL_DIR USE_KLIBC=true USE_LOG=false DEBUG=false udevdir=/dev all etc/udev/udev.conf" utils
+		if [ "${ARCH}" = 'um' ]
+		then
+			compile_generic "ARCH=um KERNEL_DIR=$KERNEL_DIR USE_KLIBC=true USE_LOG=false DEBUG=false udevdir=/dev all etc/udev/udev.conf" utils
+		else
+			compile_generic "KERNEL_DIR=$KERNEL_DIR USE_KLIBC=true USE_LOG=false DEBUG=false udevdir=/dev all etc/udev/udev.conf" utils
+		fi
+
 
 		strip udev || gen_die 'Failed to strip the udev binary!'
 
