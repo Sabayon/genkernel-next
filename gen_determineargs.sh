@@ -14,8 +14,14 @@ get_KV() {
 			PAT=`grep ^PATCHLEVEL\ \= ${tmp}/kerncache.config | awk '{ print $3 };'`
 			SUB=`grep ^SUBLEVEL\ \= ${tmp}/kerncache.config | awk '{ print $3 };'`
 			EXV=`grep ^EXTRAVERSION\ \= ${tmp}/kerncache.config | sed -e "s/EXTRAVERSION =//" -e "s/ //g"`
-			LOV=`grep ^CONFIG_LOCALVERSION\= ${tmp}/kerncache.config | sed -e "s/CONFIG_LOCALVERSION=\"\(.*\)\"/\1/"`
-			KV=${VER}.${PAT}.${SUB}${EXV}${LOV}
+			if [ "${PAT}" -gt '4' ]
+			then
+				LOV=`grep ^CONFIG_LOCALVERSION\= ${tmp}/kerncache.config | sed -e "s/CONFIG_LOCALVERSION=\"\(.*\)\"/\1/"`
+				KV=${VER}.${PAT}.${SUB}${EXV}${LOV}
+			else
+				KV=${VER}.${PAT}.${SUB}${EXV}
+			fi
+
 
 		else
 			rm -r ${tmp}
@@ -30,17 +36,23 @@ get_KV() {
 		PAT=`grep ^PATCHLEVEL\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
 		SUB=`grep ^SUBLEVEL\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
 		EXV=`grep ^EXTRAVERSION\ \= ${KERNEL_DIR}/Makefile | sed -e "s/EXTRAVERSION =//" -e "s/ //g"`
-		cd ${KERNEL_DIR}
-		compile_generic prepare0 kernel > /dev/null 2>&1
-		cd - > /dev/null 2>&1
-		if [ -f ${KERNEL_DIR}/include/linux/version.h ]
+		if [ "${PAT}" -gt '4' ]
 		then
-			UTS_RELEASE=`grep UTS_RELEASE ${KERNEL_DIR}/include/linux/version.h | sed -e 's/#define UTS_RELEASE "\(.*\)"/\1/'`
-			LOV=`echo ${UTS_RELEASE}|sed -e "s/${VER}.${PAT}.${SUB}${EXV}//"`
-			KV=${VER}.${PAT}.${SUB}${EXV}${LOV}
+			cd ${KERNEL_DIR}
+			compile_generic prepare kernel > /dev/null 2>&1
+			cd - > /dev/null 2>&1
+			if [ -f ${KERNEL_DIR}/include/linux/version.h ]
+			then
+				UTS_RELEASE=`grep UTS_RELEASE ${KERNEL_DIR}/include/linux/version.h | sed -e 's/#define UTS_RELEASE "\(.*\)"/\1/'`
+				LOV=`echo ${UTS_RELEASE}|sed -e "s/${VER}.${PAT}.${SUB}${EXV}//"`
+				KV=${VER}.${PAT}.${SUB}${EXV}${LOV}
+			else
+				KV=${VER}.${PAT}.${SUB}${EXV}
+			fi
 		else
 			KV=${VER}.${PAT}.${SUB}${EXV}
 		fi
+
 	fi
 }
 
