@@ -36,7 +36,7 @@ get_KV() {
 		PAT=`grep ^PATCHLEVEL\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
 		SUB=`grep ^SUBLEVEL\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
 		EXV=`grep ^EXTRAVERSION\ \= ${KERNEL_DIR}/Makefile | sed -e "s/EXTRAVERSION =//" -e "s/ //g"`
-		if [ "${PAT}" -gt '4' ]
+		if [ "${PAT}" -gt '4' -a -e ${KERNEL_DIR}/.config ]
 		then
 			cd ${KERNEL_DIR}
 			compile_generic prepare kernel > /dev/null 2>&1
