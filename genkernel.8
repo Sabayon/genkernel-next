@@ -1,4 +1,4 @@
-.TH GENKERNEL "8" "November 2004" "genkernel 3.1.0c" "Gentoo Linux"
+.TH GENKERNEL "8" "June 2005" "genkernel 3.2.0" "Gentoo Linux"
 .SH NAME
 genkernel \- the Gentoo Linux automatic kernel compiler.
 .SH SYNOPSIS
@@ -252,7 +252,7 @@ If present, the initrd will try to mount a livecd from that location. Otherwise 
 The initrd scripts have limited support for network booting.
 This is activated if the ip=<...> kernel parameter was given. Please refer to the genkernel guide at http://www.gentoo.org/doc/en/genkernel.xml for more information.
 
-The initrd scripts will extract any *.tar.gz files found in the \fB/add\fR directory of the livecd into the root filesystem during boot. This way its easy to extend a netbooted livecd i.e. with custom tools, or other kernel modules.
+The initrd scripts will extract any *.tar.gz files found in the \fB/add\fR directory of the livecd into the root filesystem during boot. This way it is easy to extend a netbooted LiveCD i.e. add custom tools, or other kernel modules.
 .SH REPORTING BUGS
 If you believe you have found a bug in the genkernel scripts, then please
 file a bug on the Gentoo Linux Bugzilla: 

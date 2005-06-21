@@ -7,6 +7,7 @@ longusage() {
   echo
   echo "Available Actions: "
   echo "  all				Build all steps"
+  echo "  bzImage			Build only the kernel"
   echo "  kernel			Build only the kernel and modules"
   echo "  initrd			Build only the initrd"
   echo
@@ -390,6 +391,7 @@ parse_cmdline() {
 	      ;;
 	      all)
 		      BUILD_KERNEL=1
+		      BUILD_MODULES=1
 		      BUILD_INITRD=1
 	      ;;
 	      initrd)
@@ -397,7 +399,15 @@ parse_cmdline() {
 	      ;;
 	      kernel)
 		      BUILD_KERNEL=1
+		      BUILD_MODULES=1
 		      BUILD_INITRD=0
+	      ;;
+	      bzImage)
+		      BUILD_KERNEL=1
+		      BUILD_MODULES=0
+		      BUILD_INITRD=1
+		      CMD_NOINITRDMODULES=1
+		      print_info 2 "CMD_NOINITRDMODULES: $CMD_NOINITRDMODULES"
 	      ;;
 	      --help)
 		      longusage
