@@ -107,6 +107,10 @@ do
       dodmraid)
 	  USE_DMRAID_NORMAL=1
 	  ;;
+      dodmraid\=*)
+	  DMRAID_OPTS=`parse_opt "${x}"`
+	  USE_DMRAID_NORMAL=1
+	  ;;
       doevms)
 	  USE_EVMS_NORMAL=1
 	  ;;

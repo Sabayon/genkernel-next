@@ -407,9 +407,13 @@ startVolumes() {
     then
 	if [ -e '/sbin/dmraid' ]
 	then
-	
 	    good_msg "Activating Device-Mapper RAID(s)"
-	    /sbin/dmraid -ay
+	    if [ '${DMRAID_OPTS}' = '' ]
+	    then
+		/sbin/dmraid -ay
+	    else
+		/sbin/dmraid -ay ${DMRAID_OPTS}
+	    fi
 	fi
     fi
 
