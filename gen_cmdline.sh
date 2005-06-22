@@ -50,6 +50,7 @@ longusage() {
   echo "	--kernel-cc=<compiler>	Compiler to use for kernel (e.g. distcc)"
   echo "	--kernel-as=<assembler>	Assembler to use for kernel"
   echo "	--kernel-ld=<linker>	Linker to use for kernel"
+  echo "	--kernel-cross-compile=<cross var> CROSS_COMPILE kernel variable"
   echo "	--kernel-make=<makeprg> GNU Make to use for kernel"
   echo "	--utils-cc=<compiler>	Compiler to use for utilities"
   echo "	--utils-as=<assembler>	Assembler to use for utils"
@@ -132,6 +133,11 @@ parse_cmdline() {
 	      --kernel-make=*)
 		      CMD_KERNEL_MAKE=`parse_opt "$*"`
 		      print_info 2 "CMD_KERNEL_MAKE: $CMD_KERNEL_MAKE"
+	      ;;
+	      --kernel-cross-compile=*)
+		      CMD_KERNEL_CROSS_COMPILE=`parse_opt "$*"`
+		      CMD_KERNEL_CROSS_COMPILE=$(echo ${CMD_KERNEL_CROSS_COMPILE}|sed -e 's/.*[^-]$/&-/g')
+		      print_info 2 "CMD_KERNEL_CROSS_COMPILE: $CMD_KERNEL_CROSS_COMPILE"
 	      ;;
 	      --utils-cc=*)
 		      CMD_UTILS_CC=`parse_opt "$*"`

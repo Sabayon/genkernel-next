@@ -132,6 +132,11 @@ determine_real_args() {
 	then
 		KERNEL_AS="${CMD_KERNEL_AS}"
 	fi
+	
+	if [ "${CMD_KERNEL_CROSS_COMPILE}" != '' ]
+	then
+		KERNEL_CROSS_COMPILE="${CMD_KERNEL_CROSS_COMPILE}"
+	fi
 
 	if [ "${CMD_UTILS_CC}" != '' ]
 	then

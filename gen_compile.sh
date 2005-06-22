@@ -18,6 +18,11 @@ compile_kernel_args()
 		ARGS="${ARGS} AS=\"${KERNEL_AS}\""
 	fi
 
+	if [ "${KERNEL_CROSS_COMPILE}" != '' ]
+	then
+		ARGS="${ARGS} CROSS_COMPILE=\"${KERNEL_CROSS_COMPILE}\""
+	fi
+
 	echo -n "${ARGS}"
 }
 
@@ -88,6 +93,10 @@ export_kernel_args()
 	then
 		export AS="${KERNEL_AS}"
 	fi
+	if [ "${KERNEL_CROSS_COMPILE}" != '' ]
+	then
+		export CROSS_COMPILE="${KERNEL_CROSS_COMPILE}"
+	fi
 }
 
 unset_kernel_args()
@@ -103,6 +112,10 @@ unset_kernel_args()
 	if [ "${KERNEL_AS}" != '' ]
 	then
 		unset AS
+	fi
+	if [ "${KERNEL_CROSS_COMPILE}" != '' ]
+	then
+		unset CROSS_COMPILE
 	fi
 }
 
