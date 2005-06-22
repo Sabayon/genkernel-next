@@ -447,34 +447,12 @@ then
 		chmod 1777 tmp
 	fi
 	
-	UML=$(cat /proc/cpuinfo|grep UML|sed -e 's|model name.*: ||')
-	if [ "${UML}" = 'UML' ]
-	then
-		# UML Fixes
-		good_msg 'Updating for uml system'
-
-		VC=$(cat ${CHROOT}/etc/securetty|grep 'vc/0'|sort|uniq)
-		if [ "${VC}" = 'vc/0' ]
-		then
-			echo 'vc/0 already exists, skipping'
-		else
-			echo 'vc/0' >> ${CHROOT}/etc/securetty
-		fi
-		TTY=$(cat ${CHROOT}/etc/securetty|grep 'tty0'|sort|uniq)
-		if [ "${TTY}" = 'vc/0' ]
-		then
-			echo 'tty0, already exists skipping'
-		else
-			echo tty0 >> ${CHROOT}/etc/securetty
-		fi
-		
-		# Setup console on 0 for uml
-		if [ -w /${CHROOT}/sbin/livecd-functions.sh ]
-		then
-			cat /${CHROOT}/sbin/livecd-functions.sh |sed -e 's|for x in 1 2 3 4 5 6|for x in 0 1 2 3 4 5 6|'> /${CHROOT}/sbin/livecd-functions.sh
-		fi
-
-	fi
+	#UML=$(cat /proc/cpuinfo|grep UML|sed -e 's|model name.*: ||')
+	#if [ "${UML}" = 'UML' ]
+	#then
+	#	# UML Fixes
+	#	good_msg 'Updating for uml system'
+	#fi
 
 	# Let Init scripts know that we booted from CD
 	export CDBOOT
