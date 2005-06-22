@@ -705,6 +705,8 @@ compile_udev() {
 		if [ "${ARCH}" = 'um' ]
 		then
 			compile_generic "ARCH=um KERNEL_DIR=$KERNEL_DIR USE_KLIBC=true USE_LOG=false DEBUG=false udevdir=/dev all etc/udev/udev.conf" utils
+		if [ "${ARCH}" = 'sparc64' ]
+			compile_generic "ARCH=sparc64 CROSS=sparc64-unknown-linux-gnu- KERNEL_DIR=$KERNEL_DIR USE_KLIBC=true USE_LOG=false DEBUG=false udevdir=/dev all etc/udev/udev.conf" utils
 		else
 			compile_generic "KERNEL_DIR=$KERNEL_DIR USE_KLIBC=true USE_LOG=false DEBUG=false udevdir=/dev all etc/udev/udev.conf" utils
 		fi
