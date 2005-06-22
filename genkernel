@@ -1,7 +1,7 @@
 #!/bin/bash
 # Genkernel v3
 
-GK_V='3.2.0_pre9'
+GK_V='3.2.0_pre10'
 TEMP='/var/tmp/genkernel'
 TODEBUGCACHE=1 # Until an error occurs or DEBUGFILE is fully qualified.
 
@@ -64,6 +64,14 @@ get_official_arch
 # Read arch-specific config
 source ${ARCH_CONFIG} || gen_die "Could not read ${ARCH_CONFIG}"
 source ${GK_SHARE}/${ARCH}/modules_load || gen_die "Could not read ${GK_SHARE}/${ARCH}/modules_load"
+
+# Merge modules_load from config
+for group_modules in ${!AMODULES_*}; do
+	group="$(echo $group_modules | cut -d_ -f2)"
+	eval cmodules="\$$group_modules"
+	eval MODULES_${group}=\"\${MODULES_${group}} ${cmodules}\"
+	print_info 1 "<config> Merged AMODULES_${group}:'${cmodules}' into MODULES_${group}"
+done
 
 [ ! -f "${TEMP}" ] && mkdir -p "${TEMP}"
 [ ! -f "${CACHE_DIR}" ] && mkdir -p "${CACHE_DIR}"

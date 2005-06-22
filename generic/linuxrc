@@ -151,6 +151,10 @@ then
       eval DO_`echo $modules | sed 's/-//'`=1
     done
 else
+    for modules in $MY_HWOPTS
+    do
+      eval DO_`echo $modules | sed 's/-//'`=1
+    done
     good_msg 'Skipping module load; no modules in the initrd!'
 fi
 
