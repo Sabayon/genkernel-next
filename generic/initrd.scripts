@@ -401,7 +401,7 @@ chooseKeymap() {
 }
 
 startVolumes() {
-    good_msg 'Checking if volumes need to be started...'
+    #good_msg 'Checking if volumes need to be started...'
     
     if [ "${USE_DMRAID_NORMAL}" -eq '1' ]
     then
