@@ -111,8 +111,8 @@ do
 	  DMRAID_OPTS=`parse_opt "${x}"`
 	  USE_DMRAID_NORMAL=1
 	  ;;
-      doevms)
-	  USE_EVMS_NORMAL=1
+      doevms2)
+	  USE_EVMS2_NORMAL=1
 	  ;;
 	    # Start Debug Option
       debug)

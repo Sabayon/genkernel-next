@@ -427,12 +427,12 @@ startVolumes() {
 	    /bin/vgchange -ay --ignorelockingfailure
 
 	    # Disable EVMS since lvm2 is activated and they dont work together.
-	    if [ "${USE_EVMS_NORMAL}" -eq '1' ]
+	    if [ "${USE_EVMS2_NORMAL}" -eq '1' ]
 	    then
 	       bad_msg "Disabling EVMS Support because LVM2 started"
 	       bad_msg "Do not add dolvm2 to the cmdline if this is not what you want"
 	       bad_msg "LVM2 and EVMS do not work well together"
-	       USE_EVMS_NORMAL=0
+	       USE_EVMS2_NORMAL=0
 	    fi
 	
 	else
@@ -441,7 +441,7 @@ startVolumes() {
 
     fi
 
-    if [ "${USE_EVMS_NORMAL}" -eq '1' ]
+    if [ "${USE_EVMS2_NORMAL}" -eq '1' ]
     then
 	if [ -e '/sbin/evms_activate' ]
 	then
