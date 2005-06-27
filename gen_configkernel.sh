@@ -92,8 +92,15 @@ config_kernel() {
 		[ "$?" ] || gen_die 'Error: xconfig failed!'
 	fi
 
-	# Make sure Ext2 support is on...
-	sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_EXT2_FS[ =].*/CONFIG_EXT2_FS=y/g'
+	# Force this on if we are a 2.4 kernel or less
+	# Force this on if we are using bootsplash
+	# This is required for initrd support
+	# Initramfs dont require this
+	if [ "${PAT}" -le '4' -o "${CMD_BOOTSPLASH}" = '1' ]
+	then
+	    # Make sure Ext2 support is on...
+	    sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_EXT2_FS[ =].*/CONFIG_EXT2_FS=y/g'
+	fi
 
 	# Make sure lvm2 modules are on if --lvm2
 	if isTrue ${CMD_LVM2}
