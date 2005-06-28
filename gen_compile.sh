@@ -704,12 +704,12 @@ compile_udev() {
 		ln -snf "${KERNEL_DIR}" klibc/linux || gen_die "Could not link to ${KERNEL_DIR}"
 		if [ "${ARCH}" = 'um' ]
 		then
-			compile_generic "ARCH=um KERNEL_DIR=$KERNEL_DIR USE_KLIBC=true USE_LOG=false DEBUG=false udevdir=/dev all etc/udev/udev.conf" utils
+			compile_generic "ARCH=um KERNEL_DIR=$KERNEL_DIR USE_KLIBC=true USE_LOG=false DEBUG=false udevdir=/dev all etc/udev/udev.conf" runtask
 		elif [ "${ARCH}" = 'sparc64' ]
 		then
 			compile_generic "ARCH=sparc64 CROSS=sparc64-unknown-linux-gnu- KERNEL_DIR=$KERNEL_DIR USE_KLIBC=true USE_LOG=false DEBUG=false udevdir=/dev all etc/udev/udev.conf" runtask
 		else
-			compile_generic "KERNEL_DIR=$KERNEL_DIR USE_KLIBC=true USE_LOG=false DEBUG=false udevdir=/dev all etc/udev/udev.conf" utils
+			compile_generic "KERNEL_DIR=$KERNEL_DIR USE_KLIBC=true USE_LOG=false DEBUG=false udevdir=/dev all etc/udev/udev.conf" runtask
 		fi
 
 

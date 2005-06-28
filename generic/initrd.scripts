@@ -294,7 +294,7 @@ cmdline_hwopts() {
     done
    
     # Shouldnt need to sort this the following loop should figure out the duplicates and strip them out
-    #MY_HWOPTS=$(echo ${MY_HWOPTS}|  sort)
+    #MY_HWOPTS=`echo ${MY_HWOPTS}|  sort`
     
     for x in ${MY_HWOPTS}
     do

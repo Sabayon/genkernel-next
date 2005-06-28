@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Daniel Robbins <drobbins@gentoo.org>
 # Copyright 2003 Gentoo Technologies, Inc.
 # Distributed under the GPL
@@ -37,7 +37,7 @@ fi
 
 quiet_kmsg
 
-CMDLINE="$(cat /proc/cmdline)"
+CMDLINE="`cat /proc/cmdline`"
 # Scan CMDLINE for any specified real_root= or cdroot arguments
 for x in ${CMDLINE}
 do
@@ -404,7 +404,7 @@ then
 	then
 		if [ -e "${CHROOT}/mnt/cdrom/add" ]
 		then
-				for targz in $(ls ${CHROOT}/mnt/cdrom/add/*.tar.gz)
+				for targz in `ls ${CHROOT}/mnt/cdrom/add/*.tar.gz`
 				do	
 					tarname=`basename ${targz}`
 					good_msg "Adding additional package ${tarname}"
@@ -458,7 +458,7 @@ then
 		chmod 1777 tmp
 	fi
 	
-	#UML=$(cat /proc/cpuinfo|grep UML|sed -e 's|model name.*: ||')
+	#UML=`cat /proc/cpuinfo|grep UML|sed -e 's|model name.*: ||'`
 	#if [ "${UML}" = 'UML' ]
 	#then
 	#	# UML Fixes
@@ -548,22 +548,22 @@ then
        
        
        INITRAMFS_FILES=`ls /`
-       INITRAMFS_FILES=$(echo ${INITRAMFS_FILES}|sed -e "s|${CHROOT#/}||g")
+       INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|${CHROOT#/}||g"`
        
        if [ -n "${MEMORY}" ]
        then
-		INITRAMFS_FILES=$(echo ${INITRAMFS_FILES}|sed -e "s|${MEMORY#/}||g")
+		INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|${MEMORY#/}||g"`
        fi
        
        if [ -n "${UNION}" ]
        then
-       INITRAMFS_FILES=$(echo ${INITRAMFS_FILES}|sed -e "s|${UNION#/}||g")
+       INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|${UNION#/}||g"`
        fi
        
-       INITRAMFS_FILES=$(echo ${INITRAMFS_FILES}|sed -e "s|newroot||g")
+       INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|newroot||g"`
        for i in ${INITRAMFS_FILES}
        do
-		for j in $(/bin/busybox find /$i)
+		for j in `/bin/busybox find /$i`
 		do
 			#/bin/busybox echo "$j"
 			if /bin/busybox [ ! -d "$j" -a "$j" != "/bin/busybox" ]
@@ -571,7 +571,7 @@ then
 				/bin/busybox rm "$j"
 			fi
 		done
-		for j in $(/bin/busybox find /$i)
+		for j in `/bin/busybox find /$i`
 		do
 			if /bin/busybox [ -d ${j} -a "${j}" != "/bin" ]
 			then
