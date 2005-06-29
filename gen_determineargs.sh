@@ -185,8 +185,6 @@ determine_real_args() {
 	UNIONFS_BINCACHE=`arch_replace "${UNIONFS_BINCACHE}"`
 	UNIONFS_MODULES_BINCACHE=`arch_replace "${UNIONFS_MODULES_BINCACHE}"`
 	
-	UNIONFS_MODULES_BINCACHE=`kv_replace "${UNIONFS_MODULES_BINCACHE}"`
-	
 	if [ "${CMD_BOOTSPLASH}" != '' ]
 	then
 		BOOTSPLASH=${CMD_BOOTSPLASH}
@@ -360,6 +358,7 @@ determine_real_args() {
 	else
 		DMRAID=0
 	fi
-	#get_KV has to be last
+	
 	get_KV
+	UNIONFS_MODULES_BINCACHE=`kv_replace "${UNIONFS_MODULES_BINCACHE}"`
 }

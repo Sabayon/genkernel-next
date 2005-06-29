@@ -274,14 +274,15 @@ compile_unionfs_modules() {
 			# Setup the kernel sources to compile modules
 			cd ${KERNEL_DIR}
 			compile_generic "modules_prepare" kernel
-			
+		
+			cd "${TEMP}"
 			cd "${UNIONFS_DIR}"
 			compile_generic unionfs2.6 kernel
 		else
 			compile_generic unionfs2.4 kernel
 		fi
 		print_info 1 'unionfs: >> Copying to cache...'
-
+	
 		mkdir -p ${TEMP}/unionfs/lib/modules/${KV}/kernel/fs
 		
 		if [ -f unionfs.ko ]
@@ -289,12 +290,12 @@ compile_unionfs_modules() {
 			cp unionfs.ko ${TEMP}/unionfs/lib/modules/${KV}/kernel/fs 
 		else 
 			cp unionfs.o ${TEMP}/unionfs/lib/modules/${KV}/kernel/fs 
-	 	fi
-		
+ 		fi
+	
 		cd ${TEMP}/unionfs	
 		/bin/tar -cjf "${UNIONFS_MODULES_BINCACHE}" . ||
 			gen_die 'Could not create unionfs modules binary cache'
-		
+	
 		cd "${TEMP}"
 		rm -rf "${UNIONFS_DIR}" > /dev/null
 		rm -rf unionfs > /dev/null
