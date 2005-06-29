@@ -271,6 +271,11 @@ compile_unionfs_modules() {
 		sed -i Makefile -e "s|LINUXSRC =.*|LINUXSRC =${KERNEL_DIR}|g"
 		if [ "${PAT}" -ge '6' ]
 		then
+			# Setup the kernel sources to compile modules
+			cd ${KERNEL_DIR}
+			compile_generic "modules_prepare" kernel
+			
+			cd "${UNIONFS_DIR}"
 			compile_generic unionfs2.6 kernel
 		else
 			compile_generic unionfs2.4 kernel
