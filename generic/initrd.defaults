@@ -74,6 +74,7 @@ REAL_ROOT=''
 CDROOT=0
 CDROOT_DEV=''
 NEW_ROOT="/newroot"
+CONSOLE="/dev/console"
 
 # Only sections that are in by default or those that
 # are not module groups need to be defined here...

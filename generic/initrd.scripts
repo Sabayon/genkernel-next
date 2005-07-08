@@ -207,6 +207,7 @@ test_success() {
 	# If last command failed send error message and fall back to a shell	
 	if [ "$?" != '0' ]
 	then
+		splash 'verbose'
 		bad_msg 'Failed to $1; failing back to the shell...'
 		run_shell
 	fi
@@ -477,6 +478,7 @@ cdupdate() {
 	${NEW_ROOT}/mnt/cdrom/cdupdate.sh
 	if [ "$?" != '0' ]
 	then
+	    splash 'verbose'
 	    bad_msg "FAILED TO EXECUTE cdupdate.sh"
 	    run_shell
 	fi

@@ -32,6 +32,7 @@ create_base_layout_cpio() {
 	cd ${TEMP}/initramfs-base-temp/dev
 	mknod -m 660 console c 5 1
 	mknod -m 660 null c 1 3
+	mknod -m 600 tty1 c 4 1
 	cd "${TEMP}/initramfs-base-temp/"
 	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_DIR}/cpio/initramfs-base-layout.cpio.gz
 	rm -rf "${TEMP}/initramfs-base-temp" > /dev/null
@@ -250,7 +251,21 @@ create_gensplash(){
 			[ -z "${GENSPLASH_THEME}" ] && GENSPLASH_THEME=default
 			print_info 1 "  >> Installing gensplash [ using the ${GENSPLASH_THEME} theme ]..."
 			cd /
-			splash_geninitramfs -g ${CACHE_DIR}/cpio/initramfs-splash-${KV}.cpio.gz ${GENSPLASH_THEME}
+			local tmp=""
+			[ -n "${GENSPLASH_RES}" ] && tmp="-r ${GENSPLASH_RES}"
+			splash_geninitramfs -g ${CACHE_DIR}/cpio/initramfs-splash-${KV}.cpio.gz ${tmp} ${GENSPLASH_THEME}
+			if [ -e "/usr/share/splashutils/initrd.splash" ]; then
+				if [ -d "${TEMP}/initramfs-gensplash-temp" ]
+				then
+					rm -r "${TEMP}/initramfs-gensplash-temp/"
+				fi
+				mkdir -p "${TEMP}/initramfs-gensplash-temp/etc"
+				cd "${TEMP}/initramfs-gensplash-temp/"
+				gunzip -c ${CACHE_DIR}/cpio/initramfs-splash-${KV}.cpio.gz | cpio -idm --quiet -H newc
+				cp "/usr/share/splashutils/initrd.splash" "${TEMP}/initramfs-gensplash-temp/etc"
+				find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_DIR}/cpio/initramfs-splash-${KV}.cpio.gz
+				rm -r "${TEMP}/initramfs-gensplash-temp/"
+			fi
 		else
 			print_warning 1 '               >> No splash detected; skipping!'
 		fi

@@ -6,8 +6,13 @@
 . /etc/initrd.defaults
 . /etc/initrd.scripts
 
+splash() {
+	return 0
+}
+[ -e /etc/initrd.splash ] && . /etc/initrd.splash
+
 # Clean input/output
-exec >/dev/console </dev/console 2>&1
+exec >${CONSOLE} <${CONSOLE} 2>&1
 
 if [ "$$" != '1' ]
 then
@@ -133,8 +138,16 @@ do
 	  MLIST="`echo ${MLIST} | sed -e \"s/,/ /\"`"
 	  export MLIST
 	  ;;
+
+      # Redirect output to a specific tty
+      CONSOLE\=*)
+      	  CONSOLE=`parse_opt "${x}"`
+	  exec >${CONSOLE} <${CONSOLE} 2>&1
+	  ;;
   esac
 done
+
+splash 'init'
 
 detect_sbp2_devices
 cmdline_hwopts
@@ -196,6 +209,7 @@ then
 	done
 	cp /dev/null ${NEW_ROOT}/dev
 	cp /dev/console ${NEW_ROOT}/dev
+	cp /dev/tty1 ${NEW_ROOT}/dev
 	sdelay
 
 	bootstrapCD
@@ -530,6 +544,7 @@ EOF
 elif [ "$0" = '/init' ]
 then
        [ ! -e /${CHROOT}/dev/console ] && mknod /${CHROOT}/dev/console c 5 1
+       [ ! -e /${CHROOT}/dev/tty1 ]    && mknod /${CHROOT}/dev/tty1 c 4 1
        echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting (initramfs)..."
 
        cd ${CHROOT}
@@ -540,7 +555,7 @@ then
                umount /proc || echo '*: Failed to unmount the initrd /proc!'
        echo -n '.'
 
-       exec <dev/console >dev/console 2>&1
+       exec <${CONSOLE} >${CONSOLE} 2>&1
        echo '.'
 
        # Cleanup initramfs in the background
@@ -563,17 +578,16 @@ then
        INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|newroot||g"`
        for i in ${INITRAMFS_FILES}
        do
-		for j in `/bin/busybox find /$i`
+		for j in `/bin/busybox find /$i 2>/dev/null`
 		do
-			#/bin/busybox echo "$j"
 			if /bin/busybox [ ! -d "$j" -a "$j" != "/bin/busybox" ]
 			then
 				/bin/busybox rm "$j"
 			fi
 		done
-		for j in `/bin/busybox find /$i`
+		for j in `/bin/busybox find /$i 2>/dev/null`
 		do
-			if /bin/busybox [ -d ${j} -a "${j}" != "/bin" ]
+			if /bin/busybox [ -d "${j}" -a "${j}" != "/bin" -a "${j}" != "/dev" ]
 			then
 				/bin/busybox rm -r "$j"
 			fi
@@ -582,12 +596,14 @@ then
        # End initramfs cleanup
 
        # Start the real root init
-       (/bin/busybox sleep 2;/bin/busybox rm /bin/busybox) & 
+       (/bin/busybox sleep 3; /bin/busybox rm /dev -r; /bin/busybox rm /bin/busybox) & 
        exec /bin/busybox chroot . /bin/sh <<- EOF
        exec /sbin/init ${REAL_INIT}
 EOF
 
 fi
+
+splash 'verbose'
 
 echo 'A fatal error has probably occured since /sbin/init did not'
 echo 'boot correctly. Trying to open a shell...'

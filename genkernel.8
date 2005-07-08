@@ -1,4 +1,4 @@
-.TH GENKERNEL "8" "June 2005" "genkernel 3.2.0" "Gentoo Linux"
+.TH GENKERNEL "8" "July 2005" "genkernel 3.2.0" "Gentoo Linux"
 .SH NAME
 genkernel \- the Gentoo Linux automatic kernel compiler.
 .SH SYNOPSIS
@@ -23,12 +23,16 @@ This would produce a kernel, asking you what how to configure it
 to your desire, leaving alone any existing compiled object files, enabling
 bootsplash support but not installing anything.
 .SH ACTIONS
-An action tells Genkernel what you want it to do - the following
+An action tells genkernel what you want it to do - the following
 actions are supported:
 .PP
 .I \fBall\fR
 .RS
 Build all steps - the kernel, modules, and the initrd.
+.RE
+.I \fBbzImage\fR
+.RS
+Build only the kernel.
 .RE
 .I \fBkernel\fR
 .RS
@@ -107,9 +111,6 @@ Implies \fB\-\-no\-clean\fR, and thus \fB\-\-no\-mrproper\fR, running a
 \fB\-\-callback=\fR<...>
 Run the specified arguments in the current environment after the kernel and
 modules have been compiled.
-.TP
-\fB\-\-udev\fR
-Add in udev support to the initrd.
 .PP
 .BR Kernel \ Locations
 .TP
@@ -169,14 +170,27 @@ rather than the default theme specified in your gensplash
 configuration. If \fB\-\-no-gensplash\fR is specified, then
 gensplash is disabled.
 .TP
+\fB\-\-gensplash-res=\fR<resolutions>
+Optionally select gensplash resolutions to include.
+.TP
+\fB\-\-evms2\fR
+Add in EVMS2 support from static binaries if they exist on the system:
+you should run "emerge evms2" first.
+.TP
 \fB\-\-lvm2\fR
 .RS
 Add in LVM2 support from static binaries if they exist on the system,
 or compile static LVM2 binaries if static ones do not exist.
 .RE
 .TP
-\fB\-\-no\-evms2\fR
-Don't add in EVMS2 support if it is available on the system.
+\fB\-\-unionfs\fR
+Add unionfs support.
+.TP
+\fB\-\-dmraid\fR
+Add DMRAID support.
+.TP
+\fB\-\-linuxrc=\fR<file>
+Use <file> for the linuxrc instead of the genkernel linuxrc.
 .PP
 .BR Internals
 .TP
@@ -203,16 +217,16 @@ initrd will be included...
 File to output a .tar.bz2'd modules after the callbacks have run
 .TP
 \fB\-\-kerncache=\fR<tbz2>
-File to output a .tar.bz2'd kernel, contents of /lib/modules/ and the kernel config
-NOTE: This is created before the callbacks are run,"
+File to output a .tar.bz2'd kernel, contents of /lib/modules/ and the kernel config.
+\fBNOTE\fR: This is created before the callbacks are run.
 .TP
 \fB\-\-no\-kernel\-sources=\fR<tbz2>
 This option is only valid if kerncache is defined
 If there is a valid kerncache no checks will be made
-against a kernel source tree
+against a kernel source tree.
 .TP
 \fB\-\-initramfs\-overlay=\fR<dir>
-Directory structure to inject into the initramfs
+Directory structure to inject into the initramfs.
 Only available on 2.6 kernels that don't use bootsplash; use a CPIO
 archive as a parameter.
 .SH INITRD OPTIONS
@@ -222,18 +236,8 @@ bootloader, which the initrd scripts would recognize.
 \fBreal_root=\fR<...>
 Specifies the device node of the root filesystem to mount.
 .TP
-\fBdevfs\fR
-.RS
-Turns on devfs support.
-.RE
-.TP
-\fBnodevfs\fR
-Turns off devfs support.
-.TP
-\fBnoudev\fR
-.RS
-Turns off udev support.
-.RE
+\fBdodmraid=\fR<...>
+Passes arguments to dmraid on bootup.
 .TP
 \fBreal_init=\fR<...>
 Passes arguments to init on bootup.

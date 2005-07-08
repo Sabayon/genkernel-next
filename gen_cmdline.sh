@@ -62,9 +62,10 @@ longusage() {
   echo "  Initialization"
   echo "	--bootsplash=<theme>	Force bootsplash using <theme>"
   echo "	--gensplash=<theme>	Force gensplash using <theme>"
+  echo "	--gensplash-res=<res>	Select gensplash resolutions"
   echo "	--do-keymap-auto	Forces keymap selection at boot"
   echo "	--evms2			Include EVMS2 support"
-  echo "				 --> 'emerge evms' in the host operating system first"
+  echo "				--> 'emerge evms' in the host operating system first"
   echo "	--lvm2			Include LVM2 support"
   echo "	--unionfs		Include UNIONFS support"
   echo "	--dmraid		Include DMRAID support"
@@ -75,22 +76,21 @@ longusage() {
   echo "	--cachedir=<dir>	Override the default cache location"
   echo "	--tempdir=<dir>		Location of Genkernel's temporary directory"
   echo "  Output Settings"
-  echo "        --kernname=<...> 	tag the kernel and initrd with a name"
-  echo "        	 		if not defined the option defaults to genkernel"
+  echo "        --kernname=<...> 	Tag the kernel and initrd with a name:"
+  echo "        	 		If not defined the option defaults to 'genkernel'"
   echo "        --minkernpackage=<tbz2> File to output a .tar.bz2'd kernel and initrd:"
   echo "                                No modules outside of the initrd will be"
   echo "                                included..."
   echo "        --modulespackage=<tbz2> File to output a .tar.bz2'd modules after the callbacks have run"
   echo "        --kerncache=<tbz2> 	File to output a .tar.bz2'd kernel,"
   echo "                                contents of /lib/modules/ and the kernel config"
-  echo "                                NOTE: This is created before the callbacks are run,"
+  echo "                                NOTE: This is created before the callbacks are run!"
   echo "        --no-kernel-sources	This option is only valid if kerncache is defined"
   echo "        			If there is a valid kerncache no checks will be made"
   echo "        			against a kernel source tree"
-  echo "        --initramfs-overlay=<dir>	directory structure to include in the initramfs"
-  echo "        			Only available on 2.6 kernels that dont use bootsplash"
-
-
+  echo "        --initramfs-overlay=<dir>"
+  echo "        			Directory structure to include in the initramfs,"
+  echo "        			only available on 2.6 kernels that don't use bootsplash"
 }
 
 usage() {
@@ -291,6 +291,10 @@ parse_cmdline() {
 	      --no-gensplash)
 		      CMD_GENSPLASH=0
 	              print_info 2 "CMD_GENSPLASH: $CMD_GENSPLASH"
+	      ;;
+	      --gensplash-res=*)
+		      GENSPLASH_RES=`parse opt "$*"`
+		      print info 2 "GENSPLASH_RES: $GENSPLASH_RES"
 	      ;;
 	      --install)
 		      CMD_NOINSTALL=0
