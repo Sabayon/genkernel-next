@@ -22,34 +22,40 @@ set_grub_bootloader() {
 	# If /boot is not defined in /etc/fstab, it must be the same as /
 	[ "x$GRUB_BOOTFS" == 'x' ] && GRUB_BOOTFS=$GRUB_ROOTFS
 
-	# Translate block letters into grub numbers
-	local GRUB_ROOT_DISK=$(echo $GRUB_ROOTFS | sed -e 's/\/dev\/[hsm]d\([[:alpha:]]\)[[:digit:]]\+/\1/')
-	case $GRUB_ROOT_DISK in
-		a )
-			GRUB_ROOT_DISK='0' ;;
-		b )
-			GRUB_ROOT_DISK='1' ;;
-		c )
-			GRUB_ROOT_DISK='2' ;;
-		d )
-			GRUB_ROOT_DISK='3' ;;
-		e )
-			GRUB_ROOT_DISK='4' ;;
-	esac
+	# Read GRUB device map
+	echo ${tmp}
+	if [ ! -d ${tmp} ]
+	then
+		mkdir ${tmp}
+	fi
 
-	# Translate partition numbers into grub numbers
-	local GRUB_ROOT_PARTITION=$(echo $GRUB_BOOTFS | sed -e 's/\/dev\/[hsm]d[[:alpha:]]\([[:digit:]]\+\)/\1/')
+	grub --batch --device-map=${tmp}/grub.map <<EOF >/dev/null
+quit
+EOF
 
+	# Get the GRUB mapping for our device
+	local GRUB_BOOT_DISK1=$(echo $GRUB_BOOTFS | sed -e 's#\(/dev/.\+\)[[:digit:]]\+#\1#')
+	echo ${GRUB_BOOT_DISK1}
+	local GRUB_BOOT_DISK=$(awk '{if ($2 == "'$GRUB_BOOT_DISK1'") {gsub(/(\(|\))/, "", $1); print $1;}}' ${tmp}/grub.map)
+
+	local GRUB_BOOT_PARTITION=$(echo $GRUB_BOOTFS | sed -e 's#/dev/.\+\([[:digit:]]\+\)#\1#')
+	if [ ! -d ${tmp} ]
+	then
+		rm -r ${tmp}
+	fi
+	echo ${GRUB_ROOTFS}
+	
+	echo ${GRUB_BOOTFS}
+	echo ${GRUB_BOOT_DISK}
+	echo ${GRUB_BOOT_PARTITION}
+	
 	# Create grub configuration directory and file if it doesn't exist.
 	[ ! -e `basename $GRUB_CONF` ] && mkdir -p `basename $GRUB_CONF`
 
 	if [ ! -e $GRUB_CONF ]
 	then
-		# Check that $GRUB_ROOT_PARTITION is a single character
-		local GRUB_ROOT_PARTITION_TEST=$(printf $GRUB_ROOT_PARTITION | wc -c)
-		if [ "${GRUB_ROOT_PARTITION_TEST}" -ne '1' ]
+		if [ "${GRUB_BOOT_DISK}" = '' -o "${GRUB_BOOT_PARTITION}" = '' ]
 		then
-			# GRUB_ROOT_PARTITION is not a number; we can't work this out so... error
 			print_error 1 'Error! /boot/grub/grub.conf does not exist and the correct settings can\'t be automatically detected.'
 			print_error 1 'Please manually create your /boot/grub/grub.conf file.'
 		else
@@ -57,12 +63,12 @@ set_grub_bootloader() {
 			touch $GRUB_CONF
 			echo 'default 0' >> $GRUB_CONF
 			echo 'timeout 5' >> $GRUB_CONF
-			echo "" >> $GRUB_CONF
+			echo >> $GRUB_CONF
 
 			# Add grub configuration to grub.conf	
 			echo "# Genkernel generated entry, see GRUB documentation for details" >> $GRUB_CONF
 			echo "title=Gentoo Linux ($KV)" >> $GRUB_CONF
-			echo -e "\troot (hd$GRUB_ROOT_DISK,$GRUB_ROOT_PARTITION)" >> $GRUB_CONF
+			echo -e "\troot ($GRUB_BOOT_DISK,$GRUB_BOOT_PARTITION)" >> $GRUB_CONF
 			if [ "${BUILD_INITRD}" -eq '0' ]
 			then
 				echo -e "\tkernel /kernel-$KV root=$GRUB_ROOTFS" >> $GRUB_CONF
@@ -70,7 +76,7 @@ set_grub_bootloader() {
 				echo -e "\tkernel /kernel-$KV root=/dev/ram0 init=/linuxrc real_root=$GRUB_ROOTFS" >> $GRUB_CONF
 				echo -e "\tinitrd /initrd-$KV" >> $GRUB_CONF
 			fi
-			echo "" >> $GRUB_CONF
+			echo >> $GRUB_CONF
 		fi
 	else
 		# grub.conf already exists; so...
