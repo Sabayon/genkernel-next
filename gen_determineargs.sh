@@ -73,6 +73,14 @@ determine_real_args() {
 	else
 		KERNEL_DIR=${DEFAULT_KERNEL_SOURCE}
 	fi
+	
+	if [ "${CMD_NO_KERNEL_SOURCES}" != "1" ]
+	then
+		if [ ! -d ${KERNEL_DIR} ]
+		then
+			gen_die "kernel source directory \"${KERNEL_DIR}\" was not found!"
+		fi
+	fi
 
 	if [ "${CMD_KERNCACHE}" != "" ]
 	then	
