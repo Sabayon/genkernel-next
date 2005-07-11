@@ -99,6 +99,21 @@ create_udev_cpio(){
 	rm -rf "${TEMP}/initramfs-udev-temp" > /dev/null
 }
 
+create_blkid_cpio(){
+	if [ -d "${TEMP}/initramfs-blkid-temp" ]
+	then
+		rm -r "${TEMP}/initramfs-blkid-temp/"
+	fi
+	cd ${TEMP}
+	mkdir -p "${TEMP}/initramfs-blkid-temp/bin/"
+	[ "${DISKLABEL}" -eq '1' ] && { /bin/bzip2 -dc "${BLKID_BINCACHE}" > "${TEMP}/initramfs-blkid-temp/bin/blkid" ||
+		gen_die "Could not extract blkid binary cache!"; }
+	chmod a+x "${TEMP}/initramfs-blkid-temp/bin/blkid"
+	cd "${TEMP}/initramfs-blkid-temp/"
+	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_DIR}/cpio/initramfs-blkid-${E2FSPROGS_VER}.cpio.gz
+	rm -rf "${TEMP}/initramfs-blkid-temp" > /dev/null
+}
+
 create_devfs_cpio(){
 	if [ -d "${TEMP}/initramfs-devfs-temp" ]
 	then
@@ -419,6 +434,10 @@ merge_initramfs_cpio_archives(){
 	then
 		MERGE_LIST="${MERGE_LIST} initramfs-udev-${UDEV_VER}.cpio.gz"
 	fi
+	if [ "${DISKLABEL}" -eq '1' -a -e ${CACHE_DIR}/cpio/initramfs-blkid-${E2FSPROGS_VER}.cpio.gz ]
+	then
+		MERGE_LIST="${MERGE_LIST} initramfs-blkid-${E2FSPROGS_VER}.cpio.gz"
+	fi
 	if [ "${UNIONFS}" -eq '1' -a -e ${CACHE_DIR}/cpio/initramfs-unionfs-${UNIONFS_VER}-tools.cpio.gz ]
 	then
 		MERGE_LIST="${MERGE_LIST} initramfs-unionfs-${UNIONFS_VER}-tools.cpio.gz"
@@ -549,6 +568,12 @@ create_initramfs() {
 		print_info 1 "initramfs: Not copying modules..."
 	fi
 	
+	if [ "${DISKLABEL}" -eq '1' ]
+	then
+		print_info 1 "        >> Creating blkid cpio archive..."
+		create_blkid_cpio
+	fi
+		
 	create_gensplash
 	
 	if [ "${INITRAMFS_OVERLAY}" != '' ]

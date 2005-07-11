@@ -54,6 +54,13 @@ get_KV() {
 		fi
 
 	fi
+
+	if isTrue "${CMD_DISKLABEL}"
+	then
+		DISKLABEL=1
+	else
+		DISKLABEL=0
+	fi
 }
 
 determine_real_args() {
@@ -176,6 +183,7 @@ determine_real_args() {
 	DMRAID_BINCACHE=`cache_replace "${DMRAID_BINCACHE}"`
 	UNIONFS_BINCACHE=`cache_replace "${UNIONFS_BINCACHE}"`
 	UNIONFS_MODULES_BINCACHE=`cache_replace "${UNIONFS_MODULES_BINCACHE}"`
+	BLKID_BINCACHE=`cache_replace "${BLKID_BINCACHE}"`
   
 	DEFAULT_KERNEL_CONFIG=`arch_replace "${DEFAULT_KERNEL_CONFIG}"`
 	BUSYBOX_CONFIG=`arch_replace "${BUSYBOX_CONFIG}"`
@@ -192,6 +200,7 @@ determine_real_args() {
 	DMRAID_BINCACHE=`arch_replace "${DMRAID_BINCACHE}"`
 	UNIONFS_BINCACHE=`arch_replace "${UNIONFS_BINCACHE}"`
 	UNIONFS_MODULES_BINCACHE=`arch_replace "${UNIONFS_MODULES_BINCACHE}"`
+	BLKID_BINCACHE=`arch_replace "${BLKID_BINCACHE}"`
 	
 	if [ "${CMD_BOOTSPLASH}" != '' ]
 	then

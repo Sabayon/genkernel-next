@@ -57,6 +57,14 @@ create_base_initrd_sys() {
 	MAKEDEV std
 	MAKEDEV console
 
+	if [ "${DISKLABEL}" -eq '1' ]; then
+		cp "${BLKID_BINCACHE}" "${TEMP}/initrd-temp/bin/blkid.bz2" ||
+			gen_die 'Could not copy blkid from bincache!'
+		bunzip2 "${TEMP}/initrd-temp/bin/blkid.bz2" ||
+			gen_die 'Could not uncompress blkid!'
+		chmod +x "${TEMP}/initrd-temp/bin/blkid"
+	fi
+
 	cp "${BUSYBOX_BINCACHE}" "${TEMP}/initrd-temp/bin/busybox.bz2" ||
 		gen_die 'Could not copy busybox from bincache!'
 	bunzip2 "${TEMP}/initrd-temp/bin/busybox.bz2" ||

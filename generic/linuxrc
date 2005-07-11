@@ -256,7 +256,41 @@ while true
 do
 	while [ "${got_good_root}" != '1' ]
 	do
-		
+		case "${REAL_ROOT}" in
+			LABEL\=*|UUID\=*)
+			
+				ROOT_DEV=""
+				retval=1
+				
+				if [ "${retval}" -ne '0' ]; then
+					ROOT_DEV=`findfs "${REAL_ROOT}" 2>/dev/null`
+					retval=$?
+				fi
+				
+				if [ "$retval" -ne '0' ]; then
+					ROOT_DEV=`busybox findfs "${REAL_ROOT}" 2>/dev/null`
+					retval=$?
+				fi
+				
+				if [ "${retval}" -ne '0' ]; then
+					ROOT_DEV=`blkid -t "${REAL_ROOT}" | cut -d ":" -f 1 2>/dev/null`
+					retval=$?
+				fi
+				
+				if [ "${retval}" -eq '0' ] && [ -n "${ROOT_DEV}" ]; then
+					good_msg "Detected real_root=${ROOT_DEV}"
+					REAL_ROOT="${ROOT_DEV}"
+				else
+					bad_msg "Could not find root block device: ${REAL_ROOT}"
+					echo '   Please specify a device to boot, or "shell" for a shell...'
+					echo -n 'boot() :: '
+					read REAL_ROOT
+					got_good_root=0
+					continue
+				fi
+				;;
+		esac
+				
 		if [ "${REAL_ROOT}" = 'shell' ]
 		then
 			run_shell

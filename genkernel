@@ -267,6 +267,8 @@ then
 			compile_modutils
 		fi
 	fi
+	
+	[ "${DISKLABEL}" -eq '1' ] && compile_e2fsprogs
 
 	if [ "${PAT}" -gt '4' -a "${UDEV}" -eq '1' ] 
 	then

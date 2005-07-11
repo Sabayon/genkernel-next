@@ -71,6 +71,7 @@ longusage() {
   echo "	--dmraid		Include DMRAID support"
   echo "	--bootloader=grub	Add new kernel to GRUB configuration"
   echo "	--linuxrc=<file>	Specifies a user created linuxrc"
+  echo "	--disklabel	        Include disk label and uuid support in your initrd"
   echo "  Internals"
   echo "	--arch-override=<arch>	Force to arch instead of autodetect"
   echo "	--cachedir=<dir>	Override the default cache location"
@@ -398,6 +399,10 @@ parse_cmdline() {
               --genzimage)
 			GENERATE_Z_IMAGE=1
 			print_info 2 "GENERATE_Z_IMAGE: $GENERATE_Z_IMAGE"
+	      ;;
+	      --disklabel)
+		      CMD_DISKLABEL=1
+		      print_info 2 "CMD_DISKLABEL: $CMD_DISKLABEL"
 	      ;;
 	      all)
 		      BUILD_KERNEL=1
