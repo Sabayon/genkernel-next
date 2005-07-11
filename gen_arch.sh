@@ -5,14 +5,19 @@ get_official_arch() {
 	then
 		ARCH=${CMD_ARCHOVERRIDE}
 	else
-		ARCH=`uname -m`
-		case "${ARCH}" in
-			i?86)
-				ARCH="x86"
-			;;
-			*)
-			;;
-		esac
+		if [ "${ARCH_OVERRIDE}" != '' ]
+		then
+			ARCH=${ARCH_OVERRIDE}
+		else
+			ARCH=`uname -m`
+			case "${ARCH}" in
+				i?86)
+					ARCH="x86"
+				;;
+				*)
+				;;
+			esac
+		fi
 	fi
 
 	ARCH_CONFIG="${GK_SHARE}/${ARCH}/config.sh"
