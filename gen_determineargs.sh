@@ -39,7 +39,7 @@ get_KV() {
 		if [ "${PAT}" -gt '4' -a -e ${KERNEL_DIR}/.config ]
 		then
 			cd ${KERNEL_DIR}
-			compile_generic prepare kernel > /dev/null 2>&1
+			#compile_generic prepare kernel > /dev/null 2>&1
 			cd - > /dev/null 2>&1
 			if [ -f ${KERNEL_DIR}/include/linux/version.h ]
 			then

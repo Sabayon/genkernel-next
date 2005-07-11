@@ -491,6 +491,27 @@ cdupdate() {
     	fi
 }
 
+setup_md_device(){
+	MAJOR=9
+
+	if [ `echo ${REAL_ROOT}|sed -e 's#\(/dev/md\)[[:digit:]]\+#\1#'` = "/dev/md" ]
+	then
+    		good_msg "real_root is a md device. Setting up the device node (If necessary) ..."
+    		MD_NUMBER=`echo ${REAL_ROOT}|sed -e 's#/dev/md\([[:digit:]]\+\)#\1#'`
+    		if [ ! -e /dev/md${MD_NUMBER} ]
+    		then
+        		mknod /dev/md${MD_NUMBER} b ${MAJOR} ${MD_NUMBER} >/dev/null 2>&1
+			ret=$?
+			if [ "${ret}" -ne 0 ]
+			then
+				bad_msg "Creation of /dev/md${MD_NUMBER} failed... "
+			else
+				good_msg "Creation of /dev/md${MD_NUMBER} Succeeded... "
+			fi
+        	fi
+    	fi
+}
+
 rundebugshell(){
     if [ -n "$DEBUG" ]; then
 	good_msg 'Starting debug shell as requested by "debug" option.'

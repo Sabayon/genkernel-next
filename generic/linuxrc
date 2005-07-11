@@ -177,6 +177,9 @@ mount_sysfs
 # Start udev/devfs
 start_dev_mgr
 
+# Setup md device nodes if they dont exist
+setup_md_device
+
 # Start EVMS
 startVolumes
 
