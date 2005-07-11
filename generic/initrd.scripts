@@ -473,16 +473,22 @@ verbose_kmsg() {
 
 
 cdupdate() {
-    if [ -x /${NEW_ROOT}/mnt/cdrom/cdupdate.sh ]
-    then
-	${NEW_ROOT}/mnt/cdrom/cdupdate.sh
-	if [ "$?" != '0' ]
+	if [ "${CDROOT}" -eq '1' ]
 	then
-	    splash 'verbose'
-	    bad_msg "FAILED TO EXECUTE cdupdate.sh"
-	    run_shell
-	fi
-    fi
+    		if [ -x /${NEW_ROOT}/mnt/cdrom/cdupdate.sh ]
+    		then
+	    		good_msg "Running cdupdate.sh"
+			${NEW_ROOT}/mnt/cdrom/cdupdate.sh
+			if [ "$?" != '0' ]
+			then
+	    			splash 'verbose'
+	    			bad_msg "FAILED TO EXECUTE cdupdate.sh"
+	    			run_shell
+			fi
+		else
+	    		good_msg "no cdupdate.sh script found .... skipping"
+    		fi
+    	fi
 }
 
 rundebugshell(){

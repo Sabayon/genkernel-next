@@ -486,6 +486,9 @@ else
 	mkdir -p ${NEW_ROOT}/tmp/.initrd
 fi
 
+# Execute script on the cdrom just before boot to update things if necessary
+cdupdate
+
 if [ "${SUBDIR}" != '' -a -e "${CHROOT}/${SUBDIR}" ]
 then
     good_msg"Entering ${SUBDIR} to boot"
