@@ -295,7 +295,7 @@ parse_cmdline() {
 	      ;;
 	      --gensplash-res=*)
 		      GENSPLASH_RES=`parse_opt "$*"`
-		      print info 2 "GENSPLASH_RES: $GENSPLASH_RES"
+		      print_info 2 "GENSPLASH_RES: $GENSPLASH_RES"
 	      ;;
 	      --install)
 		      CMD_NOINSTALL=0
