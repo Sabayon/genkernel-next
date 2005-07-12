@@ -474,35 +474,40 @@ then
 		# Now we do the links.
 		for x in ${ROOT_LINKS}
 		do
-			# List all subdirectories of x
-			for directory in `find "${NEW_ROOT}/${FS_LOCATION}/${x}" -type d 2>/dev/null`
-			do
-				## Strip the prefix of the FS_LOCATION
-				directory=${directory#${NEW_ROOT}/${FS_LOCATION}/}
+			if [ -L "${NEW_ROOT}/${FS_LOCATION}/${x}" ]
+			then
+				ln -s "`readlink ${NEW_ROOT}/${FS_LOCATION}/${x}`" "${x}" 2>/dev/null
+			else
+				# List all subdirectories of x
+				for directory in `find "${NEW_ROOT}/${FS_LOCATION}/${x}" -type d 2>/dev/null`
+				do
+					## Strip the prefix of the FS_LOCATION
+					directory=${directory#${NEW_ROOT}/${FS_LOCATION}/}
 
-				## Skip this directory if we already linked a parent directory
-				if [ "${current_parrent}" != '' ]; then
-					var=`echo "${directory}" | grep "^${current_parrent}"`
-					if [ "${var}" != '' ]; then
-						continue
-					fi
-				fi
-				## Test if the directory exists already
-				if [ -e "/${NEW_ROOT}/${directory}" ]
-				then
-					# It does exist, link all the individual files
-					for file in `ls /${NEW_ROOT}/${FS_LOCATION}/${directory}`
-					do
-					if [ ! -d "/${NEW_ROOT}/${FS_LOCATION}/${directory}/${file}" ] && [ ! -e "${NEW_ROOT}/${directory}/${file}" ]; then
-							ln -s "/${FS_LOCATION}/${directory}/${file}" "${directory}/${file}" 2> /dev/null
+					## Skip this directory if we already linked a parent directory
+					if [ "${curent_parrent}" != '' ]; then
+						var=`echo "${directory}" | grep "^${curent_parrent}"`
+						if [ "${var}" != '' ]; then
+							continue
 						fi
-					done
-				else
-					# It does not exist, make a link to the livecd
-					ln -s "/${FS_LOCATION}/${directory}" "${directory}" 2> /dev/null
-					current_parrent=${directory}
-				fi
-			done
+					fi
+					## Test if the directory exists already
+					if [ -e "/${NEW_ROOT}/${directory}" ]
+					then
+						# It does exist, link all the individual files
+						for file in `ls /${NEW_ROOT}/${FS_LOCATION}/${directory}`
+						do
+						if [ ! -d "/${NEW_ROOT}/${FS_LOCATION}/${directory}/${file}" ] && [ ! -e "${NEW_ROOT}/${directory}/${file}" ]; then
+								ln -s "/${FS_LOCATION}/${directory}/${file}" "${directory}/${file}" 2> /dev/null
+							fi
+						done
+					else
+						# It does not exist, make a link to the livecd
+						ln -s "/${FS_LOCATION}/${directory}" "${directory}" 2>/dev/null
+						current_parent=${directory}
+					fi
+				done
+			fi
 		done
 
 		mkdir initrd proc tmp sys
