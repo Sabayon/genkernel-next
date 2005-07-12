@@ -364,6 +364,44 @@ else
 	fi
 fi
 
+if [ "${CMD_NOINSTALL}" != '1' -a "${SYMLINK}" = '1' ]
+then 
+    print_info 1 ''
+    print_info 1 'Creating symlinks'
+    
+    
+    print_info 1 '	    creating kernel name symlink!'
+    if [ -e /boot/kernel-${KNAME}-${ARCH}-${KV} ]
+    then
+	/bin/rm /boot/kernel
+        ln -s /boot/kernel-${KNAME}-${ARCH}-${KV} /boot/kernel
+        ret=$?
+        [ ${ret} = '1' ] && print_error 1 'kernel link failed'
+    fi
+    
+    if [ "${PAT}" -gt '4' -a  "${CMD_BOOTSPLASH}" != '1' ]
+    then
+	print_info 1 '	    creating initramfs name symlink!'
+	if [ -e /boot/initramfs-${KNAME}-${ARCH}-${KV} ]
+	then
+	    /bin/rm /boot/initramfs
+	    ln -s /boot/initramfs-${KNAME}-${ARCH}-${KV} /boot/initramfs
+	    ret=$?
+	    [ ${ret} = '1' ] && print_error 1 'initramfs link failed'
+	fi
+    else
+	print_info 1 '	    creating initrd name symlink!'
+	if [ -e /boot/initrd-${KNAME}-${ARCH}-${KV} ]
+	then
+	    /bin/rm /boot/initrd
+	    ln -s /boot/initrd-${KNAME}-${ARCH}-${KV} /boot/initrd
+	    ret=$?
+	    [ ${ret} = '1' ] && print_error 1 'initrd link failed'
+	fi
+    fi
+fi
+
+
 [ "${BOOTRW}" != '' ] && mount -o remount,ro /boot
 
 print_info 1 ''

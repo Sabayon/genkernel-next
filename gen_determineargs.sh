@@ -299,6 +299,13 @@ determine_real_args() {
 		SAVE_CONFIG=0
 	fi
   
+	if isTrue "${CMD_SYMLINK}"
+	then
+		SYMLINK=1
+	else
+		SYMLINK=0
+	fi
+	
 	if [ "${CMD_INSTALL_MOD_PATH}" != '' ]
 	then
 		INSTALL_MOD_PATH="${CMD_INSTALL_MOD_PATH}"

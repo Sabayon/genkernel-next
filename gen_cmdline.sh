@@ -384,6 +384,10 @@ parse_cmdline() {
 		      CMD_KERNNAME=`parse_opt "$*"`
 		      print_info 2 "KERNNAME: $CMD_KERNNAME"
 	      ;;
+	      --symlink)
+		      CMD_SYMLINK=1
+		      print_info 2 "CMD_SYMLINK: $CMD_SYMLINK"
+	      ;;
 	      --no-kernel-sources)
 		      CMD_NO_KERNEL_SOURCES=1
 		      print_info 2 "CMD_NO_KERNEL_SOURCES: $CMD_NO_KERNEL_SOURCES"
