@@ -269,6 +269,11 @@ compile_unionfs_modules() {
 		cd "${UNIONFS_DIR}"
 		print_info 1 'unionfs modules: >> Compiling...'
 		sed -i Makefile -e "s|LINUXSRC =.*|LINUXSRC =${KERNEL_DIR}|g"
+		
+		#Fix for hardened/selinux systems to have extened attributes
+		#per r2d2's request
+		sed -i Makefile -e "s|#  \(EXTRACFLAGS=-DUNIONFS_XATTR -DFIST_SETXATTR_CONSTVOID\)|\1|g"
+
 		if [ "${PAT}" -ge '6' ]
 		then
 			# Setup the kernel sources to compile modules
