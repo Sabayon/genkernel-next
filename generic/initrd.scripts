@@ -39,10 +39,15 @@ modules_scan() {
 			echo -e "${BOLD}   ::${NORMAL} Skipping ${x}..."
 		elif [ "${MLOAD}" = "${MLIST}" ] # == No change == No specified no-load
 		then
-			echo -ne "${BOLD}   ::${NORMAL} Scanning for ${x}..."
-			modprobe ${x} -n
-			backup
-			echo -ne "${NORMAL}"
+			[ -n "${DEBUG}" ] && echo -ne "${BOLD}   ::${NORMAL} Checking for ${x}..."
+			# find -name does not work since the return status is always zero
+			if find /lib/modules | grep "${x}${KSUFF}" 2>/dev/null
+			then
+				echo -ne "${BOLD}   ::${NORMAL} Scanning for ${x}..."
+				modprobe ${x} -n
+				backup
+				echo -ne "${NORMAL}"
+			fi
 		else
 			echo -e "${BOLD}   ::${NORMAL} Skipping ${x}..."
 		fi
