@@ -144,6 +144,11 @@ do
       	  CONSOLE=`parse_opt "${x}"`
 	  exec >${CONSOLE} <${CONSOLE} 2>&1
 	  ;;
+
+      # /dev/md
+      part\=*)
+          MDPART=`parse_opt "${x}"`
+          ;;
   esac
 done
 

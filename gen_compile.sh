@@ -192,7 +192,7 @@ clean_dietlibc_bincache() {
 
 compile_dep() {
 	# Only run ``make dep'' for 2.4 kernels
-	if [ "${VER}" -eq '2' -a "${PAT}" -le '4' ]
+	if [ "${VER}" -eq '2' -a "${KERN_24}" -eq '1' ]
 	then
 		print_info 1 "kernel: >> Making dependencies..."
 		cd ${KERNEL_DIR}
@@ -206,14 +206,14 @@ compile_modules() {
 	compile_generic modules kernel
 	export UNAME_MACHINE="${ARCH}"
 	# On 2.4 kernels, if MAKEOPTS > -j1 it can cause failures
-	if [ "${VER}" -eq '2' -a "${PAT}" -le '4' ]
+	if [ "${VER}" -eq '2' -a "${KERN_24}" -eq '1' ]
 	then
 		MAKEOPTS_SAVE="${MAKEOPTS}"
 		MAKEOPTS="${MAKEOPTS_SAVE/-j?/-j1}"
 	fi
 	[ "${INSTALL_MOD_PATH}" != '' ] && export INSTALL_MOD_PATH
 	compile_generic "modules_install" kernel
-	[ "${VER}" -eq '2' -a "${PAT}" -le '4' ] && MAKEOPTS="${MAKEOPTS_SAVE}"
+	[ "${VER}" -eq '2' -a "${KERN_24}" -eq '1' ] && MAKEOPTS="${MAKEOPTS_SAVE}"
 	export MAKEOPTS
 	unset UNAME_MACHINE
 }

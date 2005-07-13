@@ -14,11 +14,12 @@ get_KV() {
 			PAT=`grep ^PATCHLEVEL\ \= ${tmp}/kerncache.config | awk '{ print $3 };'`
 			SUB=`grep ^SUBLEVEL\ \= ${tmp}/kerncache.config | awk '{ print $3 };'`
 			EXV=`grep ^EXTRAVERSION\ \= ${tmp}/kerncache.config | sed -e "s/EXTRAVERSION =//" -e "s/ //g"`
-			if [ "${PAT}" -gt '4' ]
+			if [ "${PAT}" -gt '4' -a "${VER}" -ge '2' ]
 			then
 				LOV=`grep ^CONFIG_LOCALVERSION\= ${tmp}/kerncache.config | sed -e "s/CONFIG_LOCALVERSION=\"\(.*\)\"/\1/"`
 				KV=${VER}.${PAT}.${SUB}${EXV}${LOV}
 			else
+				KERN_24=1
 				KV=${VER}.${PAT}.${SUB}${EXV}
 			fi
 
@@ -30,16 +31,17 @@ get_KV() {
 		rm -r ${tmp}
 
 	else
-		#configure the kernel
-			#if BUILD_KERNEL=0 then assume --no-clean, menuconfig is cleared, 
+		# Configure the kernel
+		# If BUILD_KERNEL=0 then assume --no-clean, menuconfig is cleared
+
 		VER=`grep ^VERSION\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
 		PAT=`grep ^PATCHLEVEL\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
 		SUB=`grep ^SUBLEVEL\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
 		EXV=`grep ^EXTRAVERSION\ \= ${KERNEL_DIR}/Makefile | sed -e "s/EXTRAVERSION =//" -e "s/ //g"`
-		if [ "${PAT}" -gt '4' -a -e ${KERNEL_DIR}/.config ]
+		if [ "${PAT}" -gt '4' -a "${VER}" -ge '2' -a -e ${KERNEL_DIR}/.config ]
 		then
 			cd ${KERNEL_DIR}
-			#compile_generic prepare kernel > /dev/null 2>&1
+			compile_generic prepare kernel > /dev/null 2>&1
 			cd - > /dev/null 2>&1
 			if [ -f ${KERNEL_DIR}/include/linux/version.h ]
 			then
@@ -47,9 +49,11 @@ get_KV() {
 				LOV=`echo ${UTS_RELEASE}|sed -e "s/${VER}.${PAT}.${SUB}${EXV}//"`
 				KV=${VER}.${PAT}.${SUB}${EXV}${LOV}
 			else
-				KV=${VER}.${PAT}.${SUB}${EXV}
+				LCV=`grep ^CONFIG_LOCALVERSION= ${KERNEL_DIR}/.config | sed -r -e "s/.*=\"(.*)\"/\1/"`
+				KV=${VER}.${PAT}.${SUB}${EXV}${LCV}
 			fi
 		else
+			KERN_24=1
 			KV=${VER}.${PAT}.${SUB}${EXV}
 		fi
 

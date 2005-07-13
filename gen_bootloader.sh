@@ -23,31 +23,17 @@ set_grub_bootloader() {
 	[ "x$GRUB_BOOTFS" == 'x' ] && GRUB_BOOTFS=$GRUB_ROOTFS
 
 	# Read GRUB device map
-	echo ${tmp}
-	if [ ! -d ${tmp} ]
-	then
-		mkdir ${tmp}
-	fi
-
+	[ ! -d ${tmp} ] && mkdir ${tmp}
 	grub --batch --device-map=${tmp}/grub.map <<EOF >/dev/null
 quit
 EOF
 
 	# Get the GRUB mapping for our device
 	local GRUB_BOOT_DISK1=$(echo $GRUB_BOOTFS | sed -e 's#\(/dev/.\+\)[[:digit:]]\+#\1#')
-	echo ${GRUB_BOOT_DISK1}
 	local GRUB_BOOT_DISK=$(awk '{if ($2 == "'$GRUB_BOOT_DISK1'") {gsub(/(\(|\))/, "", $1); print $1;}}' ${tmp}/grub.map)
 
 	local GRUB_BOOT_PARTITION=$(echo $GRUB_BOOTFS | sed -e 's#/dev/.\+\([[:digit:]]\+\)#\1#')
-	if [ ! -d ${tmp} ]
-	then
-		rm -r ${tmp}
-	fi
-	echo ${GRUB_ROOTFS}
-	
-	echo ${GRUB_BOOTFS}
-	echo ${GRUB_BOOT_DISK}
-	echo ${GRUB_BOOT_PARTITION}
+	[ ! -d ${tmp} ] && rm -r ${tmp}
 	
 	# Create grub configuration directory and file if it doesn't exist.
 	[ ! -e `basename $GRUB_CONF` ] && mkdir -p `basename $GRUB_CONF`
@@ -71,25 +57,33 @@ EOF
 			echo -e "\troot ($GRUB_BOOT_DISK,$GRUB_BOOT_PARTITION)" >> $GRUB_CONF
 			if [ "${BUILD_INITRD}" -eq '0' ]
 			then
-				echo -e "\tkernel /kernel-$KV root=$GRUB_ROOTFS" >> $GRUB_CONF
+				echo -e "\tkernel /kernel-${KNAME}-${ARCH}-${KV} root=$GRUB_ROOTFS" >> $GRUB_CONF
 			else
-				echo -e "\tkernel /kernel-$KV root=/dev/ram0 init=/linuxrc real_root=$GRUB_ROOTFS" >> $GRUB_CONF
-				echo -e "\tinitrd /initrd-$KV" >> $GRUB_CONF
+				echo -e "\tkernel /kernel-${KNAME}-${ARCH}-${KV} root=/dev/ram0 init=/linuxrc real_root=$GRUB_ROOTFS" >> $GRUB_CONF
+				if [ "${PAT}" -gt '4' -a  "${CMD_BOOTSPLASH}" != '1' ]
+				then
+				    echo -e "\tinitrd /initramfs-${KNAME}-${ARCH}-${KV}" >> $GRUB_CONF
+				else
+				    echo -e "\tinitrd /initrd-${KNAME}-${ARCH}-${KV}" >> $GRUB_CONF
+				fi
 			fi
 			echo >> $GRUB_CONF
 		fi
 	else
 		# grub.conf already exists; so...
 		# ... Clone the first boot definition and change the version.
+		local TYPE
+		[ "${KERN_24}" -eq '1' ] && TYPE='rd' || TYPE='ramfs'
+
 		cp $GRUB_CONF $GRUB_CONF.bak
 		awk 'BEGIN { RS="" ; FS="\n" ; OFS="\n" ; ORS="\n\n" } 
 			NR == 2 {
 				ORIG=$0;
 				sub(/\(.+\)/,"(" KV ")",$1);
-				sub(/kernel-[[:alnum:][:punct:]]+/, "kernel-" KV, $3);
-				sub(/initrd-[[:alnum:][:punct:]]+/, "initrd-" KV, $4);
+				sub(/kernel-[[:alnum:][:punct:]]+/, "kernel-" KNAME "-" ARCH "-" KV, $3);
+				sub(/initr(d|amfs)-[[:alnum:][:punct:]]+/, "init" TYPE "-" KNAME "-" ARCH "-" KV, $4);
 				print RS $0; 
 				print RS ORIG;}
-			NR != 2 { print RS $0; }' KV=$KV $GRUB_CONF.bak > $GRUB_CONF
+			NR != 2 { print RS $0; }' KNAME=$KNAME ARCH=$ARCH KV=$KV TYPE=$TYPE $GRUB_CONF.bak > $GRUB_CONF
 	fi
 }

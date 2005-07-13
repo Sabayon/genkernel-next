@@ -2,7 +2,7 @@
 # Genkernel v3
 
 PATH="/bin:/usr/bin:/sbin:/usr/sbin"
-GK_V='3.2.2'
+GK_V='3.2.3'
 
 TEMP='/var/tmp/genkernel'
 TODEBUGCACHE=1 # Until an error occurs or DEBUGFILE is fully qualified.
@@ -259,7 +259,7 @@ then
 	# Only compile insmod if we're installing modules onto the initrd
 	if [ "${NOINITRDMODULES}" = '' ]
 	then
-		if [ "${PAT}" -gt '4' ]
+		if [ "${KERN_24}" != '1' ]
 		then
 			# Compile module-init-tools
 			compile_module_init_tools
@@ -270,7 +270,7 @@ then
 	
 	[ "${DISKLABEL}" -eq '1' ] && compile_e2fsprogs
 
-	if [ "${PAT}" -gt '4' -a "${UDEV}" -eq '1' ] 
+	if [ "${KERN_24}" != '1' -a "${UDEV}" -eq '1' ] 
 	then
 		compile_udev 
 	else
@@ -279,7 +279,7 @@ then
 		compile_devfsd
 	fi
 
-	if [ "${PAT}" -gt '4' -a  "${CMD_BOOTSPLASH}" != '1' ]
+	if [ "${KERN_24}" != '1' -a  "${CMD_BOOTSPLASH}" != '1' ]
 	then
 	    if [ "${BUSYBOX}" -eq '1' ]
 	    then
@@ -325,7 +325,7 @@ then
 		print_info 1 ''
 		print_info 1 '    Where $ROOT is the device node for your root partition as the'
 		print_info 1 '    one specified in /etc/fstab'
-	elif [ "${PAT}" -gt '4' -a  "${CMD_BOOTSPLASH}" != '1' ]
+	elif [ "${KERN_24}" != '1' -a  "${CMD_BOOTSPLASH}" != '1' ]
 	then
 		print_info 1 '    real_root=/dev/$ROOT'
 		print_info 1 '    [ And "vga=0x317 splash=verbose" if you use a framebuffer ]'
@@ -356,7 +356,7 @@ then
 	fi
 else
 	print_info 1 ''
-	if [ "${PAT}" -gt '4' -a  "${CMD_BOOTSPLASH}" != '1' ]
+	if [ "${KERN_24}" != '1' -a  "${CMD_BOOTSPLASH}" != '1' ]
 	then
 	    print_info 1 'initramfs compiled successfully!'
 	else
@@ -379,7 +379,7 @@ then
         [ ${ret} = '1' ] && print_error 1 'kernel link failed'
     fi
     
-    if [ "${PAT}" -gt '4' -a  "${CMD_BOOTSPLASH}" != '1' ]
+    if [ "${KERN_24}" != '1' -a  "${CMD_BOOTSPLASH}" != '1' ]
     then
 	print_info 1 '	    creating initramfs name symlink!'
 	if [ -e /boot/initramfs-${KNAME}-${ARCH}-${KV} ]

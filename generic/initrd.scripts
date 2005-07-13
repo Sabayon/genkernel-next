@@ -240,13 +240,13 @@ good_msg() {
 bad_msg() {
 	msg_string=$1
 	msg_string="${msg_string:-...}"
-	echo -e "${BAD}!! ${NORMAL}${BOLD} ${msg_string} ${NORMAL}"
+	echo -e "${BAD}!!${NORMAL}${BOLD} ${msg_string} ${NORMAL}"
 } 
 
 warn_msg() {
 	msg_string=$1
 	msg_string="${msg_string:-...}"
-	echo -e "${WARN}** ${NORMAL}${BOLD} ${msg_string} ${NORMAL}"
+	echo -e "${WARN}**${NORMAL}${BOLD} ${msg_string} ${NORMAL}"
 } 
 
 bind_mount_dev() {
@@ -504,29 +504,22 @@ cdupdate() {
 	    			run_shell
 			fi
 		else
-	    		good_msg "no cdupdate.sh script found .... skipping"
+	    		good_msg 'No cdupdate.sh script found, skipping...'
     		fi
     	fi
 }
 
-setup_md_device(){
-	MAJOR=9
-
+setup_md_device() {
 	if [ `echo ${REAL_ROOT}|sed -e 's#\(/dev/md\)[[:digit:]]\+#\1#'` = "/dev/md" ]
 	then
-    		good_msg "real_root is a md device. Setting up the device node (If necessary) ..."
-    		MD_NUMBER=`echo ${REAL_ROOT}|sed -e 's#/dev/md\([[:digit:]]\+\)#\1#'`
-    		if [ ! -e /dev/md${MD_NUMBER} ]
-    		then
-        		mknod /dev/md${MD_NUMBER} b ${MAJOR} ${MD_NUMBER} >/dev/null 2>&1
-			ret=$?
-			if [ "${ret}" -ne 0 ]
-			then
-				bad_msg "Creation of /dev/md${MD_NUMBER} failed... "
-			else
-				good_msg "Creation of /dev/md${MD_NUMBER} Succeeded... "
-			fi
+		good_msg 'Detected real_root as a md device. Setting up the device node...'
+		MD_NUMBER=`echo ${REAL_ROOT}|sed -e 's#/dev/md\([[:digit:]]\+\)#\1#'`
+		if [ ! -e /dev/md${MD_NUMBER} ]
+		then
+			mknod /dev/md${MD_NUMBER} b 9 ${MD_NUMBER} >/dev/null 2>&1
+			[ "$?" -ne 0 ] && bad_msg "Creation of /dev/md${MD_NUMBER} failed..."
         	fi
+		mdstart ${MDPART} /dev/md${MD_NUMBER}
     	fi
 }
 

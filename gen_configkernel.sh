@@ -95,8 +95,8 @@ config_kernel() {
 	# Force this on if we are a 2.4 kernel or less
 	# Force this on if we are using bootsplash
 	# This is required for initrd support
-	# Initramfs dont require this
-	if [ "${PAT}" -le '4' -o "${CMD_BOOTSPLASH}" = '1' ]
+	# Initramfs doesn't require this
+	if [ "${KERN_24}" -eq '1' -o "${CMD_BOOTSPLASH}" = '1' ]
 	then
 	    # Make sure Ext2 support is on...
 	    sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_EXT2_FS[ =].*/CONFIG_EXT2_FS=y/g'

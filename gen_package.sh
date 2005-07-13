@@ -14,7 +14,7 @@ gen_minkernpackage()
 	    cp "${KERNEL_BINARY}" "${TEMP}/minkernpackage/kernel-${KV}" || gen_die 'Could not the copy kernel for the min kernel package!'
 	    cp ".config" "${TEMP}/minkernpackage/config-${ARCH}-${KV}" || gen_die 'Could not the copy kernel config for the min kernel package!'
 	fi
-	if [ "${PAT}" -gt '4' -a  "${CMD_BOOTSPLASH}" != '1' ]
+	if [ "${KERN_24}" != '1' -a  "${CMD_BOOTSPLASH}" != '1' ]
 	then
 		[ "${BUILD_INITRD}" -ne 0 ] && { cp "${TEMP}/initramfs-${KV}" "${TEMP}/minkernpackage/initramfs-${ARCH}-${KV}" || gen_die 'Could not copy the initramfs for the kernel package!'; }
 	else
