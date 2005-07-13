@@ -179,7 +179,7 @@ create_base_initrd_sys() {
 			# These are not required in the initrd
 			for swap_libs in "${TEMP}/initrd-temp/lib/evms/*/swap*.so"
 			do
-				rm $swap_libs
+				rm ${swap_libs}
 			done
 		fi
 	fi	

@@ -253,7 +253,7 @@ create_evms2_cpio(){
 
 			# Fix EVMS2 complaining that it can't find the swap utilities.
 			# These are not required in the initramfs
-			for swap_libs in "${TEMP}/initramfs-evms2-temp/lib/evms/*swap*.so"
+			for swap_libs in "${TEMP}/initramfs-evms2-temp/lib/evms/*/swap*.so"
 			do
 				rm ${swap_libs}
 			done
