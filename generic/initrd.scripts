@@ -41,7 +41,7 @@ modules_scan() {
 		then
 			[ -n "${DEBUG}" ] && echo -ne "${BOLD}   ::${NORMAL} Checking for ${x}..."
 			# find -name does not work since the return status is always zero
-			if find /lib/modules | grep "${x}${KSUFF}" 2>/dev/null
+			if find /lib/modules | grep "${x}${KSUFF}" >/dev/null 2>&1
 			then
 				echo -ne "${BOLD}   ::${NORMAL} Scanning for ${x}..."
 				modprobe ${x} -n
