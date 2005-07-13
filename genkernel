@@ -178,9 +178,6 @@ then
 	# Configure kernel
 	config_kernel
 	
-	# KV may have changed due to the configuration
-	get_KV
-
 	# Make deps
 	compile_dep
 
@@ -189,6 +186,9 @@ then
 	then
 		[ "${VER}" -gt '2' ] || [ "${VER}" -eq '2' -a "${PAT}" -ge '6' ] && compile_generic prepare kernel
 	fi
+	
+	# KV may have changed due to the configuration
+	get_KV
 
 	# Compile kernel
 	[ "${GENERATE_Z_IMAGE}" = '' ] && compile_kernel
