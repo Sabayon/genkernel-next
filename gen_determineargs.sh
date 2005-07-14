@@ -10,6 +10,7 @@ get_KV() {
 		/bin/tar -xj -C ${tmp} -f ${CMD_KERNCACHE} kerncache.config 
 		if [ -e ${tmp}/kerncache.config ]
 		then
+			KERN_24=0
 			VER=`grep ^VERSION\ \= ${tmp}/kerncache.config | awk '{ print $3 };'`
 			PAT=`grep ^PATCHLEVEL\ \= ${tmp}/kerncache.config | awk '{ print $3 };'`
 			SUB=`grep ^SUBLEVEL\ \= ${tmp}/kerncache.config | awk '{ print $3 };'`
@@ -22,7 +23,6 @@ get_KV() {
 				KERN_24=1
 				KV=${VER}.${PAT}.${SUB}${EXV}
 			fi
-
 
 		else
 			rm -r ${tmp}
@@ -40,6 +40,7 @@ get_KV() {
 		EXV=`grep ^EXTRAVERSION\ \= ${KERNEL_DIR}/Makefile | sed -e "s/EXTRAVERSION =//" -e "s/ //g"`
 		if [ "${PAT}" -gt '4' -a "${VER}" -ge '2' -a -e ${KERNEL_DIR}/.config ]
 		then
+			KERN_24=0
 			cd ${KERNEL_DIR}
 			compile_generic prepare kernel > /dev/null 2>&1
 			cd - > /dev/null 2>&1
@@ -318,6 +319,12 @@ determine_real_args() {
 	if [ "${CMD_BOOTLOADER}" != '' ]
 	then
 		BOOTLOADER="${CMD_BOOTLOADER}"
+                
+		if [ "${CMD_BOOTLOADER}" != "${CMD_BOOTLOADER/:/}" ]
+		then
+			BOOTFS=`echo "${CMD_BOOTLOADER}" | cut -f2- -d:`
+			BOOTLOADER=`echo "${CMD_BOOTLOADER}" | cut -f1 -d:`
+		fi
 	fi
 
 	if isTrue "${CMD_OLDCONFIG}"

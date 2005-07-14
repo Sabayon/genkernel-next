@@ -14,25 +14,28 @@ set_grub_bootloader() {
 
 	print_info 1 ''
 	print_info 1 "Adding kernel to $GRUB_CONF..."
+	if [ "${BOOTFS}" != '' ]
+	then
+		GRUB_BOOTFS=${BOOTFS}
+	else	
+		# Extract block device information from /etc/fstab
+		GRUB_ROOTFS=$(awk '/[[:space:]]\/[[:space:]]/ { print $1 }' /etc/fstab)
+		GRUB_BOOTFS=$(awk '/^[^#].+[[:space:]]\/boot[[:space:]]/ { print $1 }' /etc/fstab)
 
-	# Extract block device information from /etc/fstab
-	local GRUB_ROOTFS=$(awk '/[[:space:]]\/[[:space:]]/ { print $1 }' /etc/fstab)
-	local GRUB_BOOTFS=$(awk '/^[^#].+[[:space:]]\/boot[[:space:]]/ { print $1 }' /etc/fstab)
-
-	# If /boot is not defined in /etc/fstab, it must be the same as /
-	[ "x$GRUB_BOOTFS" == 'x' ] && GRUB_BOOTFS=$GRUB_ROOTFS
+		# If /boot is not defined in /etc/fstab, it must be the same as /
+		[ "x$GRUB_BOOTFS" == 'x' ] && GRUB_BOOTFS=$GRUB_ROOTFS
+	fi
 
 	# Read GRUB device map
 	[ ! -d ${tmp} ] && mkdir ${tmp}
-	grub --batch --device-map=${tmp}/grub.map <<EOF >/dev/null
+	grub --batch --device-map=${tmp}/grub.map <<EOF >/dev/null 2>&1
 quit
 EOF
-
 	# Get the GRUB mapping for our device
 	local GRUB_BOOT_DISK1=$(echo $GRUB_BOOTFS | sed -e 's#\(/dev/.\+\)[[:digit:]]\+#\1#')
 	local GRUB_BOOT_DISK=$(awk '{if ($2 == "'$GRUB_BOOT_DISK1'") {gsub(/(\(|\))/, "", $1); print $1;}}' ${tmp}/grub.map)
 
-	local GRUB_BOOT_PARTITION=$(echo $GRUB_BOOTFS | sed -e 's#/dev/.\+\([[:digit:]]\+\)#\1#')
+	local GRUB_BOOT_PARTITION=$(echo $GRUB_BOOTFS | sed -e 's#/dev/.\+\([[:digit:]]?*\)#\1#')
 	[ ! -d ${tmp} ] && rm -r ${tmp}
 	
 	# Create grub configuration directory and file if it doesn't exist.
@@ -40,11 +43,9 @@ EOF
 
 	if [ ! -e $GRUB_CONF ]
 	then
-		if [ "${GRUB_BOOT_DISK}" = '' -o "${GRUB_BOOT_PARTITION}" = '' ]
+		if [ "${GRUB_BOOT_DISK}" != '' -a "${GRUB_BOOT_PARTITION}" != '' ]
 		then
-			print_error 1 'Error! /boot/grub/grub.conf does not exist and the correct settings can\'t be automatically detected.'
-			print_error 1 'Please manually create your /boot/grub/grub.conf file.'
-		else
+			GRUB_BOOT_PARTITION=`expr ${GRUB_BOOT_PARTITION} - 1`
 			# grub.conf doesn't exist - create it with standard defaults
 			touch $GRUB_CONF
 			echo 'default 0' >> $GRUB_CONF
@@ -68,6 +69,9 @@ EOF
 				fi
 			fi
 			echo >> $GRUB_CONF
+		else
+			print_error 1 'Error! /boot/grub/grub.conf does not exist and the correct settings can not be automatically detected.'
+			print_error 1 'Please manually create your /boot/grub/grub.conf file.'
 		fi
 	else
 		# grub.conf already exists; so...
@@ -76,14 +80,21 @@ EOF
 		[ "${KERN_24}" -eq '1' ] && TYPE='rd' || TYPE='ramfs'
 
 		cp $GRUB_CONF $GRUB_CONF.bak
-		awk 'BEGIN { RS="" ; FS="\n" ; OFS="\n" ; ORS="\n\n" } 
-			NR == 2 {
-				ORIG=$0;
-				sub(/\(.+\)/,"(" KV ")",$1);
-				sub(/kernel-[[:alnum:][:punct:]]+/, "kernel-" KNAME "-" ARCH "-" KV, $3);
-				sub(/initr(d|amfs)-[[:alnum:][:punct:]]+/, "init" TYPE "-" KNAME "-" ARCH "-" KV, $4);
-				print RS $0; 
-				print RS ORIG;}
-			NR != 2 { print RS $0; }' KNAME=$KNAME ARCH=$ARCH KV=$KV TYPE=$TYPE $GRUB_CONF.bak > $GRUB_CONF
+		awk 'BEGIN { RS="\n"; }
+		     {
+			if(match($0, "kernel-" KNAME "-" ARCH "-" KV))
+			{ have_k="1" }
+			if(match($0, "init" TYPE "-" KNAME "-" ARCH "-" KV))
+			{ have_i="1" }
+			if(have_k == "1" && have_i == "1")
+			{ exit 1; }
+		     }' KNAME=$KNAME ARCH=$ARCH KV=$KV TYPE=$TYPE $GRUB_CONF.bak
+		if [ "$?" -eq '0' ]
+		then
+			local LIMIT=$(wc -l $GRUB_CONF.bak)
+			awk -f ${GK_BIN}/gen_bootloader_grub.awk LIMIT=${LIMIT/ */} KNAME=$KNAME ARCH=$ARCH KV=$KV TYPE=$TYPE $GRUB_CONF.bak > $GRUB_CONF
+		else
+			print_info 1 "GRUB: Definition found, not duplicating."
+		fi
 	fi
 }
