@@ -510,6 +510,8 @@ cdupdate() {
 }
 
 setup_md_device() {
+	[ -z "${REAL_ROOT}" ] && return # LiveCD
+
 	if [ `echo ${REAL_ROOT}|sed -e 's#\(/dev/md\)[[:digit:]]\+#\1#'` = "/dev/md" ]
 	then
 		good_msg 'Detected real_root as a md device. Setting up the device node...'
