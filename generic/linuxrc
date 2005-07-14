@@ -44,6 +44,7 @@ quiet_kmsg
 
 CMDLINE="`cat /proc/cmdline`"
 # Scan CMDLINE for any specified real_root= or cdroot arguments
+REAL_ROOT=''
 for x in ${CMDLINE}
 do
   case "${x}" in
@@ -60,12 +61,10 @@ do
       # Livecd options
       cdroot)
 	  CDROOT=1
-	  REAL_ROOT=''
 	  ;;
       cdroot\=*)
 	  CDROOT=1
 	  CDROOT_DEV=`parse_opt "${x}"`
-	  REAL_ROOT=''
 	  ;;
 
       # Start livecd loop and looptype options
@@ -149,6 +148,14 @@ do
       part\=*)
           MDPART=`parse_opt "${x}"`
           ;;
+
+      # NFS
+      ip\=*)
+          IP=`parse_opt "${x}"`
+          ;;
+      nfsroot\=*)
+          NFSROOT=`parse_opt "${x}"`
+          ;;
   esac
 done
 
@@ -220,7 +227,7 @@ then
 	cp /dev/tty1 ${NEW_ROOT}/dev
 	sdelay
 
-	bootstrapCD
+	[ "${REAL_ROOT}"="/dev/nfs" ] || bootstrapCD
 	
 	if [ "${REAL_ROOT}" = '' ]
 	then
@@ -325,9 +332,9 @@ do
 	done
 
 
-	if [ "${CDROOT}" -eq '1' -a "${got_good_root}" = '1' ]
+	if [ "${CDROOT}" -eq '1' -a "${got_good_root}" = '1' -a "${REAL_ROOT}" != "/dev/nfs" ]
 	then
-		# cdrom device already mounted no further checks necessary
+		# CD already mounted; no further checks necessary
 		break
 	else
 		good_msg "Mounting root..."
