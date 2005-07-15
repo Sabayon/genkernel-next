@@ -227,8 +227,7 @@ then
 	cp /dev/tty1 ${NEW_ROOT}/dev
 	sdelay
 
-	[ "${REAL_ROOT}"="/dev/nfs" ] || bootstrapCD
-	
+	[ "${REAL_ROOT}" = "/dev/nfs" ] || bootstrapCD
 	if [ "${REAL_ROOT}" = '' ]
 	then
 		echo -n -e "${WARN}>>${NORMAL}${BOLD} No bootable medium found. Waiting for new devices"
@@ -522,7 +521,7 @@ then
 			fi
 		done
 
-		mkdir initrd proc tmp sys
+		mkdir initrd proc tmp sys 2>/dev/null
 		chmod 1777 tmp
 	fi
 	
