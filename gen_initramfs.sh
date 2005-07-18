@@ -236,6 +236,7 @@ create_evms2_cpio(){
 		mkdir -p "${TEMP}/initramfs-evms2-temp/lib/evms"
 		mkdir -p "${TEMP}/initramfs-evms2-temp/etc/"
 		mkdir -p "${TEMP}/initramfs-evms2-temp/bin/"
+		mkdir -p "${TEMP}/initramfs-evms2-temp/sbin/"
 		if [ "${EVMS2}" -eq '1' ]
 		then
 			print_info 1 '		EVMS2: Adding support...'	
@@ -249,7 +250,7 @@ create_evms2_cpio(){
 			cp -a /lib/evms "${TEMP}/initramfs-evms2-temp/lib" || gen_die 'Could not copy files for EVMS2!'
 			cp -a /lib/evms/* "${TEMP}/initramfs-evms2-temp/lib/evms" || gen_die 'Could not copy files for EVMS2!'
 			cp -a /etc/evms.conf "${TEMP}/initramfs-evms2-temp/etc" || gen_die 'Could not copy files for EVMS2!'
-			cp /sbin/evms_activate "${TEMP}/initramfs-evms2-temp/sbin/evms_activate" || gen_die 'Could not copy over vgscan!'
+			cp /sbin/evms_activate "${TEMP}/initramfs-evms2-temp/sbin/evms_activate" || gen_die 'Could not copy over evms_activate!'
 
 			# Fix EVMS2 complaining that it can't find the swap utilities.
 			# These are not required in the initramfs
