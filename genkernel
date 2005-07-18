@@ -29,7 +29,6 @@ TEMP=${TEMP}/$RANDOM.$RANDOM.$RANDOM.$$
 
 cleanup(){
     if [ -n "$TEMP" -a -d "$TEMP" ]; then
-	echo "Removing $TEMP"
 	rm -rf "$TEMP"
     fi
 

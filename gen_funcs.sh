@@ -225,6 +225,9 @@ gen_die() {
 	print_info 1 'Please do *not* report compilation failures as genkernel bugs!'
 	print_info 1 ''
   	exit 1
+
+	# Cleanup temp dirs and caches if requested
+	cleanup
 }
 
 has_loop() {
