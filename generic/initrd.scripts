@@ -64,7 +64,6 @@ findcdmount() {
 			then
 				good_msg "Attempting to mount CD:- ${x}"
 				mount -r ${x} ${NEW_ROOT}/mnt/cdrom > /dev/null 2>&1
-
 				if [ "$?" = '0' ]
 				then
 					# Check for a LiveCD
@@ -269,6 +268,7 @@ start_dev_mgr(){
 	kill_devfsd
 	good_msg 'Activating udev'
 	runUdev
+	cd /
     else
 	if [ ! -e /dev/.devfsd ]
 	then

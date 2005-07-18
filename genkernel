@@ -25,14 +25,28 @@ source ${GK_BIN}/gen_moddeps.sh || gen_die "Could not read ${GK_BIN}/gen_moddeps
 source ${GK_BIN}/gen_package.sh || gen_die "Could not read ${GK_BIN}/gen_package.sh"
 source ${GK_BIN}/gen_bootloader.sh || gen_die "Could not read ${GK_BIN}/gen_bootloader.sh"
 
-tmp=${TMPDIR-/tmp}
-tmp=${tmp}/genkernel.$RANDOM.$RANDOM.$RANDOM.$$
+TEMP=${TEMP}/$RANDOM.$RANDOM.$RANDOM.$$
 
 cleanup(){
-    if [ -n "$tmp" -a -d "$tmp" ]; then
-	echo "Removing $tmp"
-	rm -rf "$tmp"
+    if [ -n "$TEMP" -a -d "$TEMP" ]; then
+	echo "Removing $TEMP"
+	rm -rf "$TEMP"
     fi
+
+    if isTrue ${POSTCLEAR}
+    then
+            print_info 1 ''
+	    print_info 1 'RUNNING FINAL CACHE/TMP CLEANUP'
+	    print_info 1 "CACHE_DIR: ${CACHE_DIR}"
+	    CLEAR_CACHE_DIR='yes'
+	    setup_cache_dir
+	    ls -la ${CACHE_DIR}
+	    print_info 1 "CACHE_CPIO_DIR: ${CACHE_CPIO_DIR}"
+	    CLEAR_CPIO_CACHE='yes'
+	    clear_cpio_dir
+	    ls -la ${CACHE_CPIO_DIR}
+	    fi
+
     exit 1
 }
 trap cleanup SIGHUP SIGQUIT SIGINT SIGTERM SIGKILL
@@ -75,13 +89,17 @@ for group_modules in ${!AMODULES_*}; do
 	print_info 1 "<config> Merged AMODULES_${group}:'${cmodules}' into MODULES_${group}"
 done
 
-[ ! -f "${TEMP}" ] && mkdir -p "${TEMP}"
-[ ! -f "${CACHE_DIR}" ] && mkdir -p "${CACHE_DIR}"
 
 # Based on genkernel.conf, arch-specific configs, and commandline options,
 # get the real arguments for usage...
 
 determine_real_args
+
+[ ! -f "${TEMP}" ] && mkdir -p "${TEMP}"
+
+setup_cache_dir
+
+
 dump_debugcache
 
 NORMAL=${BOLD} print_info 1 "Linux Kernel ${BOLD}${KV}${NORMAL} for ${BOLD}${ARCH}${NORMAL}..."
@@ -156,7 +174,6 @@ then
 	echo
 	print_warning 1 'Running multiple genkernels on the same source tree will cause data loss!'
 	print_info 1 "Press ^C to halt; ^D to continue [ ${BOLD}if${NORMAL} you know what you're doing! ]"
-	cat
 	echo
 	CTEMP="${TEMP}"
 	TEMP=${TMPDIR-/tmp}
@@ -409,3 +426,6 @@ print_info 1 'Do NOT report kernel bugs as genkernel bugs unless your bug'
 print_info 1 'is about the default genkernel configuration...'
 print_info 1 ''
 print_info 1 'Make sure you have the latest genkernel before reporting bugs.'
+
+#Final Cleanup
+cleanup

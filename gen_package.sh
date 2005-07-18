@@ -70,20 +70,20 @@ gen_kerncache()
 
 gen_kerncache_extract_kernel()
 {
-	[ -d ${tmp} ] && gen_die "temporary directory already exists! Exiting."
-	(umask 077 && mkdir ${tmp}) || {
+	[ -d ${TEMP} ] && gen_die "temporary directory already exists! Exiting."
+	(umask 077 && mkdir ${TEMP}) || {
 	    gen_die "Could not create temporary directory! Exiting."
 	}
-       	/bin/tar -f ${KERNCACHE} -C ${tmp} -xj 
-	cp "${tmp}/kernel-${ARCH}-${KV}" "/boot/kernel-${KNAME}-${ARCH}-${KV}" || {
-		rm -r ${tmp}
+       	/bin/tar -f ${KERNCACHE} -C ${TEMP} -xj 
+	cp "${TEMP}/kernel-${ARCH}-${KV}" "/boot/kernel-${KNAME}-${ARCH}-${KV}" || {
+		rm -r ${TEMP}
 		gen_die 'Could not copy the kernel binary to /boot!'
 		}
-        cp "${tmp}/System.map-${ARCH}-${KV}" "/boot/System.map-${KNAME}-${ARCH}-${KV}" || {
-		rm -r ${tmp}
+        cp "${TEMP}/System.map-${ARCH}-${KV}" "/boot/System.map-${KNAME}-${ARCH}-${KV}" || {
+		rm -r ${TEMP}
 		gen_die 'Could not copy System.map to /boot!'
 		}
-	rm -r ${tmp}
+	rm -r ${TEMP}
 }
 
 gen_kerncache_extract_modules()
@@ -108,32 +108,32 @@ gen_kerncache_is_valid()
 		
 		BUILD_KERNEL=0
 		# Can make this more secure ....
-		[ -d ${tmp} ] && gen_die "temporary directory already exists! Exiting."
-		(umask 077 && mkdir ${tmp}) || {
+		[ -d ${TEMP} ] && gen_die "temporary directory already exists! Exiting."
+		(umask 077 && mkdir ${TEMP}) || {
 		    gen_die "Could not create temporary directory! Exiting."
 		}
 		
-		/bin/tar -xj -f ${KERNCACHE} -C ${tmp}
-		if [ -e ${tmp}/config-${ARCH}-${KV} -a -e ${tmp}/kernel-${ARCH}-${KV} ] 
+		/bin/tar -xj -f ${KERNCACHE} -C ${TEMP}
+		if [ -e ${TEMP}/config-${ARCH}-${KV} -a -e ${TEMP}/kernel-${ARCH}-${KV} ] 
 		then 	
 			print_info 1 'Valid kernel cache found; no sources will be used'
 			KERNCACHE_IS_VALID=1
 		fi
-		/bin/rm -r ${tmp}
+		/bin/rm -r ${TEMP}
         else
 		if [ -e "${KERNCACHE}" ] 
 		then
-			[ -d ${tmp} ] && gen_die "temporary directory already exists! Exiting."
-			(umask 077 && mkdir ${tmp}) || {
+			[ -d ${TEMP} ] && gen_die "temporary directory already exists! Exiting."
+			(umask 077 && mkdir ${TEMP}) || {
 			    gen_die "Could not create temporary directory! Exiting."
 			    
 			}
 		
-			/bin/tar -xj -f ${KERNCACHE} -C ${tmp}
-			if [ -e ${tmp}/config-${ARCH}-${KV} -a -e /${KERNEL_DIR}/.config ]
+			/bin/tar -xj -f ${KERNCACHE} -C ${TEMP}
+			if [ -e ${TEMP}/config-${ARCH}-${KV} -a -e /${KERNEL_DIR}/.config ]
 			then
 	
-				test1=$(md5sum ${tmp}/config-${ARCH}-${KV} | cut -d " " -f 1)
+				test1=$(md5sum ${TEMP}/config-${ARCH}-${KV} | cut -d " " -f 1)
 				test2=$(md5sum /${KERNEL_DIR}/.config | cut -d " " -f 1)
 				if [ "${test1}" == "${test2}" ]
 				then
@@ -144,7 +144,7 @@ gen_kerncache_is_valid()
 					KERNCACHE_IS_VALID=1
 				fi
 			fi
-			/bin/rm -r ${tmp}
+			/bin/rm -r ${TEMP}
 		fi
 	fi
 	export KERNCACHE_IS_VALID	

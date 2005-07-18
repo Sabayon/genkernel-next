@@ -76,6 +76,7 @@ longusage() {
   echo "	--arch-override=<arch>	Force to arch instead of autodetect"
   echo "	--cachedir=<dir>	Override the default cache location"
   echo "	--tempdir=<dir>		Location of Genkernel's temporary directory"
+  echo "	--postclear		Clear all tmp files and caches after genkernel has run"
   echo "  Output Settings"
   echo "        --kernname=<...> 	Tag the kernel and initrd with a name:"
   echo "        	 		If not defined the option defaults to 'genkernel'"
@@ -333,6 +334,10 @@ parse_cmdline() {
 	      --tempdir=*)
 		      TEMP=`parse_opt "$*"`
 		      print_info 2 "TEMP: $TEMP"
+	      ;; 
+	      --postclear)
+		      CMD_POSTCLEAR=1
+		      print_info 2 "CMD_POSTCLEAR: $CMD_POSTCLEAR"
 	      ;; 
 	      --arch-override=*)
 		      CMD_ARCHOVERRIDE=`parse_opt "$*"`

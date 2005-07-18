@@ -3,21 +3,21 @@
 get_KV() {
 	if [ "${CMD_NO_KERNEL_SOURCES}" = '1' -a -e "${CMD_KERNCACHE}" ]
 	then
-		[ -d ${tmp} ] && gen_die "temporary directory already exists! Exiting."
-		(umask 077 && mkdir ${tmp}) || {
+		[ -d ${TEMP} ] && gen_die "temporary directory already exists! Exiting."
+		(umask 077 && mkdir ${TEMP}) || {
 			gen_die "Could not create temporary directory! Exiting."
 		}
-		/bin/tar -xj -C ${tmp} -f ${CMD_KERNCACHE} kerncache.config 
-		if [ -e ${tmp}/kerncache.config ]
+		/bin/tar -xj -C ${TEMP} -f ${CMD_KERNCACHE} kerncache.config 
+		if [ -e ${TEMP}/kerncache.config ]
 		then
 			KERN_24=0
-			VER=`grep ^VERSION\ \= ${tmp}/kerncache.config | awk '{ print $3 };'`
-			PAT=`grep ^PATCHLEVEL\ \= ${tmp}/kerncache.config | awk '{ print $3 };'`
-			SUB=`grep ^SUBLEVEL\ \= ${tmp}/kerncache.config | awk '{ print $3 };'`
-			EXV=`grep ^EXTRAVERSION\ \= ${tmp}/kerncache.config | sed -e "s/EXTRAVERSION =//" -e "s/ //g"`
+			VER=`grep ^VERSION\ \= ${TEMP}/kerncache.config | awk '{ print $3 };'`
+			PAT=`grep ^PATCHLEVEL\ \= ${TEMP}/kerncache.config | awk '{ print $3 };'`
+			SUB=`grep ^SUBLEVEL\ \= ${TEMP}/kerncache.config | awk '{ print $3 };'`
+			EXV=`grep ^EXTRAVERSION\ \= ${TEMP}/kerncache.config | sed -e "s/EXTRAVERSION =//" -e "s/ //g"`
 			if [ "${PAT}" -gt '4' -a "${VER}" -ge '2' ]
 			then
-				LOV=`grep ^CONFIG_LOCALVERSION\= ${tmp}/kerncache.config | sed -e "s/CONFIG_LOCALVERSION=\"\(.*\)\"/\1/"`
+				LOV=`grep ^CONFIG_LOCALVERSION\= ${TEMP}/kerncache.config | sed -e "s/CONFIG_LOCALVERSION=\"\(.*\)\"/\1/"`
 				KV=${VER}.${PAT}.${SUB}${EXV}${LOV}
 			else
 				KERN_24=1
@@ -25,10 +25,10 @@ get_KV() {
 			fi
 
 		else
-			rm -r ${tmp}
+			rm -r ${TEMP}
 			gen_die "Could not find kerncache.config in the kernel cache! Exiting."
 		fi
-		rm -r ${tmp}
+		rm -r ${TEMP}
 
 	else
 		# Configure the kernel
@@ -172,9 +172,9 @@ determine_real_args() {
 	then
 		UTILS_AS="${CMD_UTILS_AS}"
 	fi
-
+	
 	CACHE_DIR=`arch_replace "${CACHE_DIR}"`
-
+	CACHE_CPIO_DIR="${CACHE_DIR}/cpio"
 	BUSYBOX_BINCACHE=`cache_replace "${BUSYBOX_BINCACHE}"`
 	MODULE_INIT_TOOLS_BINCACHE=`cache_replace "${MODULE_INIT_TOOLS_BINCACHE}"`
 	MODUTILS_BINCACHE=`cache_replace "${MODUTILS_BINCACHE}"`
@@ -238,6 +238,13 @@ determine_real_args() {
 		COMPRESS_INITRD=0
 	fi
 
+	if isTrue ${CMD_POSTCLEAR}
+	then
+		POSTCLEAR=1
+	else
+		POSTCLEAR=0
+	fi
+	
 	if [ "${CMD_MRPROPER}" != '' ]
 	then
 		MRPROPER="${CMD_MRPROPER}"

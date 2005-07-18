@@ -27,16 +27,16 @@ set_grub_bootloader() {
 	fi
 
 	# Read GRUB device map
-	[ ! -d ${tmp} ] && mkdir ${tmp}
-	grub --batch --device-map=${tmp}/grub.map <<EOF >/dev/null 2>&1
+	[ ! -d ${TEMP} ] && mkdir ${TEMP}
+	grub --batch --device-map=${TEMP}/grub.map <<EOF >/dev/null 2>&1
 quit
 EOF
 	# Get the GRUB mapping for our device
 	local GRUB_BOOT_DISK1=$(echo $GRUB_BOOTFS | sed -e 's#\(/dev/.\+\)[[:digit:]]\+#\1#')
-	local GRUB_BOOT_DISK=$(awk '{if ($2 == "'$GRUB_BOOT_DISK1'") {gsub(/(\(|\))/, "", $1); print $1;}}' ${tmp}/grub.map)
+	local GRUB_BOOT_DISK=$(awk '{if ($2 == "'$GRUB_BOOT_DISK1'") {gsub(/(\(|\))/, "", $1); print $1;}}' ${TEMP}/grub.map)
 
 	local GRUB_BOOT_PARTITION=$(echo $GRUB_BOOTFS | sed -e 's#/dev/.\+\([[:digit:]]?*\)#\1#')
-	[ ! -d ${tmp} ] && rm -r ${tmp}
+	[ ! -d ${TEMP} ] && rm -r ${TEMP}
 	
 	# Create grub configuration directory and file if it doesn't exist.
 	[ ! -e `basename $GRUB_CONF` ] && mkdir -p `basename $GRUB_CONF`

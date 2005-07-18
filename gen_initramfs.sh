@@ -34,7 +34,7 @@ create_base_layout_cpio() {
 	mknod -m 660 null c 1 3
 	mknod -m 600 tty1 c 4 1
 	cd "${TEMP}/initramfs-base-temp/"
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_DIR}/cpio/initramfs-base-layout.cpio.gz
+	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-base-layout.cpio.gz
 	rm -rf "${TEMP}/initramfs-base-temp" > /dev/null
 }
 
@@ -62,7 +62,7 @@ create_busybox_cpio() {
 	done
 	
 	cd "${TEMP}/initramfs-busybox-temp/"
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_DIR}/cpio/initramfs-busybox-${BUSYBOX_VER}.cpio.gz
+	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-busybox-${BUSYBOX_VER}.cpio.gz
 	rm -rf "${TEMP}/initramfs-busybox-temp" > /dev/null
 }
 
@@ -81,7 +81,7 @@ create_insmod_cpio() {
 	chmod +x "${TEMP}/initramfs-insmod-temp/bin/insmod"
 	
 	cd "${TEMP}/initramfs-insmod-temp/"
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_DIR}/cpio/initramfs-insmod-${MODULE_INIT_TOOLS_VER}.cpio.gz
+	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-insmod-${MODULE_INIT_TOOLS_VER}.cpio.gz
 	rm -rf "${TEMP}/initramfs-insmod-temp" > /dev/null
 }
 
@@ -95,7 +95,7 @@ create_udev_cpio(){
 	[ "${UDEV}" -eq '1' ] && { /bin/tar -jxpf "${UDEV_BINCACHE}" -C "${TEMP}/initramfs-udev-temp" ||
 		gen_die "Could not extract udev binary cache!"; }
 	cd "${TEMP}/initramfs-udev-temp/"
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_DIR}/cpio/initramfs-udev-${UDEV_VER}.cpio.gz
+	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-udev-${UDEV_VER}.cpio.gz
 	rm -rf "${TEMP}/initramfs-udev-temp" > /dev/null
 }
 
@@ -110,7 +110,7 @@ create_blkid_cpio(){
 		gen_die "Could not extract blkid binary cache!"; }
 	chmod a+x "${TEMP}/initramfs-blkid-temp/bin/blkid"
 	cd "${TEMP}/initramfs-blkid-temp/"
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_DIR}/cpio/initramfs-blkid-${E2FSPROGS_VER}.cpio.gz
+	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-blkid-${E2FSPROGS_VER}.cpio.gz
 	rm -rf "${TEMP}/initramfs-blkid-temp" > /dev/null
 }
 
@@ -127,7 +127,7 @@ create_devfs_cpio(){
 	bunzip2 "${TEMP}/initramfs-devfs-temp/bin/devfsd.bz2" || gen_die "could not uncompress devfsd"
 	chmod +x "${TEMP}/initramfs-devfs-temp/bin/devfsd"
 	cd "${TEMP}/initramfs-devfs-temp/"
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_DIR}/cpio/initramfs-devfs-${DEVFSD_VER}.cpio.gz
+	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-devfs-${DEVFSD_VER}.cpio.gz
 	rm -rf "${TEMP}/initramfs-devfs-temp" > /dev/null
 }
 
@@ -145,7 +145,7 @@ create_unionfs_modules_cpio(){
 		/bin/tar -jxpf "${UNIONFS_MODULES_BINCACHE}" -C "${TEMP}/initramfs-unionfs-modules-temp" ||
 			gen_die "Could not extract unionfs modules binary cache!";
 	cd "${TEMP}/initramfs-unionfs-modules-temp/"
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_DIR}/cpio/initramfs-unionfs-${UNIONFS_VER}-modules-${KV}.cpio.gz
+	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-unionfs-${UNIONFS_VER}-modules-${KV}.cpio.gz
 	rm -r "${TEMP}/initramfs-unionfs-modules-temp/"
 	fi
 }
@@ -164,7 +164,7 @@ create_unionfs_tools_cpio(){
 		/bin/tar -jxpf "${UNIONFS_BINCACHE}" -C "${TEMP}/initramfs-unionfs-tools-temp" ||
 			gen_die "Could not extract unionfs tools binary cache!";
 	cd "${TEMP}/initramfs-unionfs-tools-temp/"
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_DIR}/cpio/initramfs-unionfs-${UNIONFS_VER}-tools.cpio.gz
+	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-unionfs-${UNIONFS_VER}-tools.cpio.gz
 	rm -r "${TEMP}/initramfs-unionfs-tools-temp/"
 	fi										        
 }
@@ -183,7 +183,7 @@ create_dmraid_cpio(){
 		/bin/tar -jxpf "${DMRAID_BINCACHE}" -C "${TEMP}/initramfs-dmraid-temp" ||
 			gen_die "Could not extract dmraid binary cache!";
 	cd "${TEMP}/initramfs-dmraid-temp/"
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_DIR}/cpio/initramfs-dmraid-${DMRAID_VER}.cpio.gz
+	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-dmraid-${DMRAID_VER}.cpio.gz
 	rm -r "${TEMP}/initramfs-dmraid-temp/"
 	fi										        
 }
@@ -212,7 +212,7 @@ create_lvm2_cpio(){
 				gen_die 'LVM2 error: Could not move lvm.static to lvm!'
 		fi	
 		cd "${TEMP}/initramfs-lvm2-temp/"
-		find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_DIR}/cpio/initramfs-lvm2-${LVM2_VER}.cpio.gz
+		find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-lvm2-${LVM2_VER}.cpio.gz
 		rm -r "${TEMP}/initramfs-lvm2-temp/"
 	else # Deprecation warning; remove in a few versions.
 		if [ -e '/sbin/lvm' ]
@@ -259,7 +259,7 @@ create_evms2_cpio(){
 			done
 		fi
 		cd "${TEMP}/initramfs-evms2-temp/"
-		find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_DIR}/cpio/initramfs-evms2.cpio.gz
+		find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-evms2.cpio.gz
 		rm -r "${TEMP}/initramfs-evms2-temp/"
 	fi	
 }
@@ -275,7 +275,7 @@ create_gensplash(){
 			cd /
 			local tmp=""
 			[ -n "${GENSPLASH_RES}" ] && tmp="-r ${GENSPLASH_RES}"
-			splash_geninitramfs -g ${CACHE_DIR}/cpio/initramfs-splash-${KV}.cpio.gz ${tmp} ${GENSPLASH_THEME}
+			splash_geninitramfs -g ${CACHE_CPIO_DIR}/initramfs-splash-${KV}.cpio.gz ${tmp} ${GENSPLASH_THEME}
 			if [ -e "/usr/share/splashutils/initrd.splash" ]; then
 				if [ -d "${TEMP}/initramfs-gensplash-temp" ]
 				then
@@ -283,9 +283,9 @@ create_gensplash(){
 				fi
 				mkdir -p "${TEMP}/initramfs-gensplash-temp/etc"
 				cd "${TEMP}/initramfs-gensplash-temp/"
-				gunzip -c ${CACHE_DIR}/cpio/initramfs-splash-${KV}.cpio.gz | cpio -idm --quiet -H newc
+				gunzip -c ${CACHE_CPIO_DIR}/initramfs-splash-${KV}.cpio.gz | cpio -idm --quiet -H newc
 				cp "/usr/share/splashutils/initrd.splash" "${TEMP}/initramfs-gensplash-temp/etc"
-				find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_DIR}/cpio/initramfs-splash-${KV}.cpio.gz
+				find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-splash-${KV}.cpio.gz
 				rm -r "${TEMP}/initramfs-gensplash-temp/"
 			fi
 		else
@@ -295,7 +295,7 @@ create_gensplash(){
 }
 create_initramfs_overlay_cpio(){
 	cd ${INITRAMFS_OVERLAY}
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_DIR}/cpio/initramfs-overlay.cpio.gz
+	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-overlay.cpio.gz
 }
 print_list()
 {
@@ -346,7 +346,7 @@ create_initramfs_modules() {
 		print_list ${!group_modules} > "${TEMP}/initramfs-modules-${KV}-temp/etc/modules/${group}"
 	done
 	cd "${TEMP}/initramfs-modules-${KV}-temp/"
-	find . | cpio --quiet -o -H newc | gzip -9 > ${CACHE_DIR}/cpio/initramfs-modules-${KV}.cpio.gz
+	find . | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-modules-${KV}.cpio.gz
 	rm -r "${TEMP}/initramfs-modules-${KV}-temp/"	
 }
 
@@ -411,74 +411,74 @@ create_initramfs_aux() {
 	chmod +x "${TEMP}/initramfs-aux-temp/etc/initrd.defaults"
 	chmod +x "${TEMP}/initramfs-aux-temp/sbin/modprobe"
 	cd "${TEMP}/initramfs-aux-temp/"
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_DIR}/cpio/initramfs-aux.cpio.gz
+	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-aux.cpio.gz
 	rm -r "${TEMP}/initramfs-aux-temp/"	
 }
 
 merge_initramfs_cpio_archives(){
-	cd "${CACHE_DIR}/cpio/"
+	cd "${CACHE_CPIO_DIR}"
 	MERGE_LIST="initramfs-base-layout.cpio.gz initramfs-aux.cpio.gz"	
-	if [ ! -e "${CACHE_DIR}/cpio/initramfs-base-layout.cpio.gz" ]
+	if [ ! -e "${CACHE_CPIO_DIR}/initramfs-base-layout.cpio.gz" ]
 	then
-		gen_die "${CACHE_DIR}/cpio/initramfs-base-layout.cpio.gz is missing."
+		gen_die "${CACHE_CPIO_DIR}/initramfs-base-layout.cpio.gz is missing."
 	fi
-	if [ ! -e "${CACHE_DIR}/cpio/initramfs-aux.cpio.gz" ]
+	if [ ! -e "${CACHE_CPIO_DIR}/initramfs-aux.cpio.gz" ]
 	then
-		gen_die "${CACHE_DIR}/cpio/initramfs-aux.cpio.gz is missing."
+		gen_die "${CACHE_CPIO_DIR}/initramfs-aux.cpio.gz is missing."
 	fi
 	
-	if [ "${BUSYBOX}" -eq '1' -a -e ${CACHE_DIR}/cpio/initramfs-busybox-${BUSYBOX_VER}.cpio.gz ]
+	if [ "${BUSYBOX}" -eq '1' -a -e ${CACHE_CPIO_DIR}/initramfs-busybox-${BUSYBOX_VER}.cpio.gz ]
 	then
 		MERGE_LIST="${MERGE_LIST} initramfs-busybox-${BUSYBOX_VER}.cpio.gz"
 	fi
 	
-	if [ "${NOINITRDMODULES}" = '' -a -e ${CACHE_DIR}/cpio/initramfs-insmod-${MODULE_INIT_TOOLS_VER}.cpio.gz ]
+	if [ "${NOINITRDMODULES}" = '' -a -e ${CACHE_CPIO_DIR}/initramfs-insmod-${MODULE_INIT_TOOLS_VER}.cpio.gz ]
 	then
 		MERGE_LIST="${MERGE_LIST} initramfs-insmod-${MODULE_INIT_TOOLS_VER}.cpio.gz"
 	fi
 	
-	if [ "${UDEV}" -eq '1' -a -e ${CACHE_DIR}/cpio/initramfs-udev-${UDEV_VER}.cpio.gz ]
+	if [ "${UDEV}" -eq '1' -a -e ${CACHE_CPIO_DIR}/initramfs-udev-${UDEV_VER}.cpio.gz ]
 	then
 		MERGE_LIST="${MERGE_LIST} initramfs-udev-${UDEV_VER}.cpio.gz"
 	fi
-	if [ "${DISKLABEL}" -eq '1' -a -e ${CACHE_DIR}/cpio/initramfs-blkid-${E2FSPROGS_VER}.cpio.gz ]
+	if [ "${DISKLABEL}" -eq '1' -a -e ${CACHE_CPIO_DIR}/initramfs-blkid-${E2FSPROGS_VER}.cpio.gz ]
 	then
 		MERGE_LIST="${MERGE_LIST} initramfs-blkid-${E2FSPROGS_VER}.cpio.gz"
 	fi
-	if [ "${UNIONFS}" -eq '1' -a -e ${CACHE_DIR}/cpio/initramfs-unionfs-${UNIONFS_VER}-tools.cpio.gz ]
+	if [ "${UNIONFS}" -eq '1' -a -e ${CACHE_CPIO_DIR}/initramfs-unionfs-${UNIONFS_VER}-tools.cpio.gz ]
 	then
 		MERGE_LIST="${MERGE_LIST} initramfs-unionfs-${UNIONFS_VER}-tools.cpio.gz"
 	fi
-	if [ "${UNIONFS}" -eq '1' -a -e ${CACHE_DIR}/cpio/initramfs-unionfs-${UNIONFS_VER}-modules-${KV}.cpio.gz ]
+	if [ "${UNIONFS}" -eq '1' -a -e ${CACHE_CPIO_DIR}/initramfs-unionfs-${UNIONFS_VER}-modules-${KV}.cpio.gz ]
 	then
 		MERGE_LIST="${MERGE_LIST} initramfs-unionfs-${UNIONFS_VER}-modules-${KV}.cpio.gz"
 	fi
-	if [ "${EVMS2}" -eq '1' -a -e "${CACHE_DIR}/cpio/initramfs-evms2.cpio.gz" ]
+	if [ "${EVMS2}" -eq '1' -a -e "${CACHE_CPIO_DIR}/initramfs-evms2.cpio.gz" ]
 	then
 		MERGE_LIST="${MERGE_LIST} initramfs-evms2.cpio.gz"
 	fi
-	if [ "${LVM2}" -eq '1' -a -e "${CACHE_DIR}/cpio/initramfs-lvm2-${LVM2_VER}.cpio.gz" ]
+	if [ "${LVM2}" -eq '1' -a -e "${CACHE_CPIO_DIR}/initramfs-lvm2-${LVM2_VER}.cpio.gz" ]
 	then
 		MERGE_LIST="${MERGE_LIST} initramfs-lvm2-${LVM2_VER}.cpio.gz"
 	fi
-	if [ "${DEVFS}" -eq '1' -a -e "${CACHE_DIR}/cpio/initramfs-devfs-${DEVFSD_VER}.cpio.gz" ]
+	if [ "${DEVFS}" -eq '1' -a -e "${CACHE_CPIO_DIR}/initramfs-devfs-${DEVFSD_VER}.cpio.gz" ]
 	then
 		MERGE_LIST="${MERGE_LIST} initramfs-devfs-${DEVFSD_VER}.cpio.gz"
 	fi
-	if [ "${DMRAID}" -eq '1' -a -e ${CACHE_DIR}/cpio/initramfs-dmraid-${DMRAID_VER}.cpio.gz ]
+	if [ "${DMRAID}" -eq '1' -a -e ${CACHE_CPIO_DIR}/initramfs-dmraid-${DMRAID_VER}.cpio.gz ]
 	then
 		MERGE_LIST="${MERGE_LIST} initramfs-dmraid-${DMRAID_VER}.cpio.gz"
 	fi
-	if [ "${NOINITRDMODULES}" = '' -a -e "${CACHE_DIR}/cpio/initramfs-modules-${KV}.cpio.gz" ]
+	if [ "${NOINITRDMODULES}" = '' -a -e "${CACHE_CPIO_DIR}/initramfs-modules-${KV}.cpio.gz" ]
 	then
 		MERGE_LIST="${MERGE_LIST} initramfs-modules-${KV}.cpio.gz"
 	fi
-	if [ "${GENSPLASH}" -eq '1' -a -e "${CACHE_DIR}/cpio/initramfs-splash-${KV}.cpio.gz" ]
+	if [ "${GENSPLASH}" -eq '1' -a -e "${CACHE_CPIO_DIR}/initramfs-splash-${KV}.cpio.gz" ]
 	then
 		MERGE_LIST="${MERGE_LIST} initramfs-splash-${KV}.cpio.gz"
 	fi
 	# This should always be appended last
-	if [ "${INITRAMFS_OVERLAY}" != '' -a -e "${CACHE_DIR}/cpio/initramfs-overlay.cpio.gz" ]
+	if [ "${INITRAMFS_OVERLAY}" != '' -a -e "${CACHE_CPIO_DIR}/initramfs-overlay.cpio.gz" ]
 	then
 		MERGE_LIST="${MERGE_LIST} initramfs-overlay.cpio.gz"
 	fi
@@ -498,9 +498,19 @@ merge_initramfs_cpio_archives(){
 }
 
 clear_cpio_dir(){
-	if [ -d ${CACHE_DIR}/cpio/ ]
+	if [ "${CLEAR_CPIO_CACHE}" == 'yes' ]
 	then
-	    rm -r ${CACHE_DIR}/cpio/
+
+		if [ -d ${CACHE_CPIO_DIR} ]
+		then
+			print_info 1 "        >> Clearing old cpio archives..."
+	    		rm -r ${CACHE_CPIO_DIR}
+		fi
+	fi
+	
+	if [ ! -d ${CACHE_CPIO_DIR} ]
+	then
+		mkdir -p ${CACHE_CPIO_DIR}
 	fi
 }
 
@@ -509,7 +519,7 @@ create_initramfs() {
 
 	print_info 1 "initramfs: >> Initializing..."
 	clear_cpio_dir
-	mkdir -p ${CACHE_DIR}/cpio/
+	mkdir -p ${CACHE_CPIO_DIR}
 	print_info 1 "        >> Creating base_layout cpio archive..."
 	create_base_layout_cpio
 	

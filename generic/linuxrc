@@ -219,7 +219,7 @@ then
 	
 	for i in dev mnt mnt/cdrom mnt/livecd tmp tmp/.initrd mnt/gentoo sys
 	do
-		mkdir ${NEW_ROOT}/$i
+		mkdir -p ${NEW_ROOT}/$i
 		chmod 755 ${NEW_ROOT}/$i
 	done
 	cp /dev/null ${NEW_ROOT}/dev
