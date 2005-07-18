@@ -191,7 +191,10 @@ cache_replace() {
 }
 
 clear_log() {
-	[ -f "${DEBUGFILE}" ] && echo > "${DEBUGFILE}"
+    if [ -f "${DEBUGFILE}" ]
+    then
+	(echo > "${DEBUGFILE}") 2>/dev/null || small_die "Genkernel: Could not write to ${DEBUGFILE}."
+    fi   
 }
 
 gen_die() {
