@@ -568,8 +568,8 @@ setup_unionfs(){
 			then
 				umount $CHANGESDEV
 				bad_msg "failed to find livecd.unionfs file on $CHANGESDEV"
-				bad_msg "falling back to ramdisk based unionfs for safety"
 				bad_msg "create a livecd.unionfs file on this device if you wish to use it for unionfs"
+				bad_msg "falling back to ramdisk based unionfs for safety"
 				mount -t tmpfs tmpfs $MEMORY
 			fi
 		else 
