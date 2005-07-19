@@ -99,8 +99,8 @@ do
 	      USE_UNIONFS_NORMAL=0
 	      bad_msg 'Unionctl not found: aborting use of unionfs!'
 	  else
-	      USE_UNIONFS_NORMAL=1
-	      UNIONFS=`parse_opt "${x}"`
+		USE_UNIONFS_NORMAL=1
+		UNIONFS=`parse_opt "${x}"`
 	  fi
 	  ;;
 

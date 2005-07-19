@@ -491,7 +491,7 @@ merge_initramfs_cpio_archives(){
 		echo "    $i"
 	done
 
-    	cat ${MERGE_LIST} > ${TEMP}/initramfs-${KV}
+    	cat ${MERGE_LIST} > ${TMPDIR}/initramfs-${KV}
 
 	[ "${KERNEL_MAKE_DIRECTIVE}" == 'zImage.initrd' ] ||
 		[ "${KERNEL_MAKE_DIRECTIVE_2}" == 'zImage.initrd' ] &&
@@ -604,7 +604,7 @@ create_initramfs() {
 
 	if ! isTrue "${CMD_NOINSTALL}"
 	then
-		cp ${TEMP}/initramfs-${KV} /boot/initramfs-${KNAME}-${ARCH}-${KV} ||
+		cp ${TMPDIR}/initramfs-${KV} /boot/initramfs-${KNAME}-${ARCH}-${KV} ||
 			gen_die 'Could not copy the initramfs to /boot!'
 	fi
 }

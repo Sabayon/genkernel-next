@@ -4,7 +4,7 @@
 PATH="/bin:/usr/bin:/sbin:/usr/sbin"
 GK_V='3.2.7'
 
-TEMP='/var/tmp/genkernel'
+TMPDIR='/var/tmp/genkernel'
 TODEBUGCACHE=1 # Until an error occurs or DEBUGFILE is fully qualified.
 
 small_die() {
@@ -25,7 +25,7 @@ source ${GK_BIN}/gen_moddeps.sh || gen_die "Could not read ${GK_BIN}/gen_moddeps
 source ${GK_BIN}/gen_package.sh || gen_die "Could not read ${GK_BIN}/gen_package.sh"
 source ${GK_BIN}/gen_bootloader.sh || gen_die "Could not read ${GK_BIN}/gen_bootloader.sh"
 
-TEMP=${TEMP}/$RANDOM.$RANDOM.$RANDOM.$$
+TEMP=${TMPDIR}/$RANDOM.$RANDOM.$RANDOM.$$
 
 cleanup(){
     if [ -n "$TEMP" -a -d "$TEMP" ]; then
@@ -34,16 +34,18 @@ cleanup(){
 
     if isTrue ${POSTCLEAR}
     then
-            print_info 1 ''
+	    echo
 	    print_info 1 'RUNNING FINAL CACHE/TMP CLEANUP'
 	    print_info 1 "CACHE_DIR: ${CACHE_DIR}"
 	    CLEAR_CACHE_DIR='yes'
 	    setup_cache_dir
-	    ls -la ${CACHE_DIR}
+	    echo
 	    print_info 1 "CACHE_CPIO_DIR: ${CACHE_CPIO_DIR}"
 	    CLEAR_CPIO_CACHE='yes'
 	    clear_cpio_dir
-	    ls -la ${CACHE_CPIO_DIR}
+	    echo
+	    print_info 1 "TMPDIR: ${TMPDIR}"
+	    clear_tmpdir
 	    fi
 
     exit 1

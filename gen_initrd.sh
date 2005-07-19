@@ -6,11 +6,11 @@ create_initrd_loop() {
 	[ "$#" -ne '1' ] && gen_die 'create_initrd_loop(): Not enough arguments!'
 	mkdir -p ${TEMP}/initrd-mount ||
 		gen_die 'Could not create loopback mount directory!'
-	dd if=/dev/zero of=${TEMP}/initrd-${KV} bs=1k count=${1} >> "${DEBUGFILE}" 2>&1 ||
+	dd if=/dev/zero of=${TMPDIR}/initrd-${KV} bs=1k count=${1} >> "${DEBUGFILE}" 2>&1 ||
 		gen_die "Could not zero initrd-${KV}"
-	mke2fs -F -N500 -q "${TEMP}/initrd-${KV}" >> "${DEBUGFILE}" 2>&1 ||
+	mke2fs -F -N500 -q "${TMPDIR}/initrd-${KV}" >> "${DEBUGFILE}" 2>&1 ||
 		gen_die "Could not format initrd-${KV}!"
-	mount -t ext2 -o loop "${TEMP}/initrd-${KV}" "${TEMP}/initrd-mount" >> "${DEBUGFILE}" 2>&1 ||
+	mount -t ext2 -o loop "${TMPDIR}/initrd-${KV}" "${TEMP}/initrd-mount" >> "${DEBUGFILE}" 2>&1 ||
 		gen_die 'Could not mount the initrd filesystem!'
 }
 
@@ -89,7 +89,7 @@ create_base_initrd_sys() {
 	fi
 
 	# devfsd
-	if [ "${NODEVFSD}" = '' ]
+	if [ "${UDEV}" != '1' ]
 	then
 		cp "${DEVFSD_BINCACHE}" "${TEMP}/initrd-temp/bin/devfsd.bz2" || gen_die 'Could not copy devfsd executable from bincache!'
 		bunzip2 "${TEMP}/initrd-temp/bin/devfsd.bz2" || gen_die 'Could not uncompress devfsd!'
@@ -340,8 +340,8 @@ create_initrd() {
 
 	if [ "${COMPRESS_INITRD}" ]
 	then
-		gzip -f -9 ${TEMP}/initrd-${KV}
-		mv ${TEMP}/initrd-${KV}.gz ${TEMP}/initrd-${KV}
+		gzip -f -9 ${TMPDIR}/initrd-${KV}
+		mv ${TMPDIR}/initrd-${KV}.gz ${TMPDIR}/initrd-${KV}
 	fi
 
 	if [ "${BOOTSPLASH}" -eq "1" ]
@@ -356,7 +356,7 @@ create_initrd() {
 			do
 				if [ -f "/etc/bootsplash/${BOOTSPLASH_THEME}/config/bootsplash-${bootRes}.cfg" ]
 				then
-					/sbin/splash -s -f /etc/bootsplash/${BOOTSPLASH_THEME}/config/bootsplash-${bootRes}.cfg >> ${TEMP}/initrd-${KV} ||
+					/sbin/splash -s -f /etc/bootsplash/${BOOTSPLASH_THEME}/config/bootsplash-${bootRes}.cfg >> ${TMPDIR}/initrd-${KV} ||
 						gen_die "Error: could not copy ${bootRes} bootsplash!"
 				else
 					print_warning 1 "splash: Did not find a bootsplash for the ${bootRes} resolution..."
@@ -368,10 +368,10 @@ create_initrd() {
 	fi
 	if ! isTrue "${CMD_NOINSTALL}"
 	then
-		cp ${TEMP}/initrd-${KV} /boot/initrd-${KNAME}-${ARCH}-${KV} ||
+		cp ${TMPDIR}/initrd-${KV} /boot/initrd-${KNAME}-${ARCH}-${KV} ||
 			gen_die 'Could not copy the initrd to /boot!'
 	fi
 	[ "${KERNEL_MAKE_DIRECTIVE}" == 'zImage.initrd' ] ||
 		[ "${KERNEL_MAKE_DIRECTIVE_2}" == 'zImage.initrd' ] &&
-		cp ${TEMP}/initrd-${KV} ${KERNEL_DIR}/arch/${ARCH}/boot/images/ramdisk.image.gz
+		cp ${TMPDIR}/initrd-${KV} ${KERNEL_DIR}/arch/${ARCH}/boot/images/ramdisk.image.gz
 }

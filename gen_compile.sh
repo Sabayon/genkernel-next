@@ -241,14 +241,14 @@ compile_kernel() {
 				gen_die 'Could not copy the kernelz binary to /boot!'
 		fi
 	else
-		cp "${KERNEL_BINARY}" "${TEMP}/kernel-${KNAME}-${ARCH}-${KV}" ||
-			gen_die "Could not copy the kernel binary to ${TEMP}!"
-		cp "System.map" "${TEMP}/System.map-${KNAME}-${ARCH}-${KV}" ||
-			gen_die "Could not copy System.map to ${TEMP}!"
+		cp "${KERNEL_BINARY}" "${TMPDIR}/kernel-${KNAME}-${ARCH}-${KV}" ||
+			gen_die "Could not copy the kernel binary to ${TMPDIR}!"
+		cp "System.map" "${TMPDIR}/System.map-${KNAME}-${ARCH}-${KV}" ||
+			gen_die "Could not copy System.map to ${TMPDIR}!"
 		if [ "${KERNEL_BINARY_2}" != '' ]
 		then
-			cp "${KERNEL_BINARY_2}" "${TEMP}/kernelz-${KV}" ||
-				gen_die "Could not copy the kernelz binary to ${TEMP}!"
+			cp "${KERNEL_BINARY_2}" "${TMPDIR}/kernelz-${KV}" ||
+				gen_die "Could not copy the kernelz binary to ${TMPDIR}!"
 		fi
 	fi
 }

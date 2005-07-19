@@ -227,10 +227,10 @@ gen_die() {
 	print_info 1 ''
 	print_info 1 'Please do *not* report compilation failures as genkernel bugs!'
 	print_info 1 ''
-  	exit 1
 
 	# Cleanup temp dirs and caches if requested
 	cleanup
+  	exit 1
 }
 
 has_loop() {
@@ -266,6 +266,7 @@ if [ "${CLEAR_CACHE_DIR}" == 'yes' ]
 then
 	print_info 1 "Clearing cache dir contents from ${CACHE_DIR}"
 	CACHE_DIR_CONTENTS=`ls ${CACHE_DIR}|grep -v CVS|grep -v cpio|grep -v README`
+	
 	for i in ${CACHE_DIR_CONTENTS}
 	do
 		print_info 1 "	 >> removing ${i}"
@@ -275,3 +276,16 @@ fi
 
 }
 
+clear_tmpdir()
+{
+if ! isTrue ${CMD_NOINSTALL}
+then
+    TMPDIR_CONTENTS=`ls ${TMPDIR}`
+    print_info 1 "Removing tmp dir contents"
+    for i in ${TMPDIR_CONTENTS}
+    do
+	print_info 1 "	 >> removing ${i}"
+	rm ${TMPDIR}/${i}
+    done
+fi
+}	
