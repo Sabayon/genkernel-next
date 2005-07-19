@@ -100,7 +100,15 @@ do
 	      bad_msg 'Unionctl not found: aborting use of unionfs!'
 	  else
 		USE_UNIONFS_NORMAL=1
-		UNIONFS=`parse_opt "${x}"`
+		CMD_UNIONFS=`parse_opt "${x}"`
+		echo ${CMD_UNIONFS}|grep , >/dev/null 2>&1
+		if [ "$?" -eq '0' ]
+		then
+			UID=`echo ${CMD_UNIONFS#*,}`
+			UNIONFS=`echo ${CMD_UNIONFS%,*}`
+		else
+			UNIONFS=${CMD_UNIONFS}
+		fi
 	  fi
 	  ;;
 

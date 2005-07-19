@@ -27,6 +27,12 @@ source ${GK_BIN}/gen_bootloader.sh || gen_die "Could not read ${GK_BIN}/gen_boot
 
 TEMP=${TMPDIR}/$RANDOM.$RANDOM.$RANDOM.$$
 
+trap_cleanup(){
+	#Call exit code of 1 for failure
+	cleanup
+	exit 1
+}
+
 cleanup(){
     if [ -n "$TEMP" -a -d "$TEMP" ]; then
 	rm -rf "$TEMP"
@@ -47,10 +53,9 @@ cleanup(){
 	    print_info 1 "TMPDIR: ${TMPDIR}"
 	    clear_tmpdir
 	    fi
-
-    exit 1
 }
-trap cleanup SIGHUP SIGQUIT SIGINT SIGTERM SIGKILL
+
+trap trap_cleanup SIGHUP SIGQUIT SIGINT SIGTERM SIGKILL
 BUILD_KERNEL=0
 BUILD_INITRD=0
 BUILD_MODULES=0
