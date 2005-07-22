@@ -3,10 +3,6 @@
 get_KV() {
 	if [ "${CMD_NO_KERNEL_SOURCES}" = '1' -a -e "${CMD_KERNCACHE}" ]
 	then
-		[ -d ${TEMP} ] && gen_die "temporary directory already exists! Exiting."
-		(umask 077 && mkdir ${TEMP}) || {
-			gen_die "Could not create temporary directory! Exiting."
-		}
 		/bin/tar -xj -C ${TEMP} -f ${CMD_KERNCACHE} kerncache.config 
 		if [ -e ${TEMP}/kerncache.config ]
 		then
@@ -25,10 +21,8 @@ get_KV() {
 			fi
 
 		else
-			rm -r ${TEMP}
 			gen_die "Could not find kerncache.config in the kernel cache! Exiting."
 		fi
-		rm -r ${TEMP}
 
 	else
 		# Configure the kernel
