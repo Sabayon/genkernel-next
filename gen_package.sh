@@ -9,10 +9,19 @@ gen_minkernpackage()
 	then
 	    /bin/tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} kernel-${ARCH}-${KV}
 	    /bin/tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} config-${ARCH}-${KV}
+	    if [ "${KERNEL_BINARY_2}" != '' ]
+            then
+	    	/bin/tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} kernelz-${ARCH}-${KV}
+            fi
 	else
 	    cd "${KERNEL_DIR}"
 	    cp "${KERNEL_BINARY}" "${TEMP}/minkernpackage/kernel-${KV}" || gen_die 'Could not the copy kernel for the min kernel package!'
 	    cp ".config" "${TEMP}/minkernpackage/config-${ARCH}-${KV}" || gen_die 'Could not the copy kernel config for the min kernel package!'
+	    if [ "${KERNEL_BINARY_2}" != '' ]
+            then
+            	cp "${KERNEL_BINARY_2}" "${TEMP}/minkernpackage/kernelz-${KV}" || gen_die "Could not copy the kernelz for the min kernel package"
+            fi
+
 	fi
 	if [ "${KERN_24}" != '1' -a  "${CMD_BOOTSPLASH}" != '1' ]
 	then
@@ -50,6 +59,10 @@ gen_kerncache()
 	cp "${KERNEL_BINARY}" "${TEMP}/kerncache/kernel-${ARCH}-${KV}" || gen_die 'Could not the copy kernel for the kernel package!'
 	cp "${KERNEL_DIR}/.config" "${TEMP}/kerncache/config-${ARCH}-${KV}"
 	cp "${KERNEL_DIR}/System.map" "${TEMP}/kerncache/System.map-${ARCH}-${KV}"
+	if [ "${KERNEL_BINARY_2}" != '' ]
+        then
+        	cp "${KERNEL_BINARY_2}" "${TEMP}/kerncache/kernelz-${ARCH}-${KV}" || gen_die "Could not copy the kernelz for the kernel package"
+        fi
 	
 	echo "VERSION = ${VER}" > "${TEMP}/kerncache/kerncache.config"
 	echo "PATCHLEVEL = ${PAT}" >> "${TEMP}/kerncache/kerncache.config"
@@ -70,15 +83,17 @@ gen_kerncache()
 
 gen_kerncache_extract_kernel()
 {
+	#[ -d ${TEMP} ] && gen_die "temporary directory already exists! Exiting."
+	#(umask 077 && mkdir ${TEMP}) || {
+	#    gen_die "Could not create temporary directory! Exiting."
+	#}
        	/bin/tar -f ${KERNCACHE} -C ${TEMP} -xj 
-	cp "${TEMP}/kernel-${ARCH}-${KV}" "/boot/kernel-${KNAME}-${ARCH}-${KV}" || {
-		gen_die 'Could not copy the kernel binary to /boot!'
-		}
-        cp "${TEMP}/System.map-${ARCH}-${KV}" "/boot/System.map-${KNAME}-${ARCH}-${KV}" || {
-		gen_die 'Could not copy System.map to /boot!'
-		}
-	rm -r ${TEMP}
-}
+	cp "${TEMP}/kernel-${ARCH}-${KV}" "/boot/kernel-${KNAME}-${ARCH}-${KV}" || gen_die 'Could not copy the kernel binary to /boot!'
+	if [ "${KERNEL_BINARY_2}" != '' ]
+        then
+		cp "${TEMP}/kernelz-${ARCH}-${KV}" "/boot/kernelz-${KNAME}-${ARCH}-${KV}" || gen_die 'Could not copy the kernel binary to /boot!'
+        fi
+        cp "${TEMP}/System.map-${ARCH}-${KV}" "/boot/System.map-${KNAME}-${ARCH}-${KV}" || gen_die 'Could not copy System.map to /boot!'
 
 gen_kerncache_extract_modules()
 {
@@ -102,6 +117,10 @@ gen_kerncache_is_valid()
 		
 		BUILD_KERNEL=0
 		# Can make this more secure ....
+		#[ -d ${TEMP} ] && gen_die "temporary directory already exists! Exiting."
+		#(umask 077 && mkdir ${TEMP}) || {
+		#    gen_die "Could not create temporary directory! Exiting."
+		#}
 		
 		/bin/tar -xj -f ${KERNCACHE} -C ${TEMP}
 		if [ -e ${TEMP}/config-${ARCH}-${KV} -a -e ${TEMP}/kernel-${ARCH}-${KV} ] 
@@ -109,9 +128,16 @@ gen_kerncache_is_valid()
 			print_info 1 'Valid kernel cache found; no sources will be used'
 			KERNCACHE_IS_VALID=1
 		fi
+		#/bin/rm -r ${TEMP}
         else
 		if [ -e "${KERNCACHE}" ] 
 		then
+			#[ -d ${TEMP} ] && gen_die "temporary directory already exists! Exiting."
+			#(umask 077 && mkdir ${TEMP}) || {
+			#    gen_die "Could not create temporary directory! Exiting."
+			#    
+			#}
+		
 			/bin/tar -xj -f ${KERNCACHE} -C ${TEMP}
 			if [ -e ${TEMP}/config-${ARCH}-${KV} -a -e /${KERNEL_DIR}/.config ]
 			then
@@ -127,6 +153,7 @@ gen_kerncache_is_valid()
 					KERNCACHE_IS_VALID=1
 				fi
 			fi
+			#/bin/rm -r ${TEMP}
 		fi
 	fi
 	export KERNCACHE_IS_VALID	
