@@ -371,7 +371,7 @@ create_initrd() {
 		cp ${TMPDIR}/initrd-${KV} /boot/initrd-${KNAME}-${ARCH}-${KV} ||
 			gen_die 'Could not copy the initrd to /boot!'
 	fi
-	[ "${KERNEL_MAKE_DIRECTIVE}" == 'zImage.initrd' ] ||
-		[ "${KERNEL_MAKE_DIRECTIVE_2}" == 'zImage.initrd' ] &&
+	[ "${KERNEL_MAKE_DIRECTIVE}" == 'zImage.initrd' -a "${GENERATE_Z_IMAGE}" = '1' ] ||
+		[ "${KERNEL_MAKE_DIRECTIVE_2}" == 'zImage.initrd' -a "${GENERATE_Z_IMAGE}" = '1' ] &&
 		cp ${TMPDIR}/initrd-${KV} ${KERNEL_DIR}/arch/${ARCH}/boot/images/ramdisk.image.gz
 }

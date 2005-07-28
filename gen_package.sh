@@ -9,7 +9,7 @@ gen_minkernpackage()
 	then
 	    /bin/tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} kernel-${ARCH}-${KV}
 	    /bin/tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} config-${ARCH}-${KV}
-	    if [ "${KERNEL_BINARY_2}" != '' ]
+	    if [ "${KERNEL_BINARY_2}" != '' -a "${GENERATE_Z_IMAGE}" = '1' ]
             then
 	    	/bin/tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} kernelz-${ARCH}-${KV}
             fi
@@ -17,7 +17,7 @@ gen_minkernpackage()
 	    cd "${KERNEL_DIR}"
 	    cp "${KERNEL_BINARY}" "${TEMP}/minkernpackage/kernel-${KV}" || gen_die 'Could not the copy kernel for the min kernel package!'
 	    cp ".config" "${TEMP}/minkernpackage/config-${ARCH}-${KV}" || gen_die 'Could not the copy kernel config for the min kernel package!'
-	    if [ "${KERNEL_BINARY_2}" != '' ]
+	    if [ "${KERNEL_BINARY_2}" != '' -a "${GENERATE_Z_IMAGE}" = '1' ]
             then
             	cp "${KERNEL_BINARY_2}" "${TEMP}/minkernpackage/kernelz-${KV}" || gen_die "Could not copy the kernelz for the min kernel package"
             fi
@@ -59,7 +59,7 @@ gen_kerncache()
 	cp "${KERNEL_BINARY}" "${TEMP}/kerncache/kernel-${ARCH}-${KV}" || gen_die 'Could not the copy kernel for the kernel package!'
 	cp "${KERNEL_DIR}/.config" "${TEMP}/kerncache/config-${ARCH}-${KV}"
 	cp "${KERNEL_DIR}/System.map" "${TEMP}/kerncache/System.map-${ARCH}-${KV}"
-	if [ "${KERNEL_BINARY_2}" != '' ]
+	if [ "${KERNEL_BINARY_2}" != '' -a "${GENERATE_Z_IMAGE}" = '1' ]
         then
         	cp "${KERNEL_BINARY_2}" "${TEMP}/kerncache/kernelz-${ARCH}-${KV}" || gen_die "Could not copy the kernelz for the kernel package"
         fi
@@ -85,7 +85,7 @@ gen_kerncache_extract_kernel()
 {
        	/bin/tar -f ${KERNCACHE} -C ${TEMP} -xj 
 	cp "${TEMP}/kernel-${ARCH}-${KV}" "/boot/kernel-${KNAME}-${ARCH}-${KV}" || gen_die 'Could not copy the kernel binary to /boot!'
-	if [ "${KERNEL_BINARY_2}" != '' ]
+	if [ "${KERNEL_BINARY_2}" != '' -a "${GENERATE_Z_IMAGE}" = '1' ]
         then
 		cp "${TEMP}/kernelz-${ARCH}-${KV}" "/boot/kernelz-${KNAME}-${ARCH}-${KV}" || gen_die 'Could not copy the kernel binary to /boot!'
         fi

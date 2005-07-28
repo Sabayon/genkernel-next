@@ -224,7 +224,7 @@ compile_kernel() {
 	cd ${KERNEL_DIR}
 	print_info 1 "        >> Compiling ${KV} ${KERNEL_MAKE_DIRECTIVE/_install/ [ install ]/}..."
 	compile_generic "${KERNEL_MAKE_DIRECTIVE}" kernel
-	if [ "${KERNEL_MAKE_DIRECTIVE_2}" != '' ]
+	if [ "${KERNEL_MAKE_DIRECTIVE_2}" != '' -a "${GENERATE_Z_IMAGE}" = '1' ]
 	then
 		print_info 1 "        >> Starting supplimental compile of ${KV}: ${KERNEL_MAKE_DIRECTIVE_2}..."
 		compile_generic "${KERNEL_MAKE_DIRECTIVE_2}" kernel
@@ -235,7 +235,7 @@ compile_kernel() {
 			gen_die 'Could not copy the kernel binary to /boot!'
 		cp "System.map" "/boot/System.map-${KNAME}-${ARCH}-${KV}" ||
 			gen_die 'Could not copy System.map to /boot!'
-		if [ "${KERNEL_BINARY_2}" != '' ]
+		if [ "${KERNEL_BINARY_2}" != '' -a "${GENERATE_Z_IMAGE}" = '1' ]
 		then
 			cp "${KERNEL_BINARY_2}" "/boot/kernelz-${KV}" ||
 				gen_die 'Could not copy the kernelz binary to /boot!'
@@ -245,7 +245,7 @@ compile_kernel() {
 			gen_die "Could not copy the kernel binary to ${TMPDIR}!"
 		cp "System.map" "${TMPDIR}/System.map-${KNAME}-${ARCH}-${KV}" ||
 			gen_die "Could not copy System.map to ${TMPDIR}!"
-		if [ "${KERNEL_BINARY_2}" != '' ]
+		if [ "${KERNEL_BINARY_2}" != '' -a "${GENERATE_Z_IMAGE}" = '1' ]
 		then
 			cp "${KERNEL_BINARY_2}" "${TMPDIR}/kernelz-${KV}" ||
 				gen_die "Could not copy the kernelz binary to ${TMPDIR}!"
