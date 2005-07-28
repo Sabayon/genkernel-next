@@ -236,7 +236,13 @@ then
 	done
 	cp /dev/null ${NEW_ROOT}/dev
 	cp /dev/console ${NEW_ROOT}/dev
-	cp /dev/tty1 ${NEW_ROOT}/dev
+
+	# Required for gensplash to work.  Not an issue with the initrd as this device isnt created there and is not needed.
+	if [ -e /dev/tty1 ]
+	then
+	    cp /dev/tty1 ${NEW_ROOT}/dev
+	fi
+
 	sdelay
 
 	[ "${REAL_ROOT}" = "/dev/nfs" ] || bootstrapCD
