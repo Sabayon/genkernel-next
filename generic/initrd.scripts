@@ -162,8 +162,8 @@ findnfsmount() {
 		fi
 
 		if [ "${NFSROOT}" != '' ]; then
-			if [ "${CDROOT}" != '' ]; then
-				good_msg "Attempting to mount NFS CD image on ${NFSPATH}"
+			if [ "${CDROOT}" != '0' ]; then
+				good_msg "Attempting to mount NFS CD image on ${NFSROOT}"
 	                        mount -t nfs -o ro,nolock,rsize=1024,wsize=1024 ${NFSROOT} ${NEW_ROOT}/mnt/cdrom
 				if [ "$?" = '0' ]; then
 					REAL_ROOT="/dev/nfs"
@@ -171,7 +171,7 @@ findnfsmount() {
 					bad_msg "NFS Mounting failed. Is the path corrent ?"
 				fi
 			else	
-				good_msg "Attemping to mount NFS root on ${NFSPATH}"
+				good_msg "Attemping to mount NFS root on ${NFSROOT}"
 				mount -t nfs -o ro,nolock,rsize=1024,wsize=1024 ${NFSROOT} ${NEW_ROOT}
                                 if [ "$?" = '0' ]; then
 					REAL_ROOT="/dev/nfs"
@@ -440,6 +440,11 @@ startVolumes() {
     then
 	if [ -e '/bin/vgscan' -a -e '/bin/vgchange' ]
 	then
+	    for dev in ${RAID_DEVICES}
+	    do
+		setup_md_device "${dev}"
+	    done
+
 	    good_msg "Scanning for Volume Groups"
 	    /bin/vgscan --ignorelockingfailure --mknodes 2>/dev/null
 	    good_msg "Activating Volume Groups"
@@ -510,12 +515,15 @@ cdupdate() {
 }
 
 setup_md_device() {
-	[ -z "${REAL_ROOT}" ] && return # LiveCD
+	local device
 
-	if [ `echo ${REAL_ROOT}|sed -e 's#\(/dev/md\)[[:digit:]]\+#\1#'` = "/dev/md" ]
+	[ -z "$1" ] && device="${REAL_ROOT}" || device="$1"
+	[ -z "${device}" ] && return # LiveCD
+
+	if [ `echo ${device}|sed -e 's#\(/dev/md\)[[:digit:]]\+#\1#'` = "/dev/md" ]
 	then
 		good_msg 'Detected real_root as a md device. Setting up the device node...'
-		MD_NUMBER=`echo ${REAL_ROOT}|sed -e 's#/dev/md\([[:digit:]]\+\)#\1#'`
+		MD_NUMBER=`echo ${device}|sed -e 's#/dev/md\([[:digit:]]\+\)#\1#'`
 		if [ ! -e /dev/md${MD_NUMBER} ]
 		then
 			mknod /dev/md${MD_NUMBER} b 9 ${MD_NUMBER} >/dev/null 2>&1

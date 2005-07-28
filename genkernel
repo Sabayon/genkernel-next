@@ -2,7 +2,7 @@
 # Genkernel v3
 
 PATH="/bin:/usr/bin:/sbin:/usr/sbin"
-GK_V='3.2.12'
+GK_V='3.3.1'
 
 TMPDIR='/var/tmp/genkernel'
 TODEBUGCACHE=1 # Until an error occurs or DEBUGFILE is fully qualified.
@@ -28,7 +28,7 @@ source ${GK_BIN}/gen_bootloader.sh || gen_die "Could not read ${GK_BIN}/gen_boot
 TEMP=${TMPDIR}/$RANDOM.$RANDOM.$RANDOM.$$
 
 trap_cleanup(){
-	#Call exit code of 1 for failure
+	# Call exit code of 1 for failure
 	cleanup
 	exit 1
 }
@@ -381,7 +381,7 @@ then
 	[ "${GENSPLASH}" -eq '1' ] && print_info 1 "add \"vga=791 splash=silent,theme:${GENSPLASH_THEME} CONSOLE=/dev/tty1 quiet\" if you use a gensplash framebuffer ]"
 	[ "${BOOTSPLASH}" -eq '1' ] && print_info 1 'add "vga=791 splash=silent" if you use a bootsplash framebuffer'
 	[ "${LVM2}" -eq '1' ] && print_info 1 'add "dolvm2" for lvm2 support'
-	[ "${EVMS2}" -eq '1' ] && print_info 1 'add "doevms" for evms support'
+	[ "${EVMS2}" -eq '1' ] && print_info 1 'add "doevms2" for evms support'
 	[ "${DMRAID}" -eq '1' ] && print_info 1 'add "dodmraid" for dmraid support'
 	[ "${DMRAID}" -eq '1' ] && print_info 1 '	or "dodmraid=<additional options>"'
 	[ "${UNIONFS}" -eq '1' ] && print_info 1 'add "unionfs" for unionfs support'

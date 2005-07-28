@@ -495,7 +495,7 @@ merge_initramfs_cpio_archives(){
 
 	[ "${KERNEL_MAKE_DIRECTIVE}" == 'zImage.initrd' ] ||
 		[ "${KERNEL_MAKE_DIRECTIVE_2}" == 'zImage.initrd' ] &&
-			cp ${TEMP}/initramfs-${KV} ${KERNEL_DIR}/arch/${ARCH}/boot/images/ramdisk.image.gz
+			cp ${TMPDIR}/initramfs-${KV} ${KERNEL_DIR}/arch/${ARCH}/boot/images/ramdisk.image.gz
 }
 
 clear_cpio_dir(){

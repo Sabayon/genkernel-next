@@ -153,6 +153,10 @@ do
 	  ;;
 
       # /dev/md
+      lvmraid\=*)
+	  RAID_DEVICES="${RAID_DEVICES} `parse_opt ${x}`"
+	  ;;
+
       part\=*)
           MDPART=`parse_opt "${x}"`
           ;;

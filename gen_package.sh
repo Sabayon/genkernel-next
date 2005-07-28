@@ -90,6 +90,7 @@ gen_kerncache_extract_kernel()
 		cp "${TEMP}/kernelz-${ARCH}-${KV}" "/boot/kernelz-${KNAME}-${ARCH}-${KV}" || gen_die 'Could not copy the kernel binary to /boot!'
         fi
         cp "${TEMP}/System.map-${ARCH}-${KV}" "/boot/System.map-${KNAME}-${ARCH}-${KV}" || gen_die 'Could not copy System.map to /boot!'
+}
 
 gen_kerncache_extract_modules()
 {
