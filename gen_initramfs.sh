@@ -34,6 +34,10 @@ create_base_layout_cpio() {
 	mknod -m 660 null c 1 3
 	mknod -m 600 tty1 c 4 1
 	cd "${TEMP}/initramfs-base-temp/"
+	if [ "${BLADECENTER}" -eq '1' ]
+	then
+		echo "BLADECENTER=1" >> ${TEMP}/initramfs-base-temp/etc/startup.conf
+	fi
 	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-base-layout.cpio.gz
 	rm -rf "${TEMP}/initramfs-base-temp" > /dev/null
 }

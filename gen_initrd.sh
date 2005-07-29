@@ -56,6 +56,10 @@ create_base_initrd_sys() {
 	cd ${TEMP}/initrd-temp/dev
 	MAKEDEV std
 	MAKEDEV console
+	if [ "${BLADECENTER}" -eq '1' ]
+	then
+		echo "BLADECENTER=1" >> ${TEMP}/initrd-temp/etc/startup.conf
+	fi
 	
 	if [ "${DISKLABEL}" -eq '1' ]; then
 		cp "${BLKID_BINCACHE}" "${TEMP}/initrd-temp/bin/blkid.bz2" ||

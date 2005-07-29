@@ -5,6 +5,7 @@
 
 . /etc/initrd.defaults
 . /etc/initrd.scripts
+. /etc/startup.conf
 
 splash() {
 	return 0
@@ -138,8 +139,13 @@ do
       scandelay)
 	  SDELAY=10
 	  ;;
+
+	  # IBM BladeCenter support
 	  bladecenter)
 	  BLADECENTER=1
+	  ;;
+	  nobladecenter)
+	  BLADECENTER=0
 	  ;;
 
       # Module no-loads
