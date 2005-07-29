@@ -178,8 +178,6 @@ parse_cmdline() {
 		      print_info 2 "CMD_EVMS2: $CMD_EVMS2"
 	      ;;
 	      --unionfs)
-		      CMD_UNIONFS=1
-		      print_info 2 "CMD_UNIONFS: $CMD_UNIONFS"
 		      echo
 		      print_warning 1 "WARNING: unionfs support is in active development and is not meant for general use."
 		      echo
