@@ -180,6 +180,7 @@ parse_cmdline() {
 	      --unionfs)
 		      echo
 		      print_warning 1 "WARNING: unionfs support is in active development and is not meant for general use."
+		      print_warning 1 "DISABLING UNIONFS SUPPORT AT THIS TIME."
 		      echo
 	      ;;
 	      --unionfs-dev)
