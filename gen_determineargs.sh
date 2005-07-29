@@ -259,16 +259,19 @@ determine_real_args() {
 	if [ "${CMD_MINKERNPACKAGE}" != '' ]
 	then
 		MINKERNPACKAGE="${CMD_MINKERNPACKAGE}"
+		mkdir -p `dirname ${MINKERNPACKAGE}`
 	fi
 	
 	if [ "${CMD_MODULESPACKAGE}" != '' ]
 	then
 		MODULESPACKAGE="${CMD_MODULESPACKAGE}"
+		mkdir -p `dirname ${MODULESPACKAGE}`
 	fi
 
 	if [ "${CMD_KERNCACHE}" != '' ]
 	then
 		KERNCACHE="${CMD_KERNCACHE}"
+		mkdir -p `dirname ${KERNCACHE}`
 	fi
 	
 	if [ "${CMD_NOINITRDMODULES}" != '' ]
