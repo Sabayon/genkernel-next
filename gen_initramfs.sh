@@ -488,7 +488,7 @@ merge_initramfs_cpio_archives(){
 	print_info 1 "Merging"
 	for i in ${MERGE_LIST}
 	do
-		echo "    $i"
+		pring_info 1 "    $i"
 	done
 
     	cat ${MERGE_LIST} > ${TMPDIR}/initramfs-${KV}
