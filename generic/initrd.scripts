@@ -257,25 +257,27 @@ start_dev_mgr(){
     # Check udev is available...
     if [ "${KV_2_6_OR_GREATER}" -a ! "${USE_UDEV_NORMAL}" -eq '0' -a -x /sbin/udev ]
     then
-	USE_UDEV_NORMAL=1
+		USE_UDEV_NORMAL=1
     else
-	USE_UDEV_NORMAL=0
+		USE_UDEV_NORMAL=0
     fi
 
     if [ "${USE_UDEV_NORMAL}" -eq '1' ]
     then
-	cd /sys
-	kill_devfsd
-	good_msg 'Activating udev'
-	runUdev
-	cd /
+		cd /sys
+		[ "${BLADECENTER}" -eq "1" ] && sleep 10
+		kill_devfsd
+		good_msg 'Activating udev'
+		runUdev
+		[ "${BLADECENTER}" -eq "1" ] && sleep 20
+		cd /
     else
-	if [ ! -e /dev/.devfsd ]
-	then
-	    good_msg 'Activating devfs'
-	    mount -t devfs devfs /dev
-	    devfsd /dev -np
-	fi
+		if [ ! -e /dev/.devfsd ]
+		then
+		    good_msg 'Activating devfs'
+			mount -t devfs devfs /dev
+			devfsd /dev -np
+		fi
     fi
 }
 
