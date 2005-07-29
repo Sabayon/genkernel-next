@@ -224,7 +224,7 @@ compile_kernel() {
 	cd ${KERNEL_DIR}
 	print_info 1 "        >> Compiling ${KV} ${KERNEL_MAKE_DIRECTIVE/_install/ [ install ]/}..."
 	compile_generic "${KERNEL_MAKE_DIRECTIVE}" kernel
-	if [ "${KERNEL_MAKE_DIRECTIVE_2}" != '' -a "${GENERATE_Z_IMAGE}" = '1' ]
+	if [ "${KERNEL_MAKE_DIRECTIVE_2}" != '' ]
 	then
 		print_info 1 "        >> Starting supplimental compile of ${KV}: ${KERNEL_MAKE_DIRECTIVE_2}..."
 		compile_generic "${KERNEL_MAKE_DIRECTIVE_2}" kernel
