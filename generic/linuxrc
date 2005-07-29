@@ -138,6 +138,9 @@ do
       scandelay)
 	  SDELAY=10
 	  ;;
+	  bladecenter)
+	  BLADECENTER=1
+	  ;;
 
       # Module no-loads
       noload\=*)
