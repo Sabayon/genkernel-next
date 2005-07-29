@@ -67,7 +67,7 @@ longusage() {
   echo "	--evms2			Include EVMS2 support"
   echo "				--> 'emerge evms' in the host operating system first"
   echo "	--lvm2			Include LVM2 support"
-  echo "	--unionfs		Include UNIONFS support"
+#  echo "	--unionfs		Include UNIONFS support"
   echo "	--dmraid		Include DMRAID support"
   echo "	--bootloader=grub	Add new kernel to GRUB configuration"
   echo "	--linuxrc=<file>	Specifies a user created linuxrc"
@@ -180,6 +180,19 @@ parse_cmdline() {
 	      --unionfs)
 		      CMD_UNIONFS=1
 		      print_info 2 "CMD_UNIONFS: $CMD_UNIONFS"
+		      echo
+		      print_warning 1 "WARNING: unionfs support is in active development and is not meant for general use."
+		      echo
+	      ;;
+	      --unionfs-dev)
+		      CMD_UNIONFS=1
+		      print_info 2 "CMD_UNIONFS: $CMD_UNIONFS"
+		      echo
+		      print_warning 1 "WARNING: unionfs support is in active development and is not meant for general use."
+		      print_warning 1 "Bug Reports without patches/fixes will be ignored."
+		      print_warning 1 "Use at your own risk as this could blow up your system."
+		      print_warning 1 "This code is subject to change at any time."
+		      echo
 	      ;;
 	      --lvm2)
 		      CMD_LVM2=1
