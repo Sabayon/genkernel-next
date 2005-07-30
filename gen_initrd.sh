@@ -56,11 +56,7 @@ create_base_initrd_sys() {
 	cd ${TEMP}/initrd-temp/dev
 	MAKEDEV std
 	MAKEDEV console
-	if [ "${BLADECENTER}" -eq '1' ]
-	then
-		echo "BLADECENTER=1" >> ${TEMP}/initrd-temp/etc/startup.conf
-	fi
-	
+
 	if [ "${DISKLABEL}" -eq '1' ]; then
 		cp "${BLKID_BINCACHE}" "${TEMP}/initrd-temp/bin/blkid.bz2" ||
 			gen_die 'Could not copy blkid from bincache!'
@@ -297,6 +293,10 @@ create_initrd_aux() {
 	fi
 	mkdir -p "${TEMP}/initrd-temp/lib/keymaps"
 	/bin/tar -C "${TEMP}/initrd-temp/lib/keymaps" -zxf "${GK_SHARE}/generic/keymaps.tar.gz"
+	if isTrue $CMD_BLADECENTER
+	then
+		echo 'MY_HWOPTS="${MY_HWOPTS} bladecenter"' >> ${TEMP}/initrd-temp/etc/initrd.defaults
+	fi
 
 	cd ${TEMP}/initrd-temp/sbin && ln -s ../linuxrc init
 	cd ${OLDPWD}

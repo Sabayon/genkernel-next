@@ -391,13 +391,6 @@ determine_real_args() {
 		BUSYBOX=1
 	fi
 
-	if isTrue "${CMD_BLADECENTER}"
-	then
-		BLADECENTER=1
-	else
-		BLADECENTER=0
-	fi
-	
 	if isTrue "${CMD_DMRAID}"
 	then
 		DMRAID=1

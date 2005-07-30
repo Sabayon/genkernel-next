@@ -265,11 +265,11 @@ start_dev_mgr(){
     if [ "${USE_UDEV_NORMAL}" -eq '1' ]
     then
 		cd /sys
-		[ "${BLADECENTER}" -eq '1' ] && sleep 10
+		[ "${DO_bladecenter}" -eq '1' ] && sleep 10
 		kill_devfsd
 		good_msg 'Activating udev'
 		runUdev
-		[ "${BLADECENTER}" -eq '1' ] && sleep 20
+		[ "${DO_bladecenter}" -eq '1' ] && sleep 20
 		cd /
     else
 		if [ ! -e /dev/.devfsd ]
