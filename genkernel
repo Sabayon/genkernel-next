@@ -167,27 +167,27 @@ else
 	fi
 fi
 
-# Check whether another Genkernel is running
-GENPIDS="`ps -C genkernel --no-headers -o pid | wc -l`"
-if [ "${GENPIDS}" -gt '3' ]
-then
-	[ "${GENPIDS}" -gt '4' ] && EX='s'
-	print_warning 1 "${BOLD}WARNING${NORMAL}: Another Genkernel instance is running under"
-	print_warning 1 "         process ID${EX} " 0
-	GENPIDS=`ps -C genkernel --no-headers -o pid`
-	echo -n "${GENPIDS}" | sed -e "s/$$//; s/ /, /g"
-	echo 'halting...'
-	echo
-	print_warning 1 'Running multiple genkernels on the same source tree will cause data loss!'
-	print_info 1 "Press ^C to halt; ^D to continue [ ${BOLD}if${NORMAL} you know what you're doing! ]"
-	echo
-	CTEMP="${TEMP}"
-	TEMP=${TMPDIR-/tmp}
-	TEMP=${TEMP}/genkernel.$RANDOM.$RANDOM.$RANDOM.$$
-	print_info 1 'thread: Running multiple genkernels may cause problems!'
-	print_info 1 "thread: Temporary files reallocated to ${TEMP}..."
-	echo
-fi
+## Check whether another Genkernel is running
+#GENPIDS="`ps -C genkernel --no-headers -o pid | wc -l`"
+#if [ "${GENPIDS}" -gt '3' ]
+#then
+#	[ "${GENPIDS}" -gt '4' ] && EX='s'
+#	print_warning 1 "${BOLD}WARNING${NORMAL}: Another Genkernel instance is running under"
+#	print_warning 1 "         process ID${EX} " 0
+#	GENPIDS=`ps -C genkernel --no-headers -o pid`
+#	echo -n "${GENPIDS}" | sed -e "s/$$//; s/ /, /g"
+#	echo 'halting...'
+#	echo
+#	print_warning 1 'Running multiple genkernels on the same source tree will cause data loss!'
+#	print_info 1 "Press ^C to halt; ^D to continue [ ${BOLD}if${NORMAL} you know what you're doing! ]"
+#	echo
+#	CTEMP="${TEMP}"
+#	TEMP=${TMPDIR-/tmp}
+#	TEMP=${TEMP}/genkernel.$RANDOM.$RANDOM.$RANDOM.$$
+#	print_info 1 'thread: Running multiple genkernels may cause problems!'
+#	print_info 1 "thread: Temporary files reallocated to ${TEMP}..."
+#	echo
+#fi
 
 
 KERNCACHE_IS_VALID=0
