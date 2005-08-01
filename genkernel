@@ -242,7 +242,9 @@ fi
 if [ "${KERNCACHE}" != "" -a "${KERNCACHE_IS_VALID}" != "0" ] 
 then
 	gen_kerncache_extract_modules
+	gen_kerncache_extract_config
 fi
+
 
 # Run callback
 if [ "${CMD_CALLBACK}" != "" ]

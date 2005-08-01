@@ -106,6 +106,17 @@ gen_kerncache_extract_modules()
 	fi
 }
 
+gen_kerncache_extract_config()
+{
+	if [ -e "${KERNCACHE}" ] 
+	then
+		print_info 1 'Extracting kerncache config to /etc/kernels'
+		mkdir -p /etc/kernels
+        	/bin/tar -xjf ${KERNCACHE} -C /etc/kernels config-${ARCH}-${KV}
+		mv /etc/kernels/config-${ARCH}-${KV} /etc/kernels/kernel-config-${ARCH}-${KV}
+	fi
+}
+
 gen_kerncache_is_valid()
 {
 	KERNCACHE_IS_VALID=0
