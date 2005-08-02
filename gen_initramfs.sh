@@ -371,6 +371,9 @@ create_initramfs_aux() {
 		fi
 	fi
 
+	# Make a symlink to init .. incase we are bundled inside the kernel as one big cpio.	
+	ln -s ${TEMP}/initramfs-aux-temp/init ${TEMP}/initramfs-aux-temp/linuxrc 
+
 	if [ -f "${GK_SHARE}/${ARCH}/initrd.scripts" ]
 	then
 		cp "${GK_SHARE}/${ARCH}/initrd.scripts" "${TEMP}/initramfs-aux-temp/etc/initrd.scripts"

@@ -423,8 +423,6 @@ parse_cmdline() {
 			print_info 2 "CMD_LINUXRC: $CMD_LINUXRC"
 	      ;;
               --genzimage)
-			KERNEL_MAKE_DIRECTIVE_2='zImage.initrd'
-			KERNEL_BINARY_2='arch/ppc/boot/images/zImage.initrd.chrp'
 			GENERATE_Z_IMAGE=1
 			print_info 2 "GENERATE_Z_IMAGE: $GENERATE_Z_IMAGE"
 	      ;;
