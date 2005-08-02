@@ -290,6 +290,7 @@ bootstrapCD() {
     DEVICES="$DEVICES /dev/sd*" # USB Keychain
     DEVICES="$DEVICES /dev/hd*" # IDE devices
     DEVICES="$DEVICES /dev/ubd* /dev/ubd/*" # UML DEVICES
+    DEVICES="$DEVICES /dev/iseries/vcd*" # iSeries Devices
 	
     findcdmount $DEVICES
 }
