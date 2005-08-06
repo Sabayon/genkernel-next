@@ -105,14 +105,14 @@ config_kernel() {
 	# Make sure lvm2 modules are on if --lvm2
 	if isTrue ${CMD_LVM2}
 	then
-		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_BLK_DEV_DM[ =].*/CONFIG_BLK_DEV_DM=m/g'
-		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_DM_SNAPSHOT[ =].*/CONFIG_DM_SNAPSHOT=m/g'
-		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_DM_MIRROR[ =].*/CONFIG_DM_MIRROR=m/g'
+		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_BLK_DEV_DM is.*/CONFIG_BLK_DEV_DM=m/g'
+		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_DM_SNAPSHOT is.*/CONFIG_DM_SNAPSHOT=m/g'
+		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_DM_MIRROR is.*/CONFIG_DM_MIRROR=m/g'
 	fi
 
 	# Make sure dmraid modules are on if --dmraid
 	if isTrue ${CMD_DMRAID}
 	then
-		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_BLK_DEV_DM[ =].*/CONFIG_BLK_DEV_DM=m/g'
+		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_BLK_DEV_DM is.*/CONFIG_BLK_DEV_DM=m/g'
 	fi
 }
