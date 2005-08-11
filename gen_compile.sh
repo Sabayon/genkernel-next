@@ -725,12 +725,23 @@ compile_udev() {
 
 
 		strip udev || gen_die 'Failed to strip the udev binary!'
+		if [ -e udevstart ]
+		then
+			strip udevstart || gen_die 'Failed to strip the udevstart binary!'
+		fi
 
 		print_info 1 '      >> Installing...'
 		install -d "${TEMP}/udev/etc/udev" "${TEMP}/udev/sbin" "${TEMP}/udev/etc/udev/scripts" "${TEMP}/udev/etc/udev/rules.d" "${TEMP}/udev/etc/udev/permissions.d" ||
 			gen_die 'Could not create directory hierarchy'
 		install -m 0755 udev "${TEMP}/udev/sbin" ||
 			gen_die 'Could not install udev binary!'
+		
+		if [ -e udevstart ]
+		then
+			install -m 0755 udevstart "${TEMP}/udev/sbin" ||
+				gen_die 'Could not install udevstart binary!'
+		fi
+
 		install -m 0644 etc/udev/udev.conf "${TEMP}/udev/etc/udev" ||
 				gen_die 'Could not install udev configuration!'
 		install -m 0644 etc/udev/gentoo/udev.rules "${TEMP}/udev/etc/udev/rules.d/50-udev.rules" ||

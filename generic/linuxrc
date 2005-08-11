@@ -31,7 +31,14 @@ then
     /bin/busybox --install -s
 
     [ -e /linuxrc ] && rm /linuxrc
-    [ -e /sbin/udev ] && ln -s /sbin/udev /sbin/udevstart
+     
+    if [ -e /sbin/udev ]
+    then
+    	if [ ! -e /sbin/udevstart ]
+	then
+		ln -s /sbin/udev /sbin/udevstart
+	fi
+    fi
 
     if [ -e /bin/lvm ]
     then
