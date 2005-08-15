@@ -202,11 +202,17 @@ parse_cmdline() {
 		      CMD_NO_BUSYBOX=1
 		      print_info 2 "CMD_NO_BUSYBOX: $CMD_NO_BUSYBOX"
 	      ;;
-		  --bladecenter)
+	      --bladecenter)
 		      CMD_BLADECENTER=1
-			  print_info 2 "CMD_BLADECENTER: $CMD_BLADECENTER"
-		  ;;
+		      print_info 2 "CMD_BLADECENTER: $CMD_BLADECENTER"
+	      ;;
 	      --dmraid)
+		      if [ ! -e /usr/include/libdevmapper.h ]
+		      then
+			echo 'Error: --dmraid requires device-mapper to be installed'
+			echo '       on the host system; try "emerge device-mapper".'
+			exit 1
+		      fi
 		      CMD_DMRAID=1
 		      print_info 2 "CMD_DMRAID: $CMD_DMRAID"
 	      ;;
@@ -225,9 +231,9 @@ parse_cmdline() {
 
 		      if [[ TERM_LINES -lt 19 || TERM_COLUMNS -lt 80 ]]
 		      then
-			      echo "Error: You need a terminal with at least 80 columns"
-			      echo "       and 19 lines for --menuconfig; try --nomenuconfig..."
-			      exit 1
+			echo "Error: You need a terminal with at least 80 columns"
+			echo "       and 19 lines for --menuconfig; try --nomenuconfig..."
+			exit 1
 		      fi
 		      CMD_MENUCONFIG=1
 		      print_info 2 "CMD_MENUCONFIG: $CMD_MENUCONFIG"
