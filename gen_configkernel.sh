@@ -115,4 +115,9 @@ config_kernel() {
 	then
 		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_BLK_DEV_DM is.*/CONFIG_BLK_DEV_DM=m/g'
 	fi
+
+	if isTrue ${GENSPLASH}
+	then
+		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_FB_SPLASH is.*/CONFIG_FB_SPLASH=y/g'
+	fi
 }
