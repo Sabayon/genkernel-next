@@ -155,9 +155,6 @@ module compilation stage of 2.4 series kernels to avoid bottlenecks; the
 .PP
 .BR Initialization
 .TP
-\fB\-\-do\-keymap\-auto\fR
-Force keymap selection at boot.
-.TP
 \fB\-\-\fR[no\-]\fBbootsplash=\fR<theme>
 If the extra argument is specified, bootsplash is forced using <theme>
 rather than the default theme specified in your bootsplash
@@ -173,6 +170,12 @@ gensplash is disabled.
 \fB\-\-gensplash-res=\fR<resolutions>
 Optionally select gensplash resolutions to include.
 .TP
+\fB\-\-do\-keymap\-auto\fR
+Force keymap selection at boot.
+.TP
+\fB\-\-dmraid\fR
+Add DMRAID support.
+.TP
 \fB\-\-evms2\fR
 Add in EVMS2 support from static binaries if they exist on the system:
 you should run "emerge evms2" first.
@@ -183,11 +186,11 @@ Add in LVM2 support from static binaries if they exist on the system,
 or compile static LVM2 binaries if static ones do not exist.
 .RE
 .TP
+\fB\-\-no-udev\fR
+Force devfs on 2.6 series kernels. Not recommended or supported.
+.TP
 \fB\-\-unionfs\fR
 Add unionfs support.
-.TP
-\fB\-\-dmraid\fR
-Add DMRAID support.
 .TP
 \fB\-\-linuxrc=\fR<file>
 Use <file> for the linuxrc instead of the genkernel linuxrc.
