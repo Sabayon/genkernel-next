@@ -210,6 +210,7 @@ runUdev() {
 	mount -t tmpfs -o size=100k udev /dev
 	mkdir /dev/pts
 	mkdir /dev/shm
+	echo /sbin/udevsend > /proc/sys/kernel/hotplug 
 	/sbin/udevstart
 	ln -snf /proc/self/fd /dev/fd
 	ln -snf /proc/self/fd/0 /dev/stdin

@@ -38,6 +38,12 @@ then
 	then
 		ln -s /sbin/udev /sbin/udevstart
 	fi
+    	
+	if [ ! -e /sbin/udevsend ]
+	then
+		ln -s /sbin/udev /sbin/udevsend
+	fi
+
     fi
 
     if [ -e /bin/lvm ]

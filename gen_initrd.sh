@@ -100,7 +100,16 @@ create_base_initrd_sys() {
 	if [ "${UDEV}" -eq '1' ]
 	then
 		/bin/tar -jxpf "${UDEV_BINCACHE}" -C "${TEMP}/initrd-temp" || gen_die 'Could not extract udev binary cache!'
-		ln -sf "./udev" "${TEMP}/initrd-temp/bin/udevstart" || 	gen_die 'Could not symlink udev -> udevstart!'
+		if [ ! -e "${TEMP}/initrd-temp/bin/udevstart" ]
+		then
+		    ln -sf "./udev" "${TEMP}/initrd-temp/bin/udevstart" || 	gen_die 'Could not symlink udev -> udevstart!'
+		fi
+		
+		if [ ! -e "${TEMP}/initrd-temp/bin/udevsend" ]
+		then
+		    ln -sf "./udev" "${TEMP}/initrd-temp/bin/udevsend" || 	gen_die 'Could not symlink udev -> udevsend!'
+		fi
+
 	fi
 	
 	#unionfs modules

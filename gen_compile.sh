@@ -729,6 +729,11 @@ compile_udev() {
 		then
 			strip udevstart || gen_die 'Failed to strip the udevstart binary!'
 		fi
+		
+		if [ -e udevsend ]
+		then
+			strip udevsend || gen_die 'Failed to strip the udevsend binary!'
+		fi
 
 		print_info 1 '      >> Installing...'
 		install -d "${TEMP}/udev/etc/udev" "${TEMP}/udev/sbin" "${TEMP}/udev/etc/udev/scripts" "${TEMP}/udev/etc/udev/rules.d" "${TEMP}/udev/etc/udev/permissions.d" ||
@@ -740,6 +745,12 @@ compile_udev() {
 		then
 			install -m 0755 udevstart "${TEMP}/udev/sbin" ||
 				gen_die 'Could not install udevstart binary!'
+		fi
+		
+		if [ -e udevsend ]
+		then
+			install -m 0755 udevsend "${TEMP}/udev/sbin" ||
+				gen_die 'Could not install udevsend binary!'
 		fi
 
 		install -m 0644 etc/udev/udev.conf "${TEMP}/udev/etc/udev" ||
