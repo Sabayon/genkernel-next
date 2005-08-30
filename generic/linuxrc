@@ -139,12 +139,12 @@ do
       doevms2)
 	  USE_EVMS2_NORMAL=1
 	  ;;
-	    # Start Debug Option
+      # Debug Options
       debug)
 	  DEBUG='yes'
 	  ;;
 
-      # Scandelay options 
+      # Scan delay options 
       scandelay\=*)
 	  SDELAY=`parse_opt "${x}"`
 	  ;;
@@ -153,9 +153,16 @@ do
 	  ;;
 
       # Module no-loads
+      doload\=*)
+          MDOLIST=`parse_opt "${x}"`
+          MDOLIST="`echo ${MDOLIST} | sed -e \"s/,/ /g\"`"
+          ;;
+      nodetect)
+          NODETECT=1
+          ;;
       noload\=*)
 	  MLIST=`parse_opt "${x}"`
-	  MLIST="`echo ${MLIST} | sed -e \"s/,/ /\"`"
+	  MLIST="`echo ${MLIST} | sed -e \"s/,/ /g\"`"
 	  export MLIST
 	  ;;
 
@@ -190,16 +197,21 @@ detect_sbp2_devices
 cmdline_hwopts
 
 # Load modules listed in MY_HWOPTS if /lib/modules exists
-    
 if [ -d '/lib/modules' ]
 then
     good_msg 'Loading modules'
     # Load appropriate kernel modules
-    for modules in $MY_HWOPTS
-    do
-      modules_scan $modules
-      eval DO_`echo $modules | sed 's/-//'`=1
-    done
+    if [ "${NODETECT}" -ne '1' ]
+    then
+      for modules in $MY_HWOPTS
+      do
+        modules_scan $modules
+        eval DO_`echo $modules | sed 's/-//'`=1
+      done
+    fi
+
+    # Always eval doload=...
+    modules_load $MDOLIST
 else
     for modules in $MY_HWOPTS
     do

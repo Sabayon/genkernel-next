@@ -26,6 +26,15 @@ parse_opt() {
 	esac
 }
 
+modules_load() {
+	for module in $*
+	do
+		echo ${module} >> /etc/modules/extra_load
+	done
+
+	modules_scan extra_load
+}
+
 modules_scan() {
 	local MODS
 	[ -d /etc/modules/${1} ] || touch /etc/modules/${1}
