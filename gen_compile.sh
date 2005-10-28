@@ -757,8 +757,8 @@ compile_udev() {
 				gen_die 'Could not install udev configuration!'
 		install -m 0644 etc/udev/gentoo/udev.rules "${TEMP}/udev/etc/udev/rules.d/50-udev.rules" ||
 				gen_die 'Could not install udev rules!'
-		install -m 0644 etc/udev/udev.permissions "${TEMP}/udev/etc/udev/permissions.d/50-udev.permissions" ||
-				gen_die 'Could not install udev permissions!'
+#		install -m 0644 etc/udev/udev.permissions "${TEMP}/udev/etc/udev/permissions.d/50-udev.permissions" ||
+#				gen_die 'Could not install udev permissions!'
 		install -m 0755 extras/ide-devfs.sh "${TEMP}/udev/etc/udev/scripts" ||
 			gen_die 'Could not install udev scripts!'
 
