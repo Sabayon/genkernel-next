@@ -499,7 +499,8 @@ then
 		union_insert_dir $UNION /${NEW_ROOT}/${FS_LOCATION}
 		
 		# Make sure fstab notes livecd is mounted ro.  Makes system skip remount which fails on unionfs dirs.
-		cat /${UNION}/etc/fstab | sed -e 's|\(.*\s/\s*tmpfs\s*\)defaults\(.*\)|\1defaults,ro\2|' > /${UNION}/etc/fstab
+		sed -e 's|\(.*\s/\s*tmpfs\s*\)defaults\(.*\)|\1defaults,ro\2|' /${UNION}/etc/fstab > /${UNION}/etc/fstab.new
+		mv /${UNION}/etc/fstab.new /${UNION}/etc/fstab
 	fi
 
 	# Unpacking additional packages from NFS mount
