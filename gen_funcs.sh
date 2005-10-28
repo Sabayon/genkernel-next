@@ -234,7 +234,12 @@ gen_die() {
 }
 
 has_loop() {
-	dmesg | egrep -q '^loop:'
+	if [ -e /var/log/dmesg ]
+	then
+		cat /var/log/dmesg | egrep -q '^loop:'
+	else
+		dmesg | egrep -q '^loop:'
+	fi
 	if [ -e '/dev/loop0' -o -e '/dev/loop/0' -a ${PIPESTATUS[1]} ]
 	then
 		# We found devfs or standard dev loop device, assume
