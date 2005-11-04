@@ -262,6 +262,13 @@ then
 	cp /dev/null ${NEW_ROOT}/dev
 	cp /dev/console ${NEW_ROOT}/dev
 
+	# For SGI LiveCDs ...
+	if [ "${LOOPTYPE}" = "sgimips" ]
+	then
+		cp /dev/sr0 ${NEW_ROOT}/dev
+		cp /dev/loop0 ${NEW_ROOT}/dev
+	fi
+
 	# Required for gensplash to work.  Not an issue with the initrd as this device isnt created there and is not needed.
 	if [ -e /dev/tty1 ]
 	then
@@ -270,7 +277,11 @@ then
 
 	sdelay
 
-	[ "${REAL_ROOT}" = "/dev/nfs" ] || bootstrapCD
+	if [ "${REAL_ROOT}" != "/dev/nfs" ] && [ "${LOOPTYPE}" != "sgimips" ]
+	then
+		bootstrapCD
+	fi
+
 	if [ "${REAL_ROOT}" = '' ]
 	then
 		echo -n -e "${WARN}>>${NORMAL}${BOLD} No bootable medium found. Waiting for new devices"
@@ -377,6 +388,11 @@ do
 	if [ "${CDROOT}" -eq '1' -a "${got_good_root}" = '1' -a "${REAL_ROOT}" != "/dev/nfs" ]
 	then
 		# CD already mounted; no further checks necessary
+		break
+	elif [ "${LOOPTYPE}" = "sgimips" ]
+	then
+		# sgimips mounts the livecd root partition directly
+		# there is no isofs filesystem to worry about
 		break
 	else
 		good_msg "Mounting root..."
@@ -488,6 +504,29 @@ then
 	elif [ "${LOOPTYPE}" = 'noloop' ]
 	then
 		FS_LOCATION='mnt/cdrom'
+
+	elif [ "${LOOPTYPE}" = 'sgimips' ]
+	then
+		# getdvhoff finds the starting offset of the ext2 partition
+		# on the cdrom and returns this offset for losetup
+		#
+		# Currently supported SGI Systems all use SCSI CD-ROMs, so
+		# so we know that the CD-ROM is always /dev/sr0
+		#
+		# We use the value given to losetup to set /dev/loop0 to point
+		# to the liveCD root partition, and then mount /dev/loop0 as
+		# the liveCD root
+		good_msg 'Locating the SGI LiveCD Root Partition'
+		echo ' ' | \
+			losetup -o $(/bin/getdvhoff ${NEW_ROOT}${REAL_ROOT} 0) \
+				${NEW_ROOT}${CDROOT_DEV} \
+				${NEW_ROOT}${REAL_ROOT}
+		test_success 'losetup /dev/sr0 /dev/loop0'
+
+		good_msg 'Mounting the Root Partition'
+		mount -t ext2 -o ro ${NEW_ROOT}${CDROOT_DEV} ${NEW_ROOT}/mnt/livecd
+		test_success 'mount /dev/loop0 /'
+		FS_LOCATION='mnt/livecd'
 	fi
 
 #

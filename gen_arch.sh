@@ -14,6 +14,9 @@ get_official_arch() {
 				i?86)
 					ARCH="x86"
 				;;
+				mips|mips64)
+					ARCH="mips"
+				;;
 				*)
 				;;
 			esac

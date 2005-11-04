@@ -30,6 +30,15 @@ create_base_layout_cpio() {
 	    echo "UNREGISTER      .*           RMNEWCOMPAT" >> ${TEMP}/initramfs-base-temp/etc/devfsd.conf
 	fi
 
+	# SGI LiveCDs need the following binary (no better place for it than here)
+	# getdvhoff is a DEPEND of genkernel, so it *should* exist
+	if [ "${MIPS_EMBEDDED_IMAGE}" != '' ]
+	then
+		[ -e /usr/lib/getdvhoff/getdvhoff ] \
+			&& cp /usr/lib/getdvhoff/getdvhoff ${TEMP}/initramfs-base-temp/bin \
+			|| gen_die "sys-boot/getdvhoff not merged!"
+	fi
+
 	cd ${TEMP}/initramfs-base-temp/dev
 	mknod -m 660 console c 5 1
 	mknod -m 660 null c 1 3
@@ -503,9 +512,16 @@ merge_initramfs_cpio_archives(){
 
     	cat ${MERGE_LIST} > ${TMPDIR}/initramfs-${KV}
 
+	# Pegasos hack for merging the initramfs into the kernel at compile time
 	[ "${KERNEL_MAKE_DIRECTIVE}" == 'zImage.initrd' -a "${GENERATE_Z_IMAGE}" = '1' ] ||
 		[ "${KERNEL_MAKE_DIRECTIVE_2}" == 'zImage.initrd' -a "${GENERATE_Z_IMAGE}" = '1' ] &&
 			cp ${TMPDIR}/initramfs-${KV} ${KERNEL_DIR}/arch/${ARCH}/boot/images/ramdisk.image.gz
+
+	# Mips also mimics Pegasos to merge the initramfs into the kernel
+	if [ "${MIPS_EMBEDDED_IMAGE}" != '' ]; then
+		cp ${TMPDIR}/initramfs-${KV} ${KERNEL_DIR}/initramfs.cpio.gz
+		gunzip -f ${KERNEL_DIR}/initramfs.cpio.gz
+	fi
 }
 
 clear_cpio_dir(){
@@ -559,14 +575,10 @@ create_initramfs() {
 	then
 	    print_info 1 "        >> Creating unionfs modules cpio archive..."
 	    create_unionfs_modules_cpio
-	fi
-	
-	if [ "${UNIONFS}" -eq '1' ]
-	then
 	    print_info 1 "        >> Creating unionfs tools cpio archive..."
 	    create_unionfs_tools_cpio
 	fi
-
+	
 	if [ "${LVM2}" -eq '1' ]
 	then
 	    

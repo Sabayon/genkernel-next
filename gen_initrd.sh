@@ -53,6 +53,15 @@ create_base_initrd_sys() {
 		echo "UNREGISTER      .*           RMNEWCOMPAT" >> ${TEMP}/initrd-temp/etc/devfsd.conf
 	fi
 
+	# SGI LiveCDs need the following binary (no better place for it than here)
+	# getdvhoff is a DEPEND of genkernel, so it *should* exist
+	if [ "${MIPS_EMBEDDED_IMAGE}" != '' ]
+	then
+		[ -e /usr/lib/getdvhoff/getdvhoff ] \
+			&& cp /usr/lib/getdvhoff/getdvhoff ${TEMP}/initrd-temp/bin \
+			|| gen_die "sys-boot/getdvhoff not merged!"
+	fi
+
 	cd ${TEMP}/initrd-temp/dev
 	MAKEDEV std
 	MAKEDEV console
@@ -384,7 +393,13 @@ create_initrd() {
 		cp ${TMPDIR}/initrd-${KV} /boot/initrd-${KNAME}-${ARCH}-${KV} ||
 			gen_die 'Could not copy the initrd to /boot!'
 	fi
+
+	# Pegasos hack for merging the initrd into the kernel at compile time
 	[ "${KERNEL_MAKE_DIRECTIVE}" == 'zImage.initrd' -a "${GENERATE_Z_IMAGE}" = '1' ] ||
 		[ "${KERNEL_MAKE_DIRECTIVE_2}" == 'zImage.initrd' -a "${GENERATE_Z_IMAGE}" = '1' ] &&
 		cp ${TMPDIR}/initrd-${KV} ${KERNEL_DIR}/arch/${ARCH}/boot/images/ramdisk.image.gz
+
+	# Mips also mimics Pegasos to merge the initrd into the kernel
+	[ "${MIPS_EMBEDDED_IMAGE}" != '' ] \
+		&& cp ${TMPDIR}/initrd-${KV} ${KERNEL_DIR}/mips/ramdisk/initrd.img.gz
 }

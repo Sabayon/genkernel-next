@@ -213,8 +213,9 @@ then
 	# KV may have changed due to the configuration
 	get_KV
 
-	# Compile kernel
-	[ "${GENERATE_Z_IMAGE}" = '' ] && compile_kernel
+	# Compile kernel; If using --genzimage, or building a mips kernel, skip compile
+	# till after initrd/initramfs is done
+	[ "${GENERATE_Z_IMAGE}" = '' -a "${MIPS_EMBEDDED_IMAGE}" = '' ] && compile_kernel
 
 	# Compile modules
 	if [ ${BUILD_MODULES} -eq 1 ]
@@ -228,7 +229,13 @@ then
 		[ ! -e '/etc/kernels' ] && mkdir -p /etc/kernels
 		cp "${KERNEL_DIR}/.config" "/etc/kernels/kernel-config-${ARCH}-${KV}"
 	fi
-	[ "${KERNCACHE}" != "" ] && gen_kerncache
+	if [ "${KERNCACHE}" != "" ]
+	then
+		if [ "${MIPS_EMBEDDED_IMAGE}" = "" ]
+		then
+			gen_kerncache
+		fi
+	fi
 fi
 
 if ! isTrue "${CMD_NOINSTALL}"
@@ -324,10 +331,14 @@ else
 fi
 
 # Pegasos fix
-if [ "${GENERATE_Z_IMAGE}" != '' ]
+if [ "${GENERATE_Z_IMAGE}" != '' -o "${MIPS_EMBEDDED_IMAGE}" != '' ]
 then
-	# Compile kernel, intergrating the initrd into it for Pegasos
+	# Compile kernel, intergrating the initrd into it for Pegasos & mips
 	compile_kernel
+
+	# We skipped the kernel build and kerncache generation
+	# So do it here
+	[ "${KERNCACHE}" != "" ] && gen_kerncache
 fi
 
 [ "${MINKERNPACKAGE}" != '' ] && gen_minkernpackage

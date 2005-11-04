@@ -94,7 +94,7 @@ findcdmount() {
 }
 cache_cd_contents() {
 	# Check loop file exists and cache to ramdisk if DO_cache is enabled
-	if [ "${LOOPTYPE}" != 'noloop' ]
+	if [ "${LOOPTYPE}" != "noloop" ] && [ "${LOOPTYPE}" != "sgimips" ]
 	then
 		check_loop
 		if [ "${DO_cache}" ]
