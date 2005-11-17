@@ -696,10 +696,55 @@ compile_dietlibc() {
 		rm -rf "${TEMP}/diet" > /dev/null
 	fi
 }
-
+compile_klibc() {
+	cd "${TEMP}"
+	rm -rf "${KLIBC_DIR}" klibc-build
+	[ ! -f "${KLIBC_SRCTAR}" ] &&
+		gen_die "Could not find klibc tarball: ${KLIBC_SRCTAR}"
+	/bin/tar -xpf "${KLIBC_SRCTAR}" ||
+		gen_die 'Could not extract klibc tarball'
+	[ ! -d "${KLIBC_DIR}" ] &&
+		gen_die "klibc tarball ${KLIBC_SRCTAR} is invalid"
+	cd "${KLIBC_DIR}"
+	print_info 1 'klibc: >> Compiling...'
+	ln -snf "${KERNEL_DIR}" linux || gen_die "Could not link to ${KERNEL_DIR}"
+	sed -i MCONFIG -e "s|prefix      =.*|prefix      = ${TEMP}/klibc-build|g"
+	# PPC fixup for 2.6.14
+	if [ "${VER}" -eq '2' -a "${PAT}" -eq '6' -a "${SUB}" -ge '14' ]
+        then
+		if [ "${ARCH}" = 'ppc' -o "${ARCH}" = 'ppc64' ]
+        	then
+			# Headers are moving around .. need to make them available
+			echo 'INCLUDE += -I$(KRNLSRC)/arch/$(ARCH)/include' >> MCONFIG
+		fi
+	fi
+	if [ "${ARCH}" = 'um' ]
+	then
+		compile_generic "ARCH=um" runtask
+	elif [ "${ARCH}" = 'sparc64' ]
+	then
+		compile_generic "ARCH=sparc64 CROSS=sparc64-unknown-linux-gnu-" runtask
+	else
+		compile_generic "" runtask
+	fi
+	compile_generic "install" runtask
+        
+}
 compile_udev() {
 	if [ ! -f "${UDEV_BINCACHE}" ]
 	then
+		# PPC fixup for 2.6.14
+		# Headers are moving around .. need to make them available
+		if [ "${VER}" -eq '2' -a "${PAT}" -eq '6' -a "${SUB}" -ge '14' ]
+		then
+		    if [ "${ARCH}" = 'ppc' -o "${ARCH}" = 'ppc64' ]
+		    then
+	    		cd ${KERNEL_DIR}
+			echo 'Applying hack to workaround 2.6.14+ PPC header breakages...'
+	    		compile_generic 'include/asm' kernel
+		    fi
+		fi
+		compile_klibc
 		cd "${TEMP}"
 		rm -rf "${UDEV_DIR}" udev
 		[ ! -f "${UDEV_SRCTAR}" ] &&
@@ -710,57 +755,43 @@ compile_udev() {
 			gen_die "Udev tarball ${UDEV_SRCTAR} is invalid"
 
 		cd "${UDEV_DIR}"
+    		local extras="extras/scsi_id extras/volume_id extras/ata_id extras/run_directory extras/usb_id extras/floppy extras/cdrom_id extras/firmware"
+    		# No selinux support yet .. someday maybe
+		#use selinux && myconf="${myconf} USE_SELINUX=true"
 		print_info 1 'udev: >> Compiling...'
+		# PPC fixup for 2.6.14
+		if [ "${VER}" -eq '2' -a "${PAT}" -eq '6' -a "${SUB}" -ge '14' ]
+        	then
+			if [ "${ARCH}" = 'ppc' -o "${ARCH}" = 'ppc64' ]
+        		then
+				# Headers are moving around .. need to make them available
+				echo "CFLAGS += -I${KERNEL_DIR}/arch/${ARCH}/include" >> Makefile
+			fi
+		fi
 
-		ln -snf "${KERNEL_DIR}" klibc/linux || gen_die "Could not link to ${KERNEL_DIR}"
 		if [ "${ARCH}" = 'um' ]
 		then
-			compile_generic "ARCH=um KERNEL_DIR=$KERNEL_DIR USE_KLIBC=true USE_LOG=false DEBUG=false udevdir=/dev all etc/udev/udev.conf" runtask
+			compile_generic "EXTRAS=\"${extras}\" ARCH=um USE_KLIBC=true KLCC=${TEMP}/klibc-build/bin/klcc USE_LOG=false DEBUG=false udevdir=/dev all" runtask
 		elif [ "${ARCH}" = 'sparc64' ]
 		then
-			compile_generic "ARCH=sparc64 CROSS=sparc64-unknown-linux-gnu- KERNEL_DIR=$KERNEL_DIR USE_KLIBC=true USE_LOG=false DEBUG=false udevdir=/dev all etc/udev/udev.conf" runtask
+			compile_generic "EXTRAS=\"${extras}\" ARCH=sparc64 CROSS=sparc64-unknown-linux-gnu- USE_KLIBC=true KLCC=${TEMP}/klibc-build/bin/klcc USE_LOG=false DEBUG=false udevdir=/dev all" runtask
 		else
-			compile_generic "KERNEL_DIR=$KERNEL_DIR USE_KLIBC=true USE_LOG=false DEBUG=false udevdir=/dev all etc/udev/udev.conf" runtask
+			compile_generic "EXTRAS=\"${extras}\" USE_KLIBC=true KLCC=${TEMP}/klibc-build/bin/klcc USE_LOG=false DEBUG=false udevdir=/dev all" runtask
 		fi
 
-
-		strip udev || gen_die 'Failed to strip the udev binary!'
-		if [ -e udevstart ]
-		then
-			strip udevstart || gen_die 'Failed to strip the udevstart binary!'
-		fi
-		
-		if [ -e udevsend ]
-		then
-			strip udevsend || gen_die 'Failed to strip the udevsend binary!'
-		fi
 
 		print_info 1 '      >> Installing...'
-		install -d "${TEMP}/udev/etc/udev" "${TEMP}/udev/sbin" "${TEMP}/udev/etc/udev/scripts" "${TEMP}/udev/etc/udev/rules.d" "${TEMP}/udev/etc/udev/permissions.d" ||
+		install -d "${TEMP}/udev/etc/udev" "${TEMP}/udev/sbin" "${TEMP}/udev/etc/udev/scripts" "${TEMP}/udev/etc/udev/rules.d" "${TEMP}/udev/etc/udev/permissions.d" "${TEMP}/udev/etc/udev/extras" "${TEMP}/udev/etc" "${TEMP}/udev/sbin" "${TEMP}/udev/usr/" "${TEMP}/udev/usr/bin" "${TEMP}/udev/usr/sbin"||
 			gen_die 'Could not create directory hierarchy'
-		install -m 0755 udev "${TEMP}/udev/sbin" ||
-			gen_die 'Could not install udev binary!'
 		
-		if [ -e udevstart ]
-		then
-			install -m 0755 udevstart "${TEMP}/udev/sbin" ||
-				gen_die 'Could not install udevstart binary!'
-		fi
-		
-		if [ -e udevsend ]
-		then
-			install -m 0755 udevsend "${TEMP}/udev/sbin" ||
-				gen_die 'Could not install udevsend binary!'
-		fi
+		install -c etc/udev/gentoo/udev.rules "${TEMP}/udev/etc/udev/rules.d/50-udev.rules" ||
+		    gen_die 'Could not copy gentoo udev.rules to 50-udev.rules'
 
-		install -m 0644 etc/udev/udev.conf "${TEMP}/udev/etc/udev" ||
-				gen_die 'Could not install udev configuration!'
-		install -m 0644 etc/udev/gentoo/udev.rules "${TEMP}/udev/etc/udev/rules.d/50-udev.rules" ||
-				gen_die 'Could not install udev rules!'
-#		install -m 0644 etc/udev/udev.permissions "${TEMP}/udev/etc/udev/permissions.d/50-udev.permissions" ||
-#				gen_die 'Could not install udev permissions!'
-		install -m 0755 extras/ide-devfs.sh "${TEMP}/udev/etc/udev/scripts" ||
-			gen_die 'Could not install udev scripts!'
+		compile_generic "EXTRAS=\"${extras}\" DESTDIR=${TEMP}/udev install-config" runtask
+		compile_generic "EXTRAS=\"${extras}\" DESTDIR=${TEMP}/udev install-bin" runtask
+		install -c extras/ide-devfs.sh "${TEMP}/udev/etc/udev/scripts" 
+		install -c extras/scsi-devfs.sh "${TEMP}/udev/etc/udev/scripts" 
+		install -c extras/raid-devfs.sh "${TEMP}/udev/etc/udev/scripts" 
 
 		cd "${TEMP}/udev"
 		print_info 1 '      >> Copying to bincache...'
@@ -769,6 +800,17 @@ compile_udev() {
 
 		cd "${TEMP}"
 		rm -rf "${UDEV_DIR}" udev
+		
+		# PPC fixup for 2.6.14
+		if [ "${VER}" -eq '2' -a "${PAT}" -eq '6' -a "${SUB}" -ge '14' ]
+		then
+		    if [ "${ARCH}" = 'ppc' -o "${ARCH}" = 'ppc64' ]
+		    then
+			cd ${KERNEL_DIR}
+			compile_generic 'archclean' kernel
+			cd "${TEMP}"
+		    fi
+		fi
 	fi
 }
 
