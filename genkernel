@@ -189,7 +189,6 @@ fi
 #	echo
 #fi
 
-
 KERNCACHE_IS_VALID=0
 if [ "${KERNCACHE}" != "" ] 
 then
@@ -231,7 +230,7 @@ then
 	fi
 	if [ "${KERNCACHE}" != "" ]
 	then
-		if [ "${MIPS_EMBEDDED_IMAGE}" = "" ]
+		if [ "${GENERATE_Z_IMAGE}" = '' -a "${MIPS_EMBEDDED_IMAGE}" = '' ]
 		then
 			gen_kerncache
 		fi
