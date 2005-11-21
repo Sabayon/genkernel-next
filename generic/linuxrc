@@ -729,7 +729,7 @@ then
 		done
 		for j in `/bin/busybox find /$i 2>/dev/null`
 		do
-			if /bin/busybox [ -d "${j}" -a "${j}" != "/bin" -a "${j}" != "/dev" ]
+			if /bin/busybox [ -d "${j}" -a "${j}" != "/bin" -a "${j}" != "/dev" -a "${j}" != "/sys" ]
 			then
 				/bin/busybox rm -r "$j"
 			fi
