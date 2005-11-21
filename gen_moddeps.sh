@@ -62,5 +62,8 @@ gen_dep_list()
 	done
 
 	# Only list each module once
-	cat ${TEMP}/moddeps | sort | uniq
+	if [ -f ${TEMP}/moddeps ]
+	then
+	    cat ${TEMP}/moddeps | sort | uniq
+	fi
 }

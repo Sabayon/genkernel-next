@@ -23,12 +23,17 @@ gen_minkernpackage()
             fi
 
 	fi
-	if [ "${KERN_24}" != '1' -a  "${CMD_BOOTSPLASH}" != '1' ]
+	
+	if [ "${GENERATE_Z_IMAGE}" != '1' ]
 	then
-		[ "${BUILD_INITRD}" -ne 0 ] && { cp "${TMPDIR}/initramfs-${KV}" "${TEMP}/minkernpackage/initramfs-${ARCH}-${KV}" || gen_die 'Could not copy the initramfs for the kernel package!'; }
-	else
-		[ "${BUILD_INITRD}" -ne 0 ] && { cp "${TMPDIR}/initrd-${KV}" "${TEMP}/minkernpackage/initrd-${ARCH}-${KV}" || gen_die 'Could not copy the initrd for the kernel package!'; }
+	    if [ "${KERN_24}" != '1' -a  "${CMD_BOOTSPLASH}" != '1' ]
+	    then
+		    [ "${BUILD_INITRD}" -ne 0 ] && { cp "${TMPDIR}/initramfs-${KV}" "${TEMP}/minkernpackage/initramfs-${ARCH}-${KV}" || gen_die 'Could not copy the initramfs for the kernel package!'; }
+	    else
+		    [ "${BUILD_INITRD}" -ne 0 ] && { cp "${TMPDIR}/initrd-${KV}" "${TEMP}/minkernpackage/initrd-${ARCH}-${KV}" || gen_die 'Could not copy the initrd for the kernel package!'; }
+	    fi
 	fi
+	
 	cd "${TEMP}/minkernpackage" 
 	/bin/tar -jcpf ${MINKERNPACKAGE} * || gen_die 'Could not compress the kernel package!'
 	cd "${TEMP}" && rm -rf "${TEMP}/minkernpackage" > /dev/null 2>&1

@@ -516,6 +516,7 @@ merge_initramfs_cpio_archives(){
 	[ "${KERNEL_MAKE_DIRECTIVE}" == 'zImage.initrd' -a "${GENERATE_Z_IMAGE}" = '1' ] ||
 		[ "${KERNEL_MAKE_DIRECTIVE_2}" == 'zImage.initrd' -a "${GENERATE_Z_IMAGE}" = '1' ] &&
 			cp ${TMPDIR}/initramfs-${KV} ${KERNEL_DIR}/arch/${ARCH}/boot/images/ramdisk.image.gz
+			rm ${TMPDIR}/initramfs-${KV}
 
 	# Mips also mimics Pegasos to merge the initramfs into the kernel
 	if [ "${MIPS_EMBEDDED_IMAGE}" != '' ]; then
