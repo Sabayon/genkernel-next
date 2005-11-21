@@ -440,6 +440,9 @@ compile_dmraid() {
 			CPPFLAGS="-I${TEMP}/device-mapper/include" \
 			./configure --enable-static_link --prefix=${TEMP}/dmraid >> ${DEBUGFILE} 2>&1 ||
 				gen_die 'Configure of dmraid failed!'
+				
+			#We dont necessarily have selinux installed yet .. look into selinux global support in the future.
+			sed -i tools/Makefile -e "s|DMRAIDLIBS += -lselinux||g"
 		mkdir -p "${TEMP}/dmraid"
 		print_info 1 'dmraid: >> Compiling...'
 			compile_generic '' utils
