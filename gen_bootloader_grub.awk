@@ -2,7 +2,7 @@ BEGIN { RS="\n"; FS=""; OFS=""; ORS=""; state="0"; }
 {
 if(state == "0")
 {
-	if (match($0, /^title=/))
+	if (match($0, /^title=/) || match($0, /^title */))
 	{
 		state = "1";
 		ORIG = ORIG $0 "\n";
@@ -47,7 +47,7 @@ if(state == "1")
 				next;
 			}
 
-			if(!match($0, /^title=/))
+			if(!(match($0, /^title=/) || match($0, /^title */) ))
 			{	
 				i = 0;
 				commentLookahead = "";
@@ -64,7 +64,7 @@ if(state == "1")
 			}
 		}
 	}
-	if(have_k == "1" && (match($0, /^title=/) || NR == LIMIT))
+	if(have_k == "1" && ((match($0, /^title=/) || match($0, /^title */)) || NR == LIMIT))
 	{
 		state = "2";
 		print extraA "title=Gentoo Linux (" KV ")\n";
