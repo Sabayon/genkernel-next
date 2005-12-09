@@ -22,7 +22,9 @@ compile_kernel_args()
 	then
 		ARGS="${ARGS} CROSS_COMPILE=\"${KERNEL_CROSS_COMPILE}\""
 	fi
-
+	
+	ARGS="${ARGS} ARCH=${ARCH}"
+	
 	echo -n "${ARGS}"
 }
 
