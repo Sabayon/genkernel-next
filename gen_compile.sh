@@ -22,9 +22,7 @@ compile_kernel_args()
 	then
 		ARGS="${ARGS} CROSS_COMPILE=\"${KERNEL_CROSS_COMPILE}\""
 	fi
-	
-	ARGS="${ARGS} ARCH=\"${ARCH}\""
-	
+
 	echo -n "${ARGS}"
 }
 
@@ -711,6 +709,13 @@ compile_klibc() {
 	[ ! -d "${KLIBC_DIR}" ] &&
 		gen_die "klibc tarball ${KLIBC_SRCTAR} is invalid"
 	cd "${KLIBC_DIR}"
+	if [ -f ${GK_SHARE}/pkg/byteswap.h ]
+	then
+		echo "Inserting byteswap.h into klibc"
+		cp "${GK_SHARE}/pkg/byteswap.h" "include/"
+	else
+		echo "${GK_SHARE}/pkg/byteswap.h not found"
+	fi
 	print_info 1 'klibc: >> Compiling...'
 	ln -snf "${KERNEL_DIR}" linux || gen_die "Could not link to ${KERNEL_DIR}"
 	sed -i MCONFIG -e "s|prefix      =.*|prefix      = ${TEMP}/klibc-build|g"
@@ -732,6 +737,7 @@ compile_klibc() {
 	else
 		compile_generic "" runtask
 	fi
+
 	compile_generic "install" runtask
         
 }
