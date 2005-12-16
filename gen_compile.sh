@@ -734,6 +734,9 @@ compile_klibc() {
 	elif [ "${ARCH}" = 'sparc64' ]
 	then
 		compile_generic "ARCH=sparc64 CROSS=sparc64-unknown-linux-gnu-" runtask
+	elif [ "${ARCH}" = 'x86' ]
+	then
+		compile_generic "ARCH=i386" runtask
 	else
 		compile_generic "" runtask
 	fi
