@@ -730,18 +730,18 @@ compile_klibc() {
 	fi
 	if [ "${ARCH}" = 'um' ]
 	then
-		compile_generic "ARCH=um" runtask
+		compile_generic "ARCH=um" utils
 	elif [ "${ARCH}" = 'sparc64' ]
 	then
-		compile_generic "ARCH=sparc64 CROSS=sparc64-unknown-linux-gnu-" runtask
+		compile_generic "ARCH=sparc64 CROSS=sparc64-unknown-linux-gnu-" utils
 	elif [ "${ARCH}" = 'x86' ]
 	then
-		compile_generic "ARCH=i386" runtask
+		compile_generic "ARCH=i386" utils
 	else
-		compile_generic "" runtask
+		compile_generic "" utils
 	fi
 
-	compile_generic "install" runtask
+	compile_generic "install" utils
         
 }
 compile_udev() {
