@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.14-gentoo-r2
-# Tue Dec  6 20:49:11 2005
+# Linux kernel version: 2.6.14-gentoo-r4
+# Fri Dec 16 13:27:33 2005
 #
 CONFIG_X86=y
 CONFIG_SEMAPHORE_SLEEPERS=y
@@ -1037,13 +1037,19 @@ CONFIG_IPW2100_MONITOR=y
 # CONFIG_IPW_DEBUG is not set
 CONFIG_IPW2200=m
 CONFIG_AIRO=m
-# CONFIG_HERMES is not set
+CONFIG_HERMES=m
+CONFIG_PLX_HERMES=m
+CONFIG_TMD_HERMES=m
+CONFIG_NORTEL_HERMES=m
+CONFIG_PCI_HERMES=m
 CONFIG_ATMEL=m
 CONFIG_PCI_ATMEL=m
 
 #
 # Wireless 802.11b Pcmcia/Cardbus cards support
 #
+CONFIG_PCMCIA_HERMES=m
+CONFIG_PCMCIA_SPECTRUM=m
 CONFIG_AIRO_CS=m
 CONFIG_PCMCIA_ATMEL=m
 CONFIG_PCMCIA_WL3501=m
