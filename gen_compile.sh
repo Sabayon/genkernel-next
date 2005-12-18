@@ -704,11 +704,14 @@ compile_klibc() {
 	rm -rf "${KLIBC_DIR}" klibc-build
 	[ ! -f "${KLIBC_SRCTAR}" ] &&
 		gen_die "Could not find klibc tarball: ${KLIBC_SRCTAR}"
-	/bin/tar -xpf "${KLIBC_SRCTAR}" ||
+	/bin/tar zxpf "${KLIBC_SRCTAR}" ||
 		gen_die 'Could not extract klibc tarball'
 	[ ! -d "${KLIBC_DIR}" ] &&
 		gen_die "klibc tarball ${KLIBC_SRCTAR} is invalid"
 	cd "${KLIBC_DIR}"
+
+	# Don't install to "//lib" fix
+	sed -e 's:$(INSTALLROOT)/$(SHLIBDIR):$(INSTALLROOT)$(INSTALLDIR)/$(CROSS)lib:' -i klibc/Makefile
 	if [ -f ${GK_SHARE}/pkg/byteswap.h ]
 	then
 		echo "Inserting byteswap.h into klibc"
