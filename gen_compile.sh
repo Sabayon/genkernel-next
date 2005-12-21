@@ -5,24 +5,23 @@ compile_kernel_args()
 	local ARGS
 
 	ARGS=''
-	if [ "${KERNEL_CC}" != '' ]
-	then
-		ARGS="CC=\"${KERNEL_CC}\""
-	fi
-	if [ "${KERNEL_LD}" != '' ]
-	then
-		ARGS="${ARGS} LD=\"${KERNEL_LD}\""
-	fi
-	if [ "${KERNEL_AS}" != '' ]
-	then
-		ARGS="${ARGS} AS=\"${KERNEL_AS}\""
-	fi
-
 	if [ "${KERNEL_CROSS_COMPILE}" != '' ]
 	then
 		ARGS="${ARGS} CROSS_COMPILE=\"${KERNEL_CROSS_COMPILE}\""
+	else
+		if [ "${KERNEL_CC}" != '' ]
+		then
+			ARGS="CC=\"${KERNEL_CC}\""
+		fi
+		if [ "${KERNEL_LD}" != '' ]
+		then
+			ARGS="${ARGS} LD=\"${KERNEL_LD}\""
+		fi
+		if [ "${KERNEL_AS}" != '' ]
+		then
+			ARGS="${ARGS} AS=\"${KERNEL_AS}\""
+		fi
 	fi
-
 	echo -n "${ARGS}"
 }
 
