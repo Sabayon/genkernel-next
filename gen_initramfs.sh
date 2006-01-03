@@ -627,7 +627,10 @@ create_initramfs() {
 
 	if ! isTrue "${CMD_NOINSTALL}"
 	then
-		cp ${TMPDIR}/initramfs-${KV} /boot/initramfs-${KNAME}-${ARCH}-${KV} ||
-			gen_die 'Could not copy the initramfs to /boot!'
+		if [ "${GENERATE_Z_IMAGE}" != '1' ]
+		then
+			cp ${TMPDIR}/initramfs-${KV} /boot/initramfs-${KNAME}-${ARCH}-${KV} ||
+				gen_die 'Could not copy the initramfs to /boot!'
+		fi
 	fi
 }

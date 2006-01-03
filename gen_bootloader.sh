@@ -19,7 +19,7 @@ set_grub_bootloader() {
 		GRUB_BOOTFS=${BOOTFS}
 	else	
 		# Extract block device information from /etc/fstab
-		GRUB_ROOTFS=$(awk '/[[:space:]]\/[[:space:]]/ { print $1 }' /etc/fstab)
+		GRUB_ROOTFS=$(awk '/^[^#].+[[:space:]]\/[[:space:]]/ { print $1 }' /etc/fstab)
 		GRUB_BOOTFS=$(awk '/^[^#].+[[:space:]]\/boot[[:space:]]/ { print $1 }' /etc/fstab)
 
 		# If /boot is not defined in /etc/fstab, it must be the same as /

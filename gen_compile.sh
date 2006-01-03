@@ -739,6 +739,9 @@ compile_klibc() {
 	elif [ "${ARCH}" = 'x86' ]
 	then
 		compile_generic "ARCH=i386" utils
+	elif [ "${KERNEL_CROSS_COMPILE}" != '' ]
+	then
+		compile_generic "CROSS=${KERNEL_CROSS_COMPILE}" utils
 	else
 		compile_generic "" utils
 	fi
