@@ -790,12 +790,12 @@ compile_udev() {
 
 		if [ "${ARCH}" = 'um' ]
 		then
-			compile_generic "EXTRAS=\"${extras}\" ARCH=um USE_KLIBC=true KLCC=${TEMP}/klibc-build/bin/klcc USE_LOG=false DEBUG=false udevdir=/dev all" runtask
+			compile_generic "EXTRAS=\"${extras}\" ARCH=um USE_KLIBC=true KLCC=${TEMP}/klibc-build/bin/klcc USE_LOG=false DEBUG=false udevdir=/dev all" utils
 		elif [ "${ARCH}" = 'sparc64' ]
 		then
-			compile_generic "EXTRAS=\"${extras}\" ARCH=sparc64 CROSS=sparc64-unknown-linux-gnu- USE_KLIBC=true KLCC=${TEMP}/klibc-build/bin/klcc USE_LOG=false DEBUG=false udevdir=/dev all" runtask
+			compile_generic "EXTRAS=\"${extras}\" ARCH=sparc64 CROSS=sparc64-unknown-linux-gnu- USE_KLIBC=true KLCC=${TEMP}/klibc-build/bin/klcc USE_LOG=false DEBUG=false udevdir=/dev all" utils
 		else
-			compile_generic "EXTRAS=\"${extras}\" USE_KLIBC=true KLCC=${TEMP}/klibc-build/bin/klcc USE_LOG=false DEBUG=false udevdir=/dev all" runtask
+			compile_generic "EXTRAS=\"${extras}\" USE_KLIBC=true KLCC=${TEMP}/klibc-build/bin/klcc USE_LOG=false DEBUG=false udevdir=/dev all" utils
 		fi
 
 
@@ -806,8 +806,8 @@ compile_udev() {
 		install -c etc/udev/gentoo/udev.rules "${TEMP}/udev/etc/udev/rules.d/50-udev.rules" ||
 		    gen_die 'Could not copy gentoo udev.rules to 50-udev.rules'
 
-		compile_generic "EXTRAS=\"${extras}\" DESTDIR=${TEMP}/udev install-config" runtask
-		compile_generic "EXTRAS=\"${extras}\" DESTDIR=${TEMP}/udev install-bin" runtask
+		compile_generic "EXTRAS=\"${extras}\" DESTDIR=${TEMP}/udev install-config" utils
+		compile_generic "EXTRAS=\"${extras}\" DESTDIR=${TEMP}/udev install-bin" utils
 		install -c extras/ide-devfs.sh "${TEMP}/udev/etc/udev/scripts" 
 		install -c extras/scsi-devfs.sh "${TEMP}/udev/etc/udev/scripts" 
 		install -c extras/raid-devfs.sh "${TEMP}/udev/etc/udev/scripts" 
