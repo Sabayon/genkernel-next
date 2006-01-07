@@ -1,0 +1,15 @@
+# /etc/inittab init(8) configuration for BusyBox
+#
+# Copyright (C) 1999-2003 by Erik Andersen <andersen@codepoet.org>
+
+
+::sysinit:/linuxrc
+::askfirst:-/bin/ash
+#tty2::askfirst:-/bin/ash
+#tty3::askfirst:-/bin/ash
+#tty4::askfirst:-/bin/ash
+::restart:/sbin/init
+::ctrlaltdel:/sbin/reboot
+::shutdown:/bin/umount -a -r
+::shutdown:/sbin/swapoff -a
+

@@ -1,0 +1,96 @@
+#!/bin/ash
+
+# Copyright 2001-2006 Gentoo Technologies, Inc.
+# Distributed under the terms of the GNU General Public License, v2 or later
+
+MYIP=""
+MYGW=""
+
+
+#// Modified Functions copied from Gentoo's /sbin/functions.sh
+#//--------------------------------------------------------------------------------
+
+# void einfo(char* message)
+# show an informative message (with a newline)
+einfo() {
+        echo -e " * ${*}"
+        return 0
+}
+
+#//--------------------------------------------------------------------------------
+
+
+
+#// Setup networking
+#//--------------------------------------------------------------------------------
+
+SetupNetwork() {
+	#// DHCP or Static?
+	if [ "${1}" = "dhcp" ]; then
+		#// Do DHCP
+		udhcpc -i eth0 -q
+	else
+
+		#// Check second param
+		if [ -z "${2}" ]; then
+			echo -e ""
+			einfo "Please specify a gateway address."
+			echo -e ""
+			exit
+		fi
+
+		#// Get networking params
+		BROADCAST="$(ipcalc -b ${1} | cut -d\= -f2)"
+		NETMASK="$(ipcalc -m ${1} | cut -d\= -f2)"
+
+		#// Enable static networking
+		/sbin/ifconfig eth0 ${1} broadcast ${BROADCAST} netmask ${NETMASK}
+		/sbin/route add -net default gw ${2} netmask 0.0.0.0 metric 1
+	fi
+
+	#// Setup the loopback
+	/sbin/ifconfig lo 127.0.0.1
+	/sbin/route add -net 127.0.0.0 netmask 255.0.0.0 gw 127.0.0.1 dev lo
+
+	#// Finish
+	MYIP="${1}"
+	MYGW="${2}"
+}
+
+#//--------------------------------------------------------------------------------
+
+
+
+#// Main Function
+#//--------------------------------------------------------------------------------
+
+#// Check first param
+if [ -z "${1}" ]; then
+	echo -e ""
+	einfo "Please specify \"dhcp\" for setting up networking via dhcp or"
+	einfo "specify an IP Address and gateway address to configure static"
+	einfo "networking."
+	echo -e ""
+	exit 0
+fi
+
+
+#// Setup the Network
+SetupNetwork ${1} ${2} ${3}
+
+
+#// Was the network setup?
+if [ ! -z "$(ifconfig | grep "eth0")" ]; then
+	echo -e ""
+	einfo "Network interface eth0 has been started:"
+	einfo "  IP Address: ${MYIP}"
+	einfo "  Gateway:    ${MYGW}"
+	echo -e ""
+	einfo "An sshd server is available on port 22.  Please set a root"
+	einfo "password via \"passwd\" before using."
+	echo -e ""
+	echo -e ""
+fi
+
+#//--------------------------------------------------------------------------------
+
