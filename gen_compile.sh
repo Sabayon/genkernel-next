@@ -785,6 +785,8 @@ compile_udev() {
 		then
 			compile_generic "EXTRAS=\"${extras}\" ARCH=sparc64 CROSS=sparc64-unknown-linux-gnu- USE_KLIBC=true KLCC=${TEMP}/klibc-build/bin/klcc USE_LOG=false DEBUG=false udevdir=/dev all" utils
 		else
+			# This *needs* to be runtask, or else it breakson most
+			# architectures.  -- wolf31o2
 			compile_generic "EXTRAS=\"${extras}\" USE_KLIBC=true KLCC=${TEMP}/klibc-build/bin/klcc USE_LOG=false DEBUG=false udevdir=/dev all" runtask
 		fi
 
