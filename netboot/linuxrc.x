@@ -91,6 +91,7 @@ StartUp() {
 
 		#// Misc tasks
 		chmod +x /bin/net-setup
+		chmod +x /usr/share/udhcpc/default.script
 
 		#// Hostname
 		hostname netboot-@@RELVER@@
