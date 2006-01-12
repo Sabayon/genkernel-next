@@ -710,26 +710,10 @@ compile_klibc() {
 	cd "${KLIBC_DIR}"
 
 	# Don't install to "//lib" fix
-	sed -e 's:$(INSTALLROOT)/$(SHLIBDIR):$(INSTALLROOT)$(INSTALLDIR)/$(CROSS)lib:' -i klibc/Makefile
-	if [ -f ${GK_SHARE}/pkg/byteswap.h ]
-	then
-		echo "Inserting byteswap.h into klibc"
-		cp "${GK_SHARE}/pkg/byteswap.h" "include/"
-	else
-		echo "${GK_SHARE}/pkg/byteswap.h not found"
-	fi
+	sed -e 's:SHLIBDIR = /lib:SHLIBDIR = $(INSTALLROOT)$(INSTALLDIR)/$(KLIBCCROSS)lib:' -i scripts/Kbuild.install
 	print_info 1 'klibc: >> Compiling...'
 	ln -snf "${KERNEL_DIR}" linux || gen_die "Could not link to ${KERNEL_DIR}"
-	sed -i MCONFIG -e "s|prefix      =.*|prefix      = ${TEMP}/klibc-build|g"
-	# PPC fixup for 2.6.14
-	if [ "${VER}" -eq '2' -a "${PAT}" -eq '6' -a "${SUB}" -ge '14' ]
-        then
-		if [ "${ARCH}" = 'ppc' -o "${ARCH}" = 'ppc64' ]
-        	then
-			# Headers are moving around .. need to make them available
-			echo 'INCLUDE += -I$(KRNLSRC)/arch/$(ARCH)/include' >> MCONFIG
-		fi
-	fi
+	sed -i Makefile -e "s|prefix      = /usr|prefix      = ${TEMP}/klibc-build|g"
 	if [ "${ARCH}" = 'um' ]
 	then
 		compile_generic "ARCH=um" utils
