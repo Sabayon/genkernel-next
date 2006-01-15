@@ -41,6 +41,7 @@ longusage() {
   echo "	--no-devfs		Disable devfs support"
   echo "	--callback=<...>	Run the specified arguments after the"
   echo "				kernel and modules have been compiled"
+  echo "	--static		Build a static (monolithic kernel)."
   echo "  Kernel settings"
   echo "	--kerneldir=<dir>	Location of the kernel sources"
   echo "	--kernel-config=<file>	Kernel configuration file to use for compilation"
@@ -353,6 +354,10 @@ parse_cmdline() {
 	      --callback=*)
 		      CMD_CALLBACK=`parse_opt "$*"`
 		      print_info 2 "CMD_CALLBACK: $CMD_CALLBACK/$*"
+	      ;;
+	      --static)
+		      CMD_STATIC=1
+		      print_info 2 "CMD_STATIC: $CMD_STATIC"
 	      ;;
 	      --tempdir=*)
 		      TEMP=`parse_opt "$*"`

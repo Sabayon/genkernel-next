@@ -217,7 +217,7 @@ then
 	[ "${GENERATE_Z_IMAGE}" = '' -a "${MIPS_EMBEDDED_IMAGE}" = '' ] && compile_kernel
 
 	# Compile modules
-	if [ ${BUILD_MODULES} -eq 1 ]
+	if [ ${BUILD_MODULES} -eq 1 -a ${BUILD_STATIC} -eq 0 ]
 	then
 		compile_modules
 	fi
@@ -247,7 +247,7 @@ fi
 
 if [ "${KERNCACHE}" != "" -a "${KERNCACHE_IS_VALID}" != "0" ] 
 then
-	gen_kerncache_extract_modules
+	[ ${BUILD_STATIC} -eq 0 ] && gen_kerncache_extract_modules
 	gen_kerncache_extract_config
 fi
 
@@ -293,9 +293,9 @@ then
 		if [ "${KERN_24}" != '1' ]
 		then
 			# Compile module-init-tools
-			compile_module_init_tools
+			[ ${BUILD_STATIC} -eq 0 ] && compile_module_init_tools
 		else
-			compile_modutils
+			[ ${BUILD_STATIC} -eq 0 ] && compile_modutils
 		fi
 	fi
 	

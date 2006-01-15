@@ -298,6 +298,18 @@ determine_real_args() {
 		MOUNTBOOT=0
 	fi
 
+	if [ "${CMD_STATIC}" != '' ]
+	then
+		BUILD_STATIC=${CMD_STATIC}
+	fi
+
+	if isTrue ${BUILD_STATIC}
+	then
+		BUILD_STATIC=1
+	else
+		BUILD_STATIC=0
+	fi
+
 	if [ "${CMD_SAVE_CONFIG}" != '' ]
 	then
 		SAVE_CONFIG="${CMD_SAVE_CONFIG}"
