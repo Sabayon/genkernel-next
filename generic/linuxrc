@@ -28,7 +28,7 @@ mount -t proc proc /proc
 # # activate suspend2
 # if [ -w /proc/suspend2/do_resume ]
 # then
-#	echo "${GOOD}>>${NORMAL}${BOLD} Activating suspend2 resume..."
+#	echo -e "${GOOD}>>${NORMAL}${BOLD} Activating suspend2 resume..."
 #	echo > /proc/suspend2/do_resume
 # fi
 
