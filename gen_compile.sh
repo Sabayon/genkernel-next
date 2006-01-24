@@ -30,6 +30,10 @@ compile_utils_args()
 	local ARGS
 
 	ARGS=''
+	if [ "${UTILS_ARCH}" != '' ]
+	then
+		ARGS="ARCH=\"${UTILS_ARCH}\""
+	fi
 	if [ "${UTILS_CC}" != '' ]
 	then
 		ARGS="CC=\"${UTILS_CC}\""
@@ -48,6 +52,10 @@ compile_utils_args()
 
 export_utils_args()
 {
+	if [ "${UTILS_ARCH}" != '' ]
+	then
+		export ARCH="${UTILS_ARCH}"
+	fi
 	if [ "${UTILS_CC}" != '' ]
 	then
 		export CC="${UTILS_CC}"
@@ -64,6 +72,10 @@ export_utils_args()
 
 unset_utils_args()
 {
+	if [ "${UTILS_ARCH}" != '' ]
+	then
+		unset ARCH
+	fi
 	if [ "${UTILS_CC}" != '' ]
 	then
 		unset CC
@@ -720,6 +732,10 @@ compile_klibc() {
 	print_info 1 'klibc: >> Compiling...'
 	ln -snf "${KERNEL_DIR}" linux || gen_die "Could not link to ${KERNEL_DIR}"
 	sed -i Makefile -e "s|prefix      = /usr|prefix      = ${TEMP}/klibc-build|g"
+	if [ "${UTILS_ARCH}" != '' ]
+	then
+		sed -i Makefile -e "s|export ARCH.*|export ARCH := ${UTILS_ARCH}|g"
+	fi
 	if [ "${ARCH}" = 'um' ]
 	then
 		compile_generic "ARCH=um" utils
@@ -729,9 +745,9 @@ compile_klibc() {
 	elif [ "${ARCH}" = 'x86' ]
 	then
 		compile_generic "ARCH=i386" utils
-	elif [ "${KERNEL_CROSS_COMPILE}" != '' ]
+	elif [ "${UTILS_CROSS_COMPILE}" != '' ]
 	then
-		compile_generic "CROSS=${KERNEL_CROSS_COMPILE}" utils
+		compile_generic "CROSS=${UTILS_CROSS_COMPILE}" utils
 	else
 		compile_generic "" utils
 	fi

@@ -57,6 +57,8 @@ longusage() {
   echo "	--utils-as=<assembler>	Assembler to use for utils"
   echo "	--utils-ld=<linker>	Linker to use for utils"
   echo "	--utils-make=<makeprog>	GNU Make to use for utils"
+  echo "	--utils-cross-compile=<cross var> CROSS_COMPILE utils variable"
+  echo "	--utils-arch=<arch> 	Force to arch for utils only instead of autodetect."
   echo "	--makeopts=<makeopts>	Make options such as -j2, etc..."
   echo "	--mountboot		Mount /boot automatically"
   echo "	--no-mountboot		Don't mount /boot automatically"  
@@ -158,6 +160,15 @@ parse_cmdline() {
 	      --utils-make=*)
 		      CMD_UTILS_MAKE=`parse_opt "$*"`
 		      print_info 2 "CMD_UTILS_MAKE: $CMD_UTILS_MAKE"
+	      ;;
+	      --utils-cross-compile=*)
+		      CMD_UTILS_CROSS_COMPILE=`parse_opt "$*"`
+		      CMD_UTILS_CROSS_COMPILE=$(echo ${CMD_UTILS_CROSS_COMPILE}|sed -e 's/.*[^-]$/&-/g')
+		      print_info 2 "CMD_UTILS_CROSS_COMPILE: $CMD_UTILS_CROSS_COMPILE"
+	      ;;
+	      --utils-arch=*)
+		      CMD_UTILS_ARCH=`parse_opt "$*"`
+		      print_info 2 "CMD_UTILS_ARCH: $CMD_ARCHOVERRIDE"
 	      ;;
 	      --makeopts=*)
 		      CMD_MAKEOPTS=`parse_opt "$*"`

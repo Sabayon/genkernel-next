@@ -167,6 +167,11 @@ determine_real_args() {
 		UTILS_AS="${CMD_UTILS_AS}"
 	fi
 	
+	if [ "${CMD_UTILS_CROSS_COMPILE}" != '' ]
+	then
+		UTILS_CROSS_COMPILE="${CMD_UTILS_CROSS_COMPILE}"
+	fi
+
 	CACHE_DIR=`arch_replace "${CACHE_DIR}"`
 	CACHE_CPIO_DIR="${CACHE_DIR}/cpio"
 	BUSYBOX_BINCACHE=`cache_replace "${BUSYBOX_BINCACHE}"`
