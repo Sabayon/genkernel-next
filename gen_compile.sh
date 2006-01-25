@@ -726,6 +726,12 @@ compile_klibc() {
 	[ ! -d "${KLIBC_DIR}" ] &&
 		gen_die "klibc tarball ${KLIBC_SRCTAR} is invalid"
 	cd "${KLIBC_DIR}"
+	if [ -f ${GK_SHARE}/pkg/klibc-1.1.16-sparc2.patch ]
+	then
+		patch -p1 -i \
+			${GK_SHARE}/pkg/klibc-1.1.16-sparc2.patch \
+			|| gen_die "Failed patching klibc"
+	fi
 
 	# Don't install to "//lib" fix
 	sed -e 's:SHLIBDIR = /lib:SHLIBDIR = $(INSTALLROOT)$(INSTALLDIR)/$(KLIBCCROSS)lib:' -i scripts/Kbuild.install
@@ -739,9 +745,6 @@ compile_klibc() {
 	if [ "${ARCH}" = 'um' ]
 	then
 		compile_generic "ARCH=um" utils
-	elif [ "${ARCH}" = 'sparc64' ]
-	then
-		compile_generic "ARCH=sparc64 CROSS=sparc64-unknown-linux-gnu-" utils
 	elif [ "${ARCH}" = 'x86' ]
 	then
 		compile_generic "ARCH=i386" utils
@@ -784,6 +787,11 @@ compile_udev() {
     		# No selinux support yet .. someday maybe
 		#use selinux && myconf="${myconf} USE_SELINUX=true"
 		print_info 1 'udev: >> Compiling...'
+		# SPARC fixup
+		if [ "${UTILS_ARCH}" = 'sparc' ]
+		then
+			echo "CFLAGS += -mcpu=v8 -mtune=v8" >> Makefile
+		fi
 		# PPC fixup for 2.6.14
 		if [ "${VER}" -eq '2' -a "${PAT}" -eq '6' -a "${SUB}" -ge '14' ]
         	then
@@ -797,9 +805,6 @@ compile_udev() {
 		if [ "${ARCH}" = 'um' ]
 		then
 			compile_generic "EXTRAS=\"${extras}\" ARCH=um USE_KLIBC=true KLCC=${TEMP}/klibc-build/bin/klcc USE_LOG=false DEBUG=false udevdir=/dev all" utils
-		elif [ "${ARCH}" = 'sparc64' ]
-		then
-			compile_generic "EXTRAS=\"${extras}\" ARCH=sparc64 CROSS=sparc64-unknown-linux-gnu- USE_KLIBC=true KLCC=${TEMP}/klibc-build/bin/klcc USE_LOG=false DEBUG=false udevdir=/dev all" utils
 		else
 			# This *needs* to be runtask, or else it breakson most
 			# architectures.  -- wolf31o2
