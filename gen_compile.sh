@@ -161,22 +161,27 @@ reset_args()
 	if [ "${ORIG_ARCH}" != '' ]
 	then
 		export ARCH="${ORIG_ARCH}"
+		unset ORIG_ARCH
 	fi
 	if [ "${ORIG_CC}" != '' ]
 	then
 		export CC="${ORIG_CC}"
+		unset ORIG_CC
 	fi
 	if [ "${ORIG_LD}" != '' ]
 	then
 		export LD="${ORIG_LD}"
+		unset ORIG_LD
 	fi
 	if [ "${ORIG_AS}" != '' ]
 	then
 		export AS="${ORIG_AS}"
+		unset ORIG_AS
 	fi
 	if [ "${ORIG_CROSS_COMPILE}" != '' ]
 	then
 		export CROSS_COMPILE="${ORIG_CROSS_COMPILE}"
+		unset ORIG_CROSS_COMPILE
 	fi
 }
 
