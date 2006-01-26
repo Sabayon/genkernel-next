@@ -52,6 +52,7 @@ compile_utils_args()
 
 export_utils_args()
 {
+	save_args
 	if [ "${UTILS_ARCH}" != '' ]
 	then
 		export ARCH="${UTILS_ARCH}"
@@ -88,10 +89,12 @@ unset_utils_args()
 	then
 		unset AS
 	fi
+	reset_args
 }
 
 export_kernel_args()
 {
+	save_args
 	if [ "${KERNEL_CC}" != '' ]
 	then
 		export CC="${KERNEL_CC}"
@@ -127,6 +130,53 @@ unset_kernel_args()
 	if [ "${KERNEL_CROSS_COMPILE}" != '' ]
 	then
 		unset CROSS_COMPILE
+	fi
+	reset_args
+}
+save_args()
+{
+	if [ "${ARCH}" != '' ]
+	then
+		export ORIG_ARCH="${ARCH}"
+	fi
+	if [ "${CC}" != '' ]
+	then
+		export ORIG_CC="${CC}"
+	fi
+	if [ "${LD}" != '' ]
+	then
+		export ORIG_LD="${LD}"
+	fi
+	if [ "${AS}" != '' ]
+	then
+		export ORIG_AS="${AS}"
+	fi
+	if [ "${CROSS_COMPILE}" != '' ]
+	then
+		export ORIG_CROSS_COMPILE="${CROSS_COMPILE}"
+	fi
+}
+reset_args()
+{
+	if [ "${ORIG_ARCH}" != '' ]
+	then
+		export ARCH="${ORIG_ARCH}"
+	fi
+	if [ "${ORIG_CC}" != '' ]
+	then
+		export CC="${ORIG_CC}"
+	fi
+	if [ "${ORIG_LD}" != '' ]
+	then
+		export LD="${ORIG_LD}"
+	fi
+	if [ "${ORIG_AS}" != '' ]
+	then
+		export AS="${ORIG_AS}"
+	fi
+	if [ "${ORIG_CROSS_COMPILE}" != '' ]
+	then
+		export CROSS_COMPILE="${ORIG_CROSS_COMPILE}"
 	fi
 }
 

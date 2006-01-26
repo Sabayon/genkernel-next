@@ -32,7 +32,7 @@ create_base_layout_cpio() {
 
 	# SGI LiveCDs need the following binary (no better place for it than here)
 	# getdvhoff is a DEPEND of genkernel, so it *should* exist
-	if [ "${MIPS_EMBEDDED_IMAGE}" != '' -a "${MIPS_LIVECD}" != '']
+	if [ "${MIPS_EMBEDDED_IMAGE}" != '' -a "${MIPS_LIVECD}" != '' ]
 	then
 		[ -e /usr/lib/getdvhoff/getdvhoff ] \
 			&& cp /usr/lib/getdvhoff/getdvhoff ${TEMP}/initramfs-base-temp/bin \
