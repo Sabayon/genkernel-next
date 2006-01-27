@@ -94,7 +94,6 @@ unset_utils_args()
 
 export_kernel_args()
 {
-	save_args
 	if [ "${KERNEL_CC}" != '' ]
 	then
 		export CC="${KERNEL_CC}"
@@ -131,7 +130,6 @@ unset_kernel_args()
 	then
 		unset CROSS_COMPILE
 	fi
-	reset_args
 }
 save_args()
 {
