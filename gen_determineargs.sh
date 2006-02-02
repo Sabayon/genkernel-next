@@ -315,6 +315,18 @@ determine_real_args() {
 		BUILD_STATIC=0
 	fi
 
+	if [ "${CMD_INITRAMFS}" != '' ]
+	then
+		BUILD_INITRAMFS=${CMD_INITRAMFS}
+	fi
+
+	if isTrue ${BUILD_INITRAMFS}
+	then
+		BUILD_INITRAMFS=1
+	else
+		BUILD_INITRAMFS=0
+	fi
+
 	if [ "${CMD_SAVE_CONFIG}" != '' ]
 	then
 		SAVE_CONFIG="${CMD_SAVE_CONFIG}"

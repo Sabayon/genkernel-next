@@ -2,7 +2,7 @@
 # Genkernel v3
 
 PATH="/bin:/usr/bin:/sbin:/usr/sbin"
-GK_V='3.3.11_pre7'
+GK_V='3.3.11_pre8'
 
 TMPDIR='/var/tmp/genkernel'
 TODEBUGCACHE=1 # Until an error occurs or DEBUGFILE is fully qualified.
@@ -214,7 +214,7 @@ then
 
 	# Compile kernel; If using --genzimage, or building a mips kernel, skip compile
 	# till after initrd/initramfs is done
-	[ "${GENERATE_Z_IMAGE}" = '' -a "${MIPS_EMBEDDED_IMAGE}" = '' ] && compile_kernel
+	[ "${GENERATE_Z_IMAGE}" = '' -a ${BUILD_INITRAMFS} -eq 0 ] && compile_kernel
 
 	# Compile modules
 	if [ ${BUILD_MODULES} -eq 1 -a ${BUILD_STATIC} -eq 0 ]
@@ -230,7 +230,7 @@ then
 	fi
 	if [ "${KERNCACHE}" != "" ]
 	then
-		if [ "${GENERATE_Z_IMAGE}" = '' -a "${MIPS_EMBEDDED_IMAGE}" = '' ]
+		if [ "${GENERATE_Z_IMAGE}" = '' -a ${BUILD_INITRAMFS} -eq 0 ]
 		then
 			gen_kerncache
 		fi
@@ -330,7 +330,7 @@ else
 fi
 
 # Pegasos fix
-if [ "${GENERATE_Z_IMAGE}" != '' -o "${MIPS_EMBEDDED_IMAGE}" != '' ]
+if [ "${GENERATE_Z_IMAGE}" != '' -o ${BUILD_INITRAMFS} -eq 1 ]
 then
 	# Compile kernel, intergrating the initrd into it for Pegasos & mips
 	compile_kernel

@@ -32,7 +32,7 @@ create_base_layout_cpio() {
 
 	# SGI LiveCDs need the following binary (no better place for it than here)
 	# getdvhoff is a DEPEND of genkernel, so it *should* exist
-	if [ "${MIPS_EMBEDDED_IMAGE}" != '' -a "${MIPS_LIVECD}" != '' ]
+	if [ ${BUILD_INITRAMFS} -eq 1 -a "${MIPS_LIVECD}" != '' ]
 	then
 		[ -e /usr/lib/getdvhoff/getdvhoff ] \
 			&& cp /usr/lib/getdvhoff/getdvhoff ${TEMP}/initramfs-base-temp/bin \
@@ -519,7 +519,7 @@ merge_initramfs_cpio_archives(){
 			rm ${TMPDIR}/initramfs-${KV}
 
 	# Mips also mimics Pegasos to merge the initramfs into the kernel
-	if [ "${MIPS_EMBEDDED_IMAGE}" != '' ]; then
+	if [ ${BUILD_INITRAMFS} -eq 1 ]; then
 		cp ${TMPDIR}/initramfs-${KV} ${KERNEL_DIR}/initramfs.cpio.gz
 		gunzip -f ${KERNEL_DIR}/initramfs.cpio.gz
 	fi

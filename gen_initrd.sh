@@ -55,7 +55,7 @@ create_base_initrd_sys() {
 
 	# SGI LiveCDs need the following binary (no better place for it than here)
 	# getdvhoff is a DEPEND of genkernel, so it *should* exist
-	if [ "${MIPS_EMBEDDED_IMAGE}" != '' ]
+	if [ ${BUILD_INITRAMFS} -eq 1 ]
 	then
 		[ -e /usr/lib/getdvhoff/getdvhoff ] \
 			&& cp /usr/lib/getdvhoff/getdvhoff ${TEMP}/initrd-temp/bin \
@@ -401,6 +401,6 @@ create_initrd() {
 		rm ${TMPDIR}/initrd-${KV}
 
 	# Mips also mimics Pegasos to merge the initrd into the kernel
-	[ "${MIPS_EMBEDDED_IMAGE}" != '' ] \
+	[ ${BUILD_INITRAMFS} -eq 1 ] \
 		&& cp ${TMPDIR}/initrd-${KV} ${KERNEL_DIR}/mips/ramdisk/initrd.img.gz
 }
