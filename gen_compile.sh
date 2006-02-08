@@ -774,7 +774,7 @@ compile_klibc() {
 	rm -rf "${KLIBC_DIR}" klibc-build
 	[ ! -f "${KLIBC_SRCTAR}" ] &&
 		gen_die "Could not find klibc tarball: ${KLIBC_SRCTAR}"
-	/bin/tar zxpf "${KLIBC_SRCTAR}" ||
+	/bin/tar jxpf "${KLIBC_SRCTAR}" ||
 		gen_die 'Could not extract klibc tarball'
 	[ ! -d "${KLIBC_DIR}" ] &&
 		gen_die "klibc tarball ${KLIBC_SRCTAR} is invalid"
