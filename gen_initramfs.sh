@@ -19,7 +19,7 @@ create_base_layout_cpio() {
 	mkdir -p ${TEMP}/initramfs-base-temp/usr/sbin
 	ln -s  ../lib  ${TEMP}/initramfs-base-temp/lib64
 
-	echo "/dev/ram0     /           ext2    defaults" > ${TEMP}/initramfs-base-temp/etc/fstab
+	echo "/dev/ram0     /           ext2    defaults	0 0" > ${TEMP}/initramfs-base-temp/etc/fstab
 	echo "proc          /proc       proc    defaults    0 0" >> ${TEMP}/initramfs-base-temp/etc/fstab
 	
 	if [ "${DEVFS}" -eq '1' ]

@@ -42,7 +42,7 @@ create_base_initrd_sys() {
 	ln -s ../bin ${TEMP}/initrd-temp/usr/bin
 	ln -s ../bin ${TEMP}/initrd-temp/usr/sbin
 
-	echo "/dev/ram0     /           ext2    defaults" > ${TEMP}/initrd-temp/etc/fstab
+	echo "/dev/ram0     /           ext2    defaults	0 0" > ${TEMP}/initrd-temp/etc/fstab
 	echo "proc          /proc       proc    defaults    0 0" >> ${TEMP}/initrd-temp/etc/fstab
 
 	if [ "${NODEVFSD}" = '' ]
