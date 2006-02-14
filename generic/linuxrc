@@ -1,7 +1,6 @@
 #!/bin/sh
-# Daniel Robbins <drobbins@gentoo.org>
-# Copyright 2003 Gentoo Technologies, Inc.
-# Distributed under the GPL
+# Copyright 2003-2006 Gentoo Foundation 
+# Distributed under the terms of the GNU General Public License v2
 
 . /etc/initrd.defaults
 . /etc/initrd.scripts
