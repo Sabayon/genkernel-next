@@ -230,6 +230,9 @@ fi
 # Mount sysfs
 mount_sysfs
 
+# Delay if needed for USB hardware
+sdelay
+
 # Start udev/devfs
 start_dev_mgr
 
@@ -281,8 +284,6 @@ then
 	then
 	    cp /dev/tty1 ${NEW_ROOT}/dev
 	fi
-
-	sdelay
 
 	if [ "${REAL_ROOT}" != "/dev/nfs" ] && [ "${LOOPTYPE}" != "sgimips" ]
 	then
