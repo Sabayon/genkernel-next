@@ -785,6 +785,12 @@ compile_klibc() {
 			${GK_SHARE}/pkg/klibc-1.1.16-sparc2.patch \
 			|| gen_die "Failed patching klibc"
 	fi
+	if [ -f "${GK_SHARE}/pkg/klibc-1.2.1-nostdinc-flags.patch" ]
+	then
+		patch -p1 -i \
+			${GK_SHARE}/pkg/klibc-1.2.1-nostdinc-flags.patch \
+			|| gen_die "Failed patching klibc"
+	fi
 
 	# Don't install to "//lib" fix
 	sed -e 's:SHLIBDIR = /lib:SHLIBDIR = $(INSTALLROOT)$(INSTALLDIR)/$(KLIBCCROSS)lib:' -i scripts/Kbuild.install

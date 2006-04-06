@@ -1,0 +1,22 @@
+--- klibc-1.2.1/Makefile	2006-02-07 10:14:05.000000000 +0200
++++ klibc-1.2.1.az/Makefile	2006-02-07 10:14:11.000000000 +0200
+@@ -12,7 +12,7 @@
+ include scripts/Kbuild.include
+ 
+ export CC      := gcc
+-NOSTDINC_FLAGS := -nostdlib -nostdinc -isystem $(shell $(CC) -print-file-name=include)
++export NOSTDINC_FLAGS := -nostdlib -nostdinc -isystem $(shell $(CC) -print-file-name=include)
+ 
+ export ARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/parisc64/parisc/ -e s/sun4u/sparc64/ -e s/arm.*/arm/ -e s/sa110/arm/)
+ 
+--- klibc-1.2.1/klcc/Kbuild	2006-02-07 10:26:11.000000000 +0200
++++ klibc-1.2.1.az/klcc/Kbuild	2006-02-07 10:28:16.000000000 +0200
+@@ -14,7 +14,7 @@
+ 	$(Q)echo 'KCROSS=$(KCROSS)' >> $@
+ 	$(Q)echo 'CC=$(KLIBCCC)' >> $@
+ 	$(Q)echo 'LD=$(KLIBCLD)' >> $@
+-	$(Q)echo 'REQFLAGS=$(filter-out -I%,$(KLIBCDEFS) $(KLIBCREQFLAGS) $(KLIBCARCHREQFLAGS))' >> $@
++	$(Q)echo 'REQFLAGS=$(NOSTDINC_FLAGS) $(filter-out -I%,$(KLIBCDEFS) $(KLIBCREQFLAGS) $(KLIBCARCHREQFLAGS))' >> $@
+ 	$(Q)echo 'OPTFLAGS=$(KLIBCOPTFLAGS)' >> $@
+ 	$(Q)echo 'LDFLAGS=$(KLIBCLDFLAGS)' >> $@
+ 	$(Q)echo 'STRIP=$(KLIBCSTRIP)' >> $@
