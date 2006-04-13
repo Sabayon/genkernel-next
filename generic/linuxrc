@@ -25,12 +25,12 @@ fi
 mount -o remount,rw /
 mount -t proc proc /proc
 
-# # activate suspend2
-# if [ -w /proc/suspend2/do_resume ]
-# then
-#	echo -e "${GOOD}>>${NORMAL}${BOLD} Activating suspend2 resume..."
-#	echo > /proc/suspend2/do_resume
-# fi
+# activate suspend2
+if [ -w /proc/suspend2/do_resume ]
+then
+	echo -e "${GOOD}>>${NORMAL}${BOLD} Activating suspend2 resume..."
+	echo > /proc/suspend2/do_resume
+fi
 
 # Set up symlinks
 if [ "$0" = '/init' ]
