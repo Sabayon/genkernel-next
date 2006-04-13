@@ -8,6 +8,7 @@
 splash() {
 	return 0
 }
+
 [ -e /etc/initrd.splash ] && . /etc/initrd.splash
 
 # Clean input/output
@@ -34,29 +35,28 @@ mount -t proc proc /proc
 # Set up symlinks
 if [ "$0" = '/init' ]
 then
-    /bin/busybox --install -s
+	/bin/busybox --install -s
 
-    [ -e /linuxrc ] && rm /linuxrc
-     
-    if [ -e /sbin/udev ]
-    then
-    	if [ ! -e /sbin/udevstart ]
+	[ -e /linuxrc ] && rm /linuxrc
+	 
+	if [ -e /sbin/udev ]
 	then
-		ln -s /sbin/udev /sbin/udevstart
+		if [ ! -e /sbin/udevstart ]
+		then
+			ln -s /sbin/udev /sbin/udevstart
+		fi
+		
+		if [ ! -e /sbin/udevsend ]
+		then
+			ln -s /sbin/udev /sbin/udevsend
+		fi
 	fi
-    	
-	if [ ! -e /sbin/udevsend ]
+
+	if [ -e /bin/lvm ]
 	then
-		ln -s /sbin/udev /sbin/udevsend
+		ln -s /bin/lvm /bin/vgscan
+		ln -s /bin/lvm /bin/vgchange
 	fi
-
-    fi
-
-    if [ -e /bin/lvm ]
-    then
-	ln -s /bin/lvm /bin/vgscan
-	ln -s /bin/lvm /bin/vgchange
-    fi
 fi
 
 quiet_kmsg
@@ -66,136 +66,126 @@ CMDLINE="`cat /proc/cmdline`"
 REAL_ROOT=''
 for x in ${CMDLINE}
 do
-  case "${x}" in
-      real_root\=*)
-	  REAL_ROOT=`parse_opt "${x}"`
-	  ;;
-      subdir\=*)
-	  SUBDIR=`parse_opt "${x}"`
-	  ;;
-      real_init\=*)
-	  REAL_INIT=`parse_opt "${x}"`
-	  ;;
-	    
-      # Livecd options
-      cdroot)
-	  CDROOT=1
-	  ;;
-      cdroot\=*)
-	  CDROOT=1
-	  CDROOT_DEV=`parse_opt "${x}"`
-	  ;;
-
-      # Start livecd loop and looptype options
-      loop\=*)
-	  LOOP=`parse_opt "${x}"`
-	  ;;
-      looptype\=*)
-	  LOOPTYPE=`parse_opt "${x}"`
-	  ;;
-
-      # Start Device Manager options 
-      devfs)
-	  USE_DEVFS_NORMAL=1
-	  USE_UDEV_NORMAL=0
-	  ;;
-      udev)
-	  USE_DEVFS_NORMAL=0
-	  USE_UDEV_NORMAL=1
-	  ;;
-      unionfs)
-	  if [ ! -x /sbin/unionctl ]
-	  then
-	      USE_UNIONFS_NORMAL=0
-	      bad_msg 'Unionctl not found: aborting use of unionfs!'
-	  else
-	      USE_UNIONFS_NORMAL=1
-	  fi
-	  ;;
-      unionfs\=*)
-	  if [ ! -x /sbin/unionctl ]
-	  then
-	      USE_UNIONFS_NORMAL=0
-	      bad_msg 'Unionctl not found: aborting use of unionfs!'
-	  else
-		USE_UNIONFS_NORMAL=1
-		CMD_UNIONFS=`parse_opt "${x}"`
-		echo ${CMD_UNIONFS}|grep , >/dev/null 2>&1
-		if [ "$?" -eq '0' ]
-		then
-			UID=`echo ${CMD_UNIONFS#*,}`
-			UNIONFS=`echo ${CMD_UNIONFS%,*}`
-		else
-			UNIONFS=${CMD_UNIONFS}
-		fi
-	  fi
-	  ;;
-
-      # Start Volume manager options 
-      dolvm2)
-	  USE_LVM2_NORMAL=1
-	  ;;
-      dodmraid)
-	  USE_DMRAID_NORMAL=1
-	  ;;
-      dodmraid\=*)
-	  DMRAID_OPTS=`parse_opt "${x}"`
-	  USE_DMRAID_NORMAL=1
-	  ;;
-      doevms2)
-	  USE_EVMS2_NORMAL=1
-	  ;;
-      # Debug Options
-      debug)
-	  DEBUG='yes'
-	  ;;
-
-      # Scan delay options 
-      scandelay\=*)
-	  SDELAY=`parse_opt "${x}"`
-	  ;;
-      scandelay)
-	  SDELAY=10
-	  ;;
-
-      # Module no-loads
-      doload\=*)
-          MDOLIST=`parse_opt "${x}"`
-          MDOLIST="`echo ${MDOLIST} | sed -e \"s/,/ /g\"`"
-          ;;
-      nodetect)
-          NODETECT=1
-          ;;
-      noload\=*)
-	  MLIST=`parse_opt "${x}"`
-	  MLIST="`echo ${MLIST} | sed -e \"s/,/ /g\"`"
-	  export MLIST
-	  ;;
-
-      # Redirect output to a specific tty
-      CONSOLE\=*)
-      	  CONSOLE=`parse_opt "${x}"`
-	  exec >${CONSOLE} <${CONSOLE} 2>&1
-	  ;;
-
-      # /dev/md
-      lvmraid\=*)
-	  RAID_DEVICES="`parse_opt ${x}`"
-	  RAID_DEVICES="`echo ${RAID_DEVICES} | sed -e 's/,/ /g'`"
-	  ;;
-
-      part\=*)
-          MDPART=`parse_opt "${x}"`
-          ;;
-
-      # NFS
-      ip\=*)
-          IP=`parse_opt "${x}"`
-          ;;
-      nfsroot\=*)
-          NFSROOT=`parse_opt "${x}"`
-          ;;
-  esac
+	case "${x}" in
+		real_root\=*)
+			REAL_ROOT=`parse_opt "${x}"`
+		;;
+		subdir\=*)
+			SUBDIR=`parse_opt "${x}"`
+		;;
+		real_init\=*)
+			REAL_INIT=`parse_opt "${x}"`
+		;;
+		# Livecd options
+		cdroot)
+			CDROOT=1
+		;;
+		cdroot\=*)
+			CDROOT=1
+			CDROOT_DEV=`parse_opt "${x}"`
+		;;
+		# Start livecd loop and looptype options
+		loop\=*)
+			LOOP=`parse_opt "${x}"`
+		;;
+		looptype\=*)
+			LOOPTYPE=`parse_opt "${x}"`
+		;;
+		# Start Device Manager options 
+		devfs)
+			USE_DEVFS_NORMAL=1
+			USE_UDEV_NORMAL=0
+		;;
+		udev)
+			USE_DEVFS_NORMAL=0
+			USE_UDEV_NORMAL=1
+		;;
+		unionfs)
+			if [ ! -x /sbin/unionctl ]
+			then
+				USE_UNIONFS_NORMAL=0
+				bad_msg 'Unionctl not found: aborting use of unionfs!'
+			else
+				USE_UNIONFS_NORMAL=1
+			fi
+		;;
+		unionfs\=*)
+			if [ ! -x /sbin/unionctl ]
+			then
+				USE_UNIONFS_NORMAL=0
+				bad_msg 'Unionctl not found: aborting use of unionfs!'
+			else
+				USE_UNIONFS_NORMAL=1
+				CMD_UNIONFS=`parse_opt "${x}"`
+				echo ${CMD_UNIONFS}|grep , >/dev/null 2>&1
+				if [ "$?" -eq '0' ]
+				then
+					UID=`echo ${CMD_UNIONFS#*,}`
+					UNIONFS=`echo ${CMD_UNIONFS%,*}`
+				else
+					UNIONFS=${CMD_UNIONFS}
+				fi
+			fi
+		;;
+		# Start Volume manager options 
+		dolvm2)
+			USE_LVM2_NORMAL=1
+		;;
+		dodmraid)
+			USE_DMRAID_NORMAL=1
+		;;
+		dodmraid\=*)
+			DMRAID_OPTS=`parse_opt "${x}"`
+			USE_DMRAID_NORMAL=1
+		;;
+		doevms2)
+			USE_EVMS2_NORMAL=1
+		;;
+		# Debug Options
+		debug)
+			DEBUG='yes'
+		;;
+		 # Scan delay options 
+		scandelay\=*)
+			SDELAY=`parse_opt "${x}"`
+		;;
+		scandelay)
+			SDELAY=10
+		;;
+		# Module no-loads
+		doload\=*)
+			MDOLIST=`parse_opt "${x}"`
+			MDOLIST="`echo ${MDOLIST} | sed -e \"s/,/ /g\"`"
+		;;
+		nodetect)
+			NODETECT=1
+		;;
+		noload\=*)
+			MLIST=`parse_opt "${x}"`
+			MLIST="`echo ${MLIST} | sed -e \"s/,/ /g\"`"
+			export MLIST
+		;;
+		# Redirect output to a specific tty
+		CONSOLE\=*)
+			CONSOLE=`parse_opt "${x}"`
+			exec >${CONSOLE} <${CONSOLE} 2>&1
+		;;
+		# /dev/md
+		lvmraid\=*)
+			RAID_DEVICES="`parse_opt ${x}`"
+			RAID_DEVICES="`echo ${RAID_DEVICES} | sed -e 's/,/ /g'`"
+		;;
+		part\=*)
+			MDPART=`parse_opt "${x}"`
+		;;
+		# NFS
+		ip\=*)
+			IP=`parse_opt "${x}"`
+		;;
+		nfsroot\=*)
+			NFSROOT=`parse_opt "${x}"`
+		;;
+	esac
 done
 
 splash 'init'
@@ -206,25 +196,24 @@ cmdline_hwopts
 # Load modules listed in MY_HWOPTS if /lib/modules exists
 if [ -d '/lib/modules' ]
 then
-    good_msg 'Loading modules'
-    # Load appropriate kernel modules
-    if [ "${NODETECT}" -ne '1' ]
-    then
-      for modules in $MY_HWOPTS
-      do
-        modules_scan $modules
-        eval DO_`echo $modules | sed 's/-//'`=1
-      done
-    fi
-
-    # Always eval doload=...
-    modules_load $MDOLIST
+	good_msg 'Loading modules'
+	# Load appropriate kernel modules
+	if [ "${NODETECT}" -ne '1' ]
+	then
+		for modules in $MY_HWOPTS
+		do
+			modules_scan $modules
+			eval DO_`echo $modules | sed 's/-//'`=1
+		done
+	fi
+	# Always eval doload=...
+	modules_load $MDOLIST
 else
-    for modules in $MY_HWOPTS
-    do
-      eval DO_`echo $modules | sed 's/-//'`=1
-    done
-    good_msg 'Skipping module load; no modules in the initrd!'
+	for modules in $MY_HWOPTS
+	do
+		eval DO_`echo $modules | sed 's/-//'`=1
+	done
+	good_msg 'Skipping module load; no modules in the initrd!'
 fi
 
 # Mount sysfs
@@ -279,10 +268,11 @@ then
 		cp /dev/loop0 ${NEW_ROOT}/dev
 	fi
 
-	# Required for gensplash to work.  Not an issue with the initrd as this device isnt created there and is not needed.
+	# Required for gensplash to work.  Not an issue with the initrd as this
+	# device isnt created there and is not needed.
 	if [ -e /dev/tty1 ]
 	then
-	    cp /dev/tty1 ${NEW_ROOT}/dev
+		cp /dev/tty1 ${NEW_ROOT}/dev
 	fi
 
 	if [ "${REAL_ROOT}" != "/dev/nfs" ] && [ "${LOOPTYPE}" != "sgimips" ]
@@ -441,16 +431,16 @@ then
 		if [ -e "${NEW_ROOT}/mnt/cdrom/livecd.loop" ]; then
 			LOOP='/livecd.loop'
 			LOOPTYPE='normal'
-                elif [ -e "${NEW_ROOT}/mnt/cdrom/zisofs" ]; then
+				elif [ -e "${NEW_ROOT}/mnt/cdrom/zisofs" ]; then
 			LOOP='/zisofs'
 			LOOPTYPE='zisofs'
-                elif [ -e "${NEW_ROOT}/mnt/cdrom/livecd.squashfs" ]; then
+				elif [ -e "${NEW_ROOT}/mnt/cdrom/livecd.squashfs" ]; then
 			LOOP='/livecd.squashfs'
 			LOOPTYPE='squashfs'
-                elif [ -e "${NEW_ROOT}/mnt/cdrom/livecd.gcloop" ]; then
+				elif [ -e "${NEW_ROOT}/mnt/cdrom/livecd.gcloop" ]; then
 			LOOP='/livecd.gcloop'
 			LOOPTYPE='gcloop'
-                else
+				else
 			LOOPTYPE='noloop'
 		fi
 	fi
@@ -637,8 +627,8 @@ cdupdate
 
 if [ "${SUBDIR}" != '' -a -e "${CHROOT}/${SUBDIR}" ]
 then
-    good_msg"Entering ${SUBDIR} to boot"
-    CHROOT=${CHROOT}/${SUBDIR}
+	good_msg"Entering ${SUBDIR} to boot"
+	CHROOT=${CHROOT}/${SUBDIR}
 fi
 
 verbose_kmsg
@@ -682,7 +672,7 @@ then
 	echo -n '.'
 
 	# /usr/src/linux/Documentation/initrd.txt:
-	#       exec chroot . /sbin/init </dev/console >/dev/console 2>&1
+	#	   exec chroot . /sbin/init </dev/console >/dev/console 2>&1
 
 	exec <dev/console >dev/console 2>&1
 	echo '.'
@@ -693,41 +683,41 @@ then
 EOF
 elif [ "$0" = '/init' ]
 then
-       [ ! -e /${CHROOT}/dev/console ] && mknod /${CHROOT}/dev/console c 5 1
-       [ ! -e /${CHROOT}/dev/tty1 ]    && mknod /${CHROOT}/dev/tty1 c 4 1
-       echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting (initramfs)..."
+	   [ ! -e /${CHROOT}/dev/console ] && mknod /${CHROOT}/dev/console c 5 1
+	   [ ! -e /${CHROOT}/dev/tty1 ] && mknod /${CHROOT}/dev/tty1 c 4 1
+	   echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting (initramfs)..."
 
-       cd ${CHROOT}
-       mkdir /${CHROOT}/proc /${CHROOT}/sys 2>/dev/null
-       echo -n '.'
-               umount /dev || echo '*: Failed to unmount the initrd /dev!'
-               umount /sys || echo '*: Failed to unmount the initrd /sys!'
-               umount /proc || echo '*: Failed to unmount the initrd /proc!'
-       echo -n '.'
+	   cd ${CHROOT}
+	   mkdir /${CHROOT}/proc /${CHROOT}/sys 2>/dev/null
+	   echo -n '.'
+			   umount /dev || echo '*: Failed to unmount the initrd /dev!'
+			   umount /sys || echo '*: Failed to unmount the initrd /sys!'
+			   umount /proc || echo '*: Failed to unmount the initrd /proc!'
+	   echo -n '.'
 
-       exec <${CONSOLE} >${CONSOLE} 2>&1
-       echo '.'
+	   exec <${CONSOLE} >${CONSOLE} 2>&1
+	   echo '.'
 
-       # Cleanup initramfs in the background
-       # to reclaim initramfs tmpfs memoryspace
-       
-       
-       INITRAMFS_FILES=`ls /`
-       INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|${CHROOT#/}||g"`
-       
-       if [ -n "${MEMORY}" ]
-       then
+	   # Cleanup initramfs in the background
+	   # to reclaim initramfs tmpfs memoryspace
+	   
+	   
+	   INITRAMFS_FILES=`ls /`
+	   INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|${CHROOT#/}||g"`
+	   
+	   if [ -n "${MEMORY}" ]
+	   then
 		INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|${MEMORY#/}||g"`
-       fi
-       
-       if [ -n "${UNION}" ]
-       then
-       INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|${UNION#/}||g"`
-       fi
-       
-       INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|newroot||g"`
-       for i in ${INITRAMFS_FILES}
-       do
+	   fi
+	   
+	   if [ -n "${UNION}" ]
+	   then
+	   INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|${UNION#/}||g"`
+	   fi
+	   
+	   INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|newroot||g"`
+	   for i in ${INITRAMFS_FILES}
+	   do
 		for j in `/bin/busybox find /$i 2>/dev/null`
 		do
 			if /bin/busybox [ ! -d "$j" -a "$j" != "/bin/busybox" ]
@@ -742,13 +732,13 @@ then
 				/bin/busybox rm -r "$j"
 			fi
 		done
-       done
-       # End initramfs cleanup
+	   done
+	   # End initramfs cleanup
 
-       # Start the real root init
-       (/bin/busybox sleep 3; /bin/busybox rm /dev -r; /bin/busybox rm /bin/busybox) & 
-       exec /bin/busybox chroot . /bin/sh <<- EOF
-       exec /sbin/init ${REAL_INIT}
+	   # Start the real root init
+	   (/bin/busybox sleep 3; /bin/busybox rm /dev -r; /bin/busybox rm /bin/busybox) & 
+	   exec /bin/busybox chroot . /bin/sh <<- EOF
+	   exec /sbin/init ${REAL_INIT}
 EOF
 
 fi
