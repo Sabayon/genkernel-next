@@ -612,7 +612,7 @@ then
 			fi
 		done
 
-		[ "${DO_bladecenter}" ] && sleep 10
+		[ "${DO_slowusb}" ] && sleep 10
 		mkdir initrd proc tmp sys 2>/dev/null
 		chmod 1777 tmp
 	fi
@@ -627,7 +627,7 @@ then
 	# Let Init scripts know that we booted from CD
 	export CDBOOT
 	CDBOOT=1
-	[ "${DO_bladecenter}" ] && sleep 10
+	[ "${DO_slowusb}" ] && sleep 10
 else
 	mkdir -p ${NEW_ROOT}/tmp/.initrd
 fi
@@ -651,7 +651,7 @@ then
 	cd ${CHROOT}
 	mkdir ${CHROOT}/proc ${CHROOT}/sys 2>/dev/null
 	pivot_root . tmp/.initrd
-	[ "${DO_bladecenter}" ] && sleep 10
+	[ "${DO_slowusb}" ] && sleep 10
 	echo -n '.'
 
 	if /tmp/.initrd/bin/[ "${USE_DEVFS_NORMAL}" -eq '1' -a "${CDROOT}" -eq '0' ]

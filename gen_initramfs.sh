@@ -419,9 +419,9 @@ create_initramfs_aux() {
 	fi
 	mkdir -p "${TEMP}/initramfs-aux-temp/lib/keymaps"
 	/bin/tar -C "${TEMP}/initramfs-aux-temp/lib/keymaps" -zxf "${GK_SHARE}/generic/keymaps.tar.gz"
-	if isTrue $CMD_BLADECENTER
+	if isTrue $CMD_SLOWUSB
 	then
-		echo 'MY_HWOPTS="${MY_HWOPTS} bladecenter"' >> ${TEMP}/initramfs-aux-temp/etc/initrd.defaults
+		echo 'MY_HWOPTS="${MY_HWOPTS} slowusb"' >> ${TEMP}/initramfs-aux-temp/etc/initrd.defaults
 	fi
 
 	cd ${TEMP}/initramfs-aux-temp/sbin && ln -s ../init init

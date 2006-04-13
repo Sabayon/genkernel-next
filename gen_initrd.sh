@@ -311,9 +311,9 @@ create_initrd_aux() {
 	fi
 	mkdir -p "${TEMP}/initrd-temp/lib/keymaps"
 	/bin/tar -C "${TEMP}/initrd-temp/lib/keymaps" -zxf "${GK_SHARE}/generic/keymaps.tar.gz"
-	if isTrue $CMD_BLADECENTER
+	if isTrue $CMD_SLOWUSB
 	then
-		echo 'MY_HWOPTS="${MY_HWOPTS} bladecenter"' >> ${TEMP}/initrd-temp/etc/initrd.defaults
+		echo 'MY_HWOPTS="${MY_HWOPTS} slowusb"' >> ${TEMP}/initrd-temp/etc/initrd.defaults
 	fi
 
 	cd ${TEMP}/initrd-temp/sbin && ln -s ../linuxrc init

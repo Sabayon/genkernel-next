@@ -74,7 +74,7 @@ longusage() {
   echo "	--lvm2			Include LVM2 support"
 #  echo "	--unionfs		Include UNIONFS support"
   echo "	--dmraid		Include DMRAID support"
-  echo "	--bladecenter	Enables extra pauses for IBM Bladecenter CD boots"
+  echo "	--slowusb		Enables extra pauses for slow USB CD boots"
   echo "	--bootloader=grub	Add new kernel to GRUB configuration"
   echo "	--linuxrc=<file>	Specifies a user created linuxrc"
   echo "	--disklabel	        Include disk label and uuid support in your initrd"
@@ -216,9 +216,9 @@ parse_cmdline() {
 		      CMD_NO_BUSYBOX=1
 		      print_info 2 "CMD_NO_BUSYBOX: $CMD_NO_BUSYBOX"
 	      ;;
-	      --bladecenter)
-		      CMD_BLADECENTER=1
-		      print_info 2 "CMD_BLADECENTER: $CMD_BLADECENTER"
+	      --slowusb)
+		      CMD_SLOWUSB=1
+		      print_info 2 "CMD_SLOWUSB: $CMD_SLOWUSB"
 	      ;;
 	      --dmraid)
 		      if [ ! -e /usr/include/libdevmapper.h ]

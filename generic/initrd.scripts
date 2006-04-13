@@ -275,11 +275,11 @@ start_dev_mgr(){
     if [ "${USE_UDEV_NORMAL}" -eq '1' ]
     then
 		cd /sys
-		[ "${DO_bladecenter}" ] && sleep 10
+		[ "${DO_slowusb}" ] && sleep 10
 		kill_devfsd
 		good_msg 'Activating udev'
 		runUdev
-		[ "${DO_bladecenter}" ] && sleep 20
+		[ "${DO_slowusb}" ] && sleep 20
 		cd /
     else
 		if [ ! -e /dev/.devfsd ]
