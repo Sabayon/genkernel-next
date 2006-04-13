@@ -533,7 +533,7 @@ then
 
 	if [ "${USE_UNIONFS_NORMAL}" -eq '1' ]
 	then
-		union_insert_dir $UNION /${NEW_ROOT}/${FS_LOCATION}
+		union_insert_dir ${UNION} ${NEW_ROOT}/${FS_LOCATION}
 		
 		# Make sure fstab notes livecd is mounted ro.  Makes system skip remount which fails on unionfs dirs.
 		sed -e 's|\(.*\s/\s*tmpfs\s*\)defaults\(.*\)|\1defaults,ro\2|' /${UNION}/etc/fstab > /${UNION}/etc/fstab.new
@@ -619,7 +619,13 @@ then
 	CDBOOT=1
 	[ "${DO_slowusb}" ] && sleep 10
 else
-	mkdir -p ${NEW_ROOT}/tmp/.initrd
+	if [ "${USE_UNIONFS_NORMAL}" -eq '1' ]
+	then
+		union_insert_dir ${UNION} ${NEW_ROOT}
+		mkdir -p ${UNION}/tmp/.initrd
+	else
+		mkdir -p ${NEW_ROOT}/tmp/.initrd
+	fi
 fi
 
 # Execute script on the cdrom just before boot to update things if necessary
@@ -632,6 +638,17 @@ then
 fi
 
 verbose_kmsg
+
+# Move the /memory mount point to what will be the system root so that 
+# init scripts will be able to unmount it properly at next reboot
+#
+# Eventually, all "unions over /" mounts should go in that /.unions/
+if [ "${USE_UNIONFS_NORMAL}" -eq '1' ]
+then
+	mkdir -p /${CHROOT}/.unions/memory 2>/dev/null
+	mount -o move /memory /${CHROOT}/.unions/memory || echo '*: Failed to move unionfs /memory into the system root!'
+fi
+
 
 if [ "$0" = '/linuxrc' ]
 then

@@ -572,7 +572,7 @@ setup_unionfs() {
 		# Directory used for rw changes in union mount filesystem
 		UNION=/union
 		MEMORY=/memory
-		if [ -n "$UID" ]
+		if [ -z "$UID" ]
 		then
 			CHANGES=$MEMORY/unionfs_changes/default
 		else
@@ -596,9 +596,9 @@ setup_unionfs() {
 				bad_msg "mount of $CHANGESDEV failed falling back to ramdisk based unionfs"
 				mount -t tmpfs tmpfs $MEMORY
 			fi
-			if [ ! -f ${MEMORY}/livecd.unionfs ]
+			if [ "${CDROOT}" -eq '1' -a ! -f ${MEMORY}/livecd.unionfs  ]
 			then
-				umount $CHANGESDEV
+				umount $MEMORY
 				bad_msg "failed to find livecd.unionfs file on $CHANGESDEV"
 				bad_msg "create a livecd.unionfs file on this device if you wish to use it for unionfs"
 				bad_msg "falling back to ramdisk based unionfs for safety"
