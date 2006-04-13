@@ -332,11 +332,17 @@ compile_unionfs_modules() {
 			gen_die 'Unionfs directory ${UNIONFS_DIR} is invalid!'
 		cd "${UNIONFS_DIR}"
 		print_info 1 'unionfs modules: >> Compiling...'
-		sed -i Makefile -e "s|LINUXSRC =.*|LINUXSRC =${KERNEL_DIR}|g"
-		
-		#Fix for hardened/selinux systems to have extened attributes
-		#per r2d2's request
-		sed -i Makefile -e "s|#  \(EXTRACFLAGS=-DUNIONFS_XATTR -DFIST_SETXATTR_CONSTVOID\)|\1|g"
+		echo "LINUXSRC=${KERNEL_DIR}" >> fistdev.mk
+		echo "MODDIR= /lib/modules/${KV}" >> fistdev.mk
+		echo "KERNELVERSION=${KV}" >> fistdev.mk
+		# Fix for hardened/selinux systems to have extened attributes
+		# per r2d2's request
+		echo "EXTRACFLAGS=-DUNIONFS_XATTR -DFIST_SETXATTR_CONSTVOID" \
+			>> fistdev.mk
+		# Here we do something really nasty and disable debugging, along with
+		# change our default CFLAGS
+		echo "UNIONFS_DEBUG_CFLAG=-DUNIONFS_NDEBUG" >> fistdev.mk
+		echo "UNIONFS_OPT_CFLAG= -O2 -pipe" >> fistdev.mk
 
 		if [ "${PAT}" -ge '6' ]
 		then
@@ -346,9 +352,9 @@ compile_unionfs_modules() {
 		
 			cd "${TEMP}"
 			cd "${UNIONFS_DIR}"
-			compile_generic unionfs2.6 kernel
+			compile_generic unionfs.ko kernel
 		else
-			compile_generic unionfs2.4 kernel
+			gen_die 'unionfs is only supported on 2.6 targets'
 		fi
 		print_info 1 'unionfs: >> Copying to cache...'
 	
