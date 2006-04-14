@@ -22,5 +22,5 @@ UTILS_LD=ld
 
 COMPRESS_INITRD=yes
 
-MAKEOPTS="-j2"
+[ -z "${MAKEOPTS}" ] && MAKEOPTS="-j2"
 

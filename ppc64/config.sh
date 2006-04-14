@@ -8,7 +8,7 @@ KERNEL_BINARY="vmlinux"
 # other stuff seems to compile fine though
 USE_DIETLIBC=1
 
-MAKEOPTS="-j2"
+[ -z "${MAKEOPTS}" ] && MAKEOPTS="-j2"
 
 KERNEL_MAKE=make
 UTILS_MAKE=make

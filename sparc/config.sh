@@ -9,7 +9,7 @@ KERNEL_BINARY="vmlinux"
 # other stuff seems to compile fine though
 USE_DIETLIBC=0
 
-MAKEOPTS="-j1"
+[ -z "${MAKEOPTS}" ] && MAKEOPTS="-j1"
 
 KERNEL_MAKE=make
 UTILS_MAKE=make

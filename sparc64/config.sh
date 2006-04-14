@@ -9,7 +9,7 @@ KERNEL_BINARY="arch/sparc64/boot/image"
 # can turn this flag on
 USE_DIETLIBC=0
 
-MAKEOPTS="-j2"
+[ -z "${MAKEOPTS}" ] && MAKEOPTS="-j2"
 
 KERNEL_MAKE=make
 UTILS_MAKE=make

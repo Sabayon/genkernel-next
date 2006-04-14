@@ -9,7 +9,7 @@ KERNEL_BINARY="linux"
 # other stuff seems to compile fine though
 USE_DIETLIBC=1
 
-MAKEOPTS="-j2"
+[ -z "${MAKEOPTS}" ] && MAKEOPTS="-j2"
 
 KERNEL_MAKE="make ARCH=um"
 UTILS_MAKE=make
