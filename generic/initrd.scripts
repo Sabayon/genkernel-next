@@ -567,7 +567,7 @@ rundebugshell() {
 }
 
 setup_unionfs() {
-	if [ "${USE_UNIONFS_NORMAL}" -eq '1' -a "${CDROOT}" -eq '1' ]
+	if [ "${USE_UNIONFS_NORMAL}" -eq '1' ]
 	then
 		# Directory used for rw changes in union mount filesystem
 		UNION=/union
