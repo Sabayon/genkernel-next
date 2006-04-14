@@ -333,6 +333,7 @@ compile_unionfs_modules() {
 		cd "${UNIONFS_DIR}"
 		print_info 1 'unionfs modules: >> Compiling...'
 		echo "LINUXSRC=${KERNEL_DIR}" >> fistdev.mk
+		echo 'TOPINC=-I$(LINUXSRC)/include' >> fistdev.mk
 		echo "MODDIR= /lib/modules/${KV}" >> fistdev.mk
 		echo "KERNELVERSION=${KV}" >> fistdev.mk
 		# Fix for hardened/selinux systems to have extened attributes
@@ -346,13 +347,11 @@ compile_unionfs_modules() {
 
 		if [ "${PAT}" -ge '6' ]
 		then
-			# Setup the kernel sources to compile modules
-			cd ${KERNEL_DIR}
-			compile_generic "modules_prepare" kernel
-		
 			cd "${TEMP}"
 			cd "${UNIONFS_DIR}"
-			compile_generic unionfs.ko kernel
+			# Compile unionfs module within the unionfs
+			# environment not within the kernelsrc dir
+			make unionfs.ko
 		else
 			gen_die 'unionfs is only supported on 2.6 targets'
 		fi

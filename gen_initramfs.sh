@@ -208,6 +208,7 @@ create_lvm2_cpio(){
 		fi
 		cd ${TEMP}
 		mkdir -p "${TEMP}/initramfs-lvm2-temp/bin/"
+		mkdir -p "${TEMP}/initramfs-lvm2-temp/etc/lvm/"
 		if [ -e '/sbin/lvm' ] && ldd /sbin/lvm|grep -q 'not a dynamic executable';
 		then
 			print_info 1 '		LVM2: Adding support (using local static binaries)...'
@@ -220,7 +221,9 @@ create_lvm2_cpio(){
 				gen_die "Could not extract lvm2 binary cache!";
 			mv ${TEMP}/initramfs-lvm2-temp/sbin/lvm.static ${TEMP}/initramfs-lvm2-temp/bin/lvm ||
 				gen_die 'LVM2 error: Could not move lvm.static to lvm!'
-		fi	
+		fi
+		cp /etc/lvm/lvm.conf "${TEMP}/initramfs-lvm2-temp/etc/lvm/lvm.conf" ||
+			gen_die 'Could not copy over lvm.conf!'
 		cd "${TEMP}/initramfs-lvm2-temp/"
 		find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-lvm2-${LVM2_VER}.cpio.gz
 		rm -r "${TEMP}/initramfs-lvm2-temp/"

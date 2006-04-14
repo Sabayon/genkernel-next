@@ -404,7 +404,8 @@ setup_keymap() {
 			DEVBIND=1
 			mount -o bind ${NEW_ROOT}/dev /dev
 		fi
-	
+		[ ! -e /dev/tty0 ] && ln -s /dev/tty1 /dev/tty0
+
 		chooseKeymap
 
 		[ "${DEVBIND}" -eq '1' ] && umount /dev

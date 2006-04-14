@@ -157,10 +157,6 @@ create_base_initrd_sys() {
 			print_info 1 'LVM2: Adding support (using local static binaries)...'
 			cp /sbin/lvm "${TEMP}/initrd-temp/bin/lvm" ||
 				gen_die 'Could not copy over lvm!'
-			ln "${TEMP}/initrd-temp/bin/lvm" "${TEMP}/initrd-temp/bin/vgscan" ||
-				gen_die 'Could not symlink lvm -> vgscan!'
-			ln "${TEMP}/initrd-temp/bin/lvm" "${TEMP}/initrd-temp/bin/vgchange" ||
-				gen_die 'Could not symlink lvm -> vgchange!'
 		else
 			print_info 1 'LVM2: Adding support (compiling binaries)...'
 			compile_lvm2
@@ -169,11 +165,14 @@ create_base_initrd_sys() {
 				gen_die "Could not extract lvm2 binary cache!";
 			mv ${TEMP}/initrd-temp/bin/lvm.static ${TEMP}/initrd-temp/bin/lvm ||
 				gen_die 'LVM2 error: Could not move lvm.static to lvm!'
-			for i in vgchange vgscan; do
-				ln  ${TEMP}/initrd-temp/bin/lvm ${TEMP}/initrd-temp/bin/$i ||
-					gen_die "LVM2 error: Could not link ${i}!"
-			done
-		fi	
+		fi
+		for i in vgchange vgscan; do
+			ln  ${TEMP}/initrd-temp/bin/lvm ${TEMP}/initrd-temp/bin/$i ||
+				gen_die "LVM2 error: Could not link ${i}!"
+		done
+		mkdir -p ${TEMP}/initrd-temp/etc/lvm
+		cp /etc/lvm/lvm.conf "${TEMP}/initrd-temp/etc/lvm/lvm.conf" ||
+			gen_die 'Could not copy over lvm.conf!'
 	fi
 	
 	# EVMS2

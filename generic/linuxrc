@@ -399,7 +399,8 @@ do
 		if [ "${REAL_ROOT}" = '/dev/nfs' ]; then
 			findnfsmount
 		else
-			mount -o rw ${REAL_ROOT}  ${NEW_ROOT}
+			# mount ro so fsck doesn't barf later
+			mount -o ro ${REAL_ROOT}  ${NEW_ROOT}
 		fi
 		
 		# If mount is successful break out of the loop 
