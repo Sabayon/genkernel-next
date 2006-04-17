@@ -848,7 +848,7 @@ compile_udev() {
 
 		cd "${UDEV_DIR}"
     		local extras="extras/scsi_id extras/volume_id extras/ata_id extras/run_directory extras/usb_id extras/floppy extras/cdrom_id extras/firmware"
-    		# No selinux support yet .. someday maybe
+		# No selinux support yet .. someday maybe
 		#use selinux && myconf="${myconf} USE_SELINUX=true"
 		print_info 1 'udev: >> Compiling...'
 		# SPARC fixup
@@ -883,8 +883,15 @@ compile_udev() {
 		install -c etc/udev/gentoo/udev.rules "${TEMP}/udev/etc/udev/rules.d/50-udev.rules" ||
 		    gen_die 'Could not copy gentoo udev.rules to 50-udev.rules'
 
-		compile_generic "EXTRAS=\"${extras}\" DESTDIR=${TEMP}/udev install-config" utils
-		compile_generic "EXTRAS=\"${extras}\" DESTDIR=${TEMP}/udev install-bin" utils
+#		compile_generic "EXTRAS=\"${extras}\" DESTDIR=${TEMP}/udev install-config" utils
+#		compile_generic "EXTRAS=\"${extras}\" DESTDIR=${TEMP}/udev install-bin" utils
+		# We are going to install our files by hand.  Why are we doing this?
+		# Well, the udev ebuild does so, and I tend to think that Greg
+		# Kroah-Hartman knows what he's doing with regards to udev.
+		for i in udev udevd udevsend udevstart
+		do
+			install -D $i "${TEMP}/udev/sbin"
+		done
 		install -c extras/ide-devfs.sh "${TEMP}/udev/etc/udev/scripts" 
 		install -c extras/scsi-devfs.sh "${TEMP}/udev/etc/udev/scripts" 
 		install -c extras/raid-devfs.sh "${TEMP}/udev/etc/udev/scripts" 
