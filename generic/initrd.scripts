@@ -226,8 +226,21 @@ runUdev() {
 	mount -t tmpfs -o size=100k udev /dev
 	mkdir /dev/pts
 	mkdir /dev/shm
-	echo /sbin/udevsend > /proc/sys/kernel/hotplug 
-	/sbin/udevstart
+	echo  > /proc/sys/kernel/hotplug 
+	/sbin/udevd --daemon
+	mkdir -p /dev/.udev/queue
+	/sbin/udevtrigger
+
+	good_msg 'Letting udev process events'
+	loop=0
+	while test -d /dev/.udev/queue; do
+		sleep 1;
+		test "$loop" -gt 30 && break
+		loop=$(($loop + 1))
+	done
+	good_msg "Udev finished proccsing after $loop iterations"
+
+	killall udevd > /dev/null 2>&1
 	ln -snf /proc/self/fd /dev/fd
 	ln -snf /proc/self/fd/0 /dev/stdin
 	ln -snf /proc/self/fd/1 /dev/stdout
@@ -272,7 +285,7 @@ bind_mount_dev() {
 
 start_dev_mgr() {
 	# Check udev is available...
-	if [ "${KV_2_6_OR_GREATER}" -a ! "${USE_UDEV_NORMAL}" -eq '0' -a -x /sbin/udev ]
+	if [ "${KV_2_6_OR_GREATER}" -a ! "${USE_UDEV_NORMAL}" -eq '0' -a -x /sbin/udevtrigger ]
 	then
 		USE_UDEV_NORMAL=1
 	else

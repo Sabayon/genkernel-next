@@ -39,19 +39,6 @@ then
 
 	[ -e /linuxrc ] && rm /linuxrc
 	 
-	if [ -e /sbin/udev ]
-	then
-		if [ ! -e /sbin/udevstart ]
-		then
-			ln -s /sbin/udev /sbin/udevstart
-		fi
-		
-		if [ ! -e /sbin/udevsend ]
-		then
-			ln -s /sbin/udev /sbin/udevsend
-		fi
-	fi
-
 	if [ -e /bin/lvm ]
 	then
 		ln -s /bin/lvm /bin/vgscan

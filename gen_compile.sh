@@ -888,7 +888,7 @@ compile_udev() {
 		# We are going to install our files by hand.  Why are we doing this?
 		# Well, the udev ebuild does so, and I tend to think that Greg
 		# Kroah-Hartman knows what he's doing with regards to udev.
-		for i in udev udevd udevsend udevstart
+		for i in udev udevd udevsend udevstart udevtrigger
 		do
 			install -D $i "${TEMP}/udev/sbin"
 		done
