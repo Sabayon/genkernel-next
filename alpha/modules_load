@@ -7,12 +7,15 @@ qlogicfas qlogicfc qlogicisp \
 seagate t128 u14-34f ultrastor wd7000  \
 NCR53c406a sym53c8xx dmx3191d imm in2000 ips qla1280 \
 sim710 sym53c416 dc395x atp870u mptbase mptscsih \
-mptspi mptfc 3w-xxxx 3w-9xxx"
+mptspi mptfc 3w-xxxx 3w-9xxx cpqarray cciss DAC960 \
+sx8 aacraid"
 
 MODULES_FIREWIRE="ieee1394 ohci1394 sbp2"
 MODULES_ATARAID="ataraid pdcraid hptraid"
 MODULES_PCMCIA="pcmcia_core yenta_socket i82365 ds ide-cs"
-MODULES_USB="ehci-hcd uhci usb-ohci hid usb-storage uhci-hcd ohci-hcd usbhid sl811-hcd"
+MODULES_USB="ehci-hcd uhci usb-ohci hid usb-storage uhci-hcd \
+ohci-hcd usbhid sl811-hcd"
 MODULES_LVM2="dm-mod dm-snapshot dm-mirror dm-bbr"
-MODULES_EVMS2="dm-mod dm-snapshot dm-mirror dm-bbr raid0 raid1 raid5 raid6 raid10"
+MODULES_EVMS2="dm-mod dm-snapshot dm-mirror dm-bbr raid0 raid1 \
+raid5 raid6 raid10"
 MODULES_DMRAID="dm-mod dm-mirror"
