@@ -357,16 +357,16 @@ compile_unionfs_modules() {
 		fi
 		print_info 1 'unionfs: >> Copying to cache...'
 	
-		mkdir -p ${TEMP}/unionfs/lib/modules/${KV}/kernel/fs
+		mkdir -p ${TEMP}/unionfs/lib/modules/${KV}/kernel/fs/unionfs
 		
 		if [ -f unionfs.ko ]
 		then 
-			cp unionfs.ko ${TEMP}/unionfs/lib/modules/${KV}/kernel/fs 
-		else 
-			cp unionfs.o ${TEMP}/unionfs/lib/modules/${KV}/kernel/fs 
+			cp unionfs.ko ${TEMP}/unionfs/lib/modules/${KV}/kernel/fs/unionfs
+		else
+			cp unionfs.o ${TEMP}/unionfs/lib/modules/${KV}/kernel/fs/unionfs
  		fi
 	
-		cd ${TEMP}/unionfs	
+		cd ${TEMP}/unionfs
 		/bin/tar -cjf "${UNIONFS_MODULES_BINCACHE}" . ||
 			gen_die 'Could not create unionfs modules binary cache'
 	
