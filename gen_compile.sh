@@ -337,8 +337,8 @@ compile_unionfs_modules() {
 		echo "MODDIR= /lib/modules/${KV}" >> fistdev.mk
 		echo "KERNELVERSION=${KV}" >> fistdev.mk
 		# Fix for hardened/selinux systems to have extened attributes
-		# per r2d2's request
-		echo "EXTRACFLAGS=-DUNIONFS_XATTR -DFIST_SETXATTR_CONSTVOID" \
+		# per r2d2's request.  Also add -DUNIONFS_UNSUPPORTED for 2.6.16
+		echo "EXTRACFLAGS=-DUNIONFS_XATTR -DFIST_SETXATTR_CONSTVOID -DUNIONFS_UNSUPPORTED" \
 			>> fistdev.mk
 		# Here we do something really nasty and disable debugging, along with
 		# change our default CFLAGS
