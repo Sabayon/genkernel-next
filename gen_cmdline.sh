@@ -377,7 +377,9 @@ parse_cmdline() {
 		      print_info 2 "CMD_INITRAMFS: $CMD_INITRAMFS"
 	      ;;
 	      --tempdir=*)
-		      TEMP=`parse_opt "$*"`
+		      TMPDIR=`parse_opt "$*"`
+		      TEMP=${TMPDIR}/$RANDOM.$RANDOM.$RANDOM.$$
+		      print_info 2 "TMPDIR: $TMPDIR"
 		      print_info 2 "TEMP: $TEMP"
 	      ;; 
 	      --postclear)

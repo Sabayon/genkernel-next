@@ -5,6 +5,7 @@ PATH="/bin:/usr/bin:/sbin:/usr/sbin"
 GK_V='3.3.11e'
 
 TMPDIR='/var/tmp/genkernel'
+TEMP=${TMPDIR}/$RANDOM.$RANDOM.$RANDOM.$$
 TODEBUGCACHE=1 # Until an error occurs or DEBUGFILE is fully qualified.
 
 small_die() {
@@ -24,8 +25,6 @@ source ${GK_BIN}/gen_initramfs.sh || gen_die "Could not read ${GK_BIN}/gen_initr
 source ${GK_BIN}/gen_moddeps.sh || gen_die "Could not read ${GK_BIN}/gen_moddeps.sh"
 source ${GK_BIN}/gen_package.sh || gen_die "Could not read ${GK_BIN}/gen_package.sh"
 source ${GK_BIN}/gen_bootloader.sh || gen_die "Could not read ${GK_BIN}/gen_bootloader.sh"
-
-TEMP=${TMPDIR}/$RANDOM.$RANDOM.$RANDOM.$$
 
 trap_cleanup(){
 	# Call exit code of 1 for failure
