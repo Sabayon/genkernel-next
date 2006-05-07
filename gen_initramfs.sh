@@ -384,6 +384,9 @@ create_initramfs_aux() {
 		fi
 	fi
 
+	# Make sure it's executable
+	chmod 0755 "${TEMP}/initramfs-aux-temp/init"
+
 	# Make a symlink to init .. incase we are bundled inside the kernel as one big cpio.
 	cd ${TEMP}/initramfs-aux-temp
 	ln -s init linuxrc

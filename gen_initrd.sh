@@ -277,6 +277,9 @@ create_initrd_aux() {
 		fi
 	fi
 
+	# Make sure it's executable
+	chmod 0755 "${TEMP}/initrd-temp/linuxrc"
+
 	if [ -f "${GK_SHARE}/${ARCH}/initrd.scripts" ]
 	then
 		cp "${GK_SHARE}/${ARCH}/initrd.scripts" "${TEMP}/initrd-temp/etc/initrd.scripts"
