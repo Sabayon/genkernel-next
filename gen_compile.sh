@@ -426,12 +426,6 @@ compile_busybox() {
 		cp "${BUSYBOX_CONFIG}" "${BUSYBOX_DIR}/.config"
 		sed -i ${BUSYBOX_DIR}/.config -e 's/#\? \?CONFIG_FEATURE_INSTALLER[ =].*/CONFIG_FEATURE_INSTALLER=y/g'
 		cd "${BUSYBOX_DIR}"
-		if [ -f ${GK_SHARE}/pkg/busybox-1.00-headers_fix.patch ]
-		then
-			patch -p1 -i \
-				${GK_SHARE}/pkg/busybox-1.00-headers_fix.patch \
-				|| gen_die "Failed patching busybox"
-		fi
 		print_info 1 'busybox: >> Configuring...'
 		yes '' 2>/dev/null | compile_generic oldconfig utils
 		print_info 1 'busybox: >> Compiling...'

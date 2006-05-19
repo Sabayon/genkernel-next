@@ -463,10 +463,10 @@ merge_initramfs_cpio_archives(){
 		MERGE_LIST="${MERGE_LIST} initramfs-insmod-${MODULE_INIT_TOOLS_VER}.cpio.gz"
 	fi
 	
-	if [ "${UDEV}" -eq '1' -a -e ${CACHE_CPIO_DIR}/initramfs-udev-${UDEV_VER}.cpio.gz ]
-	then
-		MERGE_LIST="${MERGE_LIST} initramfs-udev-${UDEV_VER}.cpio.gz"
-	fi
+#	if [ "${UDEV}" -eq '1' -a -e ${CACHE_CPIO_DIR}/initramfs-udev-${UDEV_VER}.cpio.gz ]
+#	then
+#		MERGE_LIST="${MERGE_LIST} initramfs-udev-${UDEV_VER}.cpio.gz"
+#	fi
 	if [ "${DISKLABEL}" -eq '1' -a -e ${CACHE_CPIO_DIR}/initramfs-blkid-${E2FSPROGS_VER}.cpio.gz ]
 	then
 		MERGE_LIST="${MERGE_LIST} initramfs-blkid-${E2FSPROGS_VER}.cpio.gz"
@@ -572,11 +572,11 @@ create_initramfs() {
 	    create_devfs_cpio
 	fi
 	
-	if [ "${UDEV}" -eq '1' ]
-	then
-	    print_info 1 "        >> Creating udev cpio archive..."
-	    create_udev_cpio
-	fi
+#	if [ "${UDEV}" -eq '1' ]
+#	then
+#	    print_info 1 "        >> Creating udev cpio archive..."
+#	    create_udev_cpio
+#	fi
 	
 	if [ "${UNIONFS}" -eq '1' ]
 	then

@@ -71,7 +71,7 @@ findcdmount() {
 			if [ -b "${x}" ]
 			then
 				good_msg "Attempting to mount CD:- ${x}"
-				mount -r ${x} ${NEW_ROOT}/mnt/cdrom > /dev/null 2>&1
+				mount -r -t iso9660 ${x} ${NEW_ROOT}/mnt/cdrom > /dev/null 2>&1
 				if [ "$?" = '0' ]
 				then
 					# Check for a LiveCD
@@ -248,6 +248,14 @@ runUdev() {
 	ln -snf /proc/kcore /dev/core
 }
 
+runmdev() {
+	# busybox udev replacement
+	mdev -s
+
+	# catch udev hotplug events
+	echo /sbin/mdev > /proc/sys/kernel/hotplug
+}
+
 test_success() {
 	error_string=$1
 	error_string="${error_string:-run command}"
@@ -285,7 +293,7 @@ bind_mount_dev() {
 
 start_dev_mgr() {
 	# Check udev is available...
-	if [ "${KV_2_6_OR_GREATER}" -a ! "${USE_UDEV_NORMAL}" -eq '0' -a -x /sbin/udevtrigger ]
+	if [ "${KV_2_6_OR_GREATER}" -a ! "${USE_UDEV_NORMAL}" -eq '0' ]
 	then
 		USE_UDEV_NORMAL=1
 	else
@@ -297,8 +305,9 @@ start_dev_mgr() {
 		cd /sys
 		[ "${DO_slowusb}" ] && sleep 10
 		kill_devfsd
-		good_msg 'Activating udev'
-		runUdev
+		good_msg 'Activating mdev'
+#		runUdev
+		runmdev
 		[ "${DO_slowusb}" ] && sleep 20
 		cd /
 	else

@@ -302,7 +302,8 @@ then
 
 	if [ "${KERN_24}" != '1' -a "${UDEV}" -eq '1' ] 
 	then
-		compile_udev 
+		:
+#		compile_udev 
 	else
 		DEVFS=1
 		UDEV=0

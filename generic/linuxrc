@@ -382,12 +382,12 @@ do
 	else
 		good_msg "Mounting root..."
 
-		# Try to mount the device as  ${NEW_ROOT}
+		# Try to mount the device as ${NEW_ROOT}
 		if [ "${REAL_ROOT}" = '/dev/nfs' ]; then
 			findnfsmount
 		else
 			# mount ro so fsck doesn't barf later
-			mount -o ro ${REAL_ROOT}  ${NEW_ROOT}
+			mount -o ro ${REAL_ROOT} ${NEW_ROOT}
 		fi
 		
 		# If mount is successful break out of the loop 
@@ -611,8 +611,6 @@ else
 	then
 		union_insert_dir ${UNION} ${NEW_ROOT}
 		mkdir -p ${UNION}/tmp/.initrd
-	else
-		mkdir -p ${NEW_ROOT}/tmp/.initrd
 	fi
 fi
 
@@ -636,7 +634,6 @@ then
 	mkdir -p /${CHROOT}/.unions/memory 2>/dev/null
 	mount -o move /memory /${CHROOT}/.unions/memory || echo '*: Failed to move unionfs /memory into the system root!'
 fi
-
 
 if [ "$0" = '/linuxrc' ]
 then
@@ -690,12 +687,11 @@ elif [ "$0" = '/init' ]
 then
 	   [ ! -e /${CHROOT}/dev/console ] && mknod /${CHROOT}/dev/console c 5 1
 	   [ ! -e /${CHROOT}/dev/tty1 ] && mknod /${CHROOT}/dev/tty1 c 4 1
-	   echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting (initramfs)..."
+	   echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting (initramfs)"
 
 	   cd ${CHROOT}
 	   mkdir /${CHROOT}/proc /${CHROOT}/sys 2>/dev/null
 	   echo -n '.'
-			   umount /dev || echo '*: Failed to unmount the initrd /dev!'
 			   umount /sys || echo '*: Failed to unmount the initrd /sys!'
 			   umount /proc || echo '*: Failed to unmount the initrd /proc!'
 	   echo -n '.'
@@ -705,9 +701,8 @@ then
 
 	   # Cleanup initramfs in the background
 	   # to reclaim initramfs tmpfs memoryspace
-	   
-	   
-	   INITRAMFS_FILES=`ls /`
+
+	   INITRAMFS_FILES=`ls / | sed -e 's|dev||'`
 	   INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|${CHROOT#/}||g"`
 	   
 	   if [ -n "${MEMORY}" ]
@@ -717,21 +712,19 @@ then
 	   
 	   if [ -n "${UNION}" ]
 	   then
-	   INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|${UNION#/}||g"`
+	   	INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|${UNION#/}||g"`
 	   fi
-	   
 	   INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|newroot||g"`
+
 	   for i in ${INITRAMFS_FILES}
 	   do
-		for j in `/bin/busybox find /$i 2>/dev/null`
+		for j in `/bin/busybox find /$i 2> /dev/null`
 		do
 			if /bin/busybox [ ! -d "$j" -a "$j" != "/bin/busybox" ]
 			then
 				/bin/busybox rm "$j"
 			fi
-		done
-		for j in `/bin/busybox find /$i 2>/dev/null`
-		do
+
 			if /bin/busybox [ -d "${j}" -a "${j}" != "/bin" -a "${j}" != "/dev" -a "${j}" != "/sys" ]
 			then
 				/bin/busybox rm -r "$j"
@@ -741,7 +734,7 @@ then
 	   # End initramfs cleanup
 
 	   # Start the real root init
-	   (/bin/busybox sleep 3; /bin/busybox rm /dev -r; /bin/busybox rm /bin/busybox) & 
+	   (/bin/busybox sleep 3; /bin/busybox rm -r /bin/busybox /dev) & 
 	   exec /bin/busybox chroot . /bin/sh <<- EOF
 	   exec /sbin/init ${REAL_INIT}
 EOF
