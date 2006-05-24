@@ -101,7 +101,12 @@ cache_cd_contents() {
 		then
 			# TODO: Check the size of the image versus the size of our tmpfs
 			# along with the amount of available RAM and increase tmpfs size
-			# if necessary.
+			# if necessary. (Not having awk sucks...)
+			# z=0
+			# for i in $(cat /proc/meminfo | grep -e ^MemFree -e ^Cached | \
+			# cut -d: -f2 | cut -dk -f1 | sed -e "s/^\s*//") ; do
+			# z=$(($z + $i)) ; done
+			# echo $z
 			good_msg "Copying loop file for caching..."
 			cp -a ${NEW_ROOT}/mnt/cdrom/${LOOP} ${NEW_ROOT}/mnt/${LOOP}
 			if [ $? -ne 0 ]
