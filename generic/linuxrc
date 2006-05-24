@@ -425,6 +425,9 @@ then
 				elif [ -e "${NEW_ROOT}/mnt/cdrom/livecd.squashfs" ]; then
 			LOOP='/livecd.squashfs'
 			LOOPTYPE='squashfs'
+				elif [ -e "${NEW_ROOT}/mnt/cdrom/image.squashfs" ]; then
+			LOOP='/image.squashfs'
+			LOOPTYPE='squashfs'
 				elif [ -e "${NEW_ROOT}/mnt/cdrom/livecd.gcloop" ]; then
 			LOOP='/livecd.gcloop'
 			LOOPTYPE='gcloop'
@@ -445,6 +448,8 @@ then
 			LOOPTYPE='zisofs'
 		elif [ "${LOOP}" = '/livecd.squashfs' ]
 		then
+			LOOPTYPE='squashfs'
+		elif [ "${LOOP}" = '/image.squashfs' ]
 			LOOPTYPE='squashfs'
 		elif [ "${LOOP}" = '/livecd.gcloop' ]
 		then

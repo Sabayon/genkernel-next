@@ -99,6 +99,9 @@ cache_cd_contents() {
 		check_loop
 		if [ "${DO_cache}" ]
 		then
+			# TODO: Check the size of the image versus the size of our tmpfs
+			# along with the amount of available RAM and increase tmpfs size
+			# if necessary.
 			good_msg "Copying loop file for caching..."
 			cp -a ${NEW_ROOT}/mnt/cdrom/${LOOP} ${NEW_ROOT}/mnt/${LOOP}
 			if [ $? -ne 0 ]
