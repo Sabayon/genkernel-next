@@ -645,7 +645,8 @@ setup_unionfs() {
 		ret=$?
 		if [ "${ret}" -ne 0 ]
 		then 
-			die "Can't setup union ${UNION} in  directory!"
+			bad_msg "Can't setup union ${UNION} in directory!"
+			USE_UNIONFS_NORMAL=0
 		fi
 	else
 		USE_UNIONFS_NORMAL=0

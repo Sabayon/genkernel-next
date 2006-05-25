@@ -238,15 +238,18 @@ then
 	then
 		good_msg "Making tmpfs for ${NEW_ROOT}"
 		mount -t tmpfs tmpfs ${NEW_ROOT}
+		echo "DEBUG: tmpfs mounted"
 	fi
 	
 	for i in dev mnt mnt/cdrom mnt/livecd tmp tmp/.initrd mnt/gentoo sys
 	do
 		mkdir -p ${NEW_ROOT}/$i
 		chmod 755 ${NEW_ROOT}/$i
+		echo "DEBUG: mkdir $i"
 	done
 	cp /dev/null ${NEW_ROOT}/dev
 	cp /dev/console ${NEW_ROOT}/dev
+	echo "DEBUG: copying null/console"
 
 	# For SGI LiveCDs ...
 	if [ "${LOOPTYPE}" = "sgimips" ]
@@ -260,6 +263,7 @@ then
 	if [ -e /dev/tty1 ]
 	then
 		cp /dev/tty1 ${NEW_ROOT}/dev
+		echo "DEBUG: copying tty1 for splash"
 	fi
 
 	if [ "${REAL_ROOT}" != "/dev/nfs" ] && [ "${LOOPTYPE}" != "sgimips" ]
