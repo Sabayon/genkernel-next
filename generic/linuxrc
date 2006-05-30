@@ -247,9 +247,9 @@ then
 		chmod 755 ${NEW_ROOT}/$i
 		echo "DEBUG: mkdir $i"
 	done
-	cp /dev/null ${NEW_ROOT}/dev
-	cp /dev/console ${NEW_ROOT}/dev
-	echo "DEBUG: copying null/console"
+	[ ! -e ${NEW_ROOT}/dev/null ] && mknod ${NEW_ROOT}/dev/null c 5 1
+	[ ! -e ${NEW_ROOT}/dev/console ] && mknod ${NEW_ROOT}/dev/console c 1 3
+	echo "DEBUG: mknod null/console"
 
 	# For SGI LiveCDs ...
 	if [ "${LOOPTYPE}" = "sgimips" ]
