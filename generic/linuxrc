@@ -454,6 +454,7 @@ then
 		then
 			LOOPTYPE='squashfs'
 		elif [ "${LOOP}" = '/image.squashfs' ]
+		then
 			LOOPTYPE='squashfs'
 		elif [ "${LOOP}" = '/livecd.gcloop' ]
 		then
