@@ -652,22 +652,22 @@ then
 	[ "${DO_slowusb}" ] && sleep 10
 	echo -n '.'
 
-	if [ "${USE_DEVFS_NORMAL}" -eq '1' -a "${CDROOT}" -eq '0' ]
+	if /tmp/.initrd/bin/[ "${USE_DEVFS_NORMAL}" -eq '1' -a "${CDROOT}" -eq '0' ]
 	then
 		umount /tmp/.initrd/proc || echo '*: Failed to unmount the initrd /proc!'
 		mount -n --move /tmp/.initrd/dev dev || echo '*: Failed to move over the /dev tree!'
 		rm -rf /tmp/.initrd/dev || echo '*: Failed to remove the initrd /dev!'
-	elif [ "${USE_UDEV_NORMAL}" -eq '1' ]
+	elif /tmp/.initrd/bin/[ "${USE_UDEV_NORMAL}" -eq '1' ]
 	then
-		[ -e /tmp/.initrd/dev/fd ] && rm /tmp/.initrd/dev/fd
-		[ -e /tmp/.initrd/dev/stdin ] && rm /tmp/.initrd/dev/stdin
-		[ -e /tmp/.initrd/dev/stdout ] && rm /tmp/.initrd/dev/stdout
-		[ -e /tmp/.initrd/dev/stderr ] && rm /tmp/.initrd/dev/stderr
-		[ -e /tmp/.initrd/dev/core ] && rm /tmp/.initrd/dev/core 
+		/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/fd ] && rm /tmp/.initrd/dev/fd
+		/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/stdin ] && rm /tmp/.initrd/dev/stdin
+		/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/stdout ] && rm /tmp/.initrd/dev/stdout
+		/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/stderr ] && rm /tmp/.initrd/dev/stderr
+		/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/core ] && rm /tmp/.initrd/dev/core 
 		umount /tmp/.initrd/dev || echo '*: Failed to unmount the initrd /dev!'
 		umount /tmp/.initrd/proc || echo '*: Failed to unmount the initrd /proc!'
 		umount /tmp/.initrd/sys || echo '*: Failed to unmount the initrd /sys!'
-	elif [ "${CDROOT}" -eq '1' ]
+	elif /tmp/.initrd/bin/[ "${CDROOT}" -eq '1' ]
 	then
 		umount /tmp/.initrd/proc || echo "*: Failed to unmount the initrd /proc!"
 		umount /dev 2>/dev/null
