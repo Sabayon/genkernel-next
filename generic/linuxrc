@@ -238,18 +238,15 @@ then
 	then
 		good_msg "Making tmpfs for ${NEW_ROOT}"
 		mount -t tmpfs tmpfs ${NEW_ROOT}
-		echo "DEBUG: tmpfs mounted"
 	fi
 	
 	for i in dev mnt mnt/cdrom mnt/livecd tmp tmp/.initrd mnt/gentoo sys
 	do
 		mkdir -p ${NEW_ROOT}/$i
 		chmod 755 ${NEW_ROOT}/$i
-		echo "DEBUG: mkdir $i"
 	done
 	[ ! -e ${NEW_ROOT}/dev/null ] && mknod ${NEW_ROOT}/dev/null c 1 3
 	[ ! -e ${NEW_ROOT}/dev/console ] && mknod ${NEW_ROOT}/dev/console c 5 1
-	echo "DEBUG: mknod null/console"
 
 	# For SGI LiveCDs ...
 	if [ "${LOOPTYPE}" = "sgimips" ]
@@ -263,7 +260,6 @@ then
 	if [ -e /dev/tty1 ]
 	then
 		[ ! -e ${NEW_ROOT}/dev/tty1 ] && mknod ${NEW_ROOT}/dev/tty1 c 4 1
-		echo "DEBUG: copying tty1 for splash"
 	fi
 
 	if [ "${REAL_ROOT}" != "/dev/nfs" ] && [ "${LOOPTYPE}" != "sgimips" ]
@@ -656,22 +652,22 @@ then
 	[ "${DO_slowusb}" ] && sleep 10
 	echo -n '.'
 
-	if /tmp/.initrd/bin/[ "${USE_DEVFS_NORMAL}" -eq '1' -a "${CDROOT}" -eq '0' ]
+	if [ "${USE_DEVFS_NORMAL}" -eq '1' -a "${CDROOT}" -eq '0' ]
 	then
 		umount /tmp/.initrd/proc || echo '*: Failed to unmount the initrd /proc!'
 		mount -n --move /tmp/.initrd/dev dev || echo '*: Failed to move over the /dev tree!'
 		rm -rf /tmp/.initrd/dev || echo '*: Failed to remove the initrd /dev!'
-	elif /tmp/.initrd/bin/[ "${USE_UDEV_NORMAL}" -eq '1' ]
+	elif [ "${USE_UDEV_NORMAL}" -eq '1' ]
 	then
-		/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/fd ] && rm /tmp/.initrd/dev/fd
-		/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/stdin ] && rm /tmp/.initrd/dev/stdin
-		/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/stdout ] && rm /tmp/.initrd/dev/stdout
-		/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/stderr ] && rm /tmp/.initrd/dev/stderr
-		/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/core ] && rm /tmp/.initrd/dev/core 
+		[ -e /tmp/.initrd/dev/fd ] && rm /tmp/.initrd/dev/fd
+		[ -e /tmp/.initrd/dev/stdin ] && rm /tmp/.initrd/dev/stdin
+		[ -e /tmp/.initrd/dev/stdout ] && rm /tmp/.initrd/dev/stdout
+		[ -e /tmp/.initrd/dev/stderr ] && rm /tmp/.initrd/dev/stderr
+		[ -e /tmp/.initrd/dev/core ] && rm /tmp/.initrd/dev/core 
 		umount /tmp/.initrd/dev || echo '*: Failed to unmount the initrd /dev!'
 		umount /tmp/.initrd/proc || echo '*: Failed to unmount the initrd /proc!'
 		umount /tmp/.initrd/sys || echo '*: Failed to unmount the initrd /sys!'
-	elif /tmp/.initrd/bin/[ "${CDROOT}" -eq '1' ]
+	elif [ "${CDROOT}" -eq '1' ]
 	then
 		umount /tmp/.initrd/proc || echo "*: Failed to unmount the initrd /proc!"
 		umount /dev 2>/dev/null
@@ -722,7 +718,7 @@ then
 	   
 	   if [ -n "${UNION}" ]
 	   then
-	   	INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|${UNION#/}||g"`
+		INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|${UNION#/}||g"`
 	   fi
 	   INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|newroot||g"`
 
