@@ -396,3 +396,4 @@ CONFIG_FEATURE_MOUNT_LOOP=y
 # Debugging Options
 #
 # CONFIG_DEBUG is not set
+CONFIG_ASH_READ_TIMEOUT=y
