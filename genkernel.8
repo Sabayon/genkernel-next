@@ -1,4 +1,4 @@
-.TH GENKERNEL "8" "July 2005" "genkernel 3.3" "Gentoo Linux"
+.TH GENKERNEL "8" "June 2006" "genkernel 3.3" "Gentoo Linux"
 .SH NAME
 genkernel \- the Gentoo Linux automatic kernel compiler.
 .SH SYNOPSIS
@@ -189,8 +189,8 @@ or compile static LVM2 binaries if static ones do not exist.
 \fB\-\-no-udev\fR
 Force devfs on 2.6 series kernels. Not recommended or supported.
 .TP
-\fB\-\-unionfs\fR
-Add unionfs support. This is completely unsupported and may be broken.
+\fB\-\-static\fR
+This builds a monolithic kernel without any modules on any initial ramdisks.
 .TP
 \fB\-\-linuxrc=\fR<file>
 Use <file> for the linuxrc instead of the genkernel linuxrc.
