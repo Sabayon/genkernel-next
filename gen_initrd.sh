@@ -27,6 +27,12 @@ move_initrd_to_loop()
 	mv * "${TEMP}/initrd-mount" >> ${DEBUGFILE} 2>&1
 }
 
+# check for static linked file with objdump
+is_static() {
+	objdump -T $1 2>&1 | grep "not a dynamic object" > /dev/null
+	return $?
+}
+
 create_base_initrd_sys() {
 	rm -rf "${TEMP}/initrd-temp" > /dev/null
 	mkdir -p ${TEMP}/initrd-temp/dev
@@ -227,10 +233,23 @@ create_base_initrd_sys() {
 		ln  ${TEMP}/initrd-temp/bin/busybox ${TEMP}/initrd-temp/bin/$i ||
 			gen_die "Busybox error: could not link ${i}!"
 	done
+
+	if isTrue ${LUKS}
+	then
+		if is_static /bin/cryptsetup
+		then
+			print_info "Including LUKS support"
+			rm -f ${TEMP}/initrd-temp/sbin/cryptsetup
+			cp /bin/cryptsetup ${TEMP}/initrd-temp/sbin/cryptsetup
+			chmod +x "${TEMP}/initrd-temp/sbin/cryptsetup"
+		else
+			print_info "LUKS support requires static cryptsetup at /bin/cryptsetup"
+			print_info "Not including LUKS support"
+		fi
+	fi
 }
 
-print_list()
-{
+print_list() {
 	local x
 	for x in ${*}
 	do

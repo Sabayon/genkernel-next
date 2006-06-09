@@ -60,6 +60,11 @@ get_KV() {
 	else
 		DISKLABEL=0
 	fi
+
+	if isTrue "${CMD_LUKS}"
+	then
+		LUKS=1
+	fi
 }
 
 determine_real_args() {

@@ -575,10 +575,10 @@ setup_md_device() {
 	[ -z "$1" ] && device="${REAL_ROOT}" || device="$1"
 	[ -z "${device}" ] && return # LiveCD
 
-	if [ `echo ${device}|sed -e 's#\(/dev/md\)[[:digit:]]\+#\1#'` = "/dev/md" ]
+	if [ `echo ${device}|sed -e 's#\(luks:\)\?\(/dev/md\)[[:digit:]]\+#\2#'` = "/dev/md" ]
 	then
 		good_msg 'Detected real_root as a md device. Setting up the device node...'
-		MD_NUMBER=`echo ${device}|sed -e 's#/dev/md\([[:digit:]]\+\)#\1#'`
+		MD_NUMBER=`echo ${device}|sed -e 's#\(luks:\)\?/dev/md\([[:digit:]]\+\)#\2#'`
 		if [ ! -e /dev/md${MD_NUMBER} ]
 		then
 			mknod /dev/md${MD_NUMBER} b 9 ${MD_NUMBER} >/dev/null 2>&1

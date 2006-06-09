@@ -173,9 +173,9 @@ create_unionfs_tools_cpio(){
 		mkdir -p "${TEMP}/initramfs-unionfs-tools-temp/bin/"
 		/bin/tar -jxpf "${UNIONFS_BINCACHE}" -C "${TEMP}/initramfs-unionfs-tools-temp" ||
 			gen_die "Could not extract unionfs tools binary cache!";
-	cd "${TEMP}/initramfs-unionfs-tools-temp/"
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-unionfs-${UNIONFS_VER}-tools.cpio.gz
-	rm -r "${TEMP}/initramfs-unionfs-tools-temp/"
+		cd "${TEMP}/initramfs-unionfs-tools-temp/"
+		find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-unionfs-${UNIONFS_VER}-tools.cpio.gz
+		rm -r "${TEMP}/initramfs-unionfs-tools-temp/"
 	fi										        
 }
 
@@ -192,9 +192,9 @@ create_dmraid_cpio(){
 		mkdir -p "${TEMP}/initramfs-dmraid-temp/"
 		/bin/tar -jxpf "${DMRAID_BINCACHE}" -C "${TEMP}/initramfs-dmraid-temp" ||
 			gen_die "Could not extract dmraid binary cache!";
-	cd "${TEMP}/initramfs-dmraid-temp/"
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-dmraid-${DMRAID_VER}.cpio.gz
-	rm -r "${TEMP}/initramfs-dmraid-temp/"
+		cd "${TEMP}/initramfs-dmraid-temp/"
+		find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-dmraid-${DMRAID_VER}.cpio.gz
+		rm -r "${TEMP}/initramfs-dmraid-temp/"
 	fi										        
 }
 
@@ -323,6 +323,7 @@ create_gensplash(){
 		fi
 	fi
 }
+
 create_initramfs_overlay_cpio(){
 	cd ${INITRAMFS_OVERLAY}
 	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-overlay.cpio.gz
@@ -380,6 +381,12 @@ create_initramfs_modules() {
 	rm -r "${TEMP}/initramfs-modules-${KV}-temp/"	
 }
 
+# check for static linked file with objdump
+is_static() {
+	objdump -T $1 2>&1 | grep "not a dynamic object" > /dev/null
+	return $?
+}
+
 create_initramfs_aux() {
 	if [ -d "${TEMP}/initramfs-aux-temp" ]
 	then
@@ -403,7 +410,8 @@ create_initramfs_aux() {
 	# Make sure it's executable
 	chmod 0755 "${TEMP}/initramfs-aux-temp/init"
 
-	# Make a symlink to init .. incase we are bundled inside the kernel as one big cpio.
+	# Make a symlink to init .. incase we are bundled inside the kernel as one
+	# big cpio.
 	cd ${TEMP}/initramfs-aux-temp
 	ln -s init linuxrc
 #	ln ${TEMP}/initramfs-aux-temp/init ${TEMP}/initramfs-aux-temp/linuxrc 
@@ -444,6 +452,19 @@ create_initramfs_aux() {
 	if isTrue $CMD_SLOWUSB
 	then
 		echo 'MY_HWOPTS="${MY_HWOPTS} slowusb"' >> ${TEMP}/initramfs-aux-temp/etc/initrd.defaults
+	fi
+	if isTrue ${LUKS}
+	then
+		if is_static /bin/cryptsetup
+		then
+			print_info "Including LUKS support"
+			rm -f ${TEMP}/initramfs-aux-temp/sbin/cryptsetup
+			cp /bin/cryptsetup ${TEMP}/initramfs-aux-temp/sbin/cryptsetup
+			chmod +x "${TEMP}/initramfs-aux-temp/sbin/cryptsetup"
+		else
+			print_info "LUKS support requires static cryptsetup at /bin/cryptsetup"
+			print_info "Not including LUKS support"
+		fi
 	fi
 
 	cd ${TEMP}/initramfs-aux-temp/sbin && ln -s ../init init

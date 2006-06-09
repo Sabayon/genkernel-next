@@ -365,6 +365,27 @@ do
 		elif [ -b "${REAL_ROOT}" ] || [ "${REAL_ROOT}" = "/dev/nfs" ]
 		then
 			got_good_root=1
+
+		#check if LUKS setup is needed
+		elif [ `echo ${REAL_ROOT} | sed -e "s/\([^:]*\):.*/\1/"` = "luks" ]
+		then
+			LUKSdev=`echo ${REAL_ROOT} | sed -e "s/luks:\(.*\)/\1/"`
+			if [ -e /sbin/cryptsetup ]
+			then
+				if cryptsetup isLuks ${LUKSdev}
+				then
+					good_msg "LUKS partition - opening $LUKSdev"
+					cryptsetup luksOpen ${LUKSdev} root &&
+						REAL_ROOT=/dev/mapper/root &&
+						got_good_root=1
+				else
+					bad_msg "${LUKSDEV} is not a LUKS partition"
+					REAL_ROOT=""
+				fi
+			else
+				bad_msg "This initrd does not support LUKS"
+				REAL_ROOT=""
+			fi
 		else
 			bad_msg "Block device ${REAL_ROOT} is not a valid root device..."
 			REAL_ROOT=""

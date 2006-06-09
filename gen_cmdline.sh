@@ -81,6 +81,8 @@ longusage() {
   echo "	--linuxrc=<file>	Specifies a user created linuxrc"
   echo "	--disklabel		Include disk label and uuid support in your"
   echo "				initrd"
+  echo "	--luks			Include LUKS support"
+  echo "				--> 'emerge cryptsetup-luks' with USE=-dynamic"
   echo "  Internals"
   echo "	--arch-override=<arch>	Force to arch instead of autodetect"
   echo "	--cachedir=<dir>	Override the default cache location"
@@ -468,6 +470,10 @@ parse_cmdline() {
 	      --disklabel)
 		      CMD_DISKLABEL=1
 		      print_info 2 "CMD_DISKLABEL: $CMD_DISKLABEL"
+	      ;;
+	      --luks)
+		      CMD_LUKS=1
+		      print_info 2 "CMD_LUKS: $CMD_LUKS"
 	      ;;
 	      all)
 		      BUILD_KERNEL=1
