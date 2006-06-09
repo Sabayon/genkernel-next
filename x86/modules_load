@@ -22,3 +22,4 @@ MODULES_DMRAID="dm-mod dm-mirror"
 MODULES_SATA="sata_promise sata_sil sata_sil24 sata_svw sata_via \
 sata_nv sata_sx4 sata_sis sata_uli sata_vsc sata_qstor ahci \
 ata_piix sata_mv pdc_adma"
+MODULES_FS="ext2 ext3 reiserfs jfs nfs xfs"

@@ -78,5 +78,5 @@ CONSOLE="/dev/console"
 
 # Only sections that are in by default or those that
 # are not module groups need to be defined here...
-HWOPTS='usb firewire keymap cache evms2 sata lvm2 dmraid slowusb'
-MY_HWOPTS='usb firewire sata dmraid'
+HWOPTS='usb firewire keymap cache evms2 sata lvm2 dmraid slowusb fs'
+MY_HWOPTS='usb firewire sata dmraid fs'

@@ -19,3 +19,4 @@ MODULES_LVM2="dm-mod dm-snapshot dm-mirror dm-bbr"
 MODULES_EVMS2="dm-mod dm-snapshot dm-mirror dm-bbr raid0 raid1 \
 raid5 raid6 raid10"
 MODULES_DMRAID="dm-mod dm-mirror"
+MODULES_FS="ext2 ext3 reiserfs jfs nfs xfs"
