@@ -63,6 +63,9 @@ do
 		real_init\=*)
 			REAL_INIT=`parse_opt "${x}"`
 		;;
+		init_opts\=*)
+			INIT_OPTS=`parse_opt "${x}"`
+		;;
 		# Livecd options
 		cdroot)
 			CDROOT=1
@@ -687,7 +690,7 @@ then
 	exec chroot . /bin/sh <<- EOF
 		umount /tmp/.initrd || echo "*: Failed to unmount the initrd!"
 		/sbin/blockdev --flushbufs /dev/ram0 >/dev/null 2>&1
-		exec /sbin/init ${REAL_INIT}
+		exec ${REAL_INIT:-/sbin/init} ${INIT_OPTS}
 EOF
 elif [ "$0" = '/init' ]
 then
