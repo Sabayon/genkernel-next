@@ -184,16 +184,32 @@ create_base_initrd_sys() {
 			mkdir -p ${TEMP}/initrd-temp/lib
 			mkdir -p ${TEMP}/initrd-temp/sbin
 			mkdir -p ${TEMP}/initrd-temp/etc
-			cp -a /lib/ld-* "${TEMP}/initrd-temp/lib" || gen_die 'Could not copy files for EVMS2!'
-			cp -a /lib/libc-* /lib/libc.* "${TEMP}/initrd-temp/lib" || gen_die 'Could not copy files for EVMS2!'
-			cp -a /lib/libdl-* /lib/libdl.* "${TEMP}/initrd-temp/lib" || gen_die 'Could not copy files for EVMS2!'
-			cp -a /lib/libpthread* "${TEMP}/initrd-temp/lib" || gen_die 'Could not copy files for EVMS2!'
-			cp -a /lib/libuuid*so* "${TEMP}/initrd-temp/lib" || gen_die 'Could not copy files for EVMS2!'
-			cp -a /lib/libevms*so* "${TEMP}/initrd-temp/lib" || gen_die 'Could not copy files for EVMS2!'
-			cp -a /lib/evms "${TEMP}/initrd-temp/lib" || gen_die 'Could not copy files for EVMS2!'
-			cp -a /lib/evms/* "${TEMP}/initrd-temp/lib/evms" || gen_die 'Could not copy files for EVMS2!'
-			cp -a /etc/evms.conf "${TEMP}/initrd-temp/etc" || gen_die 'Could not copy files for EVMS2!'
-			cp /sbin/evms_activate "${TEMP}/initrd-temp/sbin/evms_activate" || gen_die 'Could not copy over evms_activate!'
+			mkdir -p ${TEMP}/initrd-temp/bin
+			cp -a /lib/ld-* "${TEMP}/initrd-temp/lib" \
+				|| gen_die 'Could not copy files for EVMS2!'
+			if [ -n "`ls /lib/libgcc_s*`" ]
+			then
+				cp -a /lib/libgcc_s* "${TEMP}/initramfs-evms2-temp/lib" \
+					|| gen_die 'Could not copy files for EVMS2!'
+			fi
+			cp -a /lib/libc-* /lib/libc.* "${TEMP}/initrd-temp/lib" \
+				|| gen_die 'Could not copy files for EVMS2!'
+			cp -a /lib/libdl-* /lib/libdl.* "${TEMP}/initrd-temp/lib" \
+				|| gen_die 'Could not copy files for EVMS2!'
+			cp -a /lib/libpthread* "${TEMP}/initrd-temp/lib" \
+				|| gen_die 'Could not copy files for EVMS2!'
+			cp -a /lib/libuuid*so* "${TEMP}/initrd-temp/lib" \
+				|| gen_die 'Could not copy files for EVMS2!'
+			cp -a /lib/libevms*so* "${TEMP}/initrd-temp/lib" \
+				|| gen_die 'Could not copy files for EVMS2!'
+			cp -a /lib/evms "${TEMP}/initrd-temp/lib" \
+				|| gen_die 'Could not copy files for EVMS2!'
+			cp -a /lib/evms/* "${TEMP}/initrd-temp/lib/evms" \
+				|| gen_die 'Could not copy files for EVMS2!'
+			cp -a /etc/evms.conf "${TEMP}/initrd-temp/etc" \
+				|| gen_die 'Could not copy files for EVMS2!'
+			cp /sbin/evms_activate "${TEMP}/initrd-temp/sbin" \
+				|| gen_die 'Could not copy over evms_activate!'
 			# Fix EVMS2 complaining that it cant find the swap utilities.
 			# These are not required in the initrd
 			for swap_libs in "${TEMP}/initrd-temp/lib/evms/*/swap*.so"
