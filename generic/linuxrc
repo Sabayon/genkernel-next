@@ -411,8 +411,9 @@ do
 			findnfsmount
 		else
 			# mount ro so fsck doesn't barf later
-			REAL_ROOT_TYPE=`vol_id -t ${REAL_ROOT}`
-			mount -t ${REAL_ROOT_TYPE} -o ro ${REAL_ROOT} ${NEW_ROOT}
+#			REAL_ROOT_TYPE=`vol_id -t ${REAL_ROOT}`
+#			mount -t ${REAL_ROOT_TYPE} -o ro ${REAL_ROOT} ${NEW_ROOT}
+			mount -o ro ${REAL_ROOT} ${NEW_ROOT}
 		fi
 		
 		# If mount is successful break out of the loop 
