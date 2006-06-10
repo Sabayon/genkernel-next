@@ -1,15 +1,11 @@
 #!/bin/bash
-# genkernel config.sh for mips systems (for 2.6.x kernels only)
-
+# genkernel config.sh for mips systems
 
 # Kernel Build Info
 KERNEL_MAKE=make
 KERNEL_MAKE_DIRECTIVE="vmlinux"
 KERNEL_MAKE_DIRECTIVE_2=""
 KERNEL_BINARY="./vmlinux"
-KERNEL_STATIC="yes"
-CMD_KERNEL_CROSS_COMPILE="mips64-unknown-linux-uclibc-"
-CMD_MAKEOPTS="-j2"
 
 # Utils Build Info
 UTILS_MAKE=make
@@ -32,8 +28,7 @@ LVM2=0
 DMRAID=0
 EVMS2=0
 DISKLABEL=0
-MIPS_EMBEDDED_IMAGE="yes"
 
-# genkernel on mips is only used for LiveCDs.  Catalyst
-# Will know where to get the kernels from.
+# genkernel on mips is only used for LiveCDs && netboots.  Catalyst
+# will know where to get the kernels at.
 CMD_NOINSTALL=1
