@@ -29,7 +29,7 @@ StartUp() {
 		#// Mount proc && sys
 		mount none	/proc		-t proc			# /proc
 		mount none	/sys		-t sysfs		# /sys
-		mount udev	/dev		-t tmpfs  -o size=250k	# /dev for udev
+		mount udev	/dev		-t tmpfs  -o size=800k	# /dev for mdev
 
 		#// Let busybox build its applets
 		/bin/busybox --install
@@ -46,19 +46,16 @@ StartUp() {
 
 		#// Mount remaining filesystems
 		mount none	/tmp		-t tmpfs  -o rw		# /tmp
-		mount devpts	/dev/pts 	-t devpts 		# /dev/pts
+		mount devpts	/dev/pts 	-t devpts -o size=300k	# /dev/pts
 
 		#// Create mtab
 		ln -sf	/proc/mounts		/etc/mtab		# mtab (symlink -> /proc/mounts)
 
-		#// Udevstart segfaults if this file exists; Works for our needs fine w/o it.
-		rm -f /etc/udev/rules.d/50-udev.rules	
+		#// Start mdev
+		echo "/sbin/mdev" > /proc/sys/kernel/hotplug		# mdev handles hotplug events
+		/sbin/mdev -s						# have mdev populate /dev
 
-		#// Start udev
-		echo "/sbin/udevsend" > /proc/sys/kernel/hotplug
-		/sbin/udevstart
-
-		#// udev doesn't create RAID devices or std* for us
+		#// mdev doesn't create RAID devices or std* for us
 		mknod 	/dev/md0		b 9 0
 		mknod 	/dev/md1		b 9 1
 		mknod 	/dev/md2		b 9 2

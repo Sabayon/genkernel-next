@@ -30,15 +30,6 @@ create_base_layout_cpio() {
 	    echo "UNREGISTER      .*           RMNEWCOMPAT" >> ${TEMP}/initramfs-base-temp/etc/devfsd.conf
 	fi
 
-	# SGI LiveCDs need the following binary (no better place for it than here)
-	# getdvhoff is a DEPEND of genkernel, so it *should* exist
-	if [ ${BUILD_INITRAMFS} -eq 1 -a "${MIPS_LIVECD}" != '' ]
-	then
-		[ -e /usr/lib/getdvhoff/getdvhoff ] \
-			&& cp /usr/lib/getdvhoff/getdvhoff ${TEMP}/initramfs-base-temp/bin \
-			|| gen_die "sys-boot/getdvhoff not merged!"
-	fi
-
 	cd ${TEMP}/initramfs-base-temp/dev
 	mknod -m 660 console c 5 1
 	mknod -m 660 null c 1 3
