@@ -525,15 +525,15 @@ then
 
 	elif [ "${LOOPTYPE}" = 'sgimips' ]
 	then
-		# getdvhoff finds the starting offset of the ext2 partition
-		# on the cdrom and returns this offset for losetup
+		# getdvhoff finds the starting offset (in bytes) of the squashfs
+		# partition on the cdrom and returns this offset for losetup
 		#
-		# Currently supported SGI Systems all use SCSI CD-ROMs, so
-		# so we know that the CD-ROM is always /dev/sr0
+		# All currently supported SGI Systems use SCSI CD-ROMs, so
+		# so we know that the CD-ROM is usually going to be /dev/sr0.
 		#
 		# We use the value given to losetup to set /dev/loop0 to point
 		# to the liveCD root partition, and then mount /dev/loop0 as
-		# the liveCD root
+		# the LiveCD rootfs
 		good_msg 'Locating the SGI LiveCD Root Partition'
 		echo ' ' | \
 			losetup -o $(/bin/getdvhoff ${NEW_ROOT}${REAL_ROOT} 0) \
@@ -542,7 +542,7 @@ then
 		test_success 'losetup /dev/sr0 /dev/loop0'
 
 		good_msg 'Mounting the Root Partition'
-		mount -t ext2 -o ro ${NEW_ROOT}${CDROOT_DEV} ${NEW_ROOT}/mnt/livecd
+		mount -t squashfs -o ro ${NEW_ROOT}${CDROOT_DEV} ${NEW_ROOT}/mnt/livecd
 		test_success 'mount /dev/loop0 /'
 		FS_LOCATION='mnt/livecd'
 	fi
