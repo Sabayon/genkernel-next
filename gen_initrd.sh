@@ -427,8 +427,8 @@ create_initrd() {
 	fi
 	if ! isTrue "${CMD_NOINSTALL}"
 	then
-		cp ${TMPDIR}/initrd-${KV} /boot/initrd-${KNAME}-${ARCH}-${KV} ||
-			gen_die 'Could not copy the initrd to /boot!'
+		cp ${TMPDIR}/initrd-${KV} ${BOOTDIR}/initrd-${KNAME}-${ARCH}-${KV} ||
+			gen_die 'Could not copy the initrd to ${BOOTDIR}!'
 	fi
 
 	# Pegasos hack for merging the initrd into the kernel at compile time

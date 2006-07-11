@@ -663,8 +663,8 @@ create_initramfs() {
 	then
 		if [ "${GENERATE_Z_IMAGE}" != '1' ]
 		then
-			cp ${TMPDIR}/initramfs-${KV} /boot/initramfs-${KNAME}-${ARCH}-${KV} ||
-				gen_die 'Could not copy the initramfs to /boot!'
+			cp ${TMPDIR}/initramfs-${KV} ${BOOTDIR}/initramfs-${KNAME}-${ARCH}-${KV} ||
+				gen_die 'Could not copy the initramfs to ${BOOTDIR}!'
 		fi
 	fi
 }

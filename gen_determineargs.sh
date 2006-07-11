@@ -177,6 +177,14 @@ determine_real_args() {
 		UTILS_CROSS_COMPILE="${CMD_UTILS_CROSS_COMPILE}"
 	fi
 
+	if [ "${BOOTDIR}" != '' ]
+	then
+		BOOTDIR=`arch_replace "${BOOTDIR}"`
+		BOOTDIR=${BOOTDIR%/}    # Remove any trailing slash
+	else
+		BOOTDIR="/boot"
+	fi
+
 	CACHE_DIR=`arch_replace "${CACHE_DIR}"`
 	CACHE_CPIO_DIR="${CACHE_DIR}/cpio"
 	BUSYBOX_BINCACHE=`cache_replace "${BUSYBOX_BINCACHE}"`

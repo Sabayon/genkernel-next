@@ -2,7 +2,7 @@
 # Genkernel v3
 
 PATH="/bin:/usr/bin:/sbin:/usr/sbin"
-GK_V='3.4.0_pre1'
+GK_V='3.4.0_pre2'
 
 TMPDIR='/var/tmp/genkernel'
 TEMP=${TMPDIR}/$RANDOM.$RANDOM.$RANDOM.$$
@@ -126,27 +126,29 @@ then
 	fi
 fi
 
-# Check /boot is mounted
+# Check BOOTDIR is mounted
 if isTrue ${CMD_NOINSTALL}
 then
 	isTrue ${MOUNTBOOT} && print_info 2 'Skipping automatic mount of boot'
 else
-	if ! egrep -q ' /boot ' /proc/mounts
+	[[ -d ${BOOTDIR} ]] || gen_die "${BOOTDIR} is not a directory"
+	
+	if ! egrep -q ' ${BOOTDIR} ' /proc/mounts
 	then
-		if egrep -q '^[^#].+	/boot	' /etc/fstab
+		if egrep -q '^[^#].+[ \t]${BOOTDIR}[ \t]' /etc/fstab
 		then
 			if isTrue ${MOUNTBOOT}
 			then
-				if ! mount /boot
+				if ! mount ${BOOTDIR}
 				then
-					print_warning 1 "${BOLD}WARNING${NORMAL}: Failed to mount /boot!"
+					print_warning 1 "${BOLD}WARNING${NORMAL}: Failed to mount ${BOOTDIR}!"
 					echo
 				else
-					print_info 1 'mount: /boot mounted successfully!'
+					print_info 1 'mount: ${BOOTDIR} mounted successfully!'
 				fi
 			else
-				print_warning 1 "${BOLD}WARNING${NORMAL}: No mounted /boot partition detected!"
-				print_warning 1 '         Run ``mount /boot`` to mount it!'
+				print_warning 1 "${BOLD}WARNING${NORMAL}: No mounted ${BOOTDIR} partition detected!"
+				print_warning 1 '         Run ``mount ${BOOTDIR}`` to mount it!'
 				echo
 			fi
 		fi
@@ -154,12 +156,12 @@ else
 	then
 		if isTrue ${MOUNTBOOT}
 		then
-			if ! mount -o remount,rw /boot
+			if ! mount -o remount,rw ${BOOTDIR}
 			then
-				print_warning 1 "${BOLD}WARNING${NORMAL}: Failed to remount /boot RW!"
+				print_warning 1 "${BOLD}WARNING${NORMAL}: Failed to remount ${BOOTDIR} RW!"
 				echo
 			else
-				print_info 1 "mount: /boot remounted read/write successfully!"
+				print_info 1 "mount: ${BOOTDIR} remounted read/write successfully!"
 				BOOTRW=1
 			fi
 		fi
@@ -407,10 +409,10 @@ then
     
     
     print_info 1 '	    creating kernel name symlink!'
-    if [ -e /boot/kernel-${KNAME}-${ARCH}-${KV} ]
+    if [ -e ${BOOTDIR}/kernel-${KNAME}-${ARCH}-${KV} ]
     then
-	/bin/rm /boot/kernel
-        ln -s /boot/kernel-${KNAME}-${ARCH}-${KV} /boot/kernel
+	/bin/rm ${BOOTDIR}/kernel
+        ln -s ${BOOTDIR}/kernel-${KNAME}-${ARCH}-${KV} ${BOOTDIR}/kernel
         ret=$?
         [ ${ret} = '1' ] && print_error 1 'kernel link failed'
     fi
@@ -418,19 +420,19 @@ then
     if [ "${KERN_24}" != '1' -a  "${CMD_BOOTSPLASH}" != '1' ]
     then
 	print_info 1 '	    creating initramfs name symlink!'
-	if [ -e /boot/initramfs-${KNAME}-${ARCH}-${KV} ]
+	if [ -e ${BOOTDIR}/initramfs-${KNAME}-${ARCH}-${KV} ]
 	then
-	    /bin/rm /boot/initramfs
-	    ln -s /boot/initramfs-${KNAME}-${ARCH}-${KV} /boot/initramfs
+	    /bin/rm ${BOOTDIR}/initramfs
+	    ln -s ${BOOTDIR}/initramfs-${KNAME}-${ARCH}-${KV} ${BOOTDIR}/initramfs
 	    ret=$?
 	    [ ${ret} = '1' ] && print_error 1 'initramfs link failed'
 	fi
     else
 	print_info 1 '	    creating initrd name symlink!'
-	if [ -e /boot/initrd-${KNAME}-${ARCH}-${KV} ]
+	if [ -e ${BOOTDIR}/initrd-${KNAME}-${ARCH}-${KV} ]
 	then
-	    /bin/rm /boot/initrd
-	    ln -s /boot/initrd-${KNAME}-${ARCH}-${KV} /boot/initrd
+	    /bin/rm ${BOOTDIR}/initrd
+	    ln -s ${BOOTDIR}/initrd-${KNAME}-${ARCH}-${KV} ${BOOTDIR}/initrd
 	    ret=$?
 	    [ ${ret} = '1' ] && print_error 1 'initrd link failed'
 	fi
@@ -438,7 +440,7 @@ then
 fi
 
 
-[ "${BOOTRW}" != '' ] && mount -o remount,ro /boot
+[ "${BOOTRW}" != '' ] && mount -o remount,ro ${BOOTDIR}
 
 echo
 print_info 1 'Do NOT report kernel bugs as genkernel bugs unless your bug'
