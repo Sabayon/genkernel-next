@@ -288,7 +288,7 @@ create_evms2_cpio(){
 create_gensplash(){	
 	if [ "${GENSPLASH}" -eq '1' ]
 	then
-		if [ -x /sbin/splash ]
+		if [ -x /sbin/splash_geninitramfs ]
 		then
 			[ -z "${GENSPLASH_THEME}" ] && [ -e /etc/conf.d/splash ] && source /etc/conf.d/splash
 			[ -z "${GENSPLASH_THEME}" ] && GENSPLASH_THEME=default
