@@ -133,9 +133,9 @@ then
 else
 	[[ -d ${BOOTDIR} ]] || gen_die "${BOOTDIR} is not a directory"
 	
-	if ! egrep -q ' ${BOOTDIR} ' /proc/mounts
+	if ! egrep -q "[[:space:]]${BOOTDIR}[[:space:]]" /proc/mounts
 	then
-		if egrep -q '^[^#].+[ \t]${BOOTDIR}[ \t]' /etc/fstab
+		if egrep -q "^[^#].+[[:space:]]${BOOTDIR}[[:space:]]" /etc/fstab
 		then
 			if isTrue ${MOUNTBOOT}
 			then
@@ -144,11 +144,11 @@ else
 					print_warning 1 "${BOLD}WARNING${NORMAL}: Failed to mount ${BOOTDIR}!"
 					echo
 				else
-					print_info 1 'mount: ${BOOTDIR} mounted successfully!'
+					print_info 1 "mount: ${BOOTDIR} mounted successfully!"
 				fi
 			else
 				print_warning 1 "${BOLD}WARNING${NORMAL}: No mounted ${BOOTDIR} partition detected!"
-				print_warning 1 '         Run ``mount ${BOOTDIR}`` to mount it!'
+				print_warning 1 "         Run ``mount ${BOOTDIR}`` to mount it!"
 				echo
 			fi
 		fi

@@ -252,14 +252,7 @@ has_loop() {
 
 isBootRO()
 {
-	for mo in `grep ' ${BOOTDIR} ' /proc/mounts | cut -d ' ' -f 4 | sed -e 's/,/ /'`
-	do
-		if [ "x${mo}x" == "xrox" ]
-		then
-			return 0
-		fi
-	done
-	return 1
+	return $(awk '( $2 == "'${BOOTDIR}'" && $4 ~ /(^|,)ro(,|$)/){ I=1; exit }END{print !I }' /proc/mounts);
 }
 
 setup_cache_dir()

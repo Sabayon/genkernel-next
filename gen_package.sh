@@ -89,12 +89,12 @@ gen_kerncache()
 gen_kerncache_extract_kernel()
 {
        	/bin/tar -f ${KERNCACHE} -C ${TEMP} -xj 
-	cp "${TEMP}/kernel-${ARCH}-${KV}" "${BOOTDIR}/kernel-${KNAME}-${ARCH}-${KV}" || gen_die 'Could not copy the kernel binary to ${BOOTDIR}!'
+	cp "${TEMP}/kernel-${ARCH}-${KV}" "${BOOTDIR}/kernel-${KNAME}-${ARCH}-${KV}" || gen_die "Could not copy the kernel binary to ${BOOTDIR}!"
 	if [ "${KERNEL_BINARY_2}" != '' -a "${GENERATE_Z_IMAGE}" = '1' ]
         then
-		cp "${TEMP}/kernelz-${ARCH}-${KV}" "${BOOTDIR}/kernelz-${KNAME}-${ARCH}-${KV}" || gen_die 'Could not copy the kernel binary to ${BOOTDIR}!'
+		cp "${TEMP}/kernelz-${ARCH}-${KV}" "${BOOTDIR}/kernelz-${KNAME}-${ARCH}-${KV}" || gen_die "Could not copy the kernel binary to ${BOOTDIR}!"
         fi
-        cp "${TEMP}/System.map-${ARCH}-${KV}" "${BOOTDIR}/System.map-${KNAME}-${ARCH}-${KV}" || gen_die 'Could not copy System.map to ${BOOTDIR}!'
+        cp "${TEMP}/System.map-${ARCH}-${KV}" "${BOOTDIR}/System.map-${KNAME}-${ARCH}-${KV}" || gen_die "Could not copy System.map to ${BOOTDIR}!"
 }
 
 gen_kerncache_extract_modules()

@@ -10,7 +10,7 @@ set_bootloader() {
 }
 
 set_grub_bootloader() {
-	local GRUB_CONF='${BOOTDIR}/grub/grub.conf'
+	local GRUB_CONF="${BOOTDIR}/grub/grub.conf"
 
 	print_info 1 ''
 	print_info 1 "Adding kernel to $GRUB_CONF..."
@@ -19,8 +19,8 @@ set_grub_bootloader() {
 		GRUB_BOOTFS=${BOOTFS}
 	else	
 		# Extract block device information from /etc/fstab
-		GRUB_ROOTFS=$(awk '/^[^#].+[[:space:]]\/[[:space:]]/ { print $1 }' /etc/fstab)
-		GRUB_BOOTFS=$(awk '/^[^#].+[[:space:]]\${BOOTDIR}[[:space:]]/ { print $1 }' /etc/fstab)
+		GRUB_ROOTFS=$(awk 'BEGIN{RS="((#[^\n]*)?\n)"}( $2 == "/" ) { print $1; exit }' /etc/fstab)
+		GRUB_BOOTFS=$(awk 'BEGIN{RS="((#[^\n]*)?\n)"}( $2 == "'${BOOTDIR}'") { print $1; exit }' /etc/fstab)
 
 		# If ${BOOTDIR} is not defined in /etc/fstab, it must be the same as /
 		[ "x$GRUB_BOOTFS" == 'x' ] && GRUB_BOOTFS=$GRUB_ROOTFS
@@ -70,8 +70,8 @@ EOF
 			fi
 			echo >> $GRUB_CONF
 		else
-			print_error 1 'Error! ${BOOTDIR}/grub/grub.conf does not exist and the correct settings can not be automatically detected.'
-			print_error 1 'Please manually create your ${BOOTDIR}/grub/grub.conf file.'
+			print_error 1 "Error! ${BOOTDIR}/grub/grub.conf does not exist and the correct settings can not be automatically detected."
+			print_error 1 "Please manually create your ${BOOTDIR}/grub/grub.conf file."
 		fi
 	else
 		# grub.conf already exists; so...
