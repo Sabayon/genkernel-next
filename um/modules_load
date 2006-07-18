@@ -8,7 +8,7 @@ seagate t128 u14-34f ultrastor wd7000  \
 NCR53c406a sym53c8xx dmx3191d imm in2000 ips qla1280 \
 sim710 sym53c416 dc395x atp870u mptbase mptscsih \
 mptspi mptfc 3w-xxxx 3w-9xxx cpqarray cciss DAC960 \
-sx8 aacraid"
+sx8 aacraid megaraid_mbox megaraid_mm megaraid_sas "
 
 MODULES_FIREWIRE="ieee1394 ohci1394 sbp2"
 MODULES_ATARAID="ataraid pdcraid hptraid"
