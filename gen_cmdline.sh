@@ -468,7 +468,7 @@ parse_cmdline() {
 	      ;;
               --genzimage)
 			KERNEL_MAKE_DIRECTIVE_2='zImage.initrd'
-			KERNEL_BINARY_2='arch/ppc/boot/images/zImage.initrd.chrp'
+			KERNEL_BINARY_2='arch/powerpc/boot/zImage.initrd'
 			GENERATE_Z_IMAGE=1
 			print_info 2 "GENERATE_Z_IMAGE: $GENERATE_Z_IMAGE"
 	      ;;

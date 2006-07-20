@@ -549,7 +549,7 @@ merge_initramfs_cpio_archives(){
 	# Pegasos hack for merging the initramfs into the kernel at compile time
 	[ "${KERNEL_MAKE_DIRECTIVE}" == 'zImage.initrd' -a "${GENERATE_Z_IMAGE}" = '1' ] ||
 		[ "${KERNEL_MAKE_DIRECTIVE_2}" == 'zImage.initrd' -a "${GENERATE_Z_IMAGE}" = '1' ] &&
-			cp ${TMPDIR}/initramfs-${KV} ${KERNEL_DIR}/arch/${ARCH}/boot/images/ramdisk.image.gz &&
+			cp ${TMPDIR}/initramfs-${KV} ${KERNEL_DIR}/arch/powerpc/boot/ramdisk.image.gz &&
 			rm ${TMPDIR}/initramfs-${KV}
 
 	# Mips also mimics Pegasos to merge the initramfs into the kernel
