@@ -351,7 +351,7 @@ compile_unionfs_modules() {
 			cd "${UNIONFS_DIR}"
 			# Compile unionfs module within the unionfs
 			# environment not within the kernelsrc dir
-			make unionfs.ko
+			make unionfs.ko || gen_die 'failed to compile unionfs'
 		else
 			gen_die 'unionfs is only supported on 2.6 targets'
 		fi
@@ -361,9 +361,9 @@ compile_unionfs_modules() {
 		
 		if [ -f unionfs.ko ]
 		then 
-			cp unionfs.ko ${TEMP}/unionfs/lib/modules/${KV}/kernel/fs/unionfs
+			cp -f unionfs.ko ${TEMP}/unionfs/lib/modules/${KV}/kernel/fs/unionfs
 		else
-			cp unionfs.o ${TEMP}/unionfs/lib/modules/${KV}/kernel/fs/unionfs
+			cp -f unionfs.o ${TEMP}/unionfs/lib/modules/${KV}/kernel/fs/unionfs
  		fi
 	
 		cd ${TEMP}/unionfs
