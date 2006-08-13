@@ -319,12 +319,9 @@ start_dev_mgr() {
 		[ "${DO_slowusb}" ] && sleep 20
 		cd /
 	else
-		if [ ! -e /dev/.devfsd ]
-		then
-			good_msg 'Activating devfs'
-			mount -t devfs devfs /dev
-			devfsd /dev -np
-		fi
+		good_msg 'Activating devfs'
+		mount -t devfs devfs /dev 2>/dev/null
+		devfsd /dev -np
 	fi
 }
 
