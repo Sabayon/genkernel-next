@@ -22,8 +22,8 @@ then
 	exit 1
 fi
 
-mount -o remount,rw / >/dev/null 2>&1
 mount -t proc proc /proc >/dev/null 2>&1
+mount -o remount,rw / >/dev/null 2>&1
 
 # activate suspend2
 if [ -w /proc/suspend2/do_resume ]
