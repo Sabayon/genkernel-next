@@ -25,13 +25,6 @@ fi
 mount -t proc proc /proc >/dev/null 2>&1
 mount -o remount,rw / >/dev/null 2>&1
 
-# activate suspend2
-if [ -w /proc/suspend2/do_resume ]
-then
-	echo -e "${GOOD}>>${NORMAL}${BOLD} Activating suspend2 resume..."
-	echo > /proc/suspend2/do_resume
-fi
-
 # Set up symlinks
 if [ "$0" = '/init' ]
 then
@@ -234,6 +227,8 @@ fi
 
 # Run debug shell if requested
 rundebugshell
+
+suspend2_resume
 
 if [ "${CDROOT}" -eq '1' ]
 then

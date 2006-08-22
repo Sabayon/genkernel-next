@@ -38,7 +38,7 @@ modules_scan() {
 	local MODS
 	[ -d /etc/modules/${1} ] || touch /etc/modules/${1}
 
-	MODS=`cat /etc/modules/${1}`
+	[ -f /etc/modules/${1} ] && MODS=`cat /etc/modules/${1}`
 	for x in ${MODS}
 	do
 		MLOAD=`echo ${MLIST} | sed -e "s/.*${x}.*/${x}/"`
@@ -649,3 +649,29 @@ setup_unionfs() {
 		USE_UNIONFS_NORMAL=0
 	fi
 }
+
+suspend2_resume() {
+	if [ -d /proc/suspend2 ]; then
+		local splash_theme
+
+		if grep "splash=" /proc/cmdline > /dev/null 2>&1; then
+			splash_theme=`cat /proc/cmdline | sed 's/.*splash=/splash=/' | sed 's/ .*//' | sed 's/.*theme://' | sed 's/,.*//'`
+		fi
+
+		if which suspend2ui_text > /dev/null 2>&1; then
+			echo `which suspend2ui_text` > /proc/suspend2/userui_program
+		fi
+
+		if [ -n "${splash_theme}" ]; then
+			ln -s /etc/splash/${splash_theme} /etc/splash/suspend2
+
+			if which suspend2ui_fbsplash > /dev/null 2>&1; then
+				echo `which suspend2ui_fbsplash` > /proc/suspend2/userui_program
+			fi
+		fi
+
+		modules_scan suspend2
+		echo > /proc/suspend2/do_resume
+	fi
+}
+
