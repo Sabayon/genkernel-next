@@ -288,7 +288,7 @@ create_evms2_cpio(){
 create_gensplash(){	
 	if [ "${GENSPLASH}" -eq '1' ]
 	then
-		if [ -x /usr/bin/splash_geninitramfs ]
+		if [ -x /usr/bin/splash_geninitramfs ] || [ -x /usr/sbin/splash_geninitramfs ]
 		then
 			[ -z "${GENSPLASH_THEME}" ] && [ -e /etc/conf.d/splash ] && source /etc/conf.d/splash
 			[ -z "${GENSPLASH_THEME}" ] && GENSPLASH_THEME=default
@@ -296,7 +296,7 @@ create_gensplash(){
 			cd /
 			local tmp=""
 			[ -n "${GENSPLASH_RES}" ] && tmp="-r ${GENSPLASH_RES}"
-			splash_geninitramfs -g ${CACHE_CPIO_DIR}/initramfs-splash-${KV}.cpio.gz ${tmp} ${GENSPLASH_THEME}
+			splash_geninitramfs -g ${CACHE_CPIO_DIR}/initramfs-splash-${KV}.cpio.gz ${tmp} ${GENSPLASH_THEME} || gen_die "Could not build splash cpio archive"
 			if [ -e "/usr/share/splashutils/initrd.splash" ]; then
 				if [ -d "${TEMP}/initramfs-gensplash-temp" ]
 				then
@@ -304,9 +304,9 @@ create_gensplash(){
 				fi
 				mkdir -p "${TEMP}/initramfs-gensplash-temp/etc"
 				cd "${TEMP}/initramfs-gensplash-temp/"
-				gunzip -c ${CACHE_CPIO_DIR}/initramfs-splash-${KV}.cpio.gz | cpio -idm --quiet -H newc
-				cp "/usr/share/splashutils/initrd.splash" "${TEMP}/initramfs-gensplash-temp/etc"
-				find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-splash-${KV}.cpio.gz
+				gunzip -c ${CACHE_CPIO_DIR}/initramfs-splash-${KV}.cpio.gz | cpio -idm --quiet -H newc || gen_die "unpacking splash cpio"
+				cp -f "/usr/share/splashutils/initrd.splash" "${TEMP}/initramfs-gensplash-temp/etc"
+				find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-splash-${KV}.cpio.gz || gen_die "compressing splash cpio"
 				rm -r "${TEMP}/initramfs-gensplash-temp/"
 			fi
 		else
