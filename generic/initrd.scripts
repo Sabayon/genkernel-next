@@ -72,7 +72,7 @@ findcdmount() {
 			if [ -b "${x}" ]
 			then
 				good_msg "Attempting to mount media:- ${x}"
-				mount -r -t auto ${x} ${NEW_ROOT}/mnt/cdrom > /dev/null 2>&1
+				mount -r -t iso9660,vfat ${x} ${NEW_ROOT}/mnt/cdrom > /dev/null 2>&1
 				if [ "$?" = '0' ]
 				then
 					# Check for a LiveCD
