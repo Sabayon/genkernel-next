@@ -60,7 +60,7 @@ then
 fi
 
 QUIET=1
-ROOT_LINKS='bin sbin lib lib32 lib64 boot usr opt'
+ROOT_LINKS='bin sbin lib lib32 lib64 boot usr opt emul'
 ROOT_TREES='etc root home var'
 INSMOD='insmod'
 if [ "${KMINOR}" -gt '4' ]
