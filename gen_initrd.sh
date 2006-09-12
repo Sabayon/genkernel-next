@@ -104,7 +104,7 @@ create_base_initrd_sys() {
 	fi
 
 	# devfsd
-	if [ "${UDEV}" != '1' ]
+	if [ "${DEVFS}" -eq '1' ]
 	then
 		cp "${DEVFSD_BINCACHE}" "${TEMP}/initrd-temp/bin/devfsd.bz2" || gen_die 'Could not copy devfsd executable from bincache!'
 		bunzip2 "${TEMP}/initrd-temp/bin/devfsd.bz2" || gen_die 'Could not uncompress devfsd!'
@@ -112,20 +112,19 @@ create_base_initrd_sys() {
 	fi
 
 	# udev
-	if [ "${UDEV}" -eq '1' ]
-	then
-		/bin/tar -jxpf "${UDEV_BINCACHE}" -C "${TEMP}/initrd-temp" || gen_die 'Could not extract udev binary cache!'
-		if [ ! -e "${TEMP}/initrd-temp/bin/udevstart" ]
-		then
-		    ln -sf "./udev" "${TEMP}/initrd-temp/bin/udevstart" || 	gen_die 'Could not symlink udev -> udevstart!'
-		fi
+#	if [ "${UDEV}" -eq '1' ]
+#	then
+#		/bin/tar -jxpf "${UDEV_BINCACHE}" -C "${TEMP}/initrd-temp" || gen_die 'Could not extract udev binary cache!'
+#		if [ ! -e "${TEMP}/initrd-temp/bin/udevstart" ]
+#		then
+#		    ln -sf "./udev" "${TEMP}/initrd-temp/bin/udevstart" || 	gen_die 'Could not symlink udev -> udevstart!'
+#		fi
 		
-		if [ ! -e "${TEMP}/initrd-temp/bin/udevsend" ]
-		then
-		    ln -sf "./udev" "${TEMP}/initrd-temp/bin/udevsend" || 	gen_die 'Could not symlink udev -> udevsend!'
-		fi
-
-	fi
+#		if [ ! -e "${TEMP}/initrd-temp/bin/udevsend" ]
+#		then
+#		    ln -sf "./udev" "${TEMP}/initrd-temp/bin/udevsend" || 	gen_die 'Could not symlink udev -> udevsend!'
+#		fi
+#	fi
 	
 	#unionfs modules
 	if [ "${UNIONFS}" -eq '1' ]
