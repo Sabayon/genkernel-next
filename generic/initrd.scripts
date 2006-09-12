@@ -1,6 +1,7 @@
 #!/bin/ash
 
 . /etc/initrd.defaults
+
 backup() {
 	echo -ne "\033[0G\033[0K"
 }
@@ -70,12 +71,12 @@ findcdmount() {
 			# Check for a block device to mount
 			if [ -b "${x}" ]
 			then
-				good_msg "Attempting to mount CD:- ${x}"
-				mount -r -t iso9660 ${x} ${NEW_ROOT}/mnt/cdrom > /dev/null 2>&1
+				good_msg "Attempting to mount media:- ${x}"
+				mount -r -t auto ${x} ${NEW_ROOT}/mnt/cdrom > /dev/null 2>&1
 				if [ "$?" = '0' ]
 				then
 					# Check for a LiveCD
-					if [ -e ${NEW_ROOT}/mnt/cdrom/livecd ]
+					if [ -e ${NEW_ROOT}/mnt/cdrom/${SUBDIR}/livecd ]
 					then
 						REAL_ROOT="${x}"
 						break
@@ -87,7 +88,7 @@ findcdmount() {
 		done
 		if [ "${REAL_ROOT}" != '' ]
 		then
-			good_msg "CD medium found on ${x}"
+			good_msg "Media found on ${x}"
 		fi
 	fi
 }
