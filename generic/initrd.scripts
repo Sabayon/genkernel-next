@@ -659,20 +659,31 @@ suspend2_resume() {
 			splash_theme=`cat /proc/cmdline | sed 's/.*splash=/splash=/' | sed 's/ .*//' | sed 's/.*theme://' | sed 's/,.*//'`
 		fi
 
+		local suspend2_userui_program="/sys/power/suspend2/user_interface/program"
+		local suspend2_do_resume="/sys/power/suspend2/do_resume"
+
+		#
+		# Backward compatibility
+		#
+		if [ -e /proc/suspend2 ]; then
+			suspend2_userui_program="/proc/suspend2/userui_program"
+			suspend2_do_resume="/proc/suspend2/do_resume"
+		fi
+
+		modules_scan suspend2
+
 		if which suspend2ui_text > /dev/null 2>&1; then
-			echo `which suspend2ui_text` > /proc/suspend2/userui_program
+			which suspend2ui_text > "${suspend2_userui_program}"
 		fi
 
 		if [ -n "${splash_theme}" ]; then
 			ln -s /etc/splash/${splash_theme} /etc/splash/suspend2
 
 			if which suspend2ui_fbsplash > /dev/null 2>&1; then
-				echo `which suspend2ui_fbsplash` > /proc/suspend2/userui_program
+				which suspend2ui_fbsplash > "${suspend2_userui_program}"
 			fi
 		fi
 
-		modules_scan suspend2
-		echo > /proc/suspend2/do_resume
+		echo > "${suspend2_do_resume}"
 	fi
 }
-
