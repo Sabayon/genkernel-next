@@ -385,6 +385,7 @@ CONFIG_MOUNT=y
 CONFIG_NFSMOUNT=y
 CONFIG_UMOUNT=y
 # CONFIG_FEATURE_MOUNT_FORCE is not set
+CONFIG_FEATURE_MOUNT_NFS=y
 
 #
 # Common options for mount/umount
