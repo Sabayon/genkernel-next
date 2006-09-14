@@ -487,6 +487,14 @@ chooseKeymap() {
 
 startVolumes() {
 	#good_msg 'Checking if volumes need to be started...'
+
+	# Here, we check for /dev/device-mapper, and if it exists, we setup a
+	# a symlink, which should hopefully fix bug #142775 and bug #147015
+	if [ -e /dev/device-mapper ]
+	then
+		mkdir -p /dev/mapper
+		ln -sf /dev/device-mapper /dev/mapper/control
+	fi
 	
 	if [ "${USE_DMRAID_NORMAL}" -eq '1' ]
 	then
