@@ -72,8 +72,14 @@ findcdmount() {
 			if [ -b "${x}" ]
 			then
 				good_msg "Attempting to mount media:- ${x}"
-				mount -r -t iso9660 ${x} ${NEW_ROOT}/mnt/cdrom \
-					> /dev/null 2>&1
+				if [ -n "${CDROOT_DEV}" ]
+				then
+					mount -r -t auto ${x} ${NEW_ROOT}/mnt/cdrom \
+						> /dev/null 2>&1
+				else
+					mount -r -t iso9660 ${x} ${NEW_ROOT}/mnt/cdrom \
+						> /dev/null 2>&1
+				fi
 				if [ "$?" = '0' ]
 				then
 					# Check for a LiveCD
@@ -85,18 +91,6 @@ findcdmount() {
 						umount ${NEW_ROOT}/mnt/cdrom
 					fi
 				fi
-				mount -r -t auto ${x} ${NEW_ROOT}/mnt/cdrom \
-					> /dev/null 2>&1
-				if [ "$?" = '0' ]
-				then
-					# Check for a LiveCD
-					if [ -e ${NEW_ROOT}/mnt/cdrom/${SUBDIR}/livecd ]
-					then
-						REAL_ROOT="${x}"
-						break
-					else
-						umount ${NEW_ROOT}/mnt/cdrom
-					fi
 			fi
 		done
 		if [ "${REAL_ROOT}" != '' ]
@@ -341,14 +335,19 @@ start_dev_mgr() {
 
 bootstrapCD() {
 	# Locate the cdrom device with our media on it.
-	[ -n "${CDROOT_DEV}" ] && DEVICES="$DEVICES ${CDROOT_DEV}" # Device specified on the command line
-	DEVICES="$DEVICES /dev/cdroms/*" # CDROM DEVICES
-	DEVICES="$DEVICES /dev/ide/cd/*" # CDROM DEVICES
-	DEVICES="$DEVICES /dev/sr*" # UML DEVICES
-	DEVICES="$DEVICES /dev/sd*" # USB Keychain
-	DEVICES="$DEVICES /dev/hd*" # IDE devices
-	DEVICES="$DEVICES /dev/ubd* /dev/ubd/*" # UML DEVICES
-	DEVICES="$DEVICES /dev/iseries/vcd*" # iSeries Devices
+	# CDROM DEVICES
+	DEVICES="/dev/cdroms/* /dev/ide/cd/* /dev/sr*"
+	# USB Keychain/Storage
+	DEVICES="$DEVICES /dev/sd*"
+	# IDE devices
+	DEVICES="$DEVICES /dev/hd*"
+	# USB using the USB Block Driver
+	DEVICES="$DEVICES /dev/ubd* /dev/ubd/*"
+	# iSeries devices
+	DEVICES="$DEVICES /dev/iseries/vcd*"
+	# The device was specified on the command line.  Shold we even be doing a
+	# scan at this point?  I think not.
+	[ -n "${CDROOT_DEV}" ] && DEVICES="$DEVICES ${CDROOT_DEV}"
 
 	findcdmount $DEVICES
 }
