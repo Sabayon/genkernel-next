@@ -2,7 +2,7 @@
 # Genkernel v3
 
 PATH="/bin:/usr/bin:/sbin:/usr/sbin"
-GK_V='3.4.0'
+GK_V='3.4.1'
 
 TMPDIR='/var/tmp/genkernel'
 TEMP=${TMPDIR}/$RANDOM.$RANDOM.$RANDOM.$$
