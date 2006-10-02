@@ -38,9 +38,19 @@ get_KV() {
 			cd ${KERNEL_DIR}
 			#compile_generic prepare kernel > /dev/null 2>&1
 			cd - > /dev/null 2>&1
-			if [ -f ${KERNEL_DIR}/include/linux/version.h ]
+			[ -f "${KERNEL_DIR}/include/linux/version.h" ] && \
+				VERSION_SOURCE="${KERNEL_DIR}/include/linux/version.h"
+			[ -f "${KERNEL_DIR}/include/linux/utsrelease.h" ] && \
+				VERSION_SOURCE="${KERNEL_DIR}/include/linux/utsrelease.h"
+			# Handle new-style releases where version.h doesn't have UTS_RELEASE
+			if [ -f ${KERNEL_DIR}/include/config/kernel.release ]
 			then
-				UTS_RELEASE=`grep UTS_RELEASE ${KERNEL_DIR}/include/linux/version.h | sed -e 's/#define UTS_RELEASE "\(.*\)"/\1/'`
+				UTS_RELEASE=`cat ${KERNEL_DIR}/include/config/kernel.release`
+				LOV=`echo ${UTS_RELEASE}|sed -e "s/${VER}.${PAT}.${SUB}${EXV}//"`
+				KV=${VER}.${PAT}.${SUB}${EXV}${LOV}
+			elif [ -n "${VERSION_SOURCE}" ]
+			then
+				UTS_RELEASE=`grep UTS_RELEASE ${VERSION_SOURCE} | sed -e 's/#define UTS_RELEASE "\(.*\)"/\1/'`
 				LOV=`echo ${UTS_RELEASE}|sed -e "s/${VER}.${PAT}.${SUB}${EXV}//"`
 				KV=${VER}.${PAT}.${SUB}${EXV}${LOV}
 			else
