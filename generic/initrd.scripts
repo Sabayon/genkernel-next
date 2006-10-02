@@ -672,7 +672,7 @@ setup_unionfs() {
 }
 
 suspend2_resume() {
-	if [ -d /proc/suspend2 ]; then
+	if [ -d /proc/suspend2 ] || [ -d /sys/power/suspend2 ]; then
 		local splash_theme
 
 		if grep "splash=" /proc/cmdline > /dev/null 2>&1; then
