@@ -2,6 +2,10 @@
 # Copyright 2006-2006 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  13 Oct 2006; Chris Gianelloni <wolf31o2@gentoo.org> genkernel.8:
+  Added patch from Salah Coronya <salahx@yahoo.com> to document dolvm2 and
+  doevms2 in the genkernel man page from bug #142606.
+
   13 Oct 2006; Chris Gianelloni <wolf31o2@gentoo.org> +AUTHORS, genkernel:
   Added the AUTHORS file and ChangeLog.  This is 3.4.2
 
