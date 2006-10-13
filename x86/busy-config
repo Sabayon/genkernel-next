@@ -275,7 +275,7 @@ CONFIG_FEATURE_CHECK_TAINTED_MODULE=y
 # CONFIG_FTPPUT is not set
 # CONFIG_HOSTNAME is not set
 # CONFIG_HTTPD is not set
-# CONFIG_IFCONFIG is not set
+CONFIG_IFCONFIG=yes
 # CONFIG_IFUPDOWN is not set
 # CONFIG_INETD is not set
 # CONFIG_IP is not set
@@ -288,7 +288,7 @@ CONFIG_FEATURE_CHECK_TAINTED_MODULE=y
 # CONFIG_NC is not set
 # CONFIG_NETSTAT is not set
 # CONFIG_NSLOOKUP is not set
-# CONFIG_PING is not set
+CONFIG_PING=y
 # CONFIG_ROUTE is not set
 # CONFIG_TELNET is not set
 # CONFIG_TELNETD is not set
@@ -301,7 +301,7 @@ CONFIG_FEATURE_CHECK_TAINTED_MODULE=y
 # udhcp Server/Client
 #
 # CONFIG_UDHCPD is not set
-# CONFIG_UDHCPC is not set
+CONFIG_UDHCPC=y
 
 #
 # Process Utilities

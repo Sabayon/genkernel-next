@@ -45,6 +45,9 @@ create_busybox_cpio() {
 		rm -rf "${TEMP}/initramfs-busybox-temp" > /dev/null
 	fi
 	mkdir -p "${TEMP}/initramfs-busybox-temp/bin/" 
+
+	cp "${GK_SHARE}/generic/udhcpc.scripts" ${TEMP}/initramfs-busybox-temp/bin/
+	chmod +x "${TEMP}/initramfs-busybox-temp/bin/udhcpc.scripts"
 	cp "${BUSYBOX_BINCACHE}" "${TEMP}/initramfs-busybox-temp/bin/busybox.bz2" ||
 		gen_die 'Could not copy busybox from bincache!'
 	bunzip2 "${TEMP}/initramfs-busybox-temp/bin/busybox.bz2" ||

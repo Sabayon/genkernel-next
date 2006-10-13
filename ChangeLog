@@ -2,6 +2,12 @@
 # Copyright 2006-2006 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  13 Oct 2006; Chris Gianelloni <wolf31o2@gentoo.org> gen_initramfs.sh,
+  generic/initrd.defaults, generic/initrd.scripts, +generic/udhcpc.scripts,
+  x86/busy-config, x86/modules_load:
+  Added patch for udhcp support. Patch by Stefan Nickl
+  <snickl@snickl.freaks.de> and submitted to bug #145115.
+
   13 Oct 2006; Chris Gianelloni <wolf31o2@gentoo.org> generic/linuxrc:
   Allow root= for initramfs, instead of only real_root= to specify the root
   volume. Patch by Salah Coronya <salahx@yahoo.com> from bug #142606.

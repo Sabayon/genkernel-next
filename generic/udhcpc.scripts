@@ -1,0 +1,17 @@
+#!/bin/sh
+
+case ${1} in
+	bound)
+		[ -n "$broadcast" ] && BROADCAST="broadcast $broadcast"
+		[ -n "$subnet" ] && NETMASK="netmask $subnet"
+		[ -n "$rootpath" ] && echo "$rootpath" > /rootpath
+		#[ -n "$router" ] && echo "$router" > /router
+		#[ -n "$dns" ] && echo "$dns" > /dns
+
+		busybox ifconfig $interface $ip $BROADCAST $NETMASK
+	;;
+	deconfig)
+		busybox ifconfig $interface 0.0.0.0
+	;;
+esac
+

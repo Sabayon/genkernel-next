@@ -155,8 +155,11 @@ union_insert_dir() {
 }
 
 findnfsmount() {
-	if [ "${IP}" != '' ]
+
+	if [ "${IP}" != '' ] || busybox udhcpc -R rootpath -n -s /bin/udhcpc.scripts
 	then
+		[ -e /rootpath ] && NFSROOT=`cat /rootpath`
+
 		if [ "${NFSROOT}" = '' ]
 		then
 			# Obtain NFSIP	

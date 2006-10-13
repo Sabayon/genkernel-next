@@ -11,6 +11,7 @@ mptspi mptfc 3w-xxxx 3w-9xxx cpqarray cciss DAC960 \
 sx8 aacraid megaraid_mbox megaraid_mm megaraid_sas \
 lpfc scsi_transport_fc"
 
+MODULES_NET="e1000"
 MODULES_FIREWIRE="ieee1394 ohci1394 sbp2"
 MODULES_ATARAID="ataraid pdcraid hptraid"
 MODULES_PCMCIA="pcmcia_core yenta_socket i82365 \
