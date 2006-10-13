@@ -44,11 +44,15 @@ quiet_kmsg
 CMDLINE="`cat /proc/cmdline`"
 # Scan CMDLINE for any specified real_root= or cdroot arguments
 REAL_ROOT=''
+FAKE_ROOT=''
 for x in ${CMDLINE}
 do
 	case "${x}" in
 		real_root\=*)
 			REAL_ROOT=`parse_opt "${x}"`
+		;;
+		root\=*)
+			FAKE_ROOT=`parse_opt "${x}"`
 		;;
 		subdir\=*)
 			SUBDIR=`parse_opt "${x}"`
@@ -170,6 +174,11 @@ do
 		;;
 	esac
 done
+
+if [ -z "${REAL_ROOT}" -a \( "${CDROOT}" -eq 0 \)  -a \( "${FAKE_ROOT}" != "/dev/ram0" \) ]
+then
+	REAL_ROOT="${FAKE_ROOT}"	
+fi
 
 splash 'init'
 
