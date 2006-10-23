@@ -2,6 +2,9 @@
 # Copyright 2006-2006 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  23 Oct 2006; Chris Gianelloni <wolf31o2@gentoo.org> generic/linuxrc:
+  Added patch from bug #152441 to improve LUKS support.
+
   23 Oct 2006; Chris Gianelloni <wolf31o2@gentoo.org> x86/kernel-config-2.6,
   x86_64/kernel-config-2.6:
   Updated kernel configs for amd64/x86 for bug #151609 and bug #152299.

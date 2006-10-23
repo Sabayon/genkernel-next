@@ -172,6 +172,9 @@ do
 		nfsroot\=*)
 			NFSROOT=`parse_opt "${x}"`
 		;;
+		crypt_root\=*)
+			CRYPT_ROOT=`parse_opt "${x}"`
+		;;
 	esac
 done
 
@@ -220,8 +223,22 @@ start_dev_mgr
 # Setup md device nodes if they dont exist
 setup_md_device
 
-# Start EVMS
+# Scan volumes
 startVolumes
+
+# Iinitialize encrypted root device
+if [ -n "${CRYPT_ROOT}" ]
+then
+	cryptsetup luksOpen ${CRYPT_ROOT} root || exit -1
+
+	if [ -n "${REAL_ROOT}" ]
+	then
+		# Rescan volumes
+		startVolumes
+	else
+		REAL_ROOT="/dev/mapper/root"
+	fi
+fi
 
 # Set up unionfs
 mkdir -p ${NEW_ROOT}
@@ -370,26 +387,6 @@ do
 		then
 			got_good_root=1
 
-		#check if LUKS setup is needed
-		elif [ `echo ${REAL_ROOT} | sed -e "s/\([^:]*\):.*/\1/"` = "luks" ]
-		then
-			LUKSdev=`echo ${REAL_ROOT} | sed -e "s/luks:\(.*\)/\1/"`
-			if [ -e /sbin/cryptsetup ]
-			then
-				if cryptsetup isLuks ${LUKSdev}
-				then
-					good_msg "LUKS partition - opening $LUKSdev"
-					cryptsetup luksOpen ${LUKSdev} root &&
-						REAL_ROOT=/dev/mapper/root &&
-						got_good_root=1
-				else
-					bad_msg "${LUKSDEV} is not a LUKS partition"
-					REAL_ROOT=""
-				fi
-			else
-				bad_msg "This initrd does not support LUKS"
-				REAL_ROOT=""
-			fi
 		else
 			bad_msg "Block device ${REAL_ROOT} is not a valid root device..."
 			REAL_ROOT=""
