@@ -2,6 +2,10 @@
 # Copyright 2006-2006 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  23 Oct 2006; Chris Gianelloni <wolf31o2@gentoo.org> genkernel:
+  Changed mime-type proprty to binary/gzip for keymaps.tar.gz for bug #151500.
+  This is genkernel 3.4.3.
+
   13 Oct 2006; Chris Gianelloni <wolf31o2@gentoo.org> gen_initramfs.sh,
   generic/initrd.defaults, generic/initrd.scripts, +generic/udhcpc.scripts,
   x86/busy-config, x86/modules_load:
