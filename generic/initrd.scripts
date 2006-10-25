@@ -492,7 +492,7 @@ startVolumes() {
 
 	# Here, we check for /dev/device-mapper, and if it exists, we setup a
 	# a symlink, which should hopefully fix bug #142775 and bug #147015
-	if [ -e /dev/device-mapper ]
+	if [ -e /dev/device-mapper ] && [ ! -e /dev/mapper/control ]
 	then
 		mkdir -p /dev/mapper
 		ln -sf /dev/device-mapper /dev/mapper/control
@@ -545,6 +545,37 @@ startVolumes() {
 		then
 			good_msg "Activating EVMS"
 			evms_activate
+		fi
+	fi
+}
+
+startLUKS() {
+	if [ -n "${LUKS_ROOT}" ]
+	then
+		if [ -e /sbin/cryptsetup ]
+		then
+			if cryptsetup isLuks ${LUKS_ROOT}
+			then
+				good_msg "Opening LUKS device ${LUKS_ROOT}"
+
+				cryptsetup luksOpen ${LUKS_ROOT} root
+				if [ ! "$?" -eq '0' ]
+				then
+					bad_msg "Failed open LUKS device ${LUKS_ROOT}"
+				fi
+
+				if [ -n "${REAL_ROOT}" ]
+				then
+					# Rescan volumes
+					startVolumes
+				else
+					REAL_ROOT="/dev/mapper/root"
+				fi
+			else
+				bad_msg "The LUKS device ${LUKS_ROOT} does not contain a LUKS hearder"
+			fi
+		else
+			bad_msg "The initrd does not support LUKS"
 		fi
 	fi
 }

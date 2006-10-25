@@ -2,6 +2,10 @@
 # Copyright 2006-2006 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  25 Oct 2006; Chris Gianelloni <wolf31o2@gentoo.org>
+  generic/initrd.scripts, generic/linuxrc:
+  Updated with the latest version of the LUKS patches from bug #152441.
+
   25 Oct 2006; Chris Gianelloni <wolf31o2@gentoo.org> ChangeLog:
   Changed mime-type to application/x-gzip for generic/keymaps.tar.gz for bug
   #151500.

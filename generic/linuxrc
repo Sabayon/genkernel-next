@@ -173,7 +173,7 @@ do
 			NFSROOT=`parse_opt "${x}"`
 		;;
 		crypt_root\=*)
-			CRYPT_ROOT=`parse_opt "${x}"`
+			LUKS_ROOT=`parse_opt "${x}"`
 		;;
 	esac
 done
@@ -226,19 +226,8 @@ setup_md_device
 # Scan volumes
 startVolumes
 
-# Iinitialize encrypted root device
-if [ -n "${CRYPT_ROOT}" ]
-then
-	cryptsetup luksOpen ${CRYPT_ROOT} root || exit -1
-
-	if [ -n "${REAL_ROOT}" ]
-	then
-		# Rescan volumes
-		startVolumes
-	else
-		REAL_ROOT="/dev/mapper/root"
-	fi
-fi
+# Iinitialize LUKS root device
+startLUKS
 
 # Set up unionfs
 mkdir -p ${NEW_ROOT}
