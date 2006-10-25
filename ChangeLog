@@ -2,6 +2,10 @@
 # Copyright 2006-2006 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  25 Oct 2006; Chris Gianelloni <wolf31o2@gentoo.org> ChangeLog:
+  Changed mime-type to application/x-gzip for generic/keymaps.tar.gz for bug
+  #151500.
+
   23 Oct 2006; Chris Gianelloni <wolf31o2@gentoo.org> generic/linuxrc:
   Added patch from bug #152441 to improve LUKS support.
 
@@ -10,7 +14,7 @@
   Updated kernel configs for amd64/x86 for bug #151609 and bug #152299.
 
   23 Oct 2006; Chris Gianelloni <wolf31o2@gentoo.org> genkernel:
-  Changed mime-type proprty to binary/gzip for keymaps.tar.gz for bug #151500.
+  Changed mime-type property to binary/gzip for keymaps.tar.gz for bug #151500.
   This is genkernel 3.4.3.
 
   13 Oct 2006; Chris Gianelloni <wolf31o2@gentoo.org> gen_initramfs.sh,
