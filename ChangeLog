@@ -2,6 +2,12 @@
 # Copyright 2006-2006 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  13 Nov 2006; Chris Gianelloni <wolf31o2@gentoo.org>
+  generic/initrd.scripts:
+  Inverted check on CDROOT_DEV, as it should be -z not -n. Thanks to Jakub Moc
+  <jakub@gentoo.org> for coming up with the quick fix in bug #153554. I lied
+  before. This one is really 3.4.5.
+
   13 Nov 2006; Chris Gianelloni <wolf31o2@gentoo.org> generic/linuxrc,
   genkernel:
   Added typo fix from Jason Pepas <j.pepas@mail.utexas.edu> in bug #153516.

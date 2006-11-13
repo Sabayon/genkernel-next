@@ -72,7 +72,7 @@ findcdmount() {
 			if [ -b "${x}" ]
 			then
 				good_msg "Attempting to mount media:- ${x}"
-				if [ -n "${CDROOT_DEV}" ]
+				if [ -z "${CDROOT_DEV}" ]
 				then
 					mount -r -t auto ${x} ${NEW_ROOT}/mnt/cdrom \
 						> /dev/null 2>&1
