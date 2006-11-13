@@ -653,7 +653,7 @@ cdupdate
 
 if [ "${SUBDIR}" != '' -a -e "${CHROOT}/${SUBDIR}" ]
 then
-	good_msg"Entering ${SUBDIR} to boot"
+	good_msg "Entering ${SUBDIR} to boot"
 	CHROOT=${CHROOT}/${SUBDIR}
 fi
 

@@ -2,6 +2,11 @@
 # Copyright 2006-2006 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  13 Nov 2006; Chris Gianelloni <wolf31o2@gentoo.org> generic/linuxrc,
+  genkernel:
+  Added typo fix from Jason Pepas <j.pepas@mail.utexas.edu> in bug #153516.
+  This is 3.4.5.
+
   13 Nov 2006; Chris Gianelloni <wolf31o2@gentoo.org> alpha/busy-config,
   ia64/busy-config, mips/busy-config, parisc/busy-config,
   parisc64/busy-config, ppc/busy-config, ppc64/busy-config,
