@@ -45,6 +45,7 @@ CMDLINE="`cat /proc/cmdline`"
 # Scan CMDLINE for any specified real_root= or cdroot arguments
 REAL_ROOT=''
 FAKE_ROOT=''
+REAL_ROOTFLAGS=''
 for x in ${CMDLINE}
 do
 	case "${x}" in
@@ -177,6 +178,9 @@ do
 		;;
 		crypt_swap\=*)
 			LUKS_SWAP=`parse_opt "${x}"`
+		;;
+		real_rootflags\=*)
+			REAL_ROOTFLAGS=`parse_opt "${x}"`
 		;;
 	esac
 done
@@ -406,7 +410,12 @@ do
 			# mount ro so fsck doesn't barf later
 #			REAL_ROOT_TYPE=`vol_id -t ${REAL_ROOT}`
 #			mount -t ${REAL_ROOT_TYPE} -o ro ${REAL_ROOT} ${NEW_ROOT}
-			mount -o ro ${REAL_ROOT} ${NEW_ROOT}
+			if [ "${REAL_ROOTFLAGS}" = '' ]; then
+				mount -o ro ${REAL_ROOT} ${NEW_ROOT}
+			else
+				good_msg "Using mount -o ro,${REAL_ROOTFLAGS}"
+				mount -o ro,${REAL_ROOTFLAGS} ${REAL_ROOT} ${NEW_ROOT}
+			fi
 		fi
 		
 		# If mount is successful break out of the loop 
