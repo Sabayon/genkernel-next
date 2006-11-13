@@ -549,34 +549,72 @@ startVolumes() {
 	fi
 }
 
+# Open a LUKS device
+# $1 LUKS device
+# $2 LUKS name
+openLUKS() {
+	LUKS_DEVICE="$1"
+	LUKS_NAME="$2"
+	if [ -e /sbin/cryptsetup ]
+	then
+		while [ 1 ]
+		do
+			if [ "${LUKS_DEVICE}" = '' ]
+			then
+				# LUKS device could not be opened. Prompt user for device.
+				bad_msg "The LUKS ${LUKS_NAME} block device is not detected."
+				echo "   Please specify a ${LUKS_NAME} LUKS device to open, "q" to skip, or "shell" for a shell..."
+				echo -n "LUKS ${LUKS_NAME}() :: "
+				read LUKS_DEVICE
+				continue
+			elif [ "${LUKS_DEVICE}" = 'shell' ]
+			then
+				run_shell
+				
+				LUKS_DEVICE=''
+				continue
+			elif [ "${LUKS_DEVICE}" = 'q' ]
+			then
+				break
+			else
+				if cryptsetup isLuks ${LUKS_DEVICE}
+				then
+					good_msg "Opening LUKS device ${LUKS_DEVICE}"
+					
+					cryptsetup luksOpen ${LUKS_DEVICE} ${LUKS_NAME}
+					if [ ! "$?" -eq '0' ]
+					then
+						bad_msg "Failed open LUKS device ${LUKS_DEVICE}"
+					else
+						break
+					fi
+				else
+					bad_msg "The LUKS device ${LUKS_DEVICE} does not contain a LUKS header"
+				fi
+			fi
+			LUKS_DEVICE=''
+		done
+	else
+		bad_msg "The initrd does not support LUKS"
+	fi
+}
+
 startLUKS() {
 	if [ -n "${LUKS_ROOT}" ]
 	then
-		if [ -e /sbin/cryptsetup ]
+		openLUKS "${LUKS_ROOT}" "root" 
+		if [ -n "${REAL_ROOT}" ]
 		then
-			if cryptsetup isLuks ${LUKS_ROOT}
-			then
-				good_msg "Opening LUKS device ${LUKS_ROOT}"
-
-				cryptsetup luksOpen ${LUKS_ROOT} root
-				if [ ! "$?" -eq '0' ]
-				then
-					bad_msg "Failed open LUKS device ${LUKS_ROOT}"
-				fi
-
-				if [ -n "${REAL_ROOT}" ]
-				then
-					# Rescan volumes
-					startVolumes
-				else
-					REAL_ROOT="/dev/mapper/root"
-				fi
-			else
-				bad_msg "The LUKS device ${LUKS_ROOT} does not contain a LUKS hearder"
-			fi
+			# Rescan volumes
+			startVolumes
 		else
-			bad_msg "The initrd does not support LUKS"
+			REAL_ROOT="/dev/mapper/root"
 		fi
+	fi
+	if [ -n "${LUKS_SWAP}" ]
+	then
+		openLUKS "${LUKS_SWAP}" "swap" 
+		break
 	fi
 }
 

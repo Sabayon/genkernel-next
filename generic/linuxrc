@@ -175,6 +175,9 @@ do
 		crypt_root\=*)
 			LUKS_ROOT=`parse_opt "${x}"`
 		;;
+		crypt_swap\=*)
+			LUKS_SWAP=`parse_opt "${x}"`
+		;;
 	esac
 done
 
@@ -226,7 +229,7 @@ setup_md_device
 # Scan volumes
 startVolumes
 
-# Iinitialize LUKS root device
+# Initialize LUKS root device
 startLUKS
 
 # Set up unionfs
