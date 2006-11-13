@@ -2,6 +2,14 @@
 # Copyright 2006-2006 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  13 Nov 2006; Chris Gianelloni <wolf31o2@gentoo.org> alpha/busy-config,
+  ia64/busy-config, mips/busy-config, parisc/busy-config,
+  parisc64/busy-config, ppc/busy-config, ppc64/busy-config,
+  sparc/busy-config, sparc64/busy-config, um/busy-config, x86/busy-config,
+  x86_64/busy-config, xen0/busy-config, xenU/busy-config:
+  Added Large File Support thanks to Fabio Erculiani <lxnay@lxnaydesign.net>
+  in bug #152881.
+
   13 Nov 2006; Chris Gianelloni <wolf31o2@gentoo.org> genkernel:
   Added patch to improve symlink support by Michael Hordijk
   <hoffbrinkle@hotmail.com> for bug #143217.
