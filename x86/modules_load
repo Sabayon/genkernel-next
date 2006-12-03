@@ -11,7 +11,7 @@ mptspi mptfc 3w-xxxx 3w-9xxx cpqarray cciss DAC960 \
 sx8 aacraid megaraid_mbox megaraid_mm megaraid_sas \
 lpfc scsi_transport_fc"
 
-MODULES_NET="e1000"
+MODULES_NET="e1000 tg3"
 MODULES_FIREWIRE="ieee1394 ohci1394 sbp2"
 MODULES_ATARAID="ataraid pdcraid hptraid"
 MODULES_PCMCIA="pcmcia_core yenta_socket i82365 \
@@ -20,7 +20,7 @@ MODULES_USB="ehci-hcd uhci usb-ohci hid usb-storage uhci-hcd \
 ohci-hcd usbhid sl811-hcd"
 MODULES_LVM2="dm-mod dm-snapshot dm-mirror dm-bbr"
 MODULES_EVMS2="dm-mod dm-snapshot dm-mirror dm-bbr raid0 raid1 \
-raid5 raid6 raid10"
+raid456 raid5 raid6 raid10"
 MODULES_DMRAID="dm-mod dm-mirror raid0 raid1 raid10"
 MODULES_SATA="sata_promise sata_sil sata_sil24 sata_svw sata_via \
 sata_nv sata_sx4 sata_sis sata_uli sata_vsc sata_qstor ahci \

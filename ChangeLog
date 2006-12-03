@@ -2,6 +2,10 @@
 # Copyright 2006-2006 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  03 Dec 2006; Chris Gianelloni <wolf31o2@gentoo.org> alpha/modules_load,
+  x86/modules_load, x86_64/modules_load:
+  Added raid456 to alpha/amd64/x86 MODULES_EVMS2 and added tg3 to MODULES_NET.
+
   13 Nov 2006; Chris Gianelloni <wolf31o2@gentoo.org>
   generic/initrd.scripts:
   Inverted check on CDROOT_DEV, as it should be -z not -n. Thanks to Jakub Moc
