@@ -2,8 +2,7 @@
 
 . /etc/initrd.defaults
 
-usage()
-{
+usage() {
 	echo 'Usage:'
 	echo '  modprobe moduleprefix'
 	echo
@@ -15,8 +14,7 @@ usage()
 }
 
 # Pass module name to this function
-modules_dep_list()
-{
+modules_dep_list() {
 	if [ "$#" -lt '1' ]
 	then
 		echo 'modules_dep_list(): Improper usage!'
@@ -27,8 +25,7 @@ modules_dep_list()
 
 
 # Pass module deps list
-strip_mod_paths()
-{
+strip_mod_paths() {
 	local x
 	local ret
 	local myret
@@ -44,8 +41,7 @@ strip_mod_paths()
 }
 
 LOADED_MODULES=''
-is_module_already_loaded()
-{
+is_module_already_loaded() {
 	local x
 	if [ "$#" != '1' ]
 	then
@@ -63,14 +59,12 @@ is_module_already_loaded()
 	return 1
 }
 
-real_mod_path()
-{
+real_mod_path() {
 	# Find -name is no good since the return status is always zero
-	find /lib/modules | grep "${1}${KSUFF}"
+	find /lib/modules | grep /"${1}${KSUFF}"
 }
 
-modprobe2()
-{
+modprobe2() {
 	local x
 	local deps
 	local real_path
