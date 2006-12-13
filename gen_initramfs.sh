@@ -1,6 +1,8 @@
 #!/bin/bash
 
-create_base_layout_cpio() {
+CPIO_ARGS="--quiet -o -H newc"
+
+append_base_layout() {
 	if [ -d "${TEMP}/initramfs-base-temp" ]
 	then
 		rm -rf "${TEMP}/initramfs-base-temp" > /dev/null
@@ -35,11 +37,11 @@ create_base_layout_cpio() {
 	mknod -m 660 null c 1 3
 	mknod -m 600 tty1 c 4 1
 	cd "${TEMP}/initramfs-base-temp/"
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-base-layout.cpio.gz
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
 	rm -rf "${TEMP}/initramfs-base-temp" > /dev/null
 }
 
-create_busybox_cpio() {
+append_busybox() {
 	if [ -d "${TEMP}/initramfs-busybox-temp" ]
 	then
 		rm -rf "${TEMP}/initramfs-busybox-temp" > /dev/null
@@ -66,11 +68,11 @@ create_busybox_cpio() {
 	done
 	
 	cd "${TEMP}/initramfs-busybox-temp/"
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-busybox-${BUSYBOX_VER}.cpio.gz
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
 	rm -rf "${TEMP}/initramfs-busybox-temp" > /dev/null
 }
 
-create_insmod_cpio() {
+append_insmod() {
 	if [ -d "${TEMP}/initramfs-insmod-temp" ]
 	then
 		rm -rf "${TEMP}/initramfs-insmod-temp" > /dev/null
@@ -85,11 +87,11 @@ create_insmod_cpio() {
 	chmod +x "${TEMP}/initramfs-insmod-temp/bin/insmod"
 	
 	cd "${TEMP}/initramfs-insmod-temp/"
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-insmod-${MODULE_INIT_TOOLS_VER}.cpio.gz
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
 	rm -rf "${TEMP}/initramfs-insmod-temp" > /dev/null
 }
 
-create_udev_cpio(){
+append_udev(){
 	if [ -d "${TEMP}/initramfs-udev-temp" ]
 	then
 		rm -r "${TEMP}/initramfs-udev-temp/"
@@ -99,11 +101,11 @@ create_udev_cpio(){
 	[ "${UDEV}" -eq '1' ] && { /bin/tar -jxpf "${UDEV_BINCACHE}" -C "${TEMP}/initramfs-udev-temp" ||
 		gen_die "Could not extract udev binary cache!"; }
 	cd "${TEMP}/initramfs-udev-temp/"
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-udev-${UDEV_VER}.cpio.gz
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
 	rm -rf "${TEMP}/initramfs-udev-temp" > /dev/null
 }
 
-create_blkid_cpio(){
+append_blkid(){
 	if [ -d "${TEMP}/initramfs-blkid-temp" ]
 	then
 		rm -r "${TEMP}/initramfs-blkid-temp/"
@@ -114,11 +116,11 @@ create_blkid_cpio(){
 		gen_die "Could not extract blkid binary cache!"; }
 	chmod a+x "${TEMP}/initramfs-blkid-temp/bin/blkid"
 	cd "${TEMP}/initramfs-blkid-temp/"
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-blkid-${E2FSPROGS_VER}.cpio.gz
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
 	rm -rf "${TEMP}/initramfs-blkid-temp" > /dev/null
 }
 
-create_devfs_cpio(){
+append_devfs(){
 	if [ -d "${TEMP}/initramfs-devfs-temp" ]
 	then
 		rm -r "${TEMP}/initramfs-devfs-temp/"
@@ -131,49 +133,41 @@ create_devfs_cpio(){
 	bunzip2 "${TEMP}/initramfs-devfs-temp/bin/devfsd.bz2" || gen_die "could not uncompress devfsd"
 	chmod +x "${TEMP}/initramfs-devfs-temp/bin/devfsd"
 	cd "${TEMP}/initramfs-devfs-temp/"
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-devfs-${DEVFSD_VER}.cpio.gz
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
 	rm -rf "${TEMP}/initramfs-devfs-temp" > /dev/null
 }
 
-create_unionfs_modules_cpio(){
-	#UNIONFS Modules
-	if [ "${UNIONFS}" -eq '1' ]
+append_unionfs_modules(){
+	if [ -d "${TEMP}/initramfs-unionfs-modules-temp" ]
 	then
-		if [ -d "${TEMP}/initramfs-unionfs-modules-temp" ]
-		then
-			rm -r "${TEMP}/initramfs-unionfs-modules-temp/"
-		fi
-		print_info 1 'UNIONFS MODULES: Adding support (compiling)...'
-		compile_unionfs_modules
-		mkdir -p "${TEMP}/initramfs-unionfs-modules-temp/"
-		/bin/tar -jxpf "${UNIONFS_MODULES_BINCACHE}" -C "${TEMP}/initramfs-unionfs-modules-temp" ||
-			gen_die "Could not extract unionfs modules binary cache!";
-	cd "${TEMP}/initramfs-unionfs-modules-temp/"
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-unionfs-${UNIONFS_VER}-modules-${KV}.cpio.gz
-	rm -r "${TEMP}/initramfs-unionfs-modules-temp/"
+		rm -r "${TEMP}/initramfs-unionfs-modules-temp/"
 	fi
+	print_info 1 'UNIONFS MODULES: Adding support (compiling)...'
+	compile_unionfs_modules
+	mkdir -p "${TEMP}/initramfs-unionfs-modules-temp/"
+	/bin/tar -jxpf "${UNIONFS_MODULES_BINCACHE}" -C "${TEMP}/initramfs-unionfs-modules-temp" ||
+		gen_die "Could not extract unionfs modules binary cache!";
+	cd "${TEMP}/initramfs-unionfs-modules-temp/"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	rm -r "${TEMP}/initramfs-unionfs-modules-temp/"
 }
 
-create_unionfs_tools_cpio(){
-	#UNIONFS Tools
-	if [ "${UNIONFS}" -eq '1' ]
+append_unionfs_tools(){
+	if [ -d "${TEMP}/initramfs-unionfs-tools-temp" ]
 	then
-		if [ -d "${TEMP}/initramfs-unionfs-tools-temp" ]
-		then
-			rm -r "${TEMP}/initramfs-unionfs-tools-temp/"
-		fi
-		print_info 1 'UNIONFS TOOLS: Adding support (compiling)...'
-		compile_unionfs_utils
-		mkdir -p "${TEMP}/initramfs-unionfs-tools-temp/bin/"
-		/bin/tar -jxpf "${UNIONFS_BINCACHE}" -C "${TEMP}/initramfs-unionfs-tools-temp" ||
-			gen_die "Could not extract unionfs tools binary cache!";
-		cd "${TEMP}/initramfs-unionfs-tools-temp/"
-		find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-unionfs-${UNIONFS_VER}-tools.cpio.gz
 		rm -r "${TEMP}/initramfs-unionfs-tools-temp/"
-	fi										        
+	fi
+	print_info 1 'UNIONFS TOOLS: Adding support (compiling)...'
+	compile_unionfs_utils
+	mkdir -p "${TEMP}/initramfs-unionfs-tools-temp/bin/"
+	/bin/tar -jxpf "${UNIONFS_BINCACHE}" -C "${TEMP}/initramfs-unionfs-tools-temp" ||
+		gen_die "Could not extract unionfs tools binary cache!";
+	cd "${TEMP}/initramfs-unionfs-tools-temp/"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	rm -r "${TEMP}/initramfs-unionfs-tools-temp/"
 }
 
-create_suspend_cpio(){
+append_suspend(){
 	if [ -d "${TEMP}/initramfs-suspend-temp" ];
 	then
 		rm -r "${TEMP}/initramfs-suspend-temp/"
@@ -187,157 +181,135 @@ create_suspend_cpio(){
 	cp -f /etc/suspend.conf "${TEMP}/initramfs-suspend-temp/etc" ||
 		gen_die 'Could not copy /etc/suspend.conf'
 	cd "${TEMP}/initramfs-suspend-temp/"
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-suspend-${SUSPEND_VER}.cpio.gz
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	rm -r "${TEMP}/initramfs-suspend-temp/"
 }
 
-create_dmraid_cpio(){
-	# DMRAID
-	if [ "${DMRAID}" = '1' ]
+append_dmraid(){
+	if [ -d "${TEMP}/initramfs-dmraid-temp" ]
 	then
-		if [ -d "${TEMP}/initramfs-dmraid-temp" ]
-		then
-			rm -r "${TEMP}/initramfs-dmraid-temp/"
-		fi
-		print_info 1 'DMRAID: Adding support (compiling binaries)...'
-		compile_dmraid
-		mkdir -p "${TEMP}/initramfs-dmraid-temp/"
-		/bin/tar -jxpf "${DMRAID_BINCACHE}" -C "${TEMP}/initramfs-dmraid-temp" ||
-			gen_die "Could not extract dmraid binary cache!";
-		cd "${TEMP}/initramfs-dmraid-temp/"
-		find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-dmraid-${DMRAID_VER}.cpio.gz
 		rm -r "${TEMP}/initramfs-dmraid-temp/"
-	fi										        
+	fi
+	print_info 1 'DMRAID: Adding support (compiling binaries)...'
+	compile_dmraid
+	mkdir -p "${TEMP}/initramfs-dmraid-temp/"
+	/bin/tar -jxpf "${DMRAID_BINCACHE}" -C "${TEMP}/initramfs-dmraid-temp" ||
+		gen_die "Could not extract dmraid binary cache!";
+	cd "${TEMP}/initramfs-dmraid-temp/"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	rm -r "${TEMP}/initramfs-dmraid-temp/"
 }
 
-create_lvm2_cpio(){
-	# LVM2
-	if [ "${LVM2}" -eq '1' ]
+append_lvm2(){
+	if [ -d "${TEMP}/initramfs-lvm2-temp" ]
 	then
-		if [ -d "${TEMP}/initramfs-lvm2-temp" ]
-		then
-			rm -r "${TEMP}/initramfs-lvm2-temp/"
-		fi
-		cd ${TEMP}
-		mkdir -p "${TEMP}/initramfs-lvm2-temp/bin/"
-		mkdir -p "${TEMP}/initramfs-lvm2-temp/etc/lvm/"
-		if [ -e '/sbin/lvm' ] && ldd /sbin/lvm|grep -q 'not a dynamic executable';
-		then
-			print_info 1 '		LVM2: Adding support (using local static binaries)...'
-			cp /sbin/lvm "${TEMP}/initramfs-lvm2-temp/bin/lvm" ||
-				gen_die 'Could not copy over lvm!'
-		else
-			print_info 1 '		LVM2: Adding support (compiling binaries)...'
-			compile_lvm2
-			/bin/tar -jxpf "${LVM2_BINCACHE}" -C "${TEMP}/initramfs-lvm2-temp" ||
-				gen_die "Could not extract lvm2 binary cache!";
-			mv ${TEMP}/initramfs-lvm2-temp/sbin/lvm.static ${TEMP}/initramfs-lvm2-temp/bin/lvm ||
-				gen_die 'LVM2 error: Could not move lvm.static to lvm!'
-		fi
-		cp /etc/lvm/lvm.conf "${TEMP}/initramfs-lvm2-temp/etc/lvm/lvm.conf" ||
-			gen_die 'Could not copy over lvm.conf!'
-		cd "${TEMP}/initramfs-lvm2-temp/"
-		find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-lvm2-${LVM2_VER}.cpio.gz
 		rm -r "${TEMP}/initramfs-lvm2-temp/"
-	else # Deprecation warning; remove in a few versions.
-		if [ -e '/sbin/lvm' ]
-		then
-			if ldd /sbin/lvm|grep -q 'not a dynamic executable';
-			then
-				print_warning 1 'LVM2: For support, use --lvm2!'
-			fi
-		fi
 	fi
+	cd ${TEMP}
+	mkdir -p "${TEMP}/initramfs-lvm2-temp/bin/"
+	mkdir -p "${TEMP}/initramfs-lvm2-temp/etc/lvm/"
+	if [ -e '/sbin/lvm' ] && ldd /sbin/lvm|grep -q 'not a dynamic executable';
+	then
+		print_info 1 '		LVM2: Adding support (using local static binaries)...'
+		cp /sbin/lvm "${TEMP}/initramfs-lvm2-temp/bin/lvm" ||
+			gen_die 'Could not copy over lvm!'
+	else
+		print_info 1 '		LVM2: Adding support (compiling binaries)...'
+		compile_lvm2
+		/bin/tar -jxpf "${LVM2_BINCACHE}" -C "${TEMP}/initramfs-lvm2-temp" ||
+			gen_die "Could not extract lvm2 binary cache!";
+		mv ${TEMP}/initramfs-lvm2-temp/sbin/lvm.static ${TEMP}/initramfs-lvm2-temp/bin/lvm ||
+			gen_die 'LVM2 error: Could not move lvm.static to lvm!'
+	fi
+	cp /etc/lvm/lvm.conf "${TEMP}/initramfs-lvm2-temp/etc/lvm/lvm.conf" ||
+		gen_die 'Could not copy over lvm.conf!'
+	cd "${TEMP}/initramfs-lvm2-temp/"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	rm -r "${TEMP}/initramfs-lvm2-temp/"
 }
 
-create_evms2_cpio(){	
-	# EVMS2
-	if [ -e '/sbin/evms_activate' ]
+append_evms2(){
+	if [ -d "${TEMP}/initramfs-evms2-temp" ]
 	then
-		if [ -d "${TEMP}/initramfs-evms2-temp" ]
-		then
-			rm -r "${TEMP}/initramfs-evms2-temp/"
-		fi
-		mkdir -p "${TEMP}/initramfs-evms2-temp/lib/evms"
-		mkdir -p "${TEMP}/initramfs-evms2-temp/etc/"
-		mkdir -p "${TEMP}/initramfs-evms2-temp/bin/"
-		mkdir -p "${TEMP}/initramfs-evms2-temp/sbin/"
-		if [ "${EVMS2}" -eq '1' ]
-		then
-			print_info 1 '		EVMS2: Adding support...'	
-			mkdir -p ${TEMP}/initramfs-evms2-temp/lib
-			cp -a /lib/ld-* "${TEMP}/initramfs-evms2-temp/lib" \
-				|| gen_die 'Could not copy files for EVMS2!'
-			if [ -n "`ls /lib/libgcc_s*`" ]
-			then
-				cp -a /lib/libgcc_s* "${TEMP}/initramfs-evms2-temp/lib" \
-					|| gen_die 'Could not copy files for EVMS2!'
-			fi
-			cp -a /lib/libc-* /lib/libc.* "${TEMP}/initramfs-evms2-temp/lib" \
-				|| gen_die 'Could not copy files for EVMS2!'
-			cp -a /lib/libdl-* /lib/libdl.* "${TEMP}/initramfs-evms2-temp/lib" \
-				|| gen_die 'Could not copy files for EVMS2!'
-			cp -a /lib/libpthread* "${TEMP}/initramfs-evms2-temp/lib" \
-				|| gen_die 'Could not copy files for EVMS2!'
-			cp -a /lib/libuuid*so* "${TEMP}/initramfs-evms2-temp/lib" \
-				|| gen_die 'Could not copy files for EVMS2!'
-			cp -a /lib/libevms*so* "${TEMP}/initramfs-evms2-temp/lib" \
-				|| gen_die 'Could not copy files for EVMS2!'
-			cp -a /lib/evms "${TEMP}/initramfs-evms2-temp/lib" \
-				|| gen_die 'Could not copy files for EVMS2!'
-			cp -a /lib/evms/* "${TEMP}/initramfs-evms2-temp/lib/evms" \
-				|| gen_die 'Could not copy files for EVMS2!'
-			cp -a /etc/evms.conf "${TEMP}/initramfs-evms2-temp/etc" \
-				|| gen_die 'Could not copy files for EVMS2!'
-			cp /sbin/evms_activate "${TEMP}/initramfs-evms2-temp/sbin" \
-				|| gen_die 'Could not copy over evms_activate!'
-
-			# Fix EVMS2 complaining that it can't find the swap utilities.
-			# These are not required in the initramfs
-			for swap_libs in "${TEMP}/initramfs-evms2-temp/lib/evms/*/swap*.so"
-			do
-				rm ${swap_libs}
-			done
-		fi
-		cd "${TEMP}/initramfs-evms2-temp/"
-		find . -print | cpio --quiet -o -H newc \
-			| gzip -9 > ${CACHE_CPIO_DIR}/initramfs-evms2.cpio.gz
 		rm -r "${TEMP}/initramfs-evms2-temp/"
-	fi	
+	fi
+	mkdir -p "${TEMP}/initramfs-evms2-temp/lib/evms"
+	mkdir -p "${TEMP}/initramfs-evms2-temp/etc/"
+	mkdir -p "${TEMP}/initramfs-evms2-temp/bin/"
+	mkdir -p "${TEMP}/initramfs-evms2-temp/sbin/"
+	if [ "${EVMS2}" -eq '1' ]
+	then
+		print_info 1 '		EVMS2: Adding support...'
+		mkdir -p ${TEMP}/initramfs-evms2-temp/lib
+		cp -a /lib/ld-* "${TEMP}/initramfs-evms2-temp/lib" \
+			|| gen_die 'Could not copy files for EVMS2!'
+		if [ -n "`ls /lib/libgcc_s*`" ]
+		then
+			cp -a /lib/libgcc_s* "${TEMP}/initramfs-evms2-temp/lib" \
+				|| gen_die 'Could not copy files for EVMS2!'
+		fi
+		cp -a /lib/libc-* /lib/libc.* "${TEMP}/initramfs-evms2-temp/lib" \
+			|| gen_die 'Could not copy files for EVMS2!'
+		cp -a /lib/libdl-* /lib/libdl.* "${TEMP}/initramfs-evms2-temp/lib" \
+			|| gen_die 'Could not copy files for EVMS2!'
+		cp -a /lib/libpthread* "${TEMP}/initramfs-evms2-temp/lib" \
+			|| gen_die 'Could not copy files for EVMS2!'
+		cp -a /lib/libuuid*so* "${TEMP}/initramfs-evms2-temp/lib" \
+			|| gen_die 'Could not copy files for EVMS2!'
+		cp -a /lib/libevms*so* "${TEMP}/initramfs-evms2-temp/lib" \
+			|| gen_die 'Could not copy files for EVMS2!'
+		cp -a /lib/evms "${TEMP}/initramfs-evms2-temp/lib" \
+			|| gen_die 'Could not copy files for EVMS2!'
+		cp -a /lib/evms/* "${TEMP}/initramfs-evms2-temp/lib/evms" \
+			|| gen_die 'Could not copy files for EVMS2!'
+		cp -a /etc/evms.conf "${TEMP}/initramfs-evms2-temp/etc" \
+			|| gen_die 'Could not copy files for EVMS2!'
+		cp /sbin/evms_activate "${TEMP}/initramfs-evms2-temp/sbin" \
+			|| gen_die 'Could not copy over evms_activate!'
+
+		# Fix EVMS2 complaining that it can't find the swap utilities.
+		# These are not required in the initramfs
+		for swap_libs in "${TEMP}/initramfs-evms2-temp/lib/evms/*/swap*.so"
+		do
+			rm ${swap_libs}
+		done
+	fi
+	cd "${TEMP}/initramfs-evms2-temp/"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	rm -r "${TEMP}/initramfs-evms2-temp/"
 }
 
-create_gensplash(){	
-	if [ "${GENSPLASH}" -eq '1' ]
+append_gensplash(){
+	if [ -x /usr/bin/splash_geninitramfs ] || [ -x /sbin/splash_geninitramfs ]
 	then
-		if [ -x /usr/bin/splash_geninitramfs ] || [ -x /sbin/splash_geninitramfs ]
+		[ -z "${GENSPLASH_THEME}" ] && [ -e /etc/conf.d/splash ] && source /etc/conf.d/splash
+		[ -z "${GENSPLASH_THEME}" ] && GENSPLASH_THEME=default
+		print_info 1 "  >> Installing gensplash [ using the ${GENSPLASH_THEME} theme ]..."
+		if [ -d "${TEMP}/initramfs-gensplash-temp" ]
 		then
-			[ -z "${GENSPLASH_THEME}" ] && [ -e /etc/conf.d/splash ] && source /etc/conf.d/splash
-			[ -z "${GENSPLASH_THEME}" ] && GENSPLASH_THEME=default
-			print_info 1 "  >> Installing gensplash [ using the ${GENSPLASH_THEME} theme ]..."
-			cd /
-			local tmp=""
-			[ -n "${GENSPLASH_RES}" ] && tmp="-r ${GENSPLASH_RES}"
-			splash_geninitramfs -g ${CACHE_CPIO_DIR}/initramfs-splash-${KV}.cpio.gz ${tmp} ${GENSPLASH_THEME} || gen_die "Could not build splash cpio archive"
-			if [ -e "/usr/share/splashutils/initrd.splash" ]; then
-				if [ -d "${TEMP}/initramfs-gensplash-temp" ]
-				then
-					rm -r "${TEMP}/initramfs-gensplash-temp/"
-				fi
-				mkdir -p "${TEMP}/initramfs-gensplash-temp/etc"
-				cd "${TEMP}/initramfs-gensplash-temp/"
-				gunzip -c ${CACHE_CPIO_DIR}/initramfs-splash-${KV}.cpio.gz | cpio -idm --quiet -H newc || gen_die "unpacking splash cpio"
-				cp -f "/usr/share/splashutils/initrd.splash" "${TEMP}/initramfs-gensplash-temp/etc"
-				find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-splash-${KV}.cpio.gz || gen_die "compressing splash cpio"
-				rm -r "${TEMP}/initramfs-gensplash-temp/"
-			fi
-		else
-			print_warning 1 '               >> No splash detected; skipping!'
+			rm -r "${TEMP}/initramfs-gensplash-temp/"
 		fi
+		mkdir -p "${TEMP}/initramfs-gensplash-temp"
+		cd /
+		local tmp=""
+		[ -n "${GENSPLASH_RES}" ] && tmp="-r ${GENSPLASH_RES}"
+		splash_geninitramfs -c "${TEMP}/initramfs-gensplash-temp" ${tmp} ${GENSPLASH_THEME} || gen_die "Could not build splash cpio archive"
+		if [ -e "/usr/share/splashutils/initrd.splash" ]; then
+			mkdir -p "${TEMP}/initramfs-gensplash-temp/etc"
+			cp -f "/usr/share/splashutils/initrd.splash" "${TEMP}/initramfs-gensplash-temp/etc"
+		fi
+		cd "${TEMP}/initramfs-gensplash-temp/"
+		find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+			|| gen_die "compressing splash cpio"
+		rm -r "${TEMP}/initramfs-gensplash-temp/"
+	else
+		print_warning 1 '               >> No splash detected; skipping!'
 	fi
 }
 
-create_initramfs_overlay_cpio(){
+append_overlay(){
 	cd ${INITRAMFS_OVERLAY}
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-overlay.cpio.gz
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
 }
 print_list()
 {
@@ -348,11 +320,10 @@ print_list()
 	done
 }
 
-create_initramfs_modules() {
+append_modules() {
 	local group
 	local group_modules
-	
-	MOD_EXT=".ko"
+	local MOD_EXT=".ko"
 
 	print_info 2 "initramfs: >> Searching for modules..."
 	if [ "${INSTALL_MOD_PATH}" != '' ]
@@ -388,7 +359,7 @@ create_initramfs_modules() {
 		print_list ${!group_modules} > "${TEMP}/initramfs-modules-${KV}-temp/etc/modules/${group}"
 	done
 	cd "${TEMP}/initramfs-modules-${KV}-temp/"
-	find . | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-modules-${KV}.cpio.gz
+	find . | cpio ${CPIO_ARGS} --append -F "${CPIO}"
 	rm -r "${TEMP}/initramfs-modules-${KV}-temp/"	
 }
 
@@ -398,7 +369,7 @@ is_static() {
 	return $?
 }
 
-create_initramfs_aux() {
+append_auxilary() {
 	if [ -d "${TEMP}/initramfs-aux-temp" ]
 	then
 		rm -r "${TEMP}/initramfs-aux-temp/"
@@ -485,90 +456,60 @@ create_initramfs_aux() {
 	chmod +x "${TEMP}/initramfs-aux-temp/etc/initrd.defaults"
 	chmod +x "${TEMP}/initramfs-aux-temp/sbin/modprobe"
 	cd "${TEMP}/initramfs-aux-temp/"
-	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-aux.cpio.gz
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
 	rm -r "${TEMP}/initramfs-aux-temp/"	
 }
 
-merge_initramfs_cpio_archives(){
-	cd "${CACHE_CPIO_DIR}"
-	MERGE_LIST="initramfs-base-layout.cpio.gz initramfs-aux.cpio.gz"	
-	if [ ! -e "${CACHE_CPIO_DIR}/initramfs-base-layout.cpio.gz" ]
-	then
-		gen_die "${CACHE_CPIO_DIR}/initramfs-base-layout.cpio.gz is missing."
-	fi
-	if [ ! -e "${CACHE_CPIO_DIR}/initramfs-aux.cpio.gz" ]
-	then
-		gen_die "${CACHE_CPIO_DIR}/initramfs-aux.cpio.gz is missing."
-	fi
-	
-	if [ "${BUSYBOX}" -eq '1' -a -e ${CACHE_CPIO_DIR}/initramfs-busybox-${BUSYBOX_VER}.cpio.gz ]
-	then
-		MERGE_LIST="${MERGE_LIST} initramfs-busybox-${BUSYBOX_VER}.cpio.gz"
-	fi
-	
-	if [ "${NOINITRDMODULES}" = '' -a -e ${CACHE_CPIO_DIR}/initramfs-insmod-${MODULE_INIT_TOOLS_VER}.cpio.gz ]
-	then
-		MERGE_LIST="${MERGE_LIST} initramfs-insmod-${MODULE_INIT_TOOLS_VER}.cpio.gz"
-	fi
-	
-#	if [ "${UDEV}" -eq '1' -a -e ${CACHE_CPIO_DIR}/initramfs-udev-${UDEV_VER}.cpio.gz ]
-#	then
-#		MERGE_LIST="${MERGE_LIST} initramfs-udev-${UDEV_VER}.cpio.gz"
-#	fi
-	if [ "${DISKLABEL}" -eq '1' -a -e ${CACHE_CPIO_DIR}/initramfs-blkid-${E2FSPROGS_VER}.cpio.gz ]
-	then
-		MERGE_LIST="${MERGE_LIST} initramfs-blkid-${E2FSPROGS_VER}.cpio.gz"
-	fi
-	if [ "${UNIONFS}" -eq '1' -a -e ${CACHE_CPIO_DIR}/initramfs-unionfs-${UNIONFS_VER}-tools.cpio.gz ]
-	then
-		MERGE_LIST="${MERGE_LIST} initramfs-unionfs-${UNIONFS_VER}-tools.cpio.gz"
-	fi
-	if [ "${UNIONFS}" -eq '1' -a -e ${CACHE_CPIO_DIR}/initramfs-unionfs-${UNIONFS_VER}-modules-${KV}.cpio.gz ]
-	then
-		MERGE_LIST="${MERGE_LIST} initramfs-unionfs-${UNIONFS_VER}-modules-${KV}.cpio.gz"
-	fi
-	if [ "${SUSPEND}" -eq '1' -a -e "${CACHE_CPIO_DIR}/initramfs-suspend-${SUSPEND_VER}.cpio.gz" ]
-	then
-		MERGE_LIST="${MERGE_LIST} initramfs-suspend-${SUSPEND_VER}.cpio.gz"
-	fi
-	if [ "${EVMS2}" -eq '1' -a -e "${CACHE_CPIO_DIR}/initramfs-evms2.cpio.gz" ]
-	then
-		MERGE_LIST="${MERGE_LIST} initramfs-evms2.cpio.gz"
-	fi
-	if [ "${LVM2}" -eq '1' -a -e "${CACHE_CPIO_DIR}/initramfs-lvm2-${LVM2_VER}.cpio.gz" ]
-	then
-		MERGE_LIST="${MERGE_LIST} initramfs-lvm2-${LVM2_VER}.cpio.gz"
-	fi
-	if [ "${DEVFS}" -eq '1' -a -e "${CACHE_CPIO_DIR}/initramfs-devfs-${DEVFSD_VER}.cpio.gz" ]
-	then
-		MERGE_LIST="${MERGE_LIST} initramfs-devfs-${DEVFSD_VER}.cpio.gz"
-	fi
-	if [ "${DMRAID}" -eq '1' -a -e ${CACHE_CPIO_DIR}/initramfs-dmraid-${DMRAID_VER}.cpio.gz ]
-	then
-		MERGE_LIST="${MERGE_LIST} initramfs-dmraid-${DMRAID_VER}.cpio.gz"
-	fi
-	if [ "${NOINITRDMODULES}" = '' -a -e "${CACHE_CPIO_DIR}/initramfs-modules-${KV}.cpio.gz" ]
-	then
-		MERGE_LIST="${MERGE_LIST} initramfs-modules-${KV}.cpio.gz"
-	fi
-	if [ "${GENSPLASH}" -eq '1' -a -e "${CACHE_CPIO_DIR}/initramfs-splash-${KV}.cpio.gz" ]
-	then
-		MERGE_LIST="${MERGE_LIST} initramfs-splash-${KV}.cpio.gz"
-	fi
-	# This should always be appended last
-	if [ "${INITRAMFS_OVERLAY}" != '' -a -e "${CACHE_CPIO_DIR}/initramfs-overlay.cpio.gz" ]
-	then
-		MERGE_LIST="${MERGE_LIST} initramfs-overlay.cpio.gz"
-	fi
-	
-	echo
-	print_info 1 "Merging"
-	for i in ${MERGE_LIST}
-	do
-		print_info 1 "    $i"
-	done
+append_data() {
+	local name=$1 var=$2
+	local func="append_${name}"
 
-    	cat ${MERGE_LIST} > ${TMPDIR}/initramfs-${KV}
+	if [ $# -eq '1' ] || [ "${var}" -eq '1' ]
+	then
+	    print_info 1 "        >> Appending ${name} cpio data..."
+	    ${func}
+	fi
+}
+
+create_initramfs() {
+	print_info 1 "initramfs: >> Initializing..."
+
+	# Create empty cpio
+	CPIO="${TMPDIR}/initramfs-${KV}"
+	echo | cpio ${CPIO_ARGS} -F "${CPIO}" 2>/dev/null \
+		|| gen_die "Could not create empty cpio at ${CPIO}"
+
+	append_data 'base_layout'
+	append_data 'auxilary'
+	append_data 'busybox' "${BUSYBOX}"
+	append_data 'devfs' "${DEVFS}"
+#	append_data 'udev' "${UDEV}"
+	append_data 'unionfs_modules' "${UNIONFS}"
+	append_data 'unionfs_tools' "${UNIONFS}"
+	append_data 'suspend' "${SUSPEND}"
+	append_data 'lvm2' "${LVM2}"
+	append_data 'dmraid' "${DMRAID}"
+	append_data 'evms2' "${EVMS2}"
+	
+	if [ "${NOINITRDMODULES}" = '' ]
+	then
+		append_data 'insmod'
+		append_data 'modules'
+	else
+		print_info 1 "initramfs: Not copying modules..."
+	fi
+
+	append_data 'blkid' "${DISKLABEL}"
+	append_data 'gensplash' "${GENSPLASH}"
+
+	# This should always be appended last
+	if [ "${INITRAMFS_OVERLAY}" != '' ]
+	then
+		append_data 'overlay'
+	fi
+
+	gzip -9 "${CPIO}"
+	mv -f "${CPIO}.gz" "${CPIO}"
 
 	# Pegasos hack for merging the initramfs into the kernel at compile time
 	[ "${KERNEL_MAKE_DIRECTIVE}" == 'zImage.initrd' -a "${GENERATE_Z_IMAGE}" = '1' ] ||
@@ -581,113 +522,6 @@ merge_initramfs_cpio_archives(){
 		cp ${TMPDIR}/initramfs-${KV} ${KERNEL_DIR}/initramfs.cpio.gz
 		gunzip -f ${KERNEL_DIR}/initramfs.cpio.gz
 	fi
-}
-
-clear_cpio_dir(){
-	if [ "${CLEAR_CPIO_CACHE}" == 'yes' ]
-	then
-
-		if [ -d ${CACHE_CPIO_DIR} ]
-		then
-			print_info 1 "        >> Clearing old cpio archives..."
-	    		rm -r ${CACHE_CPIO_DIR}
-		fi
-	fi
-	
-	if [ ! -d ${CACHE_CPIO_DIR} ]
-	then
-		mkdir -p ${CACHE_CPIO_DIR}
-	fi
-}
-
-create_initramfs() {
-	local MOD_EXT
-
-	print_info 1 "initramfs: >> Initializing..."
-	clear_cpio_dir
-	mkdir -p ${CACHE_CPIO_DIR}
-	print_info 1 "        >> Creating base_layout cpio archive..."
-	create_base_layout_cpio
-	
-	print_info 1 "        >> Creating auxilary cpio archive..."
-	create_initramfs_aux
-	
-	if [ "${BUSYBOX}" -eq '1' ]
-	then
-	    print_info 1 "        >> Creating busybox cpio archive..."
-	    create_busybox_cpio
-	fi
-	
-	if [ "${DEVFS}" -eq '1' ]
-	then
-	    print_info 1 "        >> Creating devfs cpio archive..."
-	    create_devfs_cpio
-	fi
-	
-#	if [ "${UDEV}" -eq '1' ]
-#	then
-#	    print_info 1 "        >> Creating udev cpio archive..."
-#	    create_udev_cpio
-#	fi
-	
-	if [ "${UNIONFS}" -eq '1' ]
-	then
-	    print_info 1 "        >> Creating unionfs modules cpio archive..."
-	    create_unionfs_modules_cpio
-	    print_info 1 "        >> Creating unionfs tools cpio archive..."
-	    create_unionfs_tools_cpio
-	fi
-
-	if [ "${SUSPEND}" -eq '1' ]
-	then
-	    print_info 1 "        >> Creating suspend cpio archive..."
-	    create_suspend_cpio
-	fi
-	
-	if [ "${LVM2}" -eq '1' ]
-	then
-	    
-	    print_info 1 "        >> Creating lvm2 cpio archive..."
-	    create_lvm2_cpio
-	fi
-	
-	if [ "${DMRAID}" -eq '1' ]
-	then
-	    print_info 1 "        >> Creating dmraid cpio archive..."
-	    create_dmraid_cpio
-	fi
-	
-	if [ "${EVMS2}" -eq '1' -a -e '/sbin/evms_activate' ]
-	then
-		print_info 1 "        >> Creating evms2 cpio archive..."
-		create_evms2_cpio
-	fi
-	
-	if [ "${NOINITRDMODULES}" = '' ]
-	then
-		print_info 1 "        >> Creating insmod cpio archive..."
-		create_insmod_cpio
-		print_info 1 "        >> Creating modules cpio archive..."
-		create_initramfs_modules
-	else
-		print_info 1 "initramfs: Not copying modules..."
-	fi
-	
-	if [ "${DISKLABEL}" -eq '1' ]
-	then
-		print_info 1 "        >> Creating blkid cpio archive..."
-		create_blkid_cpio
-	fi
-		
-	create_gensplash
-	
-	if [ "${INITRAMFS_OVERLAY}" != '' ]
-	then
-		print_info 1 "        >> Creating initramfs_overlay cpio archive..."
-		create_initramfs_overlay_cpio
-	fi
-	
-	merge_initramfs_cpio_archives
 
 	if ! isTrue "${CMD_NOINSTALL}"
 	then

@@ -45,10 +45,6 @@ cleanup(){
 	    CLEAR_CACHE_DIR='yes'
 	    setup_cache_dir
 	    echo
-	    print_info 1 "CACHE_CPIO_DIR: ${CACHE_CPIO_DIR}"
-	    CLEAR_CPIO_CACHE='yes'
-	    clear_cpio_dir
-	    echo
 	    print_info 1 "TMPDIR: ${TMPDIR}"
 	    clear_tmpdir
 	    fi

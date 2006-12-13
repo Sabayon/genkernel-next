@@ -196,7 +196,6 @@ determine_real_args() {
 	fi
 
 	CACHE_DIR=`arch_replace "${CACHE_DIR}"`
-	CACHE_CPIO_DIR="${CACHE_DIR}/cpio"
 	BUSYBOX_BINCACHE=`cache_replace "${BUSYBOX_BINCACHE}"`
 	MODULE_INIT_TOOLS_BINCACHE=`cache_replace "${MODULE_INIT_TOOLS_BINCACHE}"`
 	MODUTILS_BINCACHE=`cache_replace "${MODUTILS_BINCACHE}"`
