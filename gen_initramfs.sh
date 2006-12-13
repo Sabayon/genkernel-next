@@ -173,6 +173,23 @@ create_unionfs_tools_cpio(){
 	fi										        
 }
 
+create_suspend_cpio(){
+	if [ -d "${TEMP}/initramfs-suspend-temp" ];
+	then
+		rm -r "${TEMP}/initramfs-suspend-temp/"
+	fi
+	print_info 1 'SUSPEND: Adding support (compiling binaries)...'
+	compile_suspend
+	mkdir -p "${TEMP}/initramfs-suspend-temp/"
+	/bin/tar -jxpf "${SUSPEND_BINCACHE}" -C "${TEMP}/initramfs-suspend-temp" ||
+		gen_die "Could not extract suspend binary cache!"
+	mkdir -p "${TEMP}/initramfs-suspend-temp/etc"
+	cp -f /etc/suspend.conf "${TEMP}/initramfs-suspend-temp/etc" ||
+		gen_die 'Could not copy /etc/suspend.conf'
+	cd "${TEMP}/initramfs-suspend-temp/"
+	find . -print | cpio --quiet -o -H newc | gzip -9 > ${CACHE_CPIO_DIR}/initramfs-suspend-${SUSPEND_VER}.cpio.gz
+}
+
 create_dmraid_cpio(){
 	# DMRAID
 	if [ "${DMRAID}" = '1' ]
@@ -510,6 +527,10 @@ merge_initramfs_cpio_archives(){
 	then
 		MERGE_LIST="${MERGE_LIST} initramfs-unionfs-${UNIONFS_VER}-modules-${KV}.cpio.gz"
 	fi
+	if [ "${SUSPEND}" -eq '1' -a -e "${CACHE_CPIO_DIR}/initramfs-suspend-${SUSPEND_VER}.cpio.gz" ]
+	then
+		MERGE_LIST="${MERGE_LIST} initramfs-suspend-${SUSPEND_VER}.cpio.gz"
+	fi
 	if [ "${EVMS2}" -eq '1' -a -e "${CACHE_CPIO_DIR}/initramfs-evms2.cpio.gz" ]
 	then
 		MERGE_LIST="${MERGE_LIST} initramfs-evms2.cpio.gz"
@@ -615,6 +636,12 @@ create_initramfs() {
 	    create_unionfs_modules_cpio
 	    print_info 1 "        >> Creating unionfs tools cpio archive..."
 	    create_unionfs_tools_cpio
+	fi
+
+	if [ "${SUSPEND}" -eq '1' ]
+	then
+	    print_info 1 "        >> Creating suspend cpio archive..."
+	    create_suspend_cpio
 	fi
 	
 	if [ "${LVM2}" -eq '1' ]

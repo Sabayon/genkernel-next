@@ -212,6 +212,7 @@ determine_real_args() {
 	UNIONFS_BINCACHE=`cache_replace "${UNIONFS_BINCACHE}"`
 	UNIONFS_MODULES_BINCACHE=`cache_replace "${UNIONFS_MODULES_BINCACHE}"`
 	BLKID_BINCACHE=`cache_replace "${BLKID_BINCACHE}"`
+	SUSPEND_BINCACHE=`cache_replace "${SUSPEND_BINCACHE}"`
   
 	DEFAULT_KERNEL_CONFIG=`arch_replace "${DEFAULT_KERNEL_CONFIG}"`
 	BUSYBOX_CONFIG=`arch_replace "${BUSYBOX_CONFIG}"`
@@ -230,6 +231,7 @@ determine_real_args() {
 	UNIONFS_BINCACHE=`arch_replace "${UNIONFS_BINCACHE}"`
 	UNIONFS_MODULES_BINCACHE=`arch_replace "${UNIONFS_MODULES_BINCACHE}"`
 	BLKID_BINCACHE=`arch_replace "${BLKID_BINCACHE}"`
+	SUSPEND_BINCACHE=`arch_replace "${SUSPEND_BINCACHE}"`
 	
 	if [ "${CMD_BOOTSPLASH}" != '' ]
 	then
@@ -422,6 +424,13 @@ determine_real_args() {
 		LVM2=1
 	else
 		LVM2=0
+	fi
+
+	if isTrue "${CMD_SUSPEND}"
+	then
+		SUSPEND=1
+	else
+		SUSPEND=0
 	fi
 	
 	if isTrue "${CMD_EVMS2}"

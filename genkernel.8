@@ -186,6 +186,13 @@ Add in LVM2 support from static binaries if they exist on the system,
 or compile static LVM2 binaries if static ones do not exist.
 .RE
 .TP
+\fB\-\-suspend\fR
+.RS
+Add support for userspace suspend/resume (uswsusp). This option requires
+Linux 2.6.17 or newer, \fBsys-power/suspend\fR installed on the host system,
+and resume configured in \fB/etc/suspend.conf\fR.
+.RE
+.TP
 \fB\-\-no-udev\fR
 Force devfs on 2.6 series kernels. Not recommended or supported.
 .TP

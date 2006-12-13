@@ -2,6 +2,13 @@
 # Copyright 2006-2006 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  13 Dec 2006; Chris Gianelloni <wolf31o2@gentoo.org> gen_cmdline.sh,
+  gen_compile.sh, gen_configkernel.sh, gen_determineargs.sh,
+  gen_initramfs.sh, gen_initrd.sh, generic/initrd.scripts, generic/linuxrc,
+  genkernel.8, genkernel.conf:
+  Added patch from Daniel Drake <dsd@gentoo.org> in bug #156445 to add
+  userspace suspend support to genkernel.
+
   13 Dec 2006; Chris Gianelloni <wolf31o2@gentoo.org> gen_initramfs.sh,
   gen_initrd.sh:
   Added debug level to LUKS print_info messages for bug #156410.

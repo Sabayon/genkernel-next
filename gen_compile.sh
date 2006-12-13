@@ -187,8 +187,10 @@ compile_generic() {
 	local RET
 	[ "$#" -lt '2' ] &&
 		gen_die 'compile_generic(): improper usage!'
+	local target=${1}
+	local argstype=${2}
 
-	if [ "${2}" = 'kernel' ] || [ "${2}" = 'runtask' ]
+	if [ "${argstype}" = 'kernel' ] || [ "${argstype}" = 'runtask' ]
 	then
 		export_kernel_args
 		MAKE=${KERNEL_MAKE}
@@ -197,42 +199,43 @@ compile_generic() {
 		export_utils_args
 		MAKE=${UTILS_MAKE}
 	fi
-	case "$2" in
+	case "${argstype}" in
 		kernel) ARGS="`compile_kernel_args`" ;;
 		utils) ARGS="`compile_utils_args`" ;;
 		*) ARGS="" ;; # includes runtask
 	esac
-		
+	shift 2
+
 
 	# the eval usage is needed in the next set of code
 	# as ARGS can contain spaces and quotes, eg:
 	# ARGS='CC="ccache gcc"'
-	if [ "${2}" == 'runtask' ]
+	if [ "${argstype}" == 'runtask' ]
 	then
-		print_info 2 "COMMAND: ${MAKE} ${MAKEOPTS/-j?/j1} ${ARGS} ${1}" 1 0 1
-		eval ${MAKE} -s ${MAKEOPTS/-j?/-j1} "${ARGS}" ${1}
+		print_info 2 "COMMAND: ${MAKE} ${MAKEOPTS/-j?/j1} ${ARGS} ${target} $*" 1 0 1
+		eval ${MAKE} -s ${MAKEOPTS/-j?/-j1} "${ARGS}" ${target} $*
 		RET=$?
 	elif [ "${DEBUGLEVEL}" -gt "1" ]
 	then
 		# Output to stdout and debugfile
-		print_info 2 "COMMAND: ${MAKE} ${MAKEOPTS} ${ARGS} ${1}" 1 0 1
-		eval ${MAKE} ${MAKEOPTS} ${ARGS} ${1} 2>&1 | tee -a ${DEBUGFILE}
+		print_info 2 "COMMAND: ${MAKE} ${MAKEOPTS} ${ARGS} ${target} $*" 1 0 1
+		eval ${MAKE} ${MAKEOPTS} ${ARGS} ${target} $* 2>&1 | tee -a ${DEBUGFILE}
 		RET=${PIPESTATUS[0]}
 	else
 		# Output to debugfile only
-		print_info 2 "COMMAND: ${MAKE} ${MAKEOPTS} ${ARGS} ${1}" 1 0 1
-		eval ${MAKE} ${MAKEOPTS} ${ARGS} ${1} >> ${DEBUGFILE} 2>&1
+		print_info 2 "COMMAND: ${MAKE} ${MAKEOPTS} ${ARGS} ${1} $*" 1 0 1
+		eval ${MAKE} ${MAKEOPTS} ${ARGS} ${target} $* >> ${DEBUGFILE} 2>&1
 		RET=$?
 	fi
 	[ "${RET}" -ne '0' ] &&
-		gen_die "Failed to compile the \"${1}\" target..."
+		gen_die "Failed to compile the \"${target}\" target..."
 
 	unset MAKE
 	unset ARGS
-	if [ "${2}" = 'kernel' ]
+	if [ "${argstype}" = 'kernel' ]
 	then
 		unset_kernel_args
-	elif [ "${2}" = 'utils' ]
+	elif [ "${argstype}" = 'utils' ]
 	then
 		unset_utils_args
 	fi
@@ -527,6 +530,39 @@ compile_dmraid() {
 		rm -rf "${TEMP}/device-mapper" > /dev/null
 		rm -rf "${DMRAID_DIR}" dmraid
 	fi
+}
+
+compile_suspend() {
+	[ -f "${SUSPEND_BINCACHE}" ] && return
+	[ -f "${SUSPEND_SRCTAR}" ] ||
+		gen_die "Could not find SUSPEND source tarball: ${SUSPEND_SRCTAR}! Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
+	cd ${TEMP}
+	rm -rf ${SUSPEND_DIR} > /dev/null
+	/bin/tar -zxpf ${SUSPEND_SRCTAR} ||
+		gen_die 'Could not extract SUSPEND source tarball!'
+	[ -d "${SUSPEND_DIR}" ] ||
+		gen_die "SUSPEND directory ${DMRAID_DIR} is invalid!"
+
+	cd "${SUSPEND_DIR}"
+	if [ -f "${GK_SHARE}/pkg/suspend-0.5-Makefile.patch" ]
+	then
+		patch -p1 -i \
+			${GK_SHARE}/pkg/suspend-0.5-Makefile.patch \
+			|| gen_die "Failed patching suspend"
+	fi
+
+	print_info 1 'suspend: >> Compiling...'
+	compile_generic '' utils CC_FLAGS= LD_FLAGS=
+
+	print_info 1 '         >> Copying to bincache...'
+	mkdir -p "${TEMP}/bincache/sbin"
+	cp -f resume "${TEMP}/bincache/sbin" ||
+		gen_die 'Could not copy resume binary'
+	cd "${TEMP}/bincache"
+	/bin/tar -cjf "${SUSPEND_BINCACHE}" * ||
+		gen_die 'Could not create suspend binary cache'
+	cd "${TEMP}"
+	rm -rf bincache suspend-0.5
 }
 
 compile_modutils() {

@@ -250,6 +250,7 @@ fi
 # Run debug shell if requested
 rundebugshell
 
+suspend_resume
 suspend2_resume
 
 if [ "${CDROOT}" -eq '1' ]

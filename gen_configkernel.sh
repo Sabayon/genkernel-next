@@ -120,4 +120,11 @@ config_kernel() {
 	then
 		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_FB_SPLASH is.*/CONFIG_FB_SPLASH=y/g'
 	fi
+
+	# This check isn't complete: SOFTWARE_SUSPEND has extra deps on some systems such as CPU hotplug
+	if isTrue ${CMD_SUSPEND}
+	then
+		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_SOFTWARE_SUSPEND is.*/CONFIG_SOFTWARE_SUSPEND=y/g'
+	fi
+
 }
