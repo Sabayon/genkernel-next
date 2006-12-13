@@ -2,6 +2,9 @@
 # Copyright 2006-2006 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  13 Dec 2006; Chris Gianelloni <wolf31o2@gentoo.org> gen_compile.sh:
+  Fixed up linking for dmraid for bug #157538.
+
   13 Dec 2006; Chris Gianelloni <wolf31o2@gentoo.org> alpha/busy-config,
   ia64/busy-config, parisc/busy-config, parisc64/busy-config,
   ppc/busy-config, ppc64/busy-config, sparc/busy-config,
