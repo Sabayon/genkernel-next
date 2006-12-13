@@ -451,13 +451,13 @@ create_initramfs_aux() {
 	then
 		if is_static /bin/cryptsetup
 		then
-			print_info "Including LUKS support"
+			print_info 1 "Including LUKS support"
 			rm -f ${TEMP}/initramfs-aux-temp/sbin/cryptsetup
 			cp /bin/cryptsetup ${TEMP}/initramfs-aux-temp/sbin/cryptsetup
 			chmod +x "${TEMP}/initramfs-aux-temp/sbin/cryptsetup"
 		else
-			print_info "LUKS support requires static cryptsetup at /bin/cryptsetup"
-			print_info "Not including LUKS support"
+			print_info 1 "LUKS support requires static cryptsetup at /bin/cryptsetup"
+			print_info 1 "Not including LUKS support"
 		fi
 	fi
 

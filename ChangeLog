@@ -2,6 +2,10 @@
 # Copyright 2006-2006 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  13 Dec 2006; Chris Gianelloni <wolf31o2@gentoo.org> gen_initramfs.sh,
+  gen_initrd.sh:
+  Added debug level to LUKS print_info messages for bug #156410.
+
   03 Dec 2006; Chris Gianelloni <wolf31o2@gentoo.org> alpha/modules_load,
   x86/modules_load, x86_64/modules_load:
   Added raid456 to alpha/amd64/x86 MODULES_EVMS2 and added tg3 to MODULES_NET.
