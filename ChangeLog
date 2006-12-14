@@ -3,6 +3,10 @@
 # $Header: $
 
   14 Dec 2006; Chris Gianelloni <wolf31o2@gentoo.org> gen_compile.sh:
+  Adjust selinux stuff in gen_compile.sh to actually do what we intended, not
+  the opposite.
+
+  14 Dec 2006; Chris Gianelloni <wolf31o2@gentoo.org> gen_compile.sh:
   Since device-mapper tries to build with selinux by default, we've removed
   it, then commented out the selinux support. The ebuild will need to
   enable/disable selinux support based on the selinux USE flag. This should

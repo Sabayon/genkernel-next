@@ -739,10 +739,9 @@ compile_device_mapper() {
 		[ ! -d "${DEVICE_MAPPER_DIR}" ] &&
 			gen_die "device-mapper directory ${DEVICE_MAPPER_DIR} invalid"
 		cd "${DEVICE_MAPPER_DIR}"
-		mymapperconf="--enable-static_link"
-		###mymapperconf="--disable-selinux ${mymapperconf}"
-		./configure  --prefix=${TEMP}/device-mapper ${mymapperconf} \
-			>> ${DEBUGFILE} 2>&1 || gen_die 'Configuring device-mapper failed!'
+		./configure --prefix=${TEMP}/device-mapper --enable-static_link \
+			--disable-selinux >> ${DEBUGFILE} 2>&1 ||
+			gen_die 'Configuring device-mapper failed!'
 		print_info 1 'device-mapper: >> Compiling...'
 		compile_generic '' utils
 		compile_generic 'install' utils
