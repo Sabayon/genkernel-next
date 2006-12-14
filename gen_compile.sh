@@ -513,9 +513,10 @@ compile_dmraid() {
 			./configure --enable-static_link --prefix=${TEMP}/dmraid >> ${DEBUGFILE} 2>&1 ||
 				gen_die 'Configure of dmraid failed!'
 				
-			#We dont necessarily have selinux installed yet .. look into selinux global support in the future.
-			# sed -i tools/Makefile -e "s|DMRAIDLIBS += -lselinux||g"
-			echo "DMRAIDLIBS += -lselinux -lsepol" >> tools/Makefile
+			# We dont necessarily have selinux installed yet... look into
+			# selinux global support in the future.
+			sed -i tools/Makefile -e "s|DMRAIDLIBS += -lselinux||g"
+			###echo "DMRAIDLIBS += -lselinux -lsepol" >> tools/Makefile
 		mkdir -p "${TEMP}/dmraid"
 		print_info 1 'dmraid: >> Compiling...'
 			compile_generic '' utils
@@ -738,8 +739,10 @@ compile_device_mapper() {
 		[ ! -d "${DEVICE_MAPPER_DIR}" ] &&
 			gen_die "device-mapper directory ${DEVICE_MAPPER_DIR} invalid"
 		cd "${DEVICE_MAPPER_DIR}"
-		./configure  --prefix=${TEMP}/device-mapper --enable-static_link >> ${DEBUGFILE} 2>&1 ||
-			gen_die 'Configuring device-mapper failed!'
+		mymapperconf="--enable-static_link"
+		###mymapperconf="--disable-selinux ${mymapperconf}"
+		./configure  --prefix=${TEMP}/device-mapper ${mymapperconf} \
+			>> ${DEBUGFILE} 2>&1 || gen_die 'Configuring device-mapper failed!'
 		print_info 1 'device-mapper: >> Compiling...'
 		compile_generic '' utils
 		compile_generic 'install' utils
