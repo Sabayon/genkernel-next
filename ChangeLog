@@ -2,6 +2,11 @@
 # Copyright 2006-2006 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  16 Dec 2006; Chris Gianelloni <wolf31o2@gentoo.org> gen_initrd.sh,
+  generic/linuxrc, genkernel:
+  Added patches from François-Xavier Roure <fx_roure@yahoo.fr> from bug
+  #149020. This will end up being genkernel 3.4.6, most likely.
+
   14 Dec 2006; Chris Gianelloni <wolf31o2@gentoo.org> gen_compile.sh:
   Adjust selinux stuff in gen_compile.sh to actually do what we intended, not
   the opposite.

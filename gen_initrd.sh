@@ -8,7 +8,7 @@ create_initrd_loop() {
 		gen_die 'Could not create loopback mount directory!'
 	dd if=/dev/zero of=${TMPDIR}/initrd-${KV} bs=1k count=${1} >> "${DEBUGFILE}" 2>&1 ||
 		gen_die "Could not zero initrd-${KV}"
-	mke2fs -F -N500 -q "${TMPDIR}/initrd-${KV}" >> "${DEBUGFILE}" 2>&1 ||
+	mke2fs -F -N750 -q "${TMPDIR}/initrd-${KV}" >> "${DEBUGFILE}" 2>&1 ||
 		gen_die "Could not format initrd-${KV}!"
 	mount -t ext2 -o loop "${TMPDIR}/initrd-${KV}" "${TEMP}/initrd-mount" >> "${DEBUGFILE}" 2>&1 ||
 		gen_die 'Could not mount the initrd filesystem!'
@@ -236,9 +236,9 @@ create_base_initrd_sys() {
 	fi	
 
 	for i in '[' ash basename cat chroot clear cp dirname echo env false find \
-	grep gunzip gzip ln ls loadkmap losetup lsmod mkdir mknod more mount mv \
-	pivot_root ps awk pwd rm rmdir rmmod sed sh sleep tar test touch true umount uname \
-	xargs yes zcat chmod chown cut kill killall; do
+	grep gunzip gzip ln ls loadkmap losetup lsmod mdev mkdir mknod more mount \
+	mv pivot_root ps awk pwd rm rmdir rmmod sed sh sleep tar test touch true \
+	umount uname xargs yes zcat chmod chown cut kill killall; do
 		rm -f ${TEMP}/initrd-temp/bin/$i > /dev/null
 		ln  ${TEMP}/initrd-temp/bin/busybox ${TEMP}/initrd-temp/bin/$i ||
 			gen_die "Busybox error: could not link ${i}!"
@@ -396,7 +396,7 @@ create_initrd() {
 	create_initrd_aux
 
 	INITRD_CALC_SIZE=`calc_initrd_size`
-	INITRD_SIZE=`expr ${INITRD_CALC_SIZE} + 100`
+	INITRD_SIZE=`expr ${INITRD_CALC_SIZE} + 250`
 	print_info 1 "        :: Size is at ${INITRD_SIZE}K"
 	print_info 1 "        >> Creating loopback filesystem..."
 	create_initrd_loop ${INITRD_SIZE}

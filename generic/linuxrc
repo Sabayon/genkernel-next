@@ -670,7 +670,7 @@ then
 	mount -o move /memory /${CHROOT}/.unions/memory || echo '*: Failed to move unionfs /memory into the system root!'
 fi
 
-if [ "$0" = '/linuxrc' ]
+if [ "$0" = '/linuxrc' ] || [ "$0" = 'linuxrc' ]
 then
 	[ ! -e ${CHROOT}/dev/console ] && mknod ${CHROOT}/dev/console c 5 1
 	echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting"
