@@ -414,6 +414,16 @@ compile_unionfs_utils() {
 }
 
 compile_busybox() {
+
+	# Delete cache if config is newer
+	if [ \
+		-f "${BUSYBOX_BINCACHE}" -a \
+		-f "${BUSYBOX_CONFIG}" -a \
+		"${BUSYBOX_BINCACHE}" -ot "${BUSYBOX_CONFIG}" ]
+	then
+		rm -rf "${BUSYBOX_BINCACHE}"
+	fi
+
 	if [ ! -f "${BUSYBOX_BINCACHE}" ]
 	then
 		[ -f "${BUSYBOX_SRCTAR}" ] ||
@@ -421,7 +431,7 @@ compile_busybox() {
 		[ -f "${BUSYBOX_CONFIG}" ] ||
 			gen_die "Cound not find busybox config file: ${BUSYBOX_CONFIG}!"
 		cd "${TEMP}"
-		rm -rf ${BUSYBOX_DIR} > /dev/null
+		rm -rf "${BUSYBOX_DIR}" > /dev/null
 		/bin/tar -jxpf ${BUSYBOX_SRCTAR} ||
 			gen_die 'Could not extract busybox source tarball!'
 		[ -d "${BUSYBOX_DIR}" ] ||

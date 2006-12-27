@@ -731,49 +731,7 @@ then
 		umount /proc || echo '*: Failed to unmount the initrd /proc!'
 	echo -n '.'
 
-	exec <${CONSOLE} >${CONSOLE} 2>&1
-	echo '.'
-
-	# Cleanup initramfs in the background
-	# to reclaim initramfs tmpfs memoryspace
-
-	INITRAMFS_FILES=`ls / | sed -e 's|dev||'`
-	INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|${CHROOT#/}||g"`
-
-	if [ -n "${MEMORY}" ]
-	then
-		INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|${MEMORY#/}||g"`
-	fi
-
-	if [ -n "${UNION}" ]
-	then
-		INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|${UNION#/}||g"`
-	fi
-	INITRAMFS_FILES=`echo ${INITRAMFS_FILES}|sed -e "s|newroot||g"`
-
-	for i in ${INITRAMFS_FILES}
-	do
-		for j in `/bin/busybox find /$i 2> /dev/null`
-		do
-			if /bin/busybox [ ! -d "$j" -a "$j" != "/bin/busybox" ]
-			then
-				/bin/busybox rm -f "$j"
-			fi
-
-			if /bin/busybox [ -d "${j}" -a "${j}" != "/bin" -a "${j}" != "/dev" -a "${j}" != "/sys" ]
-			then
-				/bin/busybox rm -rf "$j"
-			fi
-		done
-	done
-	# End initramfs cleanup
-
-	# Start the real root init
-	(/bin/busybox sleep 3; /bin/busybox rm -r /bin/busybox /dev) & 
-	exec /bin/busybox chroot . /bin/sh <<- EOF
-	exec /sbin/init ${REAL_INIT}
-EOF
-
+	exec switch_root -c "/dev/console" "${CHROOT}" /sbin/init ${REAL_INIT}
 fi
 
 splash 'verbose'

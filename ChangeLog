@@ -2,6 +2,15 @@
 # Copyright 2006-2006 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  27 Dec 2006; Chris Gianelloni <wolf31o2@gentoo.org> alpha/busy-config,
+  gen_compile.sh, -generic/keymaps.tar.gz, generic/linuxrc, genkernel,
+  ia64/busy-config, mips/busy-config, parisc/busy-config,
+  parisc64/busy-config, ppc/busy-config, ppc64/busy-config,
+  sparc/busy-config, sparc64/busy-config, um/busy-config, x86/busy-config,
+  x86_64/busy-config, xen0/busy-config, xenU/busy-config:
+  Removing generic/keymaps.tar.gz to replace it with a known-good copy. Blame
+  cvs2svn.
+
   16 Dec 2006; Chris Gianelloni <wolf31o2@gentoo.org> gen_initrd.sh,
   generic/linuxrc, genkernel:
   Added patches from François-Xavier Roure <fx_roure@yahoo.fr> from bug

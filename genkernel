@@ -405,7 +405,7 @@ symlinker() {
 
 	local newThing=${BOOTDIR}/${base}-${fullVer}
 	local newSym=${BOOTDIR}/${base}
-	local oldSym=${newsym}.old
+	local oldSym=${newSym}.old
 
 	local prevLink
 	local ret=0
