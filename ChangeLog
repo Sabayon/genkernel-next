@@ -2,6 +2,12 @@
 # Copyright 2006-2006 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  27 Dec 2006; Chris Gianelloni <wolf31o2@gentoo.org> gen_bootloader.sh,
+  generic/initrd.scripts:
+  Added a case statement for the keymap selection to ensure we're always using
+  the named keymaps. This should resolve bug #146714 if everything works
+  correctly. This is 3.4.6, for real.
+
   27 Dec 2006; Chris Gianelloni <wolf31o2@gentoo.org>
   +generic/keymaps.tar.gz:
   Adding back the known-good copy of keymaps.tar.gz to svn.
@@ -13,9 +19,11 @@
   sparc/busy-config, sparc64/busy-config, um/busy-config, x86/busy-config,
   x86_64/busy-config, xen0/busy-config, xenU/busy-config:
   Removing generic/keymaps.tar.gz to replace it with a known-good copy. Blame
-  cvs2svn.
+  cvs2svn.  Also, added patch from Alon Bar-Lev <alonbl@gentoo.org> to switch
+  to using switch_root for 2.6 kernels, and a small typo fix from Michael
+  Hordijk <hoffbrinkle@hotmail.com> for bug #158776.
 
-  16 Dec 2006; Chris Gianelloni <wolf31o2@gentoo.org> gen_initrd.sh,
+  15 Dec 2006; Chris Gianelloni <wolf31o2@gentoo.org> gen_initrd.sh,
   generic/linuxrc, genkernel:
   Added patches from François-Xavier Roure <fx_roure@yahoo.fr> from bug
   #149020. This will end up being genkernel 3.4.6, most likely.

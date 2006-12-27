@@ -79,7 +79,7 @@ EOF
 		local TYPE
 		[ "${KERN_24}" -eq '1' ] && TYPE='rd' || TYPE='ramfs'
 
-		cp $GRUB_CONF $GRUB_CONF.bak
+		cp -f $GRUB_CONF $GRUB_CONF.bak
 		awk 'BEGIN { RS="\n"; }
 		     {
 			if(match($0, "kernel-" KNAME "-" ARCH "-" KV))
