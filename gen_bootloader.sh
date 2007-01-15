@@ -39,7 +39,7 @@ EOF
 	[ ! -d ${TEMP} ] && rm -r ${TEMP}
 	
 	# Create grub configuration directory and file if it doesn't exist.
-	[ ! -e `basename $GRUB_CONF` ] && mkdir -p `basename $GRUB_CONF`
+	[ ! -e `dirname $GRUB_CONF` ] && mkdir -p `dirname $GRUB_CONF`
 
 	if [ ! -e $GRUB_CONF ]
 	then

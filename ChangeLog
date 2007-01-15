@@ -2,6 +2,10 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  15 Jan 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_bootloader.sh:
+  Changed basename to dirname when creating the directory from grub.conf to
+  solve bug #161716.
+
   09 Jan 2007; Chris Gianelloni <wolf31o2@gentoo.org> alpha/modules_load,
   x86/modules_load, x86_64/modules_load, xen0/modules_load,
   xenU/modules_load:
