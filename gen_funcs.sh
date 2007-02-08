@@ -21,6 +21,7 @@ isTrue() {
 	return 1
 }
 
+setColorVars() { 
 if isTrue ${USECOLOR}
 then
 	GOOD=$'\e[32;01m'
@@ -37,6 +38,8 @@ else
 	BOLD=''
 	UNDER=''
 fi
+}
+setColorVars
 
 dump_debugcache() {
 	TODEBUGCACHE=0

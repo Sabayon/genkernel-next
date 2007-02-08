@@ -417,12 +417,14 @@ parse_cmdline() {
 		      print_info 2 "CMD_ARCHOVERRIDE: $CMD_ARCHOVERRIDE"
 	      ;;
 	      --color)
-		      CMD_USECOLOR=1
-		      print_info 2 "CMD_USECOLOR: $CMD_USECOLOR"
+		      USECOLOR=1
+		      print_info 2 "USECOLOR: $USECOLOR"
+		      setColorVars
 	      ;;
 	      --no-color)
-		      CMD_USECOLOR=0
-		      print_info 2 "CMD_USECOLOR: $CMD_USECOLOR"
+		      USECOLOR=0
+		      print_info 2 "USECOLOR: $USECOLOR"
+		      setColorVars
 	      ;;
 	      --debugfile=*)
 		      CMD_DEBUGFILE=`parse_opt "$*"`
