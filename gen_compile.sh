@@ -327,9 +327,9 @@ compile_unionfs_modules() {
 			gen_die "Could not find unionfs source tarball: ${UNIONFS_SRCTAR}!"
 		cd "${TEMP}"
 		rm -rf ${UNIONFS_DIR} > /dev/null
-		rm -rf unionfs > /dev/null
-		mkdir -p unionfs
-		/bin/tar -zxpf ${UNIONFS_SRCTAR} ||
+		rm -rf unionfs* > /dev/null
+		mkdir unionfs
+		/bin/tar xzpf ${UNIONFS_SRCTAR} ||
 			gen_die 'Could not extract unionfs source tarball!'
 		[ -d "${UNIONFS_DIR}" ] ||
 			gen_die 'Unionfs directory ${UNIONFS_DIR} is invalid!'
@@ -338,6 +338,7 @@ compile_unionfs_modules() {
 		echo "LINUXSRC=${KERNEL_DIR}" >> fistdev.mk
 		echo 'TOPINC=-I$(LINUXSRC)/include' >> fistdev.mk
 		echo "MODDIR= /lib/modules/${KV}" >> fistdev.mk
+		echo "KVERS=${KV}" >> fistdev.mk
 		echo "KERNELVERSION=${KV}" >> fistdev.mk
 		# Fix for hardened/selinux systems to have extened attributes
 		# per r2d2's request.  Also add -DUNIONFS_UNSUPPORTED for 2.6.16
@@ -350,11 +351,13 @@ compile_unionfs_modules() {
 
 		if [ "${PAT}" -ge '6' ]
 		then
-			cd "${TEMP}"
-			cd "${UNIONFS_DIR}"
+			# ARCH is used by unionfs - and conflicts with genkernel
+			ARCH_PUSH=${ARCH}
+			unset ARCH
 			# Compile unionfs module within the unionfs
 			# environment not within the kernelsrc dir
 			make unionfs.ko || gen_die 'failed to compile unionfs'
+			ARCH=${ARCH_PUSH}
 		else
 			gen_die 'unionfs is only supported on 2.6 targets'
 		fi
@@ -386,7 +389,7 @@ compile_unionfs_utils() {
 			gen_die "Could not find unionfs source tarball: ${UNIONFS_SRCTAR}!"
 		cd "${TEMP}"
 		rm -rf ${UNIONFS_DIR} > /dev/null
-		rm -rf unionfs > /dev/null
+		rm -rf unionfs* > /dev/null
 		mkdir -p unionfs/sbin
 		/bin/tar -zxpf ${UNIONFS_SRCTAR} ||
 			gen_die 'Could not extract unionfs source tarball!'
@@ -394,16 +397,20 @@ compile_unionfs_utils() {
 			gen_die 'Unionfs directory ${UNIONFS_DIR} is invalid!'
 		cd "${UNIONFS_DIR}"
 		print_info 1 'unionfs tools: >> Compiling...'
+		sed -i utils/Makefile -e 's|${CC} -o|${CC} -static -o|g'
 		sed -i Makefile -e 's|${CC} -o|${CC} -static -o|g'
 		compile_generic utils utils
-		
+
+		if [ ! -e "uniondbg" ]; then
+			cd utils
+		fi
 		print_info 1 'unionfs: >> Copying to cache...'
 		strip uniondbg unionctl
 		cp uniondbg ${TEMP}/unionfs/sbin/ || 
 			gen_die 'Could not copy the uniondbg binary to the tmp directory'
 		cp unionctl ${TEMP}/unionfs/sbin/ ||
 			gen_die 'Could not copy the unionctl binary to the tmp directory'
-		cd ${TEMP}/unionfs	
+		cd ${TEMP}/unionfs
 		/bin/tar -cjf "${UNIONFS_BINCACHE}" . ||
 			gen_die 'Could not create unionfs tools binary cache'
 		

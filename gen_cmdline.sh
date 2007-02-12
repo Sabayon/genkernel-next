@@ -209,7 +209,8 @@ parse_cmdline() {
 	      ;;
 	      --unionfs)
 		      echo
-		      print_warning 1 "WARNING: unionfs support is in active development and is not meant for general use."
+		      print_warning 1 "WARNING: unionfs support is in active development and is not meant for general"
+			  print_warning 1 "use."
 		      print_warning 1 "DISABLING UNIONFS SUPPORT AT THIS TIME."
 		      echo
 	      ;;
@@ -217,7 +218,8 @@ parse_cmdline() {
 		      CMD_UNIONFS=1
 		      print_info 2 "CMD_UNIONFS: $CMD_UNIONFS"
 		      echo
-		      print_warning 1 "WARNING: unionfs support is in active development and is not meant for general use."
+		      print_warning 1 "WARNING: unionfs support is in active development and is not meant for general"
+			  print_warning 1 "use."
 		      print_warning 1 "Bug Reports without patches/fixes will be ignored."
 		      print_warning 1 "Use at your own risk as this could blow up your system."
 		      print_warning 1 "This code is subject to change at any time."
