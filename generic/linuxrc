@@ -625,7 +625,10 @@ then
 			fi
 		done
 
-		[ "${DO_slowusb}" ] && sleep 10
+		if [ "${DO_slowusb}" ] || [ "${FORCE_slowusb}" ]
+		then
+			sleep 10
+		fi
 		mkdir initrd proc tmp sys 2>/dev/null
 		chmod 1777 tmp
 	fi
@@ -640,7 +643,10 @@ then
 	# Let Init scripts know that we booted from CD
 	export CDBOOT
 	CDBOOT=1
-	[ "${DO_slowusb}" ] && sleep 10
+	if [ "${DO_slowusb}" ] || [ "${FORCE_slowusb}" ]
+	then
+		sleep 10
+	fi
 else
 	if [ "${USE_UNIONFS_NORMAL}" -eq '1' ]
 	then
@@ -678,7 +684,10 @@ then
 	cd ${CHROOT}
 	mkdir ${CHROOT}/proc ${CHROOT}/sys 2>/dev/null
 	pivot_root . tmp/.initrd
-	[ "${DO_slowusb}" ] && sleep 10
+	if [ "${DO_slowusb}" ] || [ "${FORCE_slowusb}" ]
+	then
+		sleep 10
+	fi
 	echo -n '.'
 
 	if /tmp/.initrd/bin/[ "${USE_DEVFS_NORMAL}" -eq '1' -a "${CDROOT}" -eq '0' ]

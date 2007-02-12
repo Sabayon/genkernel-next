@@ -321,14 +321,26 @@ start_dev_mgr() {
 
 	if [ "${USE_UDEV_NORMAL}" -eq '1' ]
 	then
-		cd /sys
-		[ "${DO_slowusb}" ] && sleep 10
+		for dir in /sys/bus/usb/drivers/usb-storage/*
+		do
+			if [ -d "${dir}" ]
+			then
+				FORCE_slowusb="1"
+			fi
+		done
+		if [ "${DO_slowusb}" ] || [ "${FORCE_slowusb}" ]
+		then
+			sleep 10
+		fi
+
 		kill_devfsd
 		good_msg 'Activating mdev'
-#		runUdev
 		runmdev
-		[ "${DO_slowusb}" ] && sleep 20
-		cd /
+
+		if [ "${DO_slowusb}" ] || [ "${FORCE_slowusb}" ]
+		then
+			sleep 10
+		fi
 	else
 		good_msg 'Activating devfs'
 		mount -t devfs devfs /dev 2>/dev/null

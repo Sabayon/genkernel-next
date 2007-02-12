@@ -2,6 +2,12 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  12 Feb 2007; Chris Gianelloni <wolf31o2@gentoo.org>
+  generic/initrd.scripts, generic/linuxrc, genkernel:
+  Added a non-braindead version of a patch provided by Fabio Erculiani
+  <lxnay@lxnaydesign.net> in bug #160333. This is completely untested, so I'm
+  rolling up 3.4.7_pre2 to get it tested prior to genkernel 3.4.7 going final.
+
   12 Feb 2007; Chris Gianelloni <wolf31o2@gentoo.org> ppc/Pegasos:
   Add a known-working 2.6.16+ kernel config from
   http://www.ppczone.org/downloads/config-2.6.16-pegasos for bug #165758.
