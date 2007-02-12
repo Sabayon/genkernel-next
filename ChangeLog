@@ -2,6 +2,10 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  12 Feb 2007; Chris Gianelloni <wolf31o2@gentoo.org> ppc/Pegasos:
+  Add a known-working 2.6.16+ kernel config from
+  http://www.ppczone.org/downloads/config-2.6.16-pegasos for bug #165758.
+
   12 Feb 2007; Chris Gianelloni <wolf31o2@gentoo.org> genkernel.conf:
   Added a note about the MAKEOPTS option to genkernel as suggested in bug
   #165980.
