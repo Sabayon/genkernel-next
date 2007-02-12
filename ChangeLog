@@ -2,6 +2,10 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  12 Feb 2007; Chris Gianelloni <wolf31o2@gentoo.org> genkernel.conf:
+  Added a note about the MAKEOPTS option to genkernel as suggested in bug
+  #165980.
+
   12 Feb 2007; Chris Gianelloni <wolf31o2@gentoo.org> genkernel.8:
   Added patch from Mike Frysinger <vapier@gentoo.org> to clean up the
   genkernel man page for bug #166179.
