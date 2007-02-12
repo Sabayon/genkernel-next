@@ -2,7 +2,7 @@
 .SH NAME
 genkernel \- the Gentoo Linux automatic kernel compiler.
 .SH SYNOPSIS
-genkernel [options...] action
+\fBgenkernel\fR \fI[options...] action\fR
 .SH INTRODUCTION
 Genkernel is designed to allow users who are not previously used to
 compiling a kernel to use a similar setup to that one that is used on
@@ -252,14 +252,14 @@ Passes arguments to dmraid on bootup.
 \fBreal_init=\fR<...>
 Passes arguments to init on bootup.
 .TP
-\fBscandelay\fR=<...>
+\fBscandelay=\fR<...>
 Pauses for 10 seconds before running devfsd if no argument is specified;
 otherwise pauses for the number of specified seconds.
 .TP 
-\fBip\fR=<...>
+\fBip=\fR<...>
 Normally used to tell the kernel that it should start a network interface. If present, the initrd will try to mount a livecd over NFS.
 .TP 
-\fBnfsroot\fR=<...>
+\fBnfsroot=\fR<...>
 If present, the initrd will try to mount a livecd from that location. Otherwise the location will be deduced from the DCHP request (option root\-path)
 .TP
 \fBdoevms2\fR
@@ -289,11 +289,10 @@ existing bug documents the same issue before opening a new bug. Issues
 for kernel sources not supported by Gentoo should go to their relevant
 authors.
 .SH AUTHORS
-Tim Yamin
-.B <plasmaroo@gentoo.org>
-.sp
-Eric Edgar
-.B <rocket@gentoo.org>
-.sp
-NFS Support by Thomas Seiler
-.B <thseiler@gmail.com>
+.nf
+Tim Yamin <plasmaroo@gentoo.org>
+Eric Edgar <rocket@gentoo.org>
+NFS Support by Thomas Seiler <thseiler@gmail.com>
+.fi
+.SH SEE ALSO
+\fB/etc/genkernel.conf\fR \- genkernel configuration file
