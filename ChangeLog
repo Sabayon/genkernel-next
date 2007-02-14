@@ -2,6 +2,13 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  14 Feb 2007; Chris Gianelloni <wolf31o2@gentoo.org> genkernel,
+  parisc/config.sh, parisc64/config.sh:
+  Moved the MAKEOPTS check to the top of the file for parisc, so it matches
+  other architectures. This fixes bug #165494. Thanks to Andrew Gaffney
+  <agaffney@gentoo.org> for finding the fix. I'm marking this as 3.4.7_pre3
+  for testing.
+
   14 Feb 2007; Chris Gianelloni <wolf31o2@gentoo.org>
   generic/initrd.scripts:
   Adding yet another patch from Fabio Erculiani <lxnay@lxnaydesign.net> from
