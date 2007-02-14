@@ -147,11 +147,13 @@ mount_sysfs() {
 # $2 = path to data directory
 #
 union_insert_dir() {
-   /sbin/unionctl $1 --add --after 0 --mode ro $2
-   if [ $? = '0' ]
-   then
-   	good_msg "Addition of $2 to $1 successful"
-   fi
+	# detect branch 0 because newer unionfs doesn't support "0,1,2"
+	BRANCH_0="/"$(/sbin/unionctl $1 --list | cut -d/ -f2- | cut -d'(' -f1)
+	/sbin/unionctl $1 --add --after $BRANCH_0 --mode ro $2
+	if [ $? = '0' ]
+	then
+		good_msg "Addition of $2 to $1 after branch $BRANCH_0 successful"
+	fi
 }
 
 findnfsmount() {

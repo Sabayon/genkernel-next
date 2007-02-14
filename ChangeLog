@@ -2,6 +2,11 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  14 Feb 2007; Chris Gianelloni <wolf31o2@gentoo.org>
+  generic/initrd.scripts:
+  Adding yet another patch from Fabio Erculiani <lxnay@lxnaydesign.net> from
+  bug #152945.
+
   12 Feb 2007; Chris Gianelloni <wolf31o2@gentoo.org>
   generic/initrd.scripts, generic/linuxrc, genkernel:
   Added a non-braindead version of a patch provided by Fabio Erculiani
