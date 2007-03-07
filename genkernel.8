@@ -186,13 +186,6 @@ Add in LVM2 support from static binaries if they exist on the system,
 or compile static LVM2 binaries if static ones do not exist.
 .RE
 .TP
-\fB\-\-suspend\fR
-.RS
-Add support for userspace suspend/resume (uswsusp). This option requires
-Linux 2.6.17 or newer, \fBsys-power/suspend\fR installed on the host system,
-and resume configured in \fB/etc/suspend.conf\fR.
-.RE
-.TP
 \fB\-\-no-udev\fR
 Force devfs on 2.6 series kernels. Not recommended or supported.
 .TP
@@ -207,12 +200,6 @@ Use <file> for the linuxrc instead of the genkernel linuxrc.
 \fB\-\-arch\-override=\fR<arch>
 Force the architecture settings described by the <arch> profile
 instead of autodetecting the running architecture.
-.TP
-\fB\-\-busybox\-config=\fR<file>
-Busybox configuration file to use when compiling busybox.
-.TP
-\fB\-\-busybox\-bin=\fR<file>
-Don't compile busybox, and use this static .bz2 binary instead.
 .PP
 .BR Output \ Settings
 .TP

@@ -2,6 +2,9 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  07 Mar 2007; Chris Gianelloni <wolf31o2@gentoo.org> genkernel.8:
+  Fixed up the man page for bug #168500 and bug #168719.
+
   14 Feb 2007; Chris Gianelloni <wolf31o2@gentoo.org> genkernel,
   parisc/config.sh, parisc64/config.sh:
   Moved the MAKEOPTS check to the top of the file for parisc, so it matches
