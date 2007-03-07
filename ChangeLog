@@ -2,6 +2,14 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  07 Mar 2007; Chris Gianelloni <wolf31o2@gentoo.org>
+  -pkg/module-init-tools-0.9.15-pre4.tar.bz2,
+  -pkg/busybox-1.1.3+gentoo.tar.bz2,
+  -pkg/devfsd-1.3.25-dietlibc-kernel25.tar.bz2,
+  -pkg/modutils-2.4.26.tar.bz2:
+  Removing binary files from pkg since they were corrupted during the CVS->SVN
+  migration.
+
   07 Mar 2007; Chris Gianelloni <wolf31o2@gentoo.org> genkernel.8:
   Fixed up the man page for bug #168500 and bug #168719.
 
