@@ -183,6 +183,7 @@ reset_args()
 	fi
 }
 
+
 compile_generic() {
 	local RET
 	[ "$#" -lt '2' ] &&
@@ -298,14 +299,19 @@ compile_kernel() {
 	fi
 	if ! isTrue "${CMD_NOINSTALL}"
 	then
-		cp "${KERNEL_BINARY}" "${BOOTDIR}/kernel-${KNAME}-${ARCH}-${KV}" ||
-			gen_die 'Could not copy the kernel binary to ${BOOTDIR}!'
-		cp "System.map" "${BOOTDIR}/System.map-${KNAME}-${ARCH}-${KV}" ||
-			gen_die 'Could not copy System.map to ${BOOTDIR}!'
+		copy_image_with_preserve "kernel" \
+			"${KERNEL_BINARY}" \
+			"kernel-${KNAME}-${ARCH}-${KV}"
+
+		copy_image_with_preserve "System.map" \
+			"System.map" \
+			"System.map-${KNAME}-${ARCH}-${KV}"
+
 		if [ "${KERNEL_BINARY_2}" != '' -a "${GENERATE_Z_IMAGE}" = '1' ]
 		then
-			cp "${KERNEL_BINARY_2}" "${BOOTDIR}/kernelz-${KV}" ||
-				gen_die 'Could not copy the kernelz binary to ${BOOTDIR}!'
+			copy_image_with_preserve "kernelz" \
+				"${KERNEL_BINARY_2}" \
+				"kernelz-${KV}"
 		fi
 	else
 		cp "${KERNEL_BINARY}" "${TMPDIR}/kernel-${KNAME}-${ARCH}-${KV}" ||

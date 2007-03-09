@@ -363,7 +363,12 @@ determine_real_args() {
 		SAVE_CONFIG=0
 	fi
   
-	if isTrue "${CMD_SYMLINK}"
+	if [ "${CMD_SYMLINK}" != '' ]
+	then
+		SYMLINK="${CMD_SYMLINK}"
+	fi
+
+	if isTrue "${SYMLINK}"
 	then
 		SYMLINK=1
 	else

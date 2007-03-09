@@ -2,7 +2,7 @@
 # Genkernel v3
 
 PATH="/bin:/usr/bin:/sbin:/usr/sbin"
-GK_V='3.4.7_pre3'
+GK_V='3.4.7_pre4'
 
 TMPDIR='/var/tmp/genkernel'
 TEMP=${TMPDIR}/$RANDOM.$RANDOM.$RANDOM.$$
@@ -397,60 +397,6 @@ then
 	[ "${UNIONFS}" -eq '1' ] && print_info 1 'add "unionfs" for unionfs support'
 	[ "${UNIONFS}" -eq '1' ] && print_info 1 '	or "unionfs=<block_device>"'
 fi
-
-
-symlinker() {
-	local base=$1
-	local fullVer=${KNAME}-${ARCH}-${KV}
-
-	local newThing=${BOOTDIR}/${base}-${fullVer}
-	local newSym=${BOOTDIR}/${base}
-	local oldSym=${newSym}.old
-
-	local prevLink
-	local ret=0
-
-	print_info 1 "	    creating ${base} name symlink!"
-	if [ -e ${newThing} ] ; then
-		if [ -L ${newSym} ] ; then
-			prevLink=`readlink --no-newline ${newSym}`
-			if [ ${prevLink} != ${newThing} ] ; then
-				if [ -L ${oldSym} ] ; then
-					rm ${oldSym}
-				fi
-				ln -s ${prevLink} ${oldSym}
-				[ $((ret += $?)) ]
-			fi
-			rm ${newSym}
-		fi
-		ln -s ${newThing} ${newSym}
-		[ $((ret += $?)) ]
-	fi
-	
-	if [[ ${ret} > 0 ]] ; then
-		print_error 1 "	    $base link failed: ${ret}"
-	fi
-
-	return ${ret}
-}
-
-
-if [ "${CMD_NOINSTALL}" != '1' -a "${SYMLINK}" = '1' ]
-then 
-    echo
-    print_info 1 'Creating symlinks'
-    
-    
-	symlinker kernel
-	symlinker System.map 
-
-	if [ "${KERN_24}" != '1' -a  "${CMD_BOOTSPLASH}" != '1' ] ; then
-		symlinker initramfs
-	else
-		symlinker initrd
-    fi
-fi
-
 
 [ "${BOOTRW}" != '' ] && mount -o remount,ro ${BOOTDIR}
 
