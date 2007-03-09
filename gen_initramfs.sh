@@ -19,7 +19,7 @@ append_base_layout() {
 	mkdir -p ${TEMP}/initramfs-base-temp/sbin
 	mkdir -p ${TEMP}/initramfs-base-temp/usr/bin
 	mkdir -p ${TEMP}/initramfs-base-temp/usr/sbin
-	ln -s  ../lib  ${TEMP}/initramfs-base-temp/lib64
+	ln -s  lib  ${TEMP}/initramfs-base-temp/lib64
 
 	echo "/dev/ram0     /           ext2    defaults	0 0" > ${TEMP}/initramfs-base-temp/etc/fstab
 	echo "proc          /proc       proc    defaults    0 0" >> ${TEMP}/initramfs-base-temp/etc/fstab
