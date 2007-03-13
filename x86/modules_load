@@ -23,6 +23,6 @@ MODULES_EVMS2="dm-mod dm-snapshot dm-mirror dm-bbr raid0 raid1 \
 raid456 raid5 raid6 raid10"
 MODULES_DMRAID="dm-mod dm-mirror raid0 raid1 raid10"
 MODULES_SATA="sata_promise sata_sil sata_sil24 sata_svw sata_via \
-sata_nv sata_sx4 sata_sis sata_uli sata_vsc sata_qstor ahci \
+sata_nv sata_sx4 sata_sis sata_uli sata_vsc sata_qstor ahci libata \
 ata_piix sata_mv pdc_adma scsi_wait_scan"
 MODULES_FS="ext2 ext3 reiserfs jfs nfs xfs"
