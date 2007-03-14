@@ -208,7 +208,7 @@ append_lvm2(){
 	cd ${TEMP}
 	mkdir -p "${TEMP}/initramfs-lvm2-temp/bin/"
 	mkdir -p "${TEMP}/initramfs-lvm2-temp/etc/lvm/"
-	if [ -e '/sbin/lvm' ] && ldd /sbin/lvm|grep -q 'not a dynamic executable';
+	if [ -e '/sbin/lvm' ] && ldd /sbin/lvm|grep -q 'not a dynamic executable'
 	then
 		print_info 1 '		LVM2: Adding support (using local static binaries)...'
 		cp /sbin/lvm "${TEMP}/initramfs-lvm2-temp/bin/lvm" ||
@@ -221,8 +221,11 @@ append_lvm2(){
 		mv ${TEMP}/initramfs-lvm2-temp/sbin/lvm.static ${TEMP}/initramfs-lvm2-temp/bin/lvm ||
 			gen_die 'LVM2 error: Could not move lvm.static to lvm!'
 	fi
-	cp /etc/lvm/lvm.conf "${TEMP}/initramfs-lvm2-temp/etc/lvm/lvm.conf" ||
-		gen_die 'Could not copy over lvm.conf!'
+	if [ `lvm dumpconfig` ]
+	then
+		cp /etc/lvm/lvm.conf "${TEMP}/initramfs-lvm2-temp/etc/lvm/" ||
+			gen_die 'Could not copy over lvm.conf!'
+	fi
 	cd "${TEMP}/initramfs-lvm2-temp/"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
 	rm -r "${TEMP}/initramfs-lvm2-temp/"

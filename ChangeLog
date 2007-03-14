@@ -2,6 +2,11 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  14 Mar 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_initramfs.sh,
+  gen_initrd.sh, genkernel:
+  Before we copy lvm.conf, we run it through 'lvm dumpconfig' to make sure the
+  config is valid for bug #156009. This is 3.4.7_pre5.
+
   14 Mar 2007; Chris Gianelloni <wolf31o2@gentoo.org> genkernel.conf:
   Change the default CACHE_DIR from /usr/share/genkernel/pkg/%%ARCH%% to
   /var/cache/genkernel/%%ARCH%% for bug #148253.
