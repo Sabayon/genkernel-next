@@ -2,6 +2,9 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  26 Mar 2007; Chris Gianelloni <wolf31o2@gentoo.org> x86/kernel-config-2.6:
+  Added joystick support to the default configuration for bug #171911.
+
   14 Mar 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_initramfs.sh,
   gen_initrd.sh, genkernel:
   Before we copy lvm.conf, we run it through 'lvm dumpconfig' to make sure the
