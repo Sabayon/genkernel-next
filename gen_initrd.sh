@@ -187,10 +187,17 @@ create_base_initrd_sys() {
 				gen_die "LVM2 error: Could not link ${i}!"
 		done
 		mkdir -p ${TEMP}/initrd-temp/etc/lvm
-		if [ `lvm dumpconfig` ]
+		if [ -x /sbin/lvm ]
 		then
-			cp /etc/lvm/lvm.conf "${TEMP}/initrd-temp/etc/lvm/" ||
+			lvm dumpconfig 2>&1 > /dev/null || gen_die 'Could not copy over lvm.conf!'
+			ret=$?
+			if [ ${ret} != 0 ]
+			then
+				cp /etc/lvm/lvm.conf "${TEMP}/initramfs-lvm2-temp/etc/lvm/" ||
+					gen_die 'Could not copy over lvm.conf!'
+			else
 				gen_die 'Could not copy over lvm.conf!'
+			fi
 		fi
 	fi
 	

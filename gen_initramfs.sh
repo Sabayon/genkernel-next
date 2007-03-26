@@ -221,10 +221,17 @@ append_lvm2(){
 		mv ${TEMP}/initramfs-lvm2-temp/sbin/lvm.static ${TEMP}/initramfs-lvm2-temp/bin/lvm ||
 			gen_die 'LVM2 error: Could not move lvm.static to lvm!'
 	fi
-	if [ `lvm dumpconfig` ]
+	if [ -x /sbin/lvm ]
 	then
-		cp /etc/lvm/lvm.conf "${TEMP}/initramfs-lvm2-temp/etc/lvm/" ||
+		lvm dumpconfig 2>&1 > /dev/null || gen_die 'Could not copy over lvm.conf!'
+		ret=$?
+		if [ ${ret} != 0 ]
+		then
+			cp /etc/lvm/lvm.conf "${TEMP}/initramfs-lvm2-temp/etc/lvm/" ||
+				gen_die 'Could not copy over lvm.conf!'
+		else
 			gen_die 'Could not copy over lvm.conf!'
+		fi
 	fi
 	cd "${TEMP}/initramfs-lvm2-temp/"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
