@@ -2,6 +2,11 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  27 Mar 2007; Chris Gianelloni <wolf31o2@gentoo.org> alpha/modules_load,
+  ia64/modules_load, x86/modules_load, x86_64/modules_load,
+  xen0/modules_load, xenU/modules_load:
+  Added raid456 to dmraid target for bug #172128.
+
   26 Mar 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_initramfs.sh,
   gen_initrd.sh:
   Changed LVM configuration detection to not error.
