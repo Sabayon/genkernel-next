@@ -101,6 +101,27 @@ then
 will be automatically mounted if it is
 not already mounted before the initrd and kernel image is copied over.
 .TP
+\fB\-\-\fR[no\-]\fBsymlink\fR
+Manages, or does not manage, symlinks in 
+.I /boot
+like the manual kernel "make install" process does. A
+.I kernel
+(or, depending on options, 
+.I kernelz\fR)
+symlink will link to the most recently built kernel image and a
+.I kernel.old
+(or
+.I kernelz.old\fR)
+symlink will link to the second most recently built image, if one exists.
+Similar symlinks (both * and *.old) are managed for
+.I initramfs\fR (or
+.I initrd\fR)
+and
+.I System.map\f.
+The corresponding work products (i.e., the actual kernel and inirtamfs images, 
+and System.map) are also managed accordingly.  NOTE:  Specifying --symlink 
+does nothing unless --install is also specified.
+.TP
 \fB\-\-no\-initrdmodules\fR
 Don't copy any modules to the initrd.
 .TP

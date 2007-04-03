@@ -2,6 +2,11 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  03 Apr 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_cmdline.sh,
+  genkernel.8:
+  Added a second patch from John R. Graham <john_r_graham@mindspring.com> from
+  bug #169383.
+
   27 Mar 2007; Chris Gianelloni <wolf31o2@gentoo.org> alpha/modules_load,
   ia64/modules_load, x86/modules_load, x86_64/modules_load,
   xen0/modules_load, xenU/modules_load:

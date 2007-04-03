@@ -36,6 +36,8 @@ longusage() {
   echo "	--no-gensplash		Do not use gensplash"
   echo "	--install		Install the kernel after building"
   echo "	--no-install		Do not install the kernel after building"
+  echo "	--symlink		Manage symlinks in /boot for installed images"
+  echo "	--no-symlink		Do not manage symlinks"
   echo "	--no-initrdmodules	Don't copy any modules to the initrd"
   echo "	--no-udev		Disable udev support"
   echo "	--no-devfs		Disable devfs support"
@@ -468,6 +470,10 @@ parse_cmdline() {
 	      ;;
 	      --symlink)
 		      CMD_SYMLINK=1
+		      print_info 2 "CMD_SYMLINK: $CMD_SYMLINK"
+	      ;;
+	      --no-symlink)
+		      CMD_SYMLINK=0
 		      print_info 2 "CMD_SYMLINK: $CMD_SYMLINK"
 	      ;;
 	      --no-kernel-sources)
