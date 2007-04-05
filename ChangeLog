@@ -2,6 +2,11 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  05 Apr 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_initramfs.sh,
+  gen_initrd.sh, genkernel:
+  Added a change to force objdump output to be English for bug #173412 and
+  rolling 3.4.7 final for the release.
+
   05 Apr 2007; Chris Gianelloni <wolf31o2@gentoo.org>
   generic/initrd.scripts:
   Added a patch from Daniel Drake <dsd@gentoo.org> to fix splash problems for

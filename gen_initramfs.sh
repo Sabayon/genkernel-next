@@ -375,7 +375,7 @@ append_modules() {
 
 # check for static linked file with objdump
 is_static() {
-	objdump -T $1 2>&1 | grep "not a dynamic object" > /dev/null
+	LANG="C" LC_ALL="C" objdump -T $1 2>&1 | grep "not a dynamic object" > /dev/null
 	return $?
 }
 
