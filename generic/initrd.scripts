@@ -283,7 +283,6 @@ test_success() {
 	# If last command failed send error message and fall back to a shell	
 	if [ "$?" != '0' ]
 	then
-		splash 'verbose'
 		bad_msg 'Failed to $1; failing back to the shell...'
 		run_shell
 	fi
@@ -298,6 +297,7 @@ good_msg() {
 bad_msg() {
 	msg_string=$1
 	msg_string="${msg_string:-...}"
+	splash 'verbose' > /dev/null &
 	echo -e "${BAD}!!${NORMAL}${BOLD} ${msg_string} ${NORMAL}"
 } 
 
@@ -708,7 +708,6 @@ cdupdate() {
 			${NEW_ROOT}/mnt/cdrom/cdupdate.sh
 			if [ "$?" != '0' ]
 			then
-				splash 'verbose'
 				bad_msg "Executing cdupdate.sh failed!"
 				run_shell
 			fi

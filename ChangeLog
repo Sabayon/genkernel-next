@@ -2,6 +2,11 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  05 Apr 2007; Chris Gianelloni <wolf31o2@gentoo.org>
+  generic/initrd.scripts:
+  Added a patch from Daniel Drake <dsd@gentoo.org> to fix splash problems for
+  bug #172562.
+
   03 Apr 2007; Chris Gianelloni <wolf31o2@gentoo.org> genkernel.conf:
   Some minor config file cleanup.
 
