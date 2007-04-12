@@ -33,6 +33,8 @@ gen_minkernpackage()
 		    [ "${BUILD_INITRD}" -ne 0 ] && { cp "${TMPDIR}/initrd-${KV}" "${TEMP}/minkernpackage/initrd-${ARCH}-${KV}" || gen_die 'Could not copy the initrd for the kernel package!'; }
 	    fi
 	fi
+
+	cp "${TMPDIR}/System.map-${KV}" "${TEMP}/minkernpackage/System.map-${ARCH}-${KV}" || gen_die 'Could not copy System.map for the kernel package!';
 	
 	cd "${TEMP}/minkernpackage" 
 	/bin/tar -jcpf ${MINKERNPACKAGE} * || gen_die 'Could not compress the kernel package!'
