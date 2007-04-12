@@ -2,6 +2,11 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  12 Apr 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_initramfs.sh,
+  gen_initrd.sh:
+  Commented out the checks on the sanity of lvm.conf since they were not quite
+  working right. This should fix bug #173622.
+
   09 Apr 2007; Chris Gianelloni <wolf31o2@gentoo.org> +x86/nb-busybox.cf:
   Added nb-busybox.cf to x86 on the request of Andrew Gaffney
   <agaffney@gentoo.org>.
