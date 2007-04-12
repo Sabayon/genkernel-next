@@ -2,6 +2,12 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  12 Apr 2007; Chris Gianelloni <wolf31o2@gentoo.org> alpha/modules_load,
+  ia64/modules_load, um/modules_load, x86/modules_load, x86_64/modules_load,
+  xen0/modules_load, xenU/modules_load:
+  Added mptsas to SCSI for bug #174130 and removing raid0/raid1/raid10/raid456
+  from DMRAID.
+
   12 Apr 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_initramfs.sh,
   gen_initrd.sh:
   Commented out the checks on the sanity of lvm.conf since they were not quite
