@@ -2,6 +2,10 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  21 Jun 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_initrd.sh:
+  Fixed lvm/evms code for initrd generation. Thanks to Vinny
+  <vfuria@gmail.com> on bug #179480 for pointing it out.
+
   21 Jun 2007; Chris Gianelloni <wolf31o2@gentoo.org> alpha/modules_load,
   generic/initrd.defaults, ia64/modules_load, ppc/modules_load,
   ppc64/modules_load, um/modules_load, x86/modules_load,

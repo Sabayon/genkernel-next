@@ -193,7 +193,7 @@ create_base_initrd_sys() {
 #			ret=$?
 #			if [ ${ret} != 0 ]
 #			then
-				cp /etc/lvm/lvm.conf "${TEMP}/initramfs-lvm2-temp/etc/lvm/" ||
+				cp /etc/lvm/lvm.conf "${TEMP}/initrd-temp/etc/lvm/" ||
 					gen_die 'Could not copy over lvm.conf!'
 #			else
 #				gen_die 'Could not copy over lvm.conf!'
@@ -215,7 +215,7 @@ create_base_initrd_sys() {
 				|| gen_die 'Could not copy files for EVMS2!'
 			if [ -n "`ls /lib/libgcc_s*`" ]
 			then
-				cp -a /lib/libgcc_s* "${TEMP}/initramfs-evms2-temp/lib" \
+				cp -a /lib/libgcc_s* "${TEMP}/initrd-temp/lib" \
 					|| gen_die 'Could not copy files for EVMS2!'
 			fi
 			cp -a /lib/libc-* /lib/libc.* "${TEMP}/initrd-temp/lib" \
