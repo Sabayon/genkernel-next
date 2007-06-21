@@ -207,6 +207,12 @@ Add in LVM2 support from static binaries if they exist on the system,
 or compile static LVM2 binaries if static ones do not exist.
 .RE
 .TP
+\fB\-\-luks\fR
+.RS
+Add in Luks support from static binaries if they exist on the 
+system.
+.RE
+.TP
 \fB\-\-no-udev\fR
 Force devfs on 2.6 series kernels. Not recommended or supported.
 .TP
@@ -253,6 +259,10 @@ bootloader, which the initrd scripts would recognize.
 .TP
 \fBreal_root=\fR<...>
 Specifies the device node of the root filesystem to mount.
+.TP
+\fBcrypt_root=\fR<...>
+This specifies the device encrypted by Luks, which contains the root 
+filesystem to mount.
 .TP
 \fBdodmraid=\fR<...>
 Passes arguments to dmraid on bootup.

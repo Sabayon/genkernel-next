@@ -2,6 +2,10 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  21 Jun 2007; Chris Gianelloni <wolf31o2@gentoo.org> genkernel.8:
+  Added patch from Nelson Batalha <nelson_batalha@hotmail.com> from bug
+  #172766 to add documentation for genkernel's LUKS features.
+
   21 Jun 2007; Chris Gianelloni <wolf31o2@gentoo.org>
   generic/initrd.scripts:
   Added patch from Nicolas Schlumberger <n.schlumberger@bluewin.ch> to create
