@@ -624,6 +624,7 @@ openLUKS() {
 			then
 				break
 			else
+				setup_md_device ${LUKS_DEVICE}
 				if cryptsetup isLuks ${LUKS_DEVICE}
 				then
 					good_msg "Opening LUKS device ${LUKS_DEVICE}"

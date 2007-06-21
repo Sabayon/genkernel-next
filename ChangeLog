@@ -4,6 +4,11 @@
 
   21 Jun 2007; Chris Gianelloni <wolf31o2@gentoo.org>
   generic/initrd.scripts:
+  Added patch from Nicolas Schlumberger <n.schlumberger@bluewin.ch> to create
+  md devices with LUKS for bug #170753.
+
+  21 Jun 2007; Chris Gianelloni <wolf31o2@gentoo.org>
+  generic/initrd.scripts:
   Reverting patch that was originally added due to bug #160333 due to the
   problems it caused on the 2007.0 release.
 
