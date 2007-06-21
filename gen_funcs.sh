@@ -373,22 +373,24 @@ copy_image_with_preserve() {
 	fi
 
 	# We only erase the old image when it is the exact same version as the
-	# current image.  Different version old images are left behind.  This is
-	# consistent with how "make install" of the manual kernel build works.
-	if [ "${currDestImage}.old" == "${prevDestImage}" ]
+	# current and new images.  Different version old images are left behind.
+	# This is consistent with how "make install" of the manual kernel build 
+	# works.
+	if [ "${currDestImage}" == "${fullDestName}" -a \
+		 "${prevDestImage}" == "${currDestImage}.old" ]
 	then
 		#
-		# Case for current / old of the same base version.
+		# Case for new, currrent, and old of the same base version.
 		#
  		print_info 5 "  Same base version.  May have to delete old image to make room."
-		if [  "${prevDestImageExists}" -eq '1' ]
-		then
-			print_info 5 "  Deleting old identical version ${symlinkName}."
-			rm -f "${BOOTDIR}/${prevDestImage}"
-		fi
 
-		if [  "${currDestImageExists}" -eq '1' ]
+		if [ "${currDestImageExists}" -eq '1' ]
 		then
+			if [ "${prevDestImageExists}" -eq '1' ]
+			then
+				print_info 5 "  Deleting old identical version ${symlinkName}."
+				rm -f "${BOOTDIR}/${prevDestImage}"
+			fi
 			print_info 5 "  Moving ${BOOTDIR}/${currDestImage}"
 			print_info 5 "    to ${BOOTDIR}/${currDestImage}.old"
 			mv "${BOOTDIR}/${currDestImage}" "${BOOTDIR}/${currDestImage}.old" ||
@@ -398,12 +400,12 @@ copy_image_with_preserve() {
 		#
 		# Case for current / old not of the same base version.
 		#
- 		print_info 5 "  Different base version.  Do not delete old iamges."
+ 		print_info 5 "  Different base version.  Do not delete old images."
 		if [ "${currDestImageExists}" -eq 1 ]
 		then
 			prevDestImage="${currDestImage}"
-			currDestImage="${fullDestName}"
 		fi
+		currDestImage="${fullDestName}"
 	fi
 
 	print_info 5 "  Copying ${symlinkName}: ${newSrceImage}"

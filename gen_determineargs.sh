@@ -274,10 +274,12 @@ determine_real_args() {
 	then
 		MRPROPER="${CMD_MRPROPER}"
 	fi
+
 	if [ "${CMD_MENUCONFIG}" != '' ]
 	then
 		MENUCONFIG="${CMD_MENUCONFIG}"
 	fi
+
 	if [ "${CMD_CLEAN}" != '' ]
 	then
 		CLEAN="${CMD_CLEAN}"
@@ -391,7 +393,12 @@ determine_real_args() {
 		fi
 	fi
 
-	if isTrue "${CMD_OLDCONFIG}"
+	if [ "${CMD_OLDCONFIG}" != '' ]
+	then
+		OLDCONFIG="${CMD_OLDCONFIG}"
+	fi
+
+	if isTrue "${OLDCONFIG}"
 	then
 		OLDCONFIG=1
 	else

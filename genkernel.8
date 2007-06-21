@@ -55,8 +55,7 @@ to 0, minimal debugging is done; if this is set to 5 as much output as
 possible is given.
 .TP
 \fB\-\-debugfile=\fR<outfile>
-This outputs full debugging data; regardless of --debuglevel to the file 
-<outfile>. By default this is
+This outputs debugging data to the file <outfile>. By default this is
 .I /var/log/genkernel.log\fR.
 .TP
 \fB\-\-\fR[no\-]\fBcolor\fR
@@ -227,6 +226,9 @@ Use <file> for the linuxrc instead of the genkernel linuxrc.
 \fB\-\-arch\-override=\fR<arch>
 Force the architecture settings described by the <arch> profile
 instead of autodetecting the running architecture.
+.TP
+\fB\-\-tempdir=\fR<dir>
+Sets genkernel's temporary working directory to <dir>.
 .PP
 .BR Output \ Settings
 .TP
