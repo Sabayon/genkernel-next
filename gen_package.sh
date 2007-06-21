@@ -34,7 +34,12 @@ gen_minkernpackage()
 	    fi
 	fi
 
-	cp "${TMPDIR}/System.map-${KV}" "${TEMP}/minkernpackage/System.map-${ARCH}-${KV}" || gen_die 'Could not copy System.map for the kernel package!';
+	if [ "${CMD_KERNCACHE}" != "" ]
+	then
+	    /bin/tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} System.map-${ARCH}-${KV}
+	else
+		cp "${KERNEL_DIR}/System.map" "${TEMP}/minkernpackage/System.map-${ARCH}-${KV}" || gen_die 'Could not copy System.map for the kernel package!';
+	fi
 	
 	cd "${TEMP}/minkernpackage" 
 	/bin/tar -jcpf ${MINKERNPACKAGE} * || gen_die 'Could not compress the kernel package!'
