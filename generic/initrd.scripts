@@ -83,7 +83,7 @@ findcdmount() {
 				if [ "$?" = '0' ]
 				then
 					# Check for a LiveCD
-					if [ -e ${NEW_ROOT}/mnt/cdrom/${SUBDIR}/livecd ]
+					if [ -f ${NEW_ROOT}/mnt/cdrom/${SUBDIR}/livecd ]
 					then
 						REAL_ROOT="${x}"
 						break
