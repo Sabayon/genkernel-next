@@ -100,6 +100,39 @@ findcdmount() {
 	fi
 }
 
+findkeymount() {
+        if [ "$#" -gt "0" ]
+        then
+                for x in $*
+                do
+                        # Check for a block device to mount
+                        if [ -b "${x}" ]
+                        then
+                                good_msg "Attempting to mount key media:- ${x}"
+                                mount -r -t auto ${x} ${NEW_ROOT}/mnt/key \
+                                                > /dev/null 2>&1
+                                fi
+                                if [ "$?" = '0' ]
+                                then
+                                        # Check for the key
+                                        if [ -e ${NEW_ROOT}/mnt/key/${SUBDIR}/${KEYNAME} ]
+                                        then
+                                                KEY_ROOT="${x}"
+                                                break
+                                        else
+                                                umount ${NEW_ROOT}/mnt/key
+                                        fi
+                                fi
+                        fi
+                done
+                if [ "${KEY_ROOT}" != '' ]
+                then
+                        good_msg "Key media found on ${x}"
+                fi
+        fi
+}
+
+
 cache_cd_contents() {
 	# Check loop file exists and cache to ramdisk if DO_cache is enabled
 	if [ "${LOOPTYPE}" != "noloop" ] && [ "${LOOPTYPE}" != "sgimips" ]
@@ -356,6 +389,23 @@ bootstrapCD() {
 
 	findcdmount $DEVICES
 }
+
+bootstrapKey() {
+        # Locate the device with our key on it.
+        # USB Keychain/Storage
+        KEYDEVS="/dev/sd*"
+        # CDROM DEVICES
+        KEYDEVS="${KEYDEVS} /dev/cdroms/* /dev/ide/cd/* /dev/sr*"
+        # IDE devices
+        KEYDEVS="${KEYDEVS} /dev/hd*"
+        # USB using the USB Block Driver
+        KEYDEVS="${KEYDEVS} /dev/ubd* /dev/ubd/*"
+        # iSeries devices
+        KEYDEVS="${KEYDEVs} /dev/iseries/vcd*"
+
+        findkeymount ${KEYDEVS}
+}
+
 
 cmdline_hwopts() {
 	# Scan CMDLINE for any "doscsi" or "noscsi"-type arguments
