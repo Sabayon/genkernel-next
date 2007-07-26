@@ -1,6 +1,6 @@
 #!/bin/ash
 
-# Copyright 2001-2006 Gentoo Foundation
+# Copyright 2001-2007 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License, v2 or later
 
 
@@ -27,9 +27,9 @@ BasicSetup() {
 StartUp() {
 	if [ ! -f "/tmp/.startup" ]; then
 		#// Mount proc && sys
-		mount none	/proc		-t proc			# /proc
-		mount none	/sys		-t sysfs		# /sys
-		mount udev	/dev		-t tmpfs  -o size=800k	# /dev for mdev
+		mount proc	/proc		-t proc			# /proc
+		mount sys	/sys		-t sysfs		# /sys
+		mount mdev	/dev		-t tmpfs  -o size=800k	# /dev for mdev
 
 		#// Let busybox build its applets
 		/bin/busybox --install
@@ -37,16 +37,15 @@ StartUp() {
 		#// Create additional mount points
 		mkdir		/dev/pts
 		mkdir		/dev/shm
-		mkdir		/gentoo
 		mkdir -p	/mnt/cdrom
-		mkdir -p	/mnt/floppy
-		mkdir		/root
-		mkdir		/srv
+		mkdir		/mnt/floppy
+		mkdir		/mnt/gentoo
 		mkdir		/tmp
 
 		#// Mount remaining filesystems
-		mount none	/tmp		-t tmpfs  -o rw		# /tmp
-		mount devpts	/dev/pts 	-t devpts -o size=300k	# /dev/pts
+		mount tmp	/tmp		-t tmpfs		# /tmp
+		mount devpts	/dev/pts 	-t devpts		# /dev/pts
+		mount shm	/dev/shm	-t tmpfs -o size=512k	# /dev/shm
 
 		#// Create mtab
 		ln -sf	/proc/mounts		/etc/mtab		# mtab (symlink -> /proc/mounts)
@@ -55,25 +54,37 @@ StartUp() {
 		echo "/sbin/mdev" > /proc/sys/kernel/hotplug		# mdev handles hotplug events
 		/sbin/mdev -s						# have mdev populate /dev
 
-		#// mdev doesn't create RAID devices or std* for us
-		mknod 	/dev/md0		b 9 0
-		mknod 	/dev/md1		b 9 1
-		mknod 	/dev/md2		b 9 2
-		mknod 	/dev/md3		b 9 3
-		mknod 	/dev/md4		b 9 4
-		mknod 	/dev/md5		b 9 5
-		mknod 	/dev/md6		b 9 6
-		mknod 	/dev/md7		b 9 7
-		mknod 	/dev/md8		b 9 8
-		mknod 	/dev/md9		b 9 9
+		#// Create standard (non-mdev) devices
+		makedevs	/dev/md		b 9 0 0 7
+		makedevs	/dev/ptyp	c 2 0 0 9
+		makedevs 	/dev/tty	c 4 0 0 12
+		makedevs	/dev/ttyp	c 3 0 0 9
+		makedevs	/dev/ttyq	c 3 16 0 9
+		makedevs	/dev/ttyS	c 4 64 0 3
+		mknod		/dev/console	c 5 1
+		mknod		/dev/kmsg	c 1 11
+		mknod		/dev/null	c 1 3
+		mknod		/dev/tty	c 5 0
+		mknod		/dev/urandom	c 1 9
+		ln -s		/dev/urandom	/dev/random
+		mknod		/dev/zero	c 1 5
+
+		#// Create std* devices
 	        ln -snf /proc/self/fd		/dev/fd
 	        ln -snf /proc/self/fd/0		/dev/stdin
 	        ln -snf /proc/self/fd/1		/dev/stdout
 	        ln -snf /proc/self/fd/2		/dev/stderr
 
-		#// /dev/random blocks, use /dev/urandom instead
-		mv	/dev/random		/dev/random-blocks
-		ln -sf	/dev/urandom		/dev/random
+		#// Make some misc directories
+		mkdir	/var/log
+		mkdir	/var/run
+
+		#// Start a minimal logger
+		klogd
+		syslogd
+
+		#// Hostname
+		hostname netboot-@@RELVER@@
 
 		#// Setup dropbear (sshd)
 		echo -e ""
@@ -89,9 +100,6 @@ StartUp() {
 		#// Misc tasks
 		chmod +x /bin/net-setup
 		chmod +x /usr/share/udhcpc/default.script
-
-		#// Hostname
-		hostname netboot-@@RELVER@@
 	fi
 
 }
@@ -305,7 +313,9 @@ StartUp
 ARCHINFO="$(uname -m)"
 case "${ARCHINFO}" in
 	mips*)		DetectMips	;;
-	sparc*)		DetectSparc	;;
+	sparc*)		DetectSparc
+		mount -t openpromfs openprom /proc/openprom
+	;;
 	ppc*)		DetectPpc	;;
 esac
 

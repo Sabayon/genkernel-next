@@ -2,6 +2,9 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  26 Jul 2007; Andrew Gaffney <agaffney@gentoo.org> netboot/linuxrc.x:
+  enhanced netboot linuxrc from gustavoz
+
   26 Jul 2007; Andrew Gaffney <agaffney@gentoo.org> alpha/busy-config,
   gen_compile.sh, gen_determineargs.sh, gen_initramfs.sh, gen_initrd.sh,
   genkernel, genkernel.conf, ia64/busy-config, mips/busy-config,
