@@ -288,18 +288,6 @@ fi
 
 if [ "${BUILD_INITRD}" -eq '1' ]
 then
-	# Only compile insmod if we're installing modules onto the initrd
-	if [ "${NOINITRDMODULES}" = '' ]
-	then
-		if [ "${KERN_24}" != '1' ]
-		then
-			# Compile module-init-tools
-			[ ${BUILD_STATIC} -eq 0 ] && compile_module_init_tools
-		else
-			[ ${BUILD_STATIC} -eq 0 ] && compile_modutils
-		fi
-	fi
-	
 	[ "${DISKLABEL}" -eq '1' ] && compile_e2fsprogs
 
 	if [ "${KERN_24}" != '1' -a "${UDEV}" -eq '1' ] 

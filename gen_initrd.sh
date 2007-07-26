@@ -86,23 +86,6 @@ create_base_initrd_sys() {
 		gen_die 'Could not extract busybox bincache!'
 	chmod +x "${TEMP}/initrd-temp/bin/busybox"
 
-	if [ "${NOINITRDMODULES}" = '' ]
-	then
-		if [ "${PAT}" -gt "4" ]
-		then
-			cp "${MODULE_INIT_TOOLS_BINCACHE}" "${TEMP}/initrd-temp/bin/insmod.static.bz2" ||
-				gen_die 'Could not copy insmod.static from bincache!'
-		else
-			cp "${MODUTILS_BINCACHE}" "${TEMP}/initrd-temp/bin/insmod.static.bz2" ||
-				gen_die 'Could not copy insmod.static from bincache'
-		fi
-
-		bunzip2 "${TEMP}/initrd-temp/bin/insmod.static.bz2" ||
-			gen_die 'Could not uncompress insmod.static!'
-		mv "${TEMP}/initrd-temp/bin/insmod.static" "${TEMP}/initrd-temp/bin/insmod"
-		chmod +x "${TEMP}/initrd-temp/bin/insmod"
-	fi
-
 	# devfsd
 	if [ "${DEVFS}" -eq '1' ]
 	then

@@ -72,25 +72,6 @@ append_busybox() {
 	rm -rf "${TEMP}/initramfs-busybox-temp" > /dev/null
 }
 
-append_insmod() {
-	if [ -d "${TEMP}/initramfs-insmod-temp" ]
-	then
-		rm -rf "${TEMP}/initramfs-insmod-temp" > /dev/null
-	fi
-	mkdir -p "${TEMP}/initramfs-insmod-temp/bin/" 
-	cp "${MODULE_INIT_TOOLS_BINCACHE}" "${TEMP}/initramfs-insmod-temp/bin/insmod.static.bz2" ||
-		gen_die 'Could not copy insmod.static from bincache!'
-
-	bunzip2 "${TEMP}/initramfs-insmod-temp/bin/insmod.static.bz2" ||
-		gen_die 'Could not uncompress insmod.static!'
-	mv "${TEMP}/initramfs-insmod-temp/bin/insmod.static" "${TEMP}/initramfs-insmod-temp/bin/insmod"
-	chmod +x "${TEMP}/initramfs-insmod-temp/bin/insmod"
-	
-	cd "${TEMP}/initramfs-insmod-temp/"
-	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
-	rm -rf "${TEMP}/initramfs-insmod-temp" > /dev/null
-}
-
 append_udev(){
 	if [ -d "${TEMP}/initramfs-udev-temp" ]
 	then
@@ -503,7 +484,6 @@ create_initramfs() {
 	
 	if [ "${NOINITRDMODULES}" = '' ]
 	then
-		append_data 'insmod'
 		append_data 'modules'
 	else
 		print_info 1 "initramfs: Not copying modules..."

@@ -2,6 +2,15 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  26 Jul 2007; Andrew Gaffney <agaffney@gentoo.org> alpha/busy-config,
+  gen_compile.sh, gen_determineargs.sh, gen_initramfs.sh, gen_initrd.sh,
+  genkernel, genkernel.conf, ia64/busy-config, mips/busy-config,
+  parisc/busy-config, parisc64/busy-config, ppc/busy-config,
+  ppc64/busy-config, sparc/busy-config, sparc64/busy-config,
+  x86/busy-config, x86_64/busy-config, xen0/busy-config, xenU/busy-config:
+  enable CONFIG_INSMOD in all arch busy-config files
+  disable building of static insmod and remove all code related to it
+
   26 Jul 2007; Andrew Gaffney <agaffney@gentoo.org> gen_package.sh:
   Patch to compare new config instead of the one left laying around in the
   kerncache dir. Thanks to Pat Double <gentoo@patdouble.com> in bug #179739
