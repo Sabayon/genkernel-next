@@ -2,6 +2,10 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  26 Jul 2007; Andrew Gaffney <agaffney@gentoo.org> gen_package.sh:
+  Patch to compare new config instead of the one left laying around in the
+  kerncache dir. Thanks to Pat Double <gentoo@patdouble.com> in bug #179739
+
   26 Jul 2007; Andrew Gaffney <agaffney@gentoo.org> gen_compile.sh,
   gen_initramfs.sh, gen_initrd.sh, genkernel.conf:
   Patch to actually use busybox bincache. Thanks to Pat Double

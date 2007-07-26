@@ -155,12 +155,18 @@ gen_kerncache_is_valid()
         else
 		if [ -e "${KERNCACHE}" ] 
 		then
+			KERNEL_CONFIG="/${KERNEL_DIR}/.config"
+			if [ "${CMD_KERNEL_CONFIG}" != '' ]
+			then
+				KERNEL_CONFIG="${CMD_KERNEL_CONFIG}"
+			fi
+
 			/bin/tar -xj -f ${KERNCACHE} -C ${TEMP}
-			if [ -e ${TEMP}/config-${ARCH}-${KV} -a -e /${KERNEL_DIR}/.config ]
+			if [ -e ${TEMP}/config-${ARCH}-${KV} -a -e ${KERNEL_CONFIG} ]
 			then
 	
-				test1=$(md5sum ${TEMP}/config-${ARCH}-${KV} | cut -d " " -f 1)
-				test2=$(md5sum /${KERNEL_DIR}/.config | cut -d " " -f 1)
+				test1=$(grep -v "^#" ${TEMP}/config-${ARCH}-${KV} | md5sum | cut -d " " -f 1)
+				test2=$(grep -v "^#" ${KERNEL_CONFIG} | md5sum | cut -d " " -f 1)
 				if [ "${test1}" == "${test2}" ]
 				then
 	
