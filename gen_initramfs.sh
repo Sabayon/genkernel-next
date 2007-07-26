@@ -50,10 +50,10 @@ append_busybox() {
 
 	cp "${GK_SHARE}/generic/udhcpc.scripts" ${TEMP}/initramfs-busybox-temp/bin/
 	chmod +x "${TEMP}/initramfs-busybox-temp/bin/udhcpc.scripts"
-	cp "${BUSYBOX_BINCACHE}" "${TEMP}/initramfs-busybox-temp/bin/busybox.bz2" ||
+	cp "${BUSYBOX_BINCACHE}" "${TEMP}/initramfs-busybox-temp/bin/busybox.tar.bz2" ||
 		gen_die 'Could not copy busybox from bincache!'
-	bunzip2 "${TEMP}/initramfs-busybox-temp/bin/busybox.bz2" ||
-		gen_die 'Could not uncompress busybox!'
+	tar -xjf "${TEMP}/initramfs-busybox-temp/bin/busybox.tar.bz2" -C "${TEMP}/initramfs-busybox-temp/bin" busybox ||
+		gen_die 'Could not extract busybox bincache!'
 	chmod +x "${TEMP}/initramfs-busybox-temp/bin/busybox"
 
 	# down devfsd we use with dietlibc

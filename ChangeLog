@@ -2,6 +2,11 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  26 Jul 2007; Andrew Gaffney <agaffney@gentoo.org> gen_compile.sh,
+  gen_initramfs.sh, gen_initrd.sh, genkernel.conf:
+  Patch to actually use busybox bincache. Thanks to Pat Double
+  <gentoo@patdouble.com> on bug #180211
+
   21 Jun 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_initrd.sh:
   Fixed lvm/evms code for initrd generation. Thanks to Vinny
   <vfuria@gmail.com> on bug #179480 for pointing it out.

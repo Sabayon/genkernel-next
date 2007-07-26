@@ -427,33 +427,38 @@ compile_unionfs_utils() {
 }
 
 compile_busybox() {
+	[ -f "${BUSYBOX_SRCTAR}" ] ||
+		gen_die "Could not find busybox source tarball: ${BUSYBOX_SRCTAR}!"
+	[ -f "${BUSYBOX_CONFIG}" ] ||
+		gen_die "Cound not find busybox config file: ${BUSYBOX_CONFIG}!"
+	cd "${TEMP}"
+	rm -rf "${BUSYBOX_DIR}" > /dev/null
+	/bin/tar -jxpf ${BUSYBOX_SRCTAR} ||
+		gen_die 'Could not extract busybox source tarball!'
+	[ -d "${BUSYBOX_DIR}" ] ||
+		gen_die 'Busybox directory ${BUSYBOX_DIR} is invalid!'
+	cp "${BUSYBOX_CONFIG}" "${BUSYBOX_DIR}/.config"
+	sed -i ${BUSYBOX_DIR}/.config -e 's/#\? \?CONFIG_FEATURE_INSTALLER[ =].*/CONFIG_FEATURE_INSTALLER=y/g'
+	cd "${BUSYBOX_DIR}"
+	print_info 1 'busybox: >> Configuring...'
+	yes '' 2>/dev/null | compile_generic oldconfig utils
 
-	# Delete cache if config is newer
-	if [ \
-		-f "${BUSYBOX_BINCACHE}" -a \
-		-f "${BUSYBOX_CONFIG}" -a \
-		"${BUSYBOX_BINCACHE}" -ot "${BUSYBOX_CONFIG}" ]
+	# Delete cache if stored config's MD5 does not match one to be used
+	if [ -f "${BUSYBOX_BINCACHE}" -a -f "${BUSYBOX_CONFIG}" ]
 	then
-		rm -rf "${BUSYBOX_BINCACHE}"
+		oldconfig_md5=$(tar -xjf "${BUSYBOX_BINCACHE}" -O .config | md5sum)
+		newconfig_md5=$(md5sum < .config)
+		if [ "${oldconfig_md5}" != "${newconfig_md5}" ]
+		then
+			print_info 1 "busybox: >> Removing stale cache..."
+			rm -rf "${BUSYBOX_BINCACHE}"
+		else
+			print_info 1 "busybox: >> Using cache"
+		fi
 	fi
 
 	if [ ! -f "${BUSYBOX_BINCACHE}" ]
 	then
-		[ -f "${BUSYBOX_SRCTAR}" ] ||
-			gen_die "Could not find busybox source tarball: ${BUSYBOX_SRCTAR}!"
-		[ -f "${BUSYBOX_CONFIG}" ] ||
-			gen_die "Cound not find busybox config file: ${BUSYBOX_CONFIG}!"
-		cd "${TEMP}"
-		rm -rf "${BUSYBOX_DIR}" > /dev/null
-		/bin/tar -jxpf ${BUSYBOX_SRCTAR} ||
-			gen_die 'Could not extract busybox source tarball!'
-		[ -d "${BUSYBOX_DIR}" ] ||
-			gen_die 'Busybox directory ${BUSYBOX_DIR} is invalid!'
-		cp "${BUSYBOX_CONFIG}" "${BUSYBOX_DIR}/.config"
-		sed -i ${BUSYBOX_DIR}/.config -e 's/#\? \?CONFIG_FEATURE_INSTALLER[ =].*/CONFIG_FEATURE_INSTALLER=y/g'
-		cd "${BUSYBOX_DIR}"
-		print_info 1 'busybox: >> Configuring...'
-		yes '' 2>/dev/null | compile_generic oldconfig utils
 		print_info 1 'busybox: >> Compiling...'
 		compile_generic all utils
 		print_info 1 'busybox: >> Copying to cache...'
@@ -461,14 +466,12 @@ compile_busybox() {
 			gen_die 'Busybox executable does not exist!'
 		strip "${TEMP}/${BUSYBOX_DIR}/busybox" ||
 			gen_die 'Could not strip busybox binary!'
-		bzip2 "${TEMP}/${BUSYBOX_DIR}/busybox" ||
-			gen_die 'bzip2 compression of busybox failed!'
-		mv "${TEMP}/${BUSYBOX_DIR}/busybox.bz2" "${BUSYBOX_BINCACHE}" ||
-			gen_die 'Could not copy the busybox binary to the package directory, does the directory exist?'
-
-		cd "${TEMP}"
-		rm -rf "${BUSYBOX_DIR}" > /dev/null
+		tar -cj -C "${TEMP}/${BUSYBOX_DIR}" -f "${BUSYBOX_BINCACHE}" busybox .config ||
+			gen_die 'Could not create the busybox bincache!'
 	fi
+
+	cd "${TEMP}"
+	rm -rf "${BUSYBOX_DIR}" > /dev/null
 }
 
 compile_lvm2() {

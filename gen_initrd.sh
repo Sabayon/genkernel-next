@@ -80,10 +80,10 @@ create_base_initrd_sys() {
 		chmod +x "${TEMP}/initrd-temp/bin/blkid"
 	fi
 
-	cp "${BUSYBOX_BINCACHE}" "${TEMP}/initrd-temp/bin/busybox.bz2" ||
+	cp "${BUSYBOX_BINCACHE}" "${TEMP}/initrd-temp/bin/busybox.tar.bz2" ||
 		gen_die 'Could not copy busybox from bincache!'
-	bunzip2 "${TEMP}/initrd-temp/bin/busybox.bz2" ||
-		gen_die 'Could not uncompress busybox!'
+	tar -xjf "${TEMP}/initrd-temp/bin/busybox.tar.bz2" -C "${TEMP}/initrd-temp/bin" busybox ||
+		gen_die 'Could not extract busybox bincache!'
 	chmod +x "${TEMP}/initrd-temp/bin/busybox"
 
 	if [ "${NOINITRDMODULES}" = '' ]
