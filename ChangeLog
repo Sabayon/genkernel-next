@@ -2,6 +2,12 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  26 Jul 2007; Robin H. Johnson <robbat2@gentoo.org> gen_initramfs.sh:
+  Clean up a cosmetic error introduced by the symlink patch:  
+  ${GK_SHARE}/gen_funcs.sh: line 431: popd:
+  /var/tmp/genkernel/3996.6301.23048.13838/initramfs-modules-${KV}-temp: No
+  such file or directory
+
   26 Jul 2007; Robin H. Johnson <robbat2@gentoo.org> generic/initrd.scripts,
   generic/linuxrc:
   The previous patch from bug #174294 still contained some bugs in the linuxrc

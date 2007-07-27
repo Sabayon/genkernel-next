@@ -351,6 +351,7 @@ append_modules() {
 	done
 	cd "${TEMP}/initramfs-modules-${KV}-temp/"
 	find . | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	cd "${TEMP}"
 	rm -r "${TEMP}/initramfs-modules-${KV}-temp/"	
 }
 
