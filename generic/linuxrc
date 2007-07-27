@@ -72,15 +72,12 @@ do
 			CDROOT=1
 			CDROOT_DEV=`parse_opt "${x}"`
 		;;
-		# Start livecd loop, looptype options and encryption
+		# Start livecd loop, looptype options
 		loop\=*)
 			LOOP=`parse_opt "${x}"`
 		;;
 		looptype\=*)
 			LOOPTYPE=`parse_opt "${x}"`
-		;;
-		loop_crypt\=*)
-			LOOP_CRYPT=`parse_opt "${x}"`
 		;;
 		# Start Device Manager options 
 		devfs)
@@ -182,6 +179,9 @@ do
 		crypt_swap\=*)
 			LUKS_SWAP=`parse_opt "${x}"`
 		;;
+		crypt_silent\=*)
+			LUKS_SILENT=`parse_opt "${x}"`
+		;;
 		real_rootflags\=*)
 			REAL_ROOTFLAGS=`parse_opt "${x}"`
 		;;
@@ -236,8 +236,11 @@ setup_md_device
 # Scan volumes
 startVolumes
 
-# Initialize LUKS root device
-startLUKS
+# Initialize LUKS root device except for livecd's
+if [ "${CDROOT}" -ne '1' ]
+then
+	startLUKS
+fi
 
 # Set up unionfs
 mkdir -p ${NEW_ROOT}
@@ -264,7 +267,7 @@ then
 		mount -t tmpfs tmpfs ${NEW_ROOT}
 	fi
 	
-	for i in dev mnt mnt/cdrom mnt/livecd mnt/key tmp tmp/.initrd mnt/gentoo sys
+	for i in dev mnt mnt/cdrom mnt/livecd mnt/keydev tmp tmp/.initrd mnt/gentoo sys
 	do
 		mkdir -p ${NEW_ROOT}/$i
 		chmod 755 ${NEW_ROOT}/$i
@@ -496,37 +499,41 @@ then
 	
 
         # If encrypted, find key and mount, otherwise mount as usual
-	if [ "${LOOP_CRYPT}" != '' ] 
+	if [ "${LUKS_ROOT}" != '' ] 
 	then
-		good_msg 'You booted an encrypted livecd'
-		KEYNAME=$(head -n 1 ${NEW_ROOT}/mnt/cdrom/livecd)
-
-		if [ "${KEYNAME}" = '' ]
-		then 
-			good_msg 'It's not locked with a gpg key, attempting to decrypt manually'
-			losetup -e ${LOOP_CRYPT} /dev/loop1 ${NEW_ROOT}/mnt/cdrom/${LOOPEXT}${LOOP}
-			
-
-		else 
-			good_msg 'Livecd locked with gpg key'
-			bootstrapKey
-			good_msg 'Attempting to decrypt with key'
-			losetup -K ${NEW_ROOT}/mnt/key/${SUBDIR}/${KEYNAME} -e ${LOOP_CRYPT} /dev/loop1 \
-				${NEW_ROOT}/mnt/cdrom/${LOOPEXT}${LOOP}
+		if [ "${LUKS_SILENT}" = '' ]
+		then
+			good_msg 'You booted an encrypted livecd'
 		fi
 
-		test_success 'Unencrypting loop'
+		LUKS_ROOT_KEY=$(head -n 1 ${NEW_ROOT}/mnt/cdrom/livecd)
+
+		if [ "${LUKS_ROOT_KEY}" ]
+		then
+			bootstrapKey
+		fi
+		
+		losetup /dev/loop0 ${NEW_ROOT}/mnt/cdrom/${LOOPEXT}${LOOP}
+		
+		test_success 'Preparing loop filesystem'
+		
+		LUKS_ROOT='/dev/loop0'
+		
+		startLUKS
 		
 		case ${LOOPTYPE} in
-			squashfs)
-				MOUNTTYPE="squashfs"
 			normal)
 				MOUNTTYPE="ext2"
-		esac
+				;;
+			*)
+				MOUNTTYPE="${LOOPTYPE}"
+				;;
+		esac		
 
-		mount -t ${MOUNTTYPE} -o ro /dev/loop1 ${NEW_ROOT}/mnt/livecd 
-				
-		test_success 'Mount filesystem, checking key'	
+
+		mount -t ${MOUNTTYPE} -o ro /dev/mapper/root ${NEW_ROOT}/mnt/livecd 
+		
+		test_success 'Mount filesystem'	
 		FS_LOCATION='mnt/livecd'
 
 
@@ -590,7 +597,7 @@ then
 			test_success 'mount /dev/loop0 /'
 			FS_LOCATION='mnt/livecd'
 		fi
-	
+	fi
 #
 # End cdrom looptype determination and mounting if necessary
 #

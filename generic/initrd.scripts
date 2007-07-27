@@ -108,26 +108,33 @@ findkeymount() {
                         # Check for a block device to mount
                         if [ -b "${x}" ]
                         then
-                                good_msg "Attempting to mount key media:- ${x}"
-                                mount -r -t auto ${x} ${NEW_ROOT}/mnt/key \
+				if [ ${crypt_silent} = '' ]
+				then
+	                                good_msg "Attempting to mount key media:- ${x}"
+				fi
+
+                                mount -r -t auto ${x} ${NEW_ROOT}/mnt/keydev \
                                                 > /dev/null 2>&1
-                                fi
                                 if [ "$?" = '0' ]
                                 then
                                         # Check for the key
-                                        if [ -e ${NEW_ROOT}/mnt/key/${SUBDIR}/${KEYNAME} ]
+                                        if [ -e ${NEW_ROOT}/mnt/keydev/${LUKS_ROOT_KEY} ]
                                         then
-                                                KEY_ROOT="${x}"
+                                                LUKS_ROOT_KEYDEV="${x}"
+						umount ${NEW_ROOT}/mnt/keydev
                                                 break
                                         else
-                                                umount ${NEW_ROOT}/mnt/key
+                                                umount ${NEW_ROOT}/mnt/keydev
                                         fi
                                 fi
                         fi
                 done
-                if [ "${KEY_ROOT}" != '' ]
+                if [ "${LUKS_ROOT_KEYDEV}" != '' ]
                 then
-                        good_msg "Key media found on ${x}"
+			if [ ${crypt_silent} = '' ]
+			then
+	                        good_msg "Key media found on ${x}"
+			fi
                 fi
         fi
 }
