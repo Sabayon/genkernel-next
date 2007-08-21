@@ -372,39 +372,37 @@ copy_image_with_preserve() {
 		rm -f "${BOOTDIR}/${symlinkName}.old"
 	fi
 
-	# We only erase the old image when it is the exact same version as the
-	# current and new images.  Different version old images are left behind.
-	# This is consistent with how "make install" of the manual kernel build 
-	# works.
-	if [ "${currDestImage}" == "${fullDestName}" -a \
-		 "${prevDestImage}" == "${currDestImage}.old" ]
+	# We only erase the .old image when it is the exact same version as the
+	# current and new images.  Different version .old (and current) images are
+	# left behind.  This is consistent with how "make install" of the manual
+	# kernel build works.
+	if [ "${currDestImage}" == "${fullDestName}" ]
 	then
 		#
-		# Case for new, currrent, and old of the same base version.
+		# Case for new and currrent of the same base version.
 		#
  		print_info 5 "  Same base version.  May have to delete old image to make room."
 
 		if [ "${currDestImageExists}" -eq '1' ]
 		then
-			if [ "${prevDestImageExists}" -eq '1' ]
+			if [ -e "${BOOTDIR}/${currDestImage}.old" ]
 			then
 				print_info 5 "  Deleting old identical version ${symlinkName}."
-				rm -f "${BOOTDIR}/${prevDestImage}"
+				rm -f "${BOOTDIR}/${currDestImage}.old"
 			fi
 			print_info 5 "  Moving ${BOOTDIR}/${currDestImage}"
 			print_info 5 "    to ${BOOTDIR}/${currDestImage}.old"
 			mv "${BOOTDIR}/${currDestImage}" "${BOOTDIR}/${currDestImage}.old" ||
 			    gen_die "Could not rename the old ${symlinkName} image!"
+			prevDestImage="${currDestImage}.old"
+			prevDestImageExists=1
 		fi
 	else
 		#
-		# Case for current / old not of the same base version.
+		# Case for new / current not of the same base version.
 		#
  		print_info 5 "  Different base version.  Do not delete old images."
-		if [ "${currDestImageExists}" -eq 1 ]
-		then
-			prevDestImage="${currDestImage}"
-		fi
+		prevDestImage="${currDestImage}"
 		currDestImage="${fullDestName}"
 	fi
 
@@ -420,7 +418,7 @@ copy_image_with_preserve() {
 		pushd ${BOOTDIR} >/dev/null
 		ln -s "${currDestImage}" "${symlinkName}" || 
 		    gen_die "Could not create the ${symlinkName} symlink!"
-		if [ "${currDestImageExists}" -eq '1' ]
+		if [ "${prevDestImageExists}" -eq '1' ]
 		then
 			print_info 5 "    ${symlinkName}.old -> ${prevDestImage}"
 			ln -s "${prevDestImage}" "${symlinkName}.old" ||
