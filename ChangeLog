@@ -2,6 +2,10 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  22 Aug 2007; Chris Gianelloni <wolf31o2@gentoo.org> genkernel.8:
+  Added a small patch from Tais M. Hansen <tais.hansen@osd.dk> to add doscsi
+  to the genkernel man page for bug #183406.
+
   21 Aug 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_funcs.sh,
   genkernel.8:
   Added another patch from John R. Graham <john_r_graham@mindspring.com> for
