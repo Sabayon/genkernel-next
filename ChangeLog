@@ -2,6 +2,11 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  22 Aug 2007; Chris Gianelloni <wolf31o2@gentoo.org>
+  +pkg/suspend-0.5-Makefile.patch:
+  Added suspend-0.5-Makefile.patch to pkg directory for suspend capabilities,
+  bringing it into the repository, from the tree.
+
   22 Aug 2007; Chris Gianelloni <wolf31o2@gentoo.org> genkernel.8:
   Added a small patch from Tais M. Hansen <tais.hansen@osd.dk> to add doscsi
   to the genkernel man page for bug #183406.
