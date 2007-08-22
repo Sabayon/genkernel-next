@@ -2,6 +2,11 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  22 Aug 2007; Chris Gianelloni <wolf31o2@gentoo.org> x86/kernel-config-2.6,
+  x86_64/kernel-config-2.6, genkernel:
+  Removed CONFIG_PHYSICAL_START from the x86/amd64 kernel configs for bug
+  #186378. This is genkernel 3.4.9_pre1 for testing.
+
   22 Aug 2007; Chris Gianelloni <wolf31o2@gentoo.org> genkernel:
   Changing to use console=tty1 instead of CONSOLE=/dev/tty1 with a patch from
   Matthias Schwarzott <zzam@gentoo.org> for bug #188954.
