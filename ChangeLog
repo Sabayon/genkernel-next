@@ -2,6 +2,12 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  22 Aug 2007; Chris Gianelloni <wolf31o2@gentoo.org> alpha/modules_load,
+  ia64/modules_load, ppc/modules_load, ppc64/modules_load, um/modules_load,
+  x86/modules_load, x86_64/modules_load, xen0/modules_load,
+  xenU/modules_load:
+  Added arcmsr to MODULES_SCSI for bug #185827.
+
   22 Aug 2007; Chris Gianelloni <wolf31o2@gentoo.org>
   +pkg/suspend-0.5-Makefile.patch:
   Added suspend-0.5-Makefile.patch to pkg directory for suspend capabilities,
