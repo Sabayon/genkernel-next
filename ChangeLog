@@ -2,6 +2,14 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  30 Aug 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_cmdline.sh,
+  gen_compile.sh, gen_configkernel.sh, gen_determineargs.sh,
+  gen_initramfs.sh, generic/initrd.scripts, generic/linuxrc, genkernel,
+  genkernel.conf, +pkg/genkernel-svn-suspend.patch:
+  Removing the suspend support that was added for bug #156445 until suspend is
+  added to the tree and we can determine the proper way to support it. For
+  more information, see bug #156431.
+
   22 Aug 2007; Chris Gianelloni <wolf31o2@gentoo.org> x86/kernel-config-2.6,
   x86_64/kernel-config-2.6, genkernel:
   Removed CONFIG_PHYSICAL_START from the x86/amd64 kernel configs for bug

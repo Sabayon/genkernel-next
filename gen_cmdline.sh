@@ -79,7 +79,7 @@ longusage() {
   echo "	--lvm2			Include LVM2 support"
 #  echo "	--unionfs		Include UNIONFS support"
   echo "	--dmraid		Include DMRAID support"
-  echo "	--suspend		Include userspace suspend/resume (uswsusp) support"
+#  echo "	--suspend		Include userspace suspend/resume (uswsusp) support"
   echo "	--slowusb		Enables extra pauses for slow USB CD boots"
   echo "	--bootloader=grub	Add new kernel to GRUB configuration"
   echo "	--linuxrc=<file>	Specifies a user created linuxrc"
@@ -231,17 +231,17 @@ parse_cmdline() {
 		      CMD_LVM2=1
 		      print_info 2 "CMD_LVM2: $CMD_LVM2"
 	      ;;
-	      --suspend)
-		      if [ ! -e /etc/suspend.conf ]
-		      then
-			echo 'Error: --suspend requires sys-power/suspend to be installed'
-			echo '       on the host system; try "emerge sys-power/suspend".'
-			echo '       Once installed, configure the resume settings in /etc/suspend.conf'
-			exit 1
-		      fi
-	      	      CMD_SUSPEND=1
-		      print_info 2 "CMD_SUSPEND: $CMD_SUSPEND"
-	      ;;
+#	      --suspend)
+#		      if [ ! -e /etc/suspend.conf ]
+#		      then
+#			echo 'Error: --suspend requires sys-power/suspend to be installed'
+#			echo '       on the host system; try "emerge sys-power/suspend".'
+#			echo '       Once installed, configure the resume settings in /etc/suspend.conf'
+#			exit 1
+#		      fi
+#	      	      CMD_SUSPEND=1
+#		      print_info 2 "CMD_SUSPEND: $CMD_SUSPEND"
+#	      ;;
 	      --no-busybox)
 		      CMD_NO_BUSYBOX=1
 		      print_info 2 "CMD_NO_BUSYBOX: $CMD_NO_BUSYBOX"

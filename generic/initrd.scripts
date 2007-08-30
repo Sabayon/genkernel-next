@@ -847,17 +847,17 @@ setup_unionfs() {
 	fi
 }
 
-suspend_resume() {
-	[ -x /sbin/resume ] || return 0
-	/sbin/resume
-	local ret=$?
+#suspend_resume() {
+#	[ -x /sbin/resume ] || return 0
+#	/sbin/resume
+#	local ret=$?
 
-	if [ "${ret}" -eq 0 ]; then
-		exit 0
-	fi
+#	if [ "${ret}" -eq 0 ]; then
+#		exit 0
+#	fi
 
-	return 0
-}
+#	return 0
+#}
 
 suspend2_resume() {
 	if [ -d /proc/suspend2 ] || [ -d /sys/power/suspend2 ]; then

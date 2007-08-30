@@ -560,38 +560,38 @@ compile_dmraid() {
 	fi
 }
 
-compile_suspend() {
-	[ -f "${SUSPEND_BINCACHE}" ] && return
-	[ -f "${SUSPEND_SRCTAR}" ] ||
-		gen_die "Could not find SUSPEND source tarball: ${SUSPEND_SRCTAR}! Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
-	cd ${TEMP}
-	rm -rf ${SUSPEND_DIR} > /dev/null
-	/bin/tar -zxpf ${SUSPEND_SRCTAR} ||
-		gen_die 'Could not extract SUSPEND source tarball!'
-	[ -d "${SUSPEND_DIR}" ] ||
-		gen_die "SUSPEND directory ${DMRAID_DIR} is invalid!"
+#compile_suspend() {
+#	[ -f "${SUSPEND_BINCACHE}" ] && return
+#	[ -f "${SUSPEND_SRCTAR}" ] ||
+#		gen_die "Could not find SUSPEND source tarball: ${SUSPEND_SRCTAR}! Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
+#	cd ${TEMP}
+#	rm -rf ${SUSPEND_DIR} > /dev/null
+#	/bin/tar -zxpf ${SUSPEND_SRCTAR} ||
+#		gen_die 'Could not extract SUSPEND source tarball!'
+#	[ -d "${SUSPEND_DIR}" ] ||
+#		gen_die "SUSPEND directory ${DMRAID_DIR} is invalid!"
 
-	cd "${SUSPEND_DIR}"
-	if [ -f "${GK_SHARE}/pkg/suspend-0.5-Makefile.patch" ]
-	then
-		patch -p1 -i \
-			${GK_SHARE}/pkg/suspend-0.5-Makefile.patch \
-			|| gen_die "Failed patching suspend"
-	fi
+#	cd "${SUSPEND_DIR}"
+#	if [ -f "${GK_SHARE}/pkg/suspend-0.5-Makefile.patch" ]
+#	then
+#		patch -p1 -i \
+#			${GK_SHARE}/pkg/suspend-0.5-Makefile.patch \
+#			|| gen_die "Failed patching suspend"
+#	fi
 
-	print_info 1 'suspend: >> Compiling...'
-	compile_generic '' utils CC_FLAGS= LD_FLAGS=
+#	print_info 1 'suspend: >> Compiling...'
+#	compile_generic '' utils CC_FLAGS= LD_FLAGS=
 
-	print_info 1 '         >> Copying to bincache...'
-	mkdir -p "${TEMP}/bincache/sbin"
-	cp -f resume "${TEMP}/bincache/sbin" ||
-		gen_die 'Could not copy resume binary'
-	cd "${TEMP}/bincache"
-	/bin/tar -cjf "${SUSPEND_BINCACHE}" * ||
-		gen_die 'Could not create suspend binary cache'
-	cd "${TEMP}"
-	rm -rf bincache suspend-0.5
-}
+#	print_info 1 '         >> Copying to bincache...'
+#	mkdir -p "${TEMP}/bincache/sbin"
+#	cp -f resume "${TEMP}/bincache/sbin" ||
+#		gen_die 'Could not copy resume binary'
+#	cd "${TEMP}/bincache"
+#	/bin/tar -cjf "${SUSPEND_BINCACHE}" * ||
+#		gen_die 'Could not create suspend binary cache'
+#	cd "${TEMP}"
+#	rm -rf bincache suspend-0.5
+#}
 
 compile_devfsd() {
 	# I've disabled dietlibc support for the time being since the
