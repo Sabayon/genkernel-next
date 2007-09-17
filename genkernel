@@ -2,7 +2,7 @@
 # Genkernel v3
 
 PATH="/bin:/usr/bin:/sbin:/usr/sbin"
-GK_V='3.4.9_pre2'
+GK_V='3.4.9_pre3'
 
 # Set the default for TMPDIR.  May be modified by genkernel.conf or the
 # --tempdir command line option.
@@ -375,7 +375,7 @@ then
 	echo
 	print_info 1 'WARNING... WARNING... WARNING...'
 	print_info 1 'Additional kernel cmdline arguments that *may* be required to boot properly...'
-	[ "${GENSPLASH}" -eq '1' ] && print_info 1 "add \"vga=791 splash=silent,theme:${GENSPLASH_THEME} console=tty1 quiet\" if you use a gensplash framebuffer ]"
+	[ "${SPLASH}" -eq '1' ] && print_info 1 "add \"vga=791 splash=silent,theme:${SPLASH_THEME} console=tty1 quiet\" if you use a splash framebuffer ]"
 	[ "${LVM}" -eq '1' ] && print_info 1 'add "dolvm" for lvm support'
 	[ "${EVMS}" -eq '1' ] && print_info 1 'add "doevms" for evms support'
 	[ "${DMRAID}" -eq '1' ] && print_info 1 'add "dodmraid" for dmraid support'

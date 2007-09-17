@@ -226,29 +226,29 @@ append_evms(){
 	rm -r "${TEMP}/initramfs-evms-temp/"
 }
 
-append_gensplash(){
+append_splash(){
 	if [ -x /usr/bin/splash_geninitramfs ] || [ -x /sbin/splash_geninitramfs ]
 	then
-		[ -z "${GENSPLASH_THEME}" ] && [ -e /etc/conf.d/splash ] && source /etc/conf.d/splash
-		[ -z "${GENSPLASH_THEME}" ] && GENSPLASH_THEME=default
-		print_info 1 "  >> Installing gensplash [ using the ${GENSPLASH_THEME} theme ]..."
-		if [ -d "${TEMP}/initramfs-gensplash-temp" ]
+		[ -z "${SPLASH_THEME}" ] && [ -e /etc/conf.d/splash ] && source /etc/conf.d/splash
+		[ -z "${SPLASH_THEME}" ] && SPLASH_THEME=default
+		print_info 1 "  >> Installing splash [ using the ${SPLASH_THEME} theme ]..."
+		if [ -d "${TEMP}/initramfs-splash-temp" ]
 		then
-			rm -r "${TEMP}/initramfs-gensplash-temp/"
+			rm -r "${TEMP}/initramfs-splash-temp/"
 		fi
-		mkdir -p "${TEMP}/initramfs-gensplash-temp"
+		mkdir -p "${TEMP}/initramfs-splash-temp"
 		cd /
 		local tmp=""
-		[ -n "${GENSPLASH_RES}" ] && tmp="-r ${GENSPLASH_RES}"
-		splash_geninitramfs -c "${TEMP}/initramfs-gensplash-temp" ${tmp} ${GENSPLASH_THEME} || gen_die "Could not build splash cpio archive"
+		[ -n "${SPLASH_RES}" ] && tmp="-r ${SPLASH_RES}"
+		splash_geninitramfs -c "${TEMP}/initramfs-splash-temp" ${tmp} ${SPLASH_THEME} || gen_die "Could not build splash cpio archive"
 		if [ -e "/usr/share/splashutils/initrd.splash" ]; then
-			mkdir -p "${TEMP}/initramfs-gensplash-temp/etc"
-			cp -f "/usr/share/splashutils/initrd.splash" "${TEMP}/initramfs-gensplash-temp/etc"
+			mkdir -p "${TEMP}/initramfs-splash-temp/etc"
+			cp -f "/usr/share/splashutils/initrd.splash" "${TEMP}/initramfs-splash-temp/etc"
 		fi
-		cd "${TEMP}/initramfs-gensplash-temp/"
+		cd "${TEMP}/initramfs-splash-temp/"
 		find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 			|| gen_die "compressing splash cpio"
-		rm -r "${TEMP}/initramfs-gensplash-temp/"
+		rm -r "${TEMP}/initramfs-splash-temp/"
 	else
 		print_warning 1 '               >> No splash detected; skipping!'
 	fi
@@ -445,7 +445,7 @@ create_initramfs() {
 	fi
 
 	append_data 'blkid' "${DISKLABEL}"
-	append_data 'gensplash' "${GENSPLASH}"
+	append_data 'splash' "${SPLASH}"
 
 	# This should always be appended last
 	if [ "${INITRAMFS_OVERLAY}" != '' ]

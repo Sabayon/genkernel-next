@@ -14,7 +14,6 @@ UTILS_LD=ld
 
 # Initrd/Initramfs Options
 COMPRESS_INITRD="yes"
-GENSPLASH=0
 USECOLOR="yes"
 NOINITRDMODULES="yes"
 BUSYBOX=1

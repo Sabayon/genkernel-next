@@ -30,8 +30,9 @@ longusage() {
   echo "	--no-clean		Do not run make clean before compilation"
   echo "	--no-mrproper		Do not run make mrproper before compilation"
   echo "	--oldconfig		Implies --no-clean and runs a 'make oldconfig'"
-  echo "	--gensplash		Install gensplash support into bzImage"
-  echo "	--no-gensplash		Do not use gensplash"
+  echo "	--gensplash		Install framebuffer splash support into initramfs"
+  echo "	--splash		Install framebuffer splash support into initramfs"
+  echo "	--no-splash		Do not install framebuffer splash"
   echo "	--install		Install the kernel after building"
   echo "	--no-install		Do not install the kernel after building"
   echo "	--symlink		Manage symlinks in /boot for installed images"
@@ -65,8 +66,10 @@ longusage() {
   echo "	--no-mountboot		Don't mount BOOTDIR automatically"  
   echo "	--bootdir=<dir>		Set the location of the boot-directory, default is /boot"
   echo "  Initialization"
-  echo "	--gensplash=<theme>	Force gensplash using <theme>"
-  echo "	--gensplash-res=<res>	Select gensplash resolutions"
+  echo "	--gensplash=<theme>	Enable framebuffer splash using <theme>"
+  echo "	--gensplash-res=<res>	Select splash theme resolutions to install"
+  echo "	--splash=<theme>	Enable framebuffer splash using <theme>"
+  echo "	--splash-res=<res>	Select splash theme resolutions to install"
   echo "	--do-keymap-auto	Forces keymap selection at boot"
   echo "	--evms			Include EVMS support"
   echo "				--> 'emerge evms' in the host operating system"
@@ -315,23 +318,44 @@ parse_cmdline() {
 		      print_info 2 "CMD_OLDCONFIG: ${CMD_OLDCONFIG}"
 	      ;;
 	      --gensplash=*)
-		      CMD_GENSPLASH=1
-		      GENSPLASH_THEME=`parse_opt "$*"`
-		      print_info 2 "CMD_GENSPLASH: ${CMD_GENSPLASH}"
-		      print_info 2 "GENSPLASH_THEME: ${GENSPLASH_THEME}"
+		      CMD_SPLASH=1
+		      SPLASH_THEME=`parse_opt "$*"`
+		      print_info 2 "CMD_SPLASH: ${CMD_SPLASH}"
+		      print_info 2 "SPLASH_THEME: ${SPLASH_THEME}"
+			  echo
+			  print_warning 1 "Please use --splash, as --gensplash is deprecated."
 	      ;;
 	      --gensplash)
-		      CMD_GENSPLASH=1
-		      GENSPLASH_THEME='default'
-		      print_info 2 "CMD_GENSPLASH: ${CMD_GENSPLASH}"
+		      CMD_SPLASH=1
+		      SPLASH_THEME='default'
+		      print_info 2 "CMD_SPLASH: ${CMD_SPLASH}"
+			  echo
+			  print_warning 1 "Please use --splash, as --gensplash is deprecated."
 	      ;;
-	      --no-gensplash)
-		      CMD_GENSPLASH=0
-		      print_info 2 "CMD_GENSPLASH: ${CMD_GENSPLASH}"
+	      --splash=*)
+		      CMD_SPLASH=1
+		      SPLASH_THEME=`parse_opt "$*"`
+		      print_info 2 "CMD_SPLASH: ${CMD_SPLASH}"
+		      print_info 2 "SPLASH_THEME: ${SPLASH_THEME}"
+	      ;;
+	      --splash)
+		      CMD_SPLASH=1
+		      SPLASH_THEME='default'
+		      print_info 2 "CMD_SPLASH: ${CMD_SPLASH}"
+	      ;;
+	      --no-splash)
+		      CMD_SPLASH=0
+		      print_info 2 "CMD_SPLASH: ${CMD_SPLASH}"
 	      ;;
 	      --gensplash-res=*)
-		      GENSPLASH_RES=`parse_opt "$*"`
-		      print_info 2 "GENSPLASH_RES: ${GENSPLASH_RES}"
+		      SPLASH_RES=`parse_opt "$*"`
+		      print_info 2 "SPLASH_RES: ${SPLASH_RES}"
+			  echo
+			  print_warning 1 "Please use --splash-res, as --gensplash-res is deprecated."
+	      ;;
+	      --splash-res=*)
+		      SPLASH_RES=`parse_opt "$*"`
+		      print_info 2 "SPLASH_RES: ${SPLASH_RES}"
 	      ;;
 	      --install)
 		      CMD_NOINSTALL=0

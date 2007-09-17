@@ -216,16 +216,16 @@ determine_real_args() {
 	UNIONFS_MODULES_BINCACHE=`arch_replace "${UNIONFS_MODULES_BINCACHE}"`
 	BLKID_BINCACHE=`arch_replace "${BLKID_BINCACHE}"`
 	
-	if [ "${CMD_GENSPLASH}" != '' ]
+	if [ "${CMD_SPLASH}" != '' ]
 	then
-		GENSPLASH=${CMD_GENSPLASH}
+		SPLASH=${CMD_SPLASH}
 	fi
 
-	if isTrue ${GENSPLASH}
+	if isTrue ${SPLASH}
 	then
-		GENSPLASH=1
+		SPLASH=1
 	else
-		GENSPLASH=0
+		SPLASH=0
 	fi
 
 	if isTrue ${COMPRESS_INITRD}
