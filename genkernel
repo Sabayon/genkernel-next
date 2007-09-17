@@ -290,13 +290,8 @@ if [ "${BUILD_INITRD}" -eq '1' ]
 then
 	[ "${DISKLABEL}" -eq '1' ] && compile_e2fsprogs
 
-	if [ "${KERN_24}" != '1' -a "${UDEV}" -eq '1' ] 
+	if [ "${KERN_24}" -eq '1' ] 
 	then
-		:
-#		compile_udev 
-	else
-		DEVFS=1
-		UDEV=0
 		compile_devfsd
 	fi
 

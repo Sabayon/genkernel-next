@@ -39,8 +39,6 @@ longusage() {
   echo "	--symlink		Manage symlinks in /boot for installed images"
   echo "	--no-symlink		Do not manage symlinks"
   echo "	--no-initrdmodules	Don't copy any modules to the initrd"
-  echo "	--no-udev		Disable udev support"
-  echo "	--no-devfs		Disable devfs support"
   echo "	--callback=<...>	Run the specified arguments after the"
   echo "				kernel and modules have been compiled"
   echo "	--static		Build a static (monolithic kernel)."
@@ -73,13 +71,15 @@ longusage() {
   echo "	--gensplash=<theme>	Force gensplash using <theme>"
   echo "	--gensplash-res=<res>	Select gensplash resolutions"
   echo "	--do-keymap-auto	Forces keymap selection at boot"
+  echo "	--evms			Include EVMS2 support"
+  echo "				--> 'emerge evms' in the host operating system"
+  echo "				first"
   echo "	--evms2			Include EVMS2 support"
   echo "				--> 'emerge evms' in the host operating system"
   echo "				first"
+  echo "	--lvm			Include LVM2 support"
   echo "	--lvm2			Include LVM2 support"
-#  echo "	--unionfs		Include UNIONFS support"
   echo "	--dmraid		Include DMRAID support"
-#  echo "	--suspend		Include userspace suspend/resume (uswsusp) support"
   echo "	--slowusb		Enables extra pauses for slow USB CD boots"
   echo "	--bootloader=grub	Add new kernel to GRUB configuration"
   echo "	--linuxrc=<file>	Specifies a user created linuxrc"
@@ -93,24 +93,24 @@ longusage() {
   echo "	--tempdir=<dir>		Location of Genkernel's temporary directory"
   echo "	--postclear		Clear all tmp files and caches after genkernel has run"
   echo "  Output Settings"
-  echo "        --kernname=<...> 	Tag the kernel and initrd with a name:"
+  echo "	--kernname=<...> 	Tag the kernel and initrd with a name:"
   echo "				If not defined the option defaults to"
   echo "				'genkernel'"
-  echo "        --minkernpackage=<tbz2> File to output a .tar.bz2'd kernel and initrd:"
+  echo "	--minkernpackage=<tbz2> File to output a .tar.bz2'd kernel and initrd:"
   echo "				No modules outside of the initrd will be"
   echo "				included..."
-  echo "        --modulespackage=<tbz2> File to output a .tar.bz2'd modules after the"
+  echo "	--modulespackage=<tbz2> File to output a .tar.bz2'd modules after the"
   echo "				callbacks have run"
-  echo "        --kerncache=<tbz2> 	File to output a .tar.bz2'd kernel contents"
+  echo "	--kerncache=<tbz2> 	File to output a .tar.bz2'd kernel contents"
   echo "				of /lib/modules/ and the kernel config"
   echo "				NOTE: This is created before the callbacks"
   echo "				are run!"
-  echo "        --no-kernel-sources	This option is only valid if kerncache is"
+  echo "	--no-kernel-sources	This option is only valid if kerncache is"
   echo "				defined. If there is a valid kerncache no checks"
   echo "				will be made against a kernel source tree"
-  echo "        --initramfs-overlay=<dir>"
-  echo "        			Directory structure to include in the initramfs,"
-  echo "        			only available on 2.6 kernels that do not use"
+  echo "	--initramfs-overlay=<dir>"
+  echo "				Directory structure to include in the initramfs,"
+  echo "				only available on 2.6 kernels that do not use"
   echo "				bootsplash"
 }
 
@@ -141,84 +141,81 @@ parse_cmdline() {
 	case "$*" in
 	      --kernel-cc=*)
 		      CMD_KERNEL_CC=`parse_opt "$*"`
-		      print_info 2 "CMD_KERNEL_CC: $CMD_KERNEL_CC"
+		      print_info 2 "CMD_KERNEL_CC: ${CMD_KERNEL_CC}"
 	      ;;
 	      --kernel-ld=*)
 		      CMD_KERNEL_LD=`parse_opt "$*"`
-		      print_info 2 "CMD_KERNEL_LD: $CMD_KERNEL_LD"
+		      print_info 2 "CMD_KERNEL_LD: ${CMD_KERNEL_LD}"
 	      ;;
 	      --kernel-as=*)
 		      CMD_KERNEL_AS=`parse_opt "$*"`
-		      print_info 2 "CMD_KERNEL_AS: $CMD_KERNEL_AS"
+		      print_info 2 "CMD_KERNEL_AS: ${CMD_KERNEL_AS}"
 	      ;;
 	      --kernel-make=*)
 		      CMD_KERNEL_MAKE=`parse_opt "$*"`
-		      print_info 2 "CMD_KERNEL_MAKE: $CMD_KERNEL_MAKE"
+		      print_info 2 "CMD_KERNEL_MAKE: ${CMD_KERNEL_MAKE}"
 	      ;;
 	      --kernel-cross-compile=*)
 		      CMD_KERNEL_CROSS_COMPILE=`parse_opt "$*"`
 		      CMD_KERNEL_CROSS_COMPILE=$(echo ${CMD_KERNEL_CROSS_COMPILE}|sed -e 's/.*[^-]$/&-/g')
-		      print_info 2 "CMD_KERNEL_CROSS_COMPILE: $CMD_KERNEL_CROSS_COMPILE"
+		      print_info 2 "CMD_KERNEL_CROSS_COMPILE: ${CMD_KERNEL_CROSS_COMPILE}"
 	      ;;
 	      --utils-cc=*)
 		      CMD_UTILS_CC=`parse_opt "$*"`
-		      print_info 2 "CMD_UTILS_CC: $CMD_UTILS_CC"
+		      print_info 2 "CMD_UTILS_CC: ${CMD_UTILS_CC}"
 	      ;;
 	      --utils-ld=*)
 		      CMD_UTILS_LD=`parse_opt "$*"`
-		      print_info 2 "CMD_UTILS_LD: $CMD_UTILS_LD"
+		      print_info 2 "CMD_UTILS_LD: ${CMD_UTILS_LD}"
 	      ;;
 	      --utils-as=*)
 		      CMD_UTILS_AS=`parse_opt "$*"`
-		      print_info 2 "CMD_UTILS_AS: $CMD_UTILS_AS"
+		      print_info 2 "CMD_UTILS_AS: ${CMD_UTILS_AS}"
 	      ;;
 	      --utils-make=*)
 		      CMD_UTILS_MAKE=`parse_opt "$*"`
-		      print_info 2 "CMD_UTILS_MAKE: $CMD_UTILS_MAKE"
+		      print_info 2 "CMD_UTILS_MAKE: ${CMD_UTILS_MAKE}"
 	      ;;
 	      --utils-cross-compile=*)
 		      CMD_UTILS_CROSS_COMPILE=`parse_opt "$*"`
 		      CMD_UTILS_CROSS_COMPILE=$(echo ${CMD_UTILS_CROSS_COMPILE}|sed -e 's/.*[^-]$/&-/g')
-		      print_info 2 "CMD_UTILS_CROSS_COMPILE: $CMD_UTILS_CROSS_COMPILE"
+		      print_info 2 "CMD_UTILS_CROSS_COMPILE: ${CMD_UTILS_CROSS_COMPILE}"
 	      ;;
 	      --utils-arch=*)
 		      CMD_UTILS_ARCH=`parse_opt "$*"`
-		      print_info 2 "CMD_UTILS_ARCH: $CMD_ARCHOVERRIDE"
+		      print_info 2 "CMD_UTILS_ARCH: ${CMD_ARCHOVERRIDE}"
 	      ;;
 	      --makeopts=*)
 		      CMD_MAKEOPTS=`parse_opt "$*"`
-		      print_info 2 "CMD_MAKEOPTS: $CMD_MAKEOPTS"
+		      print_info 2 "CMD_MAKEOPTS: ${CMD_MAKEOPTS}"
 	      ;;
 	      --mountboot)
 		      CMD_MOUNTBOOT=1
-		      print_info 2 "CMD_MOUNTBOOT: $CMD_MOUNTBOOT"
+		      print_info 2 "CMD_MOUNTBOOT: ${CMD_MOUNTBOOT}"
 	      ;;
 	      --no-mountboot)
 		      CMD_MOUNTBOOT=0
-		      print_info 2 "CMD_MOUNTBOOT: $CMD_MOUNTBOOT"
+		      print_info 2 "CMD_MOUNTBOOT: ${CMD_MOUNTBOOT}"
 	      ;;
 	      --bootdir=*)
 		      BOOTDIR=`parse_opt "$*"`
-		      print_info 2 "BOOTDIR: $BOOTDIR"
+		      print_info 2 "BOOTDIR: ${BOOTDIR}"
 	      ;;
 	      --do-keymap-auto)
 		      CMD_DOKEYMAPAUTO=1
-		      print_info 2 "CMD_DOKEYMAPAUTO: $CMD_DOKEYMAPAUTO"
+		      print_info 2 "CMD_DOKEYMAPAUTO: ${CMD_DOKEYMAPAUTO}"
+	      ;;
+	      --evms)
+		      CMD_EVMS=1
+		      print_info 2 "CMD_EVMS: ${CMD_EVMS}"
 	      ;;
 	      --evms2)
-		      CMD_EVMS2=1
-		      print_info 2 "CMD_EVMS2: $CMD_EVMS2"
+		      CMD_EVMS=1
+		      print_info 2 "CMD_EVMS: ${CMD_EVMS}"
 	      ;;
 	      --unionfs)
-		      echo
-		      print_warning 1 "WARNING: unionfs support is in active development and is not meant for general"
-			  print_warning 1 "use."
-		      print_warning 1 "DISABLING UNIONFS SUPPORT AT THIS TIME."
-		      echo
-	      ;;
-	      --unionfs-dev)
 		      CMD_UNIONFS=1
-		      print_info 2 "CMD_UNIONFS: $CMD_UNIONFS"
+		      print_info 2 "CMD_UNIONFS: ${CMD_UNIONFS}"
 		      echo
 		      print_warning 1 "WARNING: unionfs support is in active development and is not meant for general"
 			  print_warning 1 "use."
@@ -229,26 +226,15 @@ parse_cmdline() {
 	      ;;
 	      --lvm2)
 		      CMD_LVM2=1
-		      print_info 2 "CMD_LVM2: $CMD_LVM2"
+		      print_info 2 "CMD_LVM2: ${CMD_LVM2}"
 	      ;;
-#	      --suspend)
-#		      if [ ! -e /etc/suspend.conf ]
-#		      then
-#			echo 'Error: --suspend requires sys-power/suspend to be installed'
-#			echo '       on the host system; try "emerge sys-power/suspend".'
-#			echo '       Once installed, configure the resume settings in /etc/suspend.conf'
-#			exit 1
-#		      fi
-#	      	      CMD_SUSPEND=1
-#		      print_info 2 "CMD_SUSPEND: $CMD_SUSPEND"
-#	      ;;
 	      --no-busybox)
 		      CMD_NO_BUSYBOX=1
-		      print_info 2 "CMD_NO_BUSYBOX: $CMD_NO_BUSYBOX"
+		      print_info 2 "CMD_NO_BUSYBOX: ${CMD_NO_BUSYBOX}"
 	      ;;
 	      --slowusb)
 		      CMD_SLOWUSB=1
-		      print_info 2 "CMD_SLOWUSB: $CMD_SLOWUSB"
+		      print_info 2 "CMD_SLOWUSB: ${CMD_SLOWUSB}"
 	      ;;
 	      --dmraid)
 		      if [ ! -e /usr/include/libdevmapper.h ]
@@ -258,16 +244,16 @@ parse_cmdline() {
 			exit 1
 		      fi
 		      CMD_DMRAID=1
-		      print_info 2 "CMD_DMRAID: $CMD_DMRAID"
+		      print_info 2 "CMD_DMRAID: ${CMD_DMRAID}"
 	      ;;
 	      --bootloader=*)
 		      CMD_BOOTLOADER=`parse_opt "$*"`
-		      print_info 2 "CMD_BOOTLOADER: $CMD_BOOTLOADER"
+		      print_info 2 "CMD_BOOTLOADER: ${CMD_BOOTLOADER}"
 	      ;;
 	      --debuglevel=*)
 		      CMD_DEBUGLEVEL=`parse_opt "$*"`
 		      DEBUGLEVEL="${CMD_DEBUGLEVEL}"
-		      print_info 2 "CMD_DEBUGLEVEL: $CMD_DEBUGLEVEL"
+		      print_info 2 "CMD_DEBUGLEVEL: ${CMD_DEBUGLEVEL}"
 	      ;;
 	      --menuconfig)
 		      TERM_LINES=`stty -a | head -n 1 | cut -d\  -f5 | cut -d\; -f1`
@@ -280,227 +266,188 @@ parse_cmdline() {
 			exit 1
 		      fi
 		      CMD_MENUCONFIG=1
-		      print_info 2 "CMD_MENUCONFIG: $CMD_MENUCONFIG"
+		      print_info 2 "CMD_MENUCONFIG: ${CMD_MENUCONFIG}"
 	      ;;
 	      --no-menuconfig)
 		      CMD_MENUCONFIG=0
-		      print_info 2 "CMD_MENUCONFIG: $CMD_MENUCONFIG"
+		      print_info 2 "CMD_MENUCONFIG: ${CMD_MENUCONFIG}"
 	      ;;
 	      --gconfig)
 		      CMD_GCONFIG=1
-		      print_info 2 "CMD_GCONFIG: $CMD_GCONFIG"
+		      print_info 2 "CMD_GCONFIG: ${CMD_GCONFIG}"
 	      ;;
 	      --xconfig)
 		      CMD_XCONFIG=1
-		      print_info 2 "CMD_XCONFIG: $CMD_XCONFIG"
+		      print_info 2 "CMD_XCONFIG: ${CMD_XCONFIG}"
 	      ;;
 	      --save-config)
 		      CMD_SAVE_CONFIG=1
-		      print_info 2 "CMD_SAVE_CONFIG: $CMD_SAVE_CONFIG"
+		      print_info 2 "CMD_SAVE_CONFIG: ${CMD_SAVE_CONFIG}"
 	      ;;
 	      --no-save-config)
 		      CMD_SAVE_CONFIG=0
-		      print_info 2 "CMD_SAVE_CONFIG: $CMD_SAVE_CONFIG"
+		      print_info 2 "CMD_SAVE_CONFIG: ${CMD_SAVE_CONFIG}"
 	      ;;
 	      --mrproper)
 		      CMD_MRPROPER=1
-		      print_info 2 "CMD_MRPROPER: $CMD_MRPROPER"
+		      print_info 2 "CMD_MRPROPER: ${CMD_MRPROPER}"
 	      ;;
 	      --no-mrproper)
 		      CMD_MRPROPER=0
-		      print_info 2 "CMD_MRPROPER: $CMD_MRPROPER"
+		      print_info 2 "CMD_MRPROPER: ${CMD_MRPROPER}"
 	      ;;
 	      --clean)
 		      CMD_CLEAN=1
-		      print_info 2 "CMD_CLEAN: $CMD_CLEAN"
+		      print_info 2 "CMD_CLEAN: ${CMD_CLEAN}"
 	      ;;
 	      --no-clean)
 		      CMD_CLEAN=0
-		      print_info 2 "CMD_CLEAN: $CMD_CLEAN"
+		      print_info 2 "CMD_CLEAN: ${CMD_CLEAN}"
 	      ;;
 	      --oldconfig)
 		      CMD_CLEAN=0
 		      CMD_OLDCONFIG=1
-		      print_info 2 "CMD_CLEAN: $CMD_CLEAN"
-		      print_info 2 "CMD_OLDCONFIG: $CMD_OLDCONFIG"
-	      ;;
-	      --bootsplash=*)
-		      CMD_BOOTSPLASH=1
-		      CMD_GENSPLASH=0
-		      BOOTSPLASH_THEME=`parse_opt "$*"`
-		      print_info 2 "CMD_BOOTSPLASH: $CMD_BOOTSPLASH"
-		      print_info 2 "CMD_GENSPLASH: $CMD_GENSPLASH"
-		      print_info 2 "BOOTSPLASH_THEME: $BOOTSPLASH_THEME"
-	      ;;
-	      --bootsplash)
-		      CMD_BOOTSPLASH=1
-		      CMD_GENSPLASH=0
-		      print_info 2 "CMD_BOOTSPLASH: $CMD_BOOTSPLASH"
-		      print_info 2 "CMD_GENSPLASH: $CMD_GENSPLASH"
-	      ;;
-	      --no-bootsplash)
-		      CMD_BOOTSPLASH=0
-		      print_info 2 "CMD_BOOTSPLASH: $CMD_BOOTSPLASH"
+		      print_info 2 "CMD_CLEAN: ${CMD_CLEAN}"
+		      print_info 2 "CMD_OLDCONFIG: ${CMD_OLDCONFIG}"
 	      ;;
 	      --gensplash=*)
 		      CMD_GENSPLASH=1
-		      CMD_BOOTSPLASH=0
 		      GENSPLASH_THEME=`parse_opt "$*"`
-		      print_info 2 "CMD_GENSPLASH: $CMD_GENSPLASH"
-		      print_info 2 "GENSPLASH_THEME: $GENSPLASH_THEME"
-		      print_info 2 "CMD_BOOTSPLASH: $CMD_BOOTSPLASH"
+		      print_info 2 "CMD_GENSPLASH: ${CMD_GENSPLASH}"
+		      print_info 2 "GENSPLASH_THEME: ${GENSPLASH_THEME}"
 	      ;;
 	      --gensplash)
 		      CMD_GENSPLASH=1
-		      CMD_BOOTSPLASH=0
 		      GENSPLASH_THEME='default'
-		      print_info 2 "CMD_GENSPLASH: $CMD_GENSPLASH"
-		      print_info 2 "CMD_BOOTSPLASH: $CMD_BOOTSPLASH"
+		      print_info 2 "CMD_GENSPLASH: ${CMD_GENSPLASH}"
 	      ;;
 	      --no-gensplash)
 		      CMD_GENSPLASH=0
-	              print_info 2 "CMD_GENSPLASH: $CMD_GENSPLASH"
+		      print_info 2 "CMD_GENSPLASH: ${CMD_GENSPLASH}"
 	      ;;
 	      --gensplash-res=*)
 		      GENSPLASH_RES=`parse_opt "$*"`
-		      print_info 2 "GENSPLASH_RES: $GENSPLASH_RES"
+		      print_info 2 "GENSPLASH_RES: ${GENSPLASH_RES}"
 	      ;;
 	      --install)
 		      CMD_NOINSTALL=0
-		      print_info 2 "CMD_NOINSTALL: $CMD_NOINSTALL"
+		      print_info 2 "CMD_NOINSTALL: ${CMD_NOINSTALL}"
 	      ;;
 	      --no-install)
 		      CMD_NOINSTALL=1
-		      print_info 2 "CMD_NOINSTALL: $CMD_NOINSTALL"
+		      print_info 2 "CMD_NOINSTALL: ${CMD_NOINSTALL}"
 	      ;;
 	      --no-initrdmodules)
 		      CMD_NOINITRDMODULES=1
-		      print_info 2 "CMD_NOINITRDMODULES: $CMD_NOINITRDMODULES"
-	      ;;
-	      --udev)
-	      	      echo
-		      echo
-		      print_info 1 "--udev is deprecated and no longer necessary as udev is on by default"
-		      sleep 3
-		      echo
-		      echo
-		      print_info 2 "CMD_UDEV: $CMD_UDEV"
-	      ;;
-	      --no-udev)
-		      CMD_NO_UDEV=1
-		      print_info 2 "CMD_NO_UDEV: $CMD_NO_UDEV"
-	      ;;
-	      --no-devfs)
-		      CMD_NO_DEVFS=1
-		      print_info 2 "CMD_NO_DEVFS: $CMD_NO_DEVFS"
+		      print_info 2 "CMD_NOINITRDMODULES: ${CMD_NOINITRDMODULES}"
 	      ;;
 	      --callback=*)
 		      CMD_CALLBACK=`parse_opt "$*"`
-		      print_info 2 "CMD_CALLBACK: $CMD_CALLBACK/$*"
+		      print_info 2 "CMD_CALLBACK: ${CMD_CALLBACK}/$*"
 	      ;;
 	      --static)
 		      CMD_STATIC=1
-		      print_info 2 "CMD_STATIC: $CMD_STATIC"
+		      print_info 2 "CMD_STATIC: ${CMD_STATIC}"
 	      ;;
 	      --initramfs)
 		      CMD_INITRAMFS=1
-		      print_info 2 "CMD_INITRAMFS: $CMD_INITRAMFS"
+		      print_info 2 "CMD_INITRAMFS: ${CMD_INITRAMFS}"
 	      ;;
 	      --tempdir=*)
 		      TMPDIR=`parse_opt "$*"`
 		      TEMP=${TMPDIR}/$RANDOM.$RANDOM.$RANDOM.$$
-		      print_info 2 "TMPDIR: $TMPDIR"
-		      print_info 2 "TEMP: $TEMP"
+		      print_info 2 "TMPDIR: ${TMPDIR}"
+		      print_info 2 "TEMP: ${TEMP}"
 	      ;; 
 	      --postclear)
 		      CMD_POSTCLEAR=1
-		      print_info 2 "CMD_POSTCLEAR: $CMD_POSTCLEAR"
+		      print_info 2 "CMD_POSTCLEAR: ${CMD_POSTCLEAR}"
 	      ;; 
 	      --arch-override=*)
 		      CMD_ARCHOVERRIDE=`parse_opt "$*"`
-		      print_info 2 "CMD_ARCHOVERRIDE: $CMD_ARCHOVERRIDE"
+		      print_info 2 "CMD_ARCHOVERRIDE: ${CMD_ARCHOVERRIDE}"
 	      ;;
 	      --color)
 		      USECOLOR=1
-		      print_info 2 "USECOLOR: $USECOLOR"
+		      print_info 2 "USECOLOR: ${USECOLOR}"
 		      setColorVars
 	      ;;
 	      --no-color)
 		      USECOLOR=0
-		      print_info 2 "USECOLOR: $USECOLOR"
+		      print_info 2 "USECOLOR: ${USECOLOR}"
 		      setColorVars
 	      ;;
 	      --debugfile=*)
 		      CMD_DEBUGFILE=`parse_opt "$*"`
 		      DEBUGFILE=`parse_opt "$*"`
-		      print_info 2 "CMD_DEBUGFILE: $CMD_DEBUGFILE"
-		      print_info 2 "DEBUGFILE: $CMD_DEBUGFILE"
+		      print_info 2 "CMD_DEBUGFILE: ${CMD_DEBUGFILE}"
+		      print_info 2 "DEBUGFILE: ${CMD_DEBUGFILE}"
 	      ;;
 	      --kerneldir=*)
 		      CMD_KERNELDIR=`parse_opt "$*"`
-		      print_info 2 "CMD_KERNELDIR: $CMD_KERNELDIR"
+		      print_info 2 "CMD_KERNELDIR: ${CMD_KERNELDIR}"
 	      ;;
 	      --kernel-config=*)
 		      CMD_KERNEL_CONFIG=`parse_opt "$*"`
-		      print_info 2 "CMD_KERNEL_CONFIG: $CMD_KERNEL_CONFIG"
+		      print_info 2 "CMD_KERNEL_CONFIG: ${CMD_KERNEL_CONFIG}"
 	      ;;
 	      --module-prefix=*)
 		      CMD_INSTALL_MOD_PATH=`parse_opt "$*"`
-		      print_info 2 "CMD_INSTALL_MOD_PATH: $CMD_INSTALL_MOD_PATH"
+		      print_info 2 "CMD_INSTALL_MOD_PATH: ${CMD_INSTALL_MOD_PATH}"
 	      ;;
 	      --cachedir=*)
 		      CACHE_DIR=`parse_opt "$*"`
-		      print_info 2 "CACHE_DIR: $CACHE_DIR"
+		      print_info 2 "CACHE_DIR: ${CACHE_DIR}"
 	      ;;
 	      --minkernpackage=*)
 		      CMD_MINKERNPACKAGE=`parse_opt "$*"`
-		      print_info 2 "MINKERNPACKAGE: $CMD_MINKERNPACKAGE"
+		      print_info 2 "MINKERNPACKAGE: ${CMD_MINKERNPACKAGE}"
 	      ;;
 	      --modulespackage=*)
 		      CMD_MODULESPACKAGE=`parse_opt "$*"`
-		      print_info 2 "MODULESPACKAGE: $CMD_MODULESPACKAGE"
+		      print_info 2 "MODULESPACKAGE: ${CMD_MODULESPACKAGE}"
 	      ;;
 	      --kerncache=*)
 		      CMD_KERNCACHE=`parse_opt "$*"`
-		      print_info 2 "KERNCACHE: $CMD_KERNCACHE"
+		      print_info 2 "KERNCACHE: ${CMD_KERNCACHE}"
 	      ;;
 	      --kernname=*)
 		      CMD_KERNNAME=`parse_opt "$*"`
-		      print_info 2 "KERNNAME: $CMD_KERNNAME"
+		      print_info 2 "KERNNAME: ${CMD_KERNNAME}"
 	      ;;
 	      --symlink)
 		      CMD_SYMLINK=1
-		      print_info 2 "CMD_SYMLINK: $CMD_SYMLINK"
+		      print_info 2 "CMD_SYMLINK: ${CMD_SYMLINK}"
 	      ;;
 	      --no-symlink)
 		      CMD_SYMLINK=0
-		      print_info 2 "CMD_SYMLINK: $CMD_SYMLINK"
+		      print_info 2 "CMD_SYMLINK: ${CMD_SYMLINK}"
 	      ;;
 	      --no-kernel-sources)
 		      CMD_NO_KERNEL_SOURCES=1
-		      print_info 2 "CMD_NO_KERNEL_SOURCES: $CMD_NO_KERNEL_SOURCES"
+		      print_info 2 "CMD_NO_KERNEL_SOURCES: ${CMD_NO_KERNEL_SOURCES}"
 	      ;;
 	      --initramfs-overlay=*)
 		      CMD_INITRAMFS_OVERLAY=`parse_opt "$*"`
-		      print_info 2 "CMD_INITRAMFS_OVERLAY: $CMD_INITRAMFS_OVERLAY"
+		      print_info 2 "CMD_INITRAMFS_OVERLAY: ${CMD_INITRAMFS_OVERLAY}"
 	      ;;
 	      --linuxrc=*)
 	      		CMD_LINUXRC=`parse_opt "$*"`
-			print_info 2 "CMD_LINUXRC: $CMD_LINUXRC"
+			print_info 2 "CMD_LINUXRC: ${CMD_LINUXRC}"
 	      ;;
-              --genzimage)
+	      --genzimage)
 			KERNEL_MAKE_DIRECTIVE_2='zImage.initrd'
 			KERNEL_BINARY_2='arch/powerpc/boot/zImage.initrd'
 			GENERATE_Z_IMAGE=1
-			print_info 2 "GENERATE_Z_IMAGE: $GENERATE_Z_IMAGE"
+			print_info 2 "GENERATE_Z_IMAGE: ${GENERATE_Z_IMAGE}"
 	      ;;
 	      --disklabel)
 		      CMD_DISKLABEL=1
-		      print_info 2 "CMD_DISKLABEL: $CMD_DISKLABEL"
+		      print_info 2 "CMD_DISKLABEL: ${CMD_DISKLABEL}"
 	      ;;
 	      --luks)
 		      CMD_LUKS=1
-		      print_info 2 "CMD_LUKS: $CMD_LUKS"
+		      print_info 2 "CMD_LUKS: ${CMD_LUKS}"
 	      ;;
 	      all)
 		      BUILD_KERNEL=1
@@ -520,7 +467,7 @@ parse_cmdline() {
 		      BUILD_MODULES=0
 		      BUILD_INITRD=1
 		      CMD_NOINITRDMODULES=1
-		      print_info 2 "CMD_NOINITRDMODULES: $CMD_NOINITRDMODULES"
+		      print_info 2 "CMD_NOINITRDMODULES: ${CMD_NOINITRDMODULES}"
 	      ;;
 	      --help)
 		      longusage

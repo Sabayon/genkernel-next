@@ -14,15 +14,13 @@ create_initrd_loop() {
 		gen_die 'Could not mount the initrd filesystem!'
 }
 
-create_initrd_unmount_loop()
-{
+create_initrd_unmount_loop() {
 	cd ${TEMP}
 	umount "${TEMP}/initrd-mount" ||
 		gen_die 'Could not unmount initrd system!'
 }
 
-move_initrd_to_loop()
-{
+move_initrd_to_loop() {
 	cd "${TEMP}/initrd-temp"
 	mv * "${TEMP}/initrd-mount" >> ${DEBUGFILE} 2>&1
 }
@@ -94,21 +92,6 @@ create_base_initrd_sys() {
 		chmod +x "${TEMP}/initrd-temp/bin/devfsd"
 	fi
 
-	# udev
-#	if [ "${UDEV}" -eq '1' ]
-#	then
-#		/bin/tar -jxpf "${UDEV_BINCACHE}" -C "${TEMP}/initrd-temp" || gen_die 'Could not extract udev binary cache!'
-#		if [ ! -e "${TEMP}/initrd-temp/bin/udevstart" ]
-#		then
-#		    ln -sf "./udev" "${TEMP}/initrd-temp/bin/udevstart" || gen_die 'Could not symlink udev -> udevstart!'
-#		fi
-		
-#		if [ ! -e "${TEMP}/initrd-temp/bin/udevsend" ]
-#		then
-#		    ln -sf "./udev" "${TEMP}/initrd-temp/bin/udevsend" || gen_die 'Could not symlink udev -> udevsend!'
-#		fi
-#	fi
-	
 	#unionfs modules
 	if [ "${UNIONFS}" -eq '1' ]
 	then
@@ -125,18 +108,6 @@ create_base_initrd_sys() {
 		compile_unionfs_utils
 		/bin/tar -jxpf "${UNIONFS_BINCACHE}" -C "${TEMP}/initrd-temp" ||
 			gen_die "Could not extract unionfs tools binary cache!";
-	fi
-
-	# Suspend
-	if [ "${SUSPEND}" = '1' ]
-	then
-		print_info 1 'SUSPEND: Adding support (compiling binaries)...'
-		compile_suspend
-		/bin/tar -jxpf "${SUSPEND_BINCACHE}" -C "${TEMP}/initrd-temp" ||
-			gen_die "Could not extract suspend binary cache!"
-		mkdir -p "${TEMP}/initrd-temp/etc"
-		cp -f /etc/suspend.conf "${TEMP}/initrd-temp/etc" ||
-			gen_die 'Could not copy /etc/suspend.conf'
 	fi
 
 	# DMRAID 

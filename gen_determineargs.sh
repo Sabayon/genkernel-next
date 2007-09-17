@@ -197,36 +197,24 @@ determine_real_args() {
 
 	CACHE_DIR=`arch_replace "${CACHE_DIR}"`
 	BUSYBOX_BINCACHE=`cache_replace "${BUSYBOX_BINCACHE}"`
-	DIETLIBC_BINCACHE=`cache_replace "${DIETLIBC_BINCACHE}"`
-	DIETLIBC_BINCACHE_TEMP=`cache_replace "${DIETLIBC_BINCACHE_TEMP}"`
 	DEVFSD_BINCACHE=`cache_replace "${DEVFSD_BINCACHE}"`
 	DEVFSD_CONF_BINCACHE=`cache_replace "${DEVFSD_CONF_BINCACHE}"`
-	UDEV_BINCACHE=`cache_replace "${UDEV_BINCACHE}"`
-	KLIBC_BINCACHE=`cache_replace "${KLIBC_BINCACHE}"`
 	DEVICE_MAPPER_BINCACHE=`cache_replace "${DEVICE_MAPPER_BINCACHE}"`
 	LVM2_BINCACHE=`cache_replace "${LVM2_BINCACHE}"`
 	DMRAID_BINCACHE=`cache_replace "${DMRAID_BINCACHE}"`
 	UNIONFS_BINCACHE=`cache_replace "${UNIONFS_BINCACHE}"`
 	UNIONFS_MODULES_BINCACHE=`cache_replace "${UNIONFS_MODULES_BINCACHE}"`
 	BLKID_BINCACHE=`cache_replace "${BLKID_BINCACHE}"`
-#	SUSPEND_BINCACHE=`cache_replace "${SUSPEND_BINCACHE}"`
   
 	DEFAULT_KERNEL_CONFIG=`arch_replace "${DEFAULT_KERNEL_CONFIG}"`
 	BUSYBOX_CONFIG=`arch_replace "${BUSYBOX_CONFIG}"`
 	BUSYBOX_BINCACHE=`arch_replace "${BUSYBOX_BINCACHE}"`
-	DIETLIBC_BINCACHE=`arch_replace "${DIETLIBC_BINCACHE}"`
-	DIETLIBC_BINCACHE_TEMP=`arch_replace "${DIETLIBC_BINCACHE_TEMP}"`
-	DEVFSD_BINCACHE=`arch_replace "${DEVFSD_BINCACHE}"`
-	DEVFSD_CONF_BINCACHE=`arch_replace "${DEVFSD_CONF_BINCACHE}"`
-	UDEV_BINCACHE=`arch_replace "${UDEV_BINCACHE}"`
-	KLIBC_BINCACHE=`arch_replace "${KLIBC_BINCACHE}"`
 	DEVICE_MAPPER_BINCACHE=`arch_replace "${DEVICE_MAPPER_BINCACHE}"`
 	LVM2_BINCACHE=`arch_replace "${LVM2_BINCACHE}"`
 	DMRAID_BINCACHE=`arch_replace "${DMRAID_BINCACHE}"`
 	UNIONFS_BINCACHE=`arch_replace "${UNIONFS_BINCACHE}"`
 	UNIONFS_MODULES_BINCACHE=`arch_replace "${UNIONFS_MODULES_BINCACHE}"`
 	BLKID_BINCACHE=`arch_replace "${BLKID_BINCACHE}"`
-#	SUSPEND_BINCACHE=`arch_replace "${SUSPEND_BINCACHE}"`
 	
 	if [ "${CMD_BOOTSPLASH}" != '' ]
 	then
@@ -401,31 +389,6 @@ determine_real_args() {
 		OLDCONFIG=0
 	fi
 
-	if isTrue "${CMD_NO_UDEV}"
-	then
-		UDEV=0
-		if isTrue "${CMD_NO_DEVFS}"
-		then
-		    DEVFS=0
-		else
-		    DEVFS=1
-		fi
-	else
-		UDEV=1
-		DEVFS=0
-	fi
-	
-	if isTrue "${CMD_NO_DEVFS}"
-	then
-		DEVFS=0
-	fi
-	
-	if isTrue "${CMD_DEVFS}"
-	then
-		DEVFS=1
-		UDEV=0
-	fi
-
 	if isTrue "${CMD_LVM2}"
 	then
 		LVM2=1
@@ -433,14 +396,7 @@ determine_real_args() {
 		LVM2=0
 	fi
 
-#	if isTrue "${CMD_SUSPEND}"
-#	then
-#		SUSPEND=1
-#	else
-#		SUSPEND=0
-#	fi
-	
-	if isTrue "${CMD_EVMS2}"
+	if isTrue "${CMD_EVMS}"
 	then
 		EVMS2=1
 	else

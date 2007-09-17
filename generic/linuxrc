@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright 2003-2006 Gentoo Foundation 
+# Copyright 2003-2007 Gentoo Foundation 
 # Distributed under the terms of the GNU General Public License v2
 
 . /etc/initrd.defaults
@@ -78,15 +78,6 @@ do
 		;;
 		looptype\=*)
 			LOOPTYPE=`parse_opt "${x}"`
-		;;
-		# Start Device Manager options 
-		devfs)
-			USE_DEVFS_NORMAL=1
-			USE_UDEV_NORMAL=0
-		;;
-		udev)
-			USE_DEVFS_NORMAL=0
-			USE_UDEV_NORMAL=1
 		;;
 		unionfs)
 			if [ ! -x /sbin/unionctl ]

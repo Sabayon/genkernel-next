@@ -2,13 +2,19 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  17 Sep 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_bootloader.sh,
+  gen_cmdline.sh, gen_compile.sh, gen_determineargs.sh, gen_initramfs.sh,
+  gen_initrd.sh, generic/linuxrc, genkernel, mips/config.sh:
+  Performed some general cleanup on a few files and removed devfs/udev
+  selection code, since we force devfs on 2.4 and mdev on 2.6 kernels.
+
   30 Aug 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_cmdline.sh,
   gen_compile.sh, gen_configkernel.sh, gen_determineargs.sh,
   gen_initramfs.sh, generic/initrd.scripts, generic/linuxrc, genkernel,
   genkernel.conf, +pkg/genkernel-svn-suspend.patch:
   Removing the suspend support that was added for bug #156445 until suspend is
   added to the tree and we can determine the proper way to support it. For
-  more information, see bug #156431.
+  more information, see bug #156431. This is genkernel 3.4.9_pre2 for testing.
 
   22 Aug 2007; Chris Gianelloni <wolf31o2@gentoo.org> x86/kernel-config-2.6,
   x86_64/kernel-config-2.6, genkernel:

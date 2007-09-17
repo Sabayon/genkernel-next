@@ -560,43 +560,7 @@ compile_dmraid() {
 	fi
 }
 
-#compile_suspend() {
-#	[ -f "${SUSPEND_BINCACHE}" ] && return
-#	[ -f "${SUSPEND_SRCTAR}" ] ||
-#		gen_die "Could not find SUSPEND source tarball: ${SUSPEND_SRCTAR}! Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
-#	cd ${TEMP}
-#	rm -rf ${SUSPEND_DIR} > /dev/null
-#	/bin/tar -zxpf ${SUSPEND_SRCTAR} ||
-#		gen_die 'Could not extract SUSPEND source tarball!'
-#	[ -d "${SUSPEND_DIR}" ] ||
-#		gen_die "SUSPEND directory ${DMRAID_DIR} is invalid!"
-
-#	cd "${SUSPEND_DIR}"
-#	if [ -f "${GK_SHARE}/pkg/suspend-0.5-Makefile.patch" ]
-#	then
-#		patch -p1 -i \
-#			${GK_SHARE}/pkg/suspend-0.5-Makefile.patch \
-#			|| gen_die "Failed patching suspend"
-#	fi
-
-#	print_info 1 'suspend: >> Compiling...'
-#	compile_generic '' utils CC_FLAGS= LD_FLAGS=
-
-#	print_info 1 '         >> Copying to bincache...'
-#	mkdir -p "${TEMP}/bincache/sbin"
-#	cp -f resume "${TEMP}/bincache/sbin" ||
-#		gen_die 'Could not copy resume binary'
-#	cd "${TEMP}/bincache"
-#	/bin/tar -cjf "${SUSPEND_BINCACHE}" * ||
-#		gen_die 'Could not create suspend binary cache'
-#	cd "${TEMP}"
-#	rm -rf bincache suspend-0.5
-#}
-
 compile_devfsd() {
-	# I've disabled dietlibc support for the time being since the
-	# version we use misses a few needed system calls.
-
 	local ARGS
 	if [ ! -f "${DEVFSD_BINCACHE}" ]
 	then
@@ -609,26 +573,8 @@ compile_devfsd() {
 			gen_die "Devfsd directory ${DEVFSD_DIR} invalid"
 		cd "${DEVFSD_DIR}"
 
-#		if [ "${USE_DIETLIBC}" -eq '1' ]
-#		then
-#			extract_dietlibc_bincache
-#			OLD_CC="${UTILS_CC}"
-#			UTILS_CC="${TEMP}/diet/bin/diet ${UTILS_CC}"
-#		fi
-
 		print_info 1 'devfsd: >> Compiling...'
-#		if [ "${USE_DIETLIBC}" -eq '1' ]
-#		then
-#			compile_generic 'has_dlopen=0 has_rpcsvc=0' utils
-#		else
-			compile_generic 'LDFLAGS=-static' utils
-#		fi
-
-#		if [ "${USE_DIETLIBC}" -eq '1' ]
-#		then
-#			clean_dietlibc_bincache
-#			UTILS_CC="${OLD_CC}"
-#		fi
+		compile_generic 'LDFLAGS=-static' utils
 
 		print_info 1 '        >> Copying to cache...'
 		[ -f "${TEMP}/${DEVFSD_DIR}/devfsd" ] || gen_die 'The devfsd executable does not exist after the compilation of devfsd!'
@@ -636,10 +582,6 @@ compile_devfsd() {
 		bzip2 "${TEMP}/${DEVFSD_DIR}/devfsd" || gen_die 'Compression of devfsd failed!'
 		[ -f "${TEMP}/${DEVFSD_DIR}/devfsd.bz2" ] || gen_die 'Could not find compressed devfsd.bz2 binary!'
 		mv "${TEMP}/${DEVFSD_DIR}/devfsd.bz2" "${DEVFSD_BINCACHE}" || gen_die 'Could not move compressed binary to the package cache!'
-
-#		[ -f "${TEMP}/${DEVFSD_DIR}/devfsd.conf" ] || gen_die 'devfsd.conf does not exist after the compilation of devfsd!'
-#		bzip2 "${TEMP}/${DEVFSD_DIR}/devfsd.conf" || gen_die 'Compression of devfsd.conf failed!'
-#		mv "${TEMP}/${DEVFSD_DIR}/devfsd.conf.bz2" "${DEVFSD_CONF_BINCACHE}" || gen_die 'Could not move the compressed configuration to the package cache!'
 
 		cd "${TEMP}"
 		rm -rf "${DEVFSD_DIR}" > /dev/null
@@ -676,195 +618,6 @@ compile_device_mapper() {
 		cd "${TEMP}"
 		rm -rf "${DEVICE_MAPPER_DIR}" > /dev/null
 		rm -rf "${TEMP}/device-mapper" > /dev/null
-	fi
-}
-
-compile_dietlibc() {
-	local BUILD_DIETLIBC
-	local ORIGTEMP
-
-	BUILD_DIETLIBC=0
-	[ ! -f "${DIETLIBC_BINCACHE}" ] && BUILD_DIETLIBC=1
-	[ ! -f "${DIETLIBC_BINCACHE_TEMP}" ] && BUILD_DIETLIBC=1
-	if ! isTrue "${BUILD_DIETLIBC}"
-	then
-		ORIGTEMP=`cat "${DIETLIBC_BINCACHE_TEMP}"`
-		if [ "${TEMP}" != "${ORIGTEMP}" ]
-		then
-			print_warning 1 'dietlibc: Bincache exists, but the current temporary directory'
-			print_warning 1 '          is different to the original. Rebuilding.'
-			BUILD_DIETLIBC=1
-		fi
-	fi
-
-	if [ "${BUILD_DIETLIBC}" -eq '1' ]
-	then
-		[ -f "${DIETLIBC_SRCTAR}" ] ||
-			gen_die "Could not find dietlibc source tarball: ${DIETLIBC_SRCTAR}"
-		cd "${TEMP}"
-		rm -rf "${DIETLIBC_DIR}" > /dev/null
-		/bin/tar -jxpf "${DIETLIBC_SRCTAR}" ||
-			gen_die 'Could not extract dietlibc source tarball'
-		[ -d "${DIETLIBC_DIR}" ] ||
-			gen_die "Dietlibc directory ${DIETLIBC_DIR} is invalid!"
-		cd "${DIETLIBC_DIR}"
-		print_info 1 "dietlibc: >> Compiling..."
-		compile_generic "prefix=${TEMP}/diet" utils
-		print_info 1 "          >> Installing..."
-		compile_generic "prefix=${TEMP}/diet install" utils
-		print_info 1 "          >> Copying to bincache..."
-		cd ${TEMP}
-		/bin/tar -jcpf "${DIETLIBC_BINCACHE}" diet ||
-			gen_die 'Could not tar up the dietlibc binary!'
-		[ -f "${DIETLIBC_BINCACHE}" ] ||
-			gen_die 'Dietlibc cache not created!'
-		echo "${TEMP}" > "${DIETLIBC_BINCACHE_TEMP}"
-
-		cd "${TEMP}"
-		rm -rf "${DIETLIBC_DIR}" > /dev/null
-		rm -rf "${TEMP}/diet" > /dev/null
-	fi
-}
-compile_klibc() {
-	cd "${TEMP}"
-	rm -rf "${KLIBC_DIR}" klibc-build
-	[ ! -f "${KLIBC_SRCTAR}" ] &&
-		gen_die "Could not find klibc tarball: ${KLIBC_SRCTAR}"
-	/bin/tar jxpf "${KLIBC_SRCTAR}" ||
-		gen_die 'Could not extract klibc tarball'
-	[ ! -d "${KLIBC_DIR}" ] &&
-		gen_die "klibc tarball ${KLIBC_SRCTAR} is invalid"
-	cd "${KLIBC_DIR}"
-	if [ -f ${GK_SHARE}/pkg/klibc-1.1.16-sparc2.patch ]
-	then
-		patch -p1 -i \
-			${GK_SHARE}/pkg/klibc-1.1.16-sparc2.patch \
-			|| gen_die "Failed patching klibc"
-	fi
-	if [ -f "${GK_SHARE}/pkg/klibc-1.2.1-nostdinc-flags.patch" ]
-	then
-		patch -p1 -i \
-			${GK_SHARE}/pkg/klibc-1.2.1-nostdinc-flags.patch \
-			|| gen_die "Failed patching klibc"
-	fi
-
-	# Don't install to "//lib" fix
-	sed -e 's:SHLIBDIR = /lib:SHLIBDIR = $(INSTALLROOT)$(INSTALLDIR)/$(KLIBCCROSS)lib:' -i scripts/Kbuild.install
-	print_info 1 'klibc: >> Compiling...'
-	ln -snf "${KERNEL_DIR}" linux || gen_die "Could not link to ${KERNEL_DIR}"
-	sed -i Makefile -e "s|prefix      = /usr|prefix      = ${TEMP}/klibc-build|g"
-	if [ "${UTILS_ARCH}" != '' ]
-	then
-		sed -i Makefile -e "s|export ARCH.*|export ARCH := ${UTILS_ARCH}|g"
-	fi
-	if [ "${ARCH}" = 'um' ]
-	then
-		compile_generic "ARCH=um" utils
-	elif [ "${ARCH}" = 'x86' ]
-	then
-		compile_generic "ARCH=i386" utils
-	elif [ "${UTILS_CROSS_COMPILE}" != '' ]
-	then
-		compile_generic "CROSS=${UTILS_CROSS_COMPILE}" utils
-	else
-		compile_generic "" utils
-	fi
-
-	compile_generic "install" utils
-        
-}
-compile_udev() {
-	if [ ! -f "${UDEV_BINCACHE}" ]
-	then
-		# PPC fixup for 2.6.14
-		# Headers are moving around .. need to make them available
-		if [ "${VER}" -eq '2' -a "${PAT}" -eq '6' -a "${SUB}" -ge '14' ]
-		then
-		    if [ "${ARCH}" = 'ppc' -o "${ARCH}" = 'ppc64' ]
-		    then
-	    		cd ${KERNEL_DIR}
-			echo 'Applying hack to workaround 2.6.14+ PPC header breakages...'
-	    		compile_generic 'include/asm' kernel
-		    fi
-		fi
-		compile_klibc
-		cd "${TEMP}"
-		rm -rf "${UDEV_DIR}" udev
-		[ ! -f "${UDEV_SRCTAR}" ] &&
-			gen_die "Could not find udev tarball: ${UDEV_SRCTAR}"
-		/bin/tar -jxpf "${UDEV_SRCTAR}" ||
-			gen_die 'Could not extract udev tarball'
-		[ ! -d "${UDEV_DIR}" ] &&
-			gen_die "Udev tarball ${UDEV_SRCTAR} is invalid"
-
-		cd "${UDEV_DIR}"
-    		local extras="extras/scsi_id extras/volume_id extras/ata_id extras/run_directory extras/usb_id extras/floppy extras/cdrom_id extras/firmware"
-		# No selinux support yet .. someday maybe
-		#use selinux && myconf="${myconf} USE_SELINUX=true"
-		print_info 1 'udev: >> Compiling...'
-		# SPARC fixup
-		if [ "${UTILS_ARCH}" = 'sparc' ]
-		then
-			echo "CFLAGS += -mcpu=v8 -mtune=v8" >> Makefile
-		fi
-		# PPC fixup for 2.6.14
-		if [ "${VER}" -eq '2' -a "${PAT}" -eq '6' -a "${SUB}" -ge '14' ]
-        	then
-			if [ "${ARCH}" = 'ppc' -o "${ARCH}" = 'ppc64' ]
-        		then
-				# Headers are moving around .. need to make them available
-				echo "CFLAGS += -I${KERNEL_DIR}/arch/${ARCH}/include" >> Makefile
-			fi
-		fi
-
-		if [ "${ARCH}" = 'um' ]
-		then
-			compile_generic "EXTRAS=\"${extras}\" ARCH=um USE_KLIBC=true KLCC=${TEMP}/klibc-build/bin/klcc USE_LOG=false DEBUG=false udevdir=/dev all" utils
-		else
-			# This *needs* to be runtask, or else it breakson most
-			# architectures.  -- wolf31o2
-			compile_generic "EXTRAS=\"${extras}\" USE_KLIBC=true KLCC=${TEMP}/klibc-build/bin/klcc USE_LOG=false DEBUG=false udevdir=/dev all" runtask
-		fi
-
-
-		print_info 1 '      >> Installing...'
-		install -d "${TEMP}/udev/etc/udev" "${TEMP}/udev/sbin" "${TEMP}/udev/etc/udev/scripts" "${TEMP}/udev/etc/udev/rules.d" "${TEMP}/udev/etc/udev/permissions.d" "${TEMP}/udev/etc/udev/extras" "${TEMP}/udev/etc" "${TEMP}/udev/sbin" "${TEMP}/udev/usr/" "${TEMP}/udev/usr/bin" "${TEMP}/udev/usr/sbin"||
-			gen_die 'Could not create directory hierarchy'
-		
-		install -c etc/udev/gentoo/udev.rules "${TEMP}/udev/etc/udev/rules.d/50-udev.rules" ||
-		    gen_die 'Could not copy gentoo udev.rules to 50-udev.rules'
-
-#		compile_generic "EXTRAS=\"${extras}\" DESTDIR=${TEMP}/udev install-config" utils
-#		compile_generic "EXTRAS=\"${extras}\" DESTDIR=${TEMP}/udev install-bin" utils
-		# We are going to install our files by hand.  Why are we doing this?
-		# Well, the udev ebuild does so, and I tend to think that Greg
-		# Kroah-Hartman knows what he's doing with regards to udev.
-		for i in udev udevd udevsend udevstart udevtrigger
-		do
-			install -D $i "${TEMP}/udev/sbin"
-		done
-		install -c extras/ide-devfs.sh "${TEMP}/udev/etc/udev/scripts" 
-		install -c extras/scsi-devfs.sh "${TEMP}/udev/etc/udev/scripts" 
-		install -c extras/raid-devfs.sh "${TEMP}/udev/etc/udev/scripts" 
-
-		cd "${TEMP}/udev"
-		print_info 1 '      >> Copying to bincache...'
-		/bin/tar -cjf "${UDEV_BINCACHE}" * ||
-			gen_die 'Could not create binary cache'
-
-		cd "${TEMP}"
-		rm -rf "${UDEV_DIR}" udev
-		
-		# PPC fixup for 2.6.14
-		if [ "${VER}" -eq '2' -a "${PAT}" -eq '6' -a "${SUB}" -ge '14' ]
-		then
-		    if [ "${ARCH}" = 'ppc' -o "${ARCH}" = 'ppc64' ]
-		    then
-			cd ${KERNEL_DIR}
-			compile_generic 'archclean' kernel
-			cd "${TEMP}"
-		    fi
-		fi
 	fi
 }
 

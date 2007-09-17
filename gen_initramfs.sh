@@ -24,14 +24,6 @@ append_base_layout() {
 	echo "/dev/ram0     /           ext2    defaults	0 0" > ${TEMP}/initramfs-base-temp/etc/fstab
 	echo "proc          /proc       proc    defaults    0 0" >> ${TEMP}/initramfs-base-temp/etc/fstab
 	
-	if [ "${DEVFS}" -eq '1' ]
-	then
-	    echo "REGISTER        .*           MKOLDCOMPAT" > ${TEMP}/initramfs-base-temp/etc/devfsd.conf
-	    echo "UNREGISTER      .*           RMOLDCOMPAT" >> ${TEMP}/initramfs-base-temp/etc/devfsd.conf
-	    echo "REGISTER        .*           MKNEWCOMPAT" >> ${TEMP}/initramfs-base-temp/etc/devfsd.conf
-	    echo "UNREGISTER      .*           RMNEWCOMPAT" >> ${TEMP}/initramfs-base-temp/etc/devfsd.conf
-	fi
-
 	cd ${TEMP}/initramfs-base-temp/dev
 	mknod -m 660 console c 5 1
 	mknod -m 660 null c 1 3
@@ -56,11 +48,6 @@ append_busybox() {
 		gen_die 'Could not extract busybox bincache!'
 	chmod +x "${TEMP}/initramfs-busybox-temp/bin/busybox"
 
-	# down devfsd we use with dietlibc
-#	cp "${DEVFSD_CONF_BINCACHE}" "${TEMP}/initramfs-temp/etc/devfsd.conf.bz2" ||
-#		gen_die "could not copy devfsd.conf from bincache"
-#	bunzip2 "${TEMP}/initramfs-temp/etc/devfsd.conf.bz2" ||
-#		gen_die "could not uncompress devfsd.conf"
 	for i in '[' ash sh mount uname echo cut; do
 		rm -f ${TEMP}/initramfs-busybox-temp/bin/$i > /dev/null
 		ln ${TEMP}/initramfs-busybox-temp/bin/busybox ${TEMP}/initramfs-busybox-temp/bin/$i ||
@@ -70,20 +57,6 @@ append_busybox() {
 	cd "${TEMP}/initramfs-busybox-temp/"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
 	rm -rf "${TEMP}/initramfs-busybox-temp" > /dev/null
-}
-
-append_udev(){
-	if [ -d "${TEMP}/initramfs-udev-temp" ]
-	then
-		rm -r "${TEMP}/initramfs-udev-temp/"
-	fi
-	cd ${TEMP}
-	mkdir -p "${TEMP}/initramfs-udev-temp/bin/"
-	[ "${UDEV}" -eq '1' ] && { /bin/tar -jxpf "${UDEV_BINCACHE}" -C "${TEMP}/initramfs-udev-temp" ||
-		gen_die "Could not extract udev binary cache!"; }
-	cd "${TEMP}/initramfs-udev-temp/"
-	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
-	rm -rf "${TEMP}/initramfs-udev-temp" > /dev/null
 }
 
 append_blkid(){
@@ -99,23 +72,6 @@ append_blkid(){
 	cd "${TEMP}/initramfs-blkid-temp/"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
 	rm -rf "${TEMP}/initramfs-blkid-temp" > /dev/null
-}
-
-append_devfs(){
-	if [ -d "${TEMP}/initramfs-devfs-temp" ]
-	then
-		rm -r "${TEMP}/initramfs-devfs-temp/"
-	fi
-	cd ${TEMP}
-	print_info 1 'DEVFS: Adding support (compiling binaries)...'
-	compile_devfsd
-	mkdir -p "${TEMP}/initramfs-devfs-temp/bin/"
-	cp "${DEVFSD_BINCACHE}" "${TEMP}/initramfs-devfs-temp/bin/devfsd.bz2" || gen_die "could not copy devfsd executable from bincache"
-	bunzip2 "${TEMP}/initramfs-devfs-temp/bin/devfsd.bz2" || gen_die "could not uncompress devfsd"
-	chmod +x "${TEMP}/initramfs-devfs-temp/bin/devfsd"
-	cd "${TEMP}/initramfs-devfs-temp/"
-	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
-	rm -rf "${TEMP}/initramfs-devfs-temp" > /dev/null
 }
 
 append_unionfs_modules(){
@@ -475,10 +431,8 @@ create_initramfs() {
 	append_data 'auxilary'
 	append_data 'busybox' "${BUSYBOX}"
 	append_data 'devfs' "${DEVFS}"
-#	append_data 'udev' "${UDEV}"
 	append_data 'unionfs_modules' "${UNIONFS}"
 	append_data 'unionfs_tools' "${UNIONFS}"
-#	append_data 'suspend' "${SUSPEND}"
 	append_data 'lvm2' "${LVM2}"
 	append_data 'dmraid' "${DMRAID}"
 	append_data 'evms2' "${EVMS2}"
