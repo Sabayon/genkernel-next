@@ -2,6 +2,11 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  17 Sep 2007; Chris Gianelloni <wolf31o2@gentoo.org>
+  -pkg/genkernel-svn-suspend.patch:
+  Removing the reversal patch for the suspend removal, since it will no longer
+  apply.
+
   17 Sep 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_bootloader.sh,
   gen_cmdline.sh, gen_compile.sh, gen_determineargs.sh, gen_initramfs.sh,
   gen_initrd.sh, generic/linuxrc, genkernel, mips/config.sh:
