@@ -1,4 +1,4 @@
-- Add LVM2 support, so people that have their root partitions
-  LVM2-ized can boot.
 - Need configs for other currently-unsupported arches.
-
+- Make configs stackable
+- Remove 2.4 kernel support
+- Refactor code to be more simple and extendable

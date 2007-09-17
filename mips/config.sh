@@ -11,7 +11,6 @@ UTILS_MAKE=make
 UTILS_CC=gcc
 UTILS_AS=as
 UTILS_LD=ld
-USE_DIETLIBC=0
 
 # Initrd/Initramfs Options
 COMPRESS_INITRD="yes"
@@ -20,9 +19,7 @@ USECOLOR="yes"
 NOINITRDMODULES="yes"
 BUSYBOX=1
 UNIONFS=0
-LVM2=0
 DMRAID=0
-EVMS2=0
 DISKLABEL=0
 
 # genkernel on mips is only used for LiveCDs && netboots.  Catalyst

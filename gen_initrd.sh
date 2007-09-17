@@ -119,26 +119,26 @@ create_base_initrd_sys() {
 			gen_die "Could not extract dmraid binary cache!";
 	fi
 
-	# LVM2
-	if [ "${LVM2}" = '1' ]
+	# LVM
+	if [ "${LVM}" = '1' ]
 	then
 		if [ -e '/sbin/lvm' ] && LC_ALL="C" ldd /sbin/lvm|grep -q 'not a dynamic executable';
 		then
-			print_info 1 'LVM2: Adding support (using local static binaries)...'
+			print_info 1 'LVM: Adding support (using local static binaries)...'
 			cp /sbin/lvm "${TEMP}/initrd-temp/bin/lvm" ||
 				gen_die 'Could not copy over lvm!'
 		else
-			print_info 1 'LVM2: Adding support (compiling binaries)...'
-			compile_lvm2
+			print_info 1 'LVM: Adding support (compiling binaries)...'
+			compile_lvm
 
-			/bin/tar -jxpf "${LVM2_BINCACHE}" -C "${TEMP}/initrd-temp" ||
-				gen_die "Could not extract lvm2 binary cache!";
+			/bin/tar -jxpf "${LVM_BINCACHE}" -C "${TEMP}/initrd-temp" ||
+				gen_die "Could not extract lvm binary cache!";
 			mv ${TEMP}/initrd-temp/bin/lvm.static ${TEMP}/initrd-temp/bin/lvm ||
-				gen_die 'LVM2 error: Could not move lvm.static to lvm!'
+				gen_die 'LVM error: Could not move lvm.static to lvm!'
 		fi
 		for i in vgchange vgscan; do
 			ln  ${TEMP}/initrd-temp/bin/lvm ${TEMP}/initrd-temp/bin/$i ||
-				gen_die "LVM2 error: Could not link ${i}!"
+				gen_die "LVM error: Could not link ${i}!"
 		done
 		mkdir -p ${TEMP}/initrd-temp/etc/lvm
 		if [ -x /sbin/lvm ]
@@ -155,42 +155,42 @@ create_base_initrd_sys() {
 		fi
 	fi
 	
-	# EVMS2
-	if [ "${EVMS2}" = '1' ]
+	# EVMS
+	if [ "${EVMS}" = '1' ]
 	then
 		if [ -e '/sbin/evms_activate' ]
 		then
-			print_info 1 'EVMS2: Adding support...'	
+			print_info 1 'EVMS: Adding support...'	
 			mkdir -p ${TEMP}/initrd-temp/lib
 			mkdir -p ${TEMP}/initrd-temp/sbin
 			mkdir -p ${TEMP}/initrd-temp/etc
 			mkdir -p ${TEMP}/initrd-temp/bin
 			cp -a /lib/ld-* "${TEMP}/initrd-temp/lib" \
-				|| gen_die 'Could not copy files for EVMS2!'
+				|| gen_die 'Could not copy files for EVMS!'
 			if [ -n "`ls /lib/libgcc_s*`" ]
 			then
 				cp -a /lib/libgcc_s* "${TEMP}/initrd-temp/lib" \
-					|| gen_die 'Could not copy files for EVMS2!'
+					|| gen_die 'Could not copy files for EVMS!'
 			fi
 			cp -a /lib/libc-* /lib/libc.* "${TEMP}/initrd-temp/lib" \
-				|| gen_die 'Could not copy files for EVMS2!'
+				|| gen_die 'Could not copy files for EVMS!'
 			cp -a /lib/libdl-* /lib/libdl.* "${TEMP}/initrd-temp/lib" \
-				|| gen_die 'Could not copy files for EVMS2!'
+				|| gen_die 'Could not copy files for EVMS!'
 			cp -a /lib/libpthread* "${TEMP}/initrd-temp/lib" \
-				|| gen_die 'Could not copy files for EVMS2!'
+				|| gen_die 'Could not copy files for EVMS!'
 			cp -a /lib/libuuid*so* "${TEMP}/initrd-temp/lib" \
-				|| gen_die 'Could not copy files for EVMS2!'
+				|| gen_die 'Could not copy files for EVMS!'
 			cp -a /lib/libevms*so* "${TEMP}/initrd-temp/lib" \
-				|| gen_die 'Could not copy files for EVMS2!'
+				|| gen_die 'Could not copy files for EVMS!'
 			cp -a /lib/evms "${TEMP}/initrd-temp/lib" \
-				|| gen_die 'Could not copy files for EVMS2!'
+				|| gen_die 'Could not copy files for EVMS!'
 			cp -a /lib/evms/* "${TEMP}/initrd-temp/lib/evms" \
-				|| gen_die 'Could not copy files for EVMS2!'
+				|| gen_die 'Could not copy files for EVMS!'
 			cp -a /etc/evms.conf "${TEMP}/initrd-temp/etc" \
-				|| gen_die 'Could not copy files for EVMS2!'
+				|| gen_die 'Could not copy files for EVMS!'
 			cp /sbin/evms_activate "${TEMP}/initrd-temp/sbin" \
 				|| gen_die 'Could not copy over evms_activate!'
-			# Fix EVMS2 complaining that it cant find the swap utilities.
+			# Fix EVMS complaining that it cant find the swap utilities.
 			# These are not required in the initrd
 			for swap_libs in "${TEMP}/initrd-temp/lib/evms/*/swap*.so"
 			do

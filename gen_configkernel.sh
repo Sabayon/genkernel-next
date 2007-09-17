@@ -102,8 +102,8 @@ config_kernel() {
 	    sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_EXT2_FS[ =].*/CONFIG_EXT2_FS=y/g'
 	fi
 
-	# Make sure lvm2 modules are on if --lvm2
-	if isTrue ${CMD_LVM2}
+	# Make sure lvm modules are on if --lvm/--lvm
+	if isTrue ${CMD_LVM}
 	then
 		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_BLK_DEV_DM is.*/CONFIG_BLK_DEV_DM=m/g'
 		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_DM_SNAPSHOT is.*/CONFIG_DM_SNAPSHOT=m/g'

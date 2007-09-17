@@ -137,26 +137,26 @@ append_dmraid(){
 	rm -r "${TEMP}/initramfs-dmraid-temp/"
 }
 
-append_lvm2(){
-	if [ -d "${TEMP}/initramfs-lvm2-temp" ]
+append_lvm(){
+	if [ -d "${TEMP}/initramfs-lvm-temp" ]
 	then
-		rm -r "${TEMP}/initramfs-lvm2-temp/"
+		rm -r "${TEMP}/initramfs-lvm-temp/"
 	fi
 	cd ${TEMP}
-	mkdir -p "${TEMP}/initramfs-lvm2-temp/bin/"
-	mkdir -p "${TEMP}/initramfs-lvm2-temp/etc/lvm/"
+	mkdir -p "${TEMP}/initramfs-lvm-temp/bin/"
+	mkdir -p "${TEMP}/initramfs-lvm-temp/etc/lvm/"
 	if [ -e '/sbin/lvm' ] && LC_ALL="C" ldd /sbin/lvm|grep -q 'not a dynamic executable'
 	then
-		print_info 1 '		LVM2: Adding support (using local static binaries)...'
-		cp /sbin/lvm "${TEMP}/initramfs-lvm2-temp/bin/lvm" ||
+		print_info 1 '		LVM: Adding support (using local static binaries)...'
+		cp /sbin/lvm "${TEMP}/initramfs-lvm-temp/bin/lvm" ||
 			gen_die 'Could not copy over lvm!'
 	else
-		print_info 1 '		LVM2: Adding support (compiling binaries)...'
-		compile_lvm2
-		/bin/tar -jxpf "${LVM2_BINCACHE}" -C "${TEMP}/initramfs-lvm2-temp" ||
-			gen_die "Could not extract lvm2 binary cache!";
-		mv ${TEMP}/initramfs-lvm2-temp/sbin/lvm.static ${TEMP}/initramfs-lvm2-temp/bin/lvm ||
-			gen_die 'LVM2 error: Could not move lvm.static to lvm!'
+		print_info 1 '		LVM: Adding support (compiling binaries)...'
+		compile_lvm
+		/bin/tar -jxpf "${LVM_BINCACHE}" -C "${TEMP}/initramfs-lvm-temp" ||
+			gen_die "Could not extract lvm binary cache!";
+		mv ${TEMP}/initramfs-lvm-temp/sbin/lvm.static ${TEMP}/initramfs-lvm-temp/bin/lvm ||
+			gen_die 'LVM error: Could not move lvm.static to lvm!'
 	fi
 	if [ -x /sbin/lvm ]
 	then
@@ -164,66 +164,66 @@ append_lvm2(){
 #		ret=$?
 #		if [ ${ret} != 0 ]
 #		then
-			cp /etc/lvm/lvm.conf "${TEMP}/initramfs-lvm2-temp/etc/lvm/" ||
+			cp /etc/lvm/lvm.conf "${TEMP}/initramfs-lvm-temp/etc/lvm/" ||
 				gen_die 'Could not copy over lvm.conf!'
 #		else
 #			gen_die 'Could not copy over lvm.conf!'
 #		fi
 	fi
-	cd "${TEMP}/initramfs-lvm2-temp/"
+	cd "${TEMP}/initramfs-lvm-temp/"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
-	rm -r "${TEMP}/initramfs-lvm2-temp/"
+	rm -r "${TEMP}/initramfs-lvm-temp/"
 }
 
-append_evms2(){
-	if [ -d "${TEMP}/initramfs-evms2-temp" ]
+append_evms(){
+	if [ -d "${TEMP}/initramfs-evms-temp" ]
 	then
-		rm -r "${TEMP}/initramfs-evms2-temp/"
+		rm -r "${TEMP}/initramfs-evms-temp/"
 	fi
-	mkdir -p "${TEMP}/initramfs-evms2-temp/lib/evms"
-	mkdir -p "${TEMP}/initramfs-evms2-temp/etc/"
-	mkdir -p "${TEMP}/initramfs-evms2-temp/bin/"
-	mkdir -p "${TEMP}/initramfs-evms2-temp/sbin/"
-	if [ "${EVMS2}" -eq '1' ]
+	mkdir -p "${TEMP}/initramfs-evms-temp/lib/evms"
+	mkdir -p "${TEMP}/initramfs-evms-temp/etc/"
+	mkdir -p "${TEMP}/initramfs-evms-temp/bin/"
+	mkdir -p "${TEMP}/initramfs-evms-temp/sbin/"
+	if [ "${EVMS}" -eq '1' ]
 	then
-		print_info 1 '		EVMS2: Adding support...'
-		mkdir -p ${TEMP}/initramfs-evms2-temp/lib
-		cp -a /lib/ld-* "${TEMP}/initramfs-evms2-temp/lib" \
-			|| gen_die 'Could not copy files for EVMS2!'
+		print_info 1 '		EVMS: Adding support...'
+		mkdir -p ${TEMP}/initramfs-evms-temp/lib
+		cp -a /lib/ld-* "${TEMP}/initramfs-evms-temp/lib" \
+			|| gen_die 'Could not copy files for EVMS!'
 		if [ -n "`ls /lib/libgcc_s*`" ]
 		then
-			cp -a /lib/libgcc_s* "${TEMP}/initramfs-evms2-temp/lib" \
-				|| gen_die 'Could not copy files for EVMS2!'
+			cp -a /lib/libgcc_s* "${TEMP}/initramfs-evms-temp/lib" \
+				|| gen_die 'Could not copy files for EVMS!'
 		fi
-		cp -a /lib/libc-* /lib/libc.* "${TEMP}/initramfs-evms2-temp/lib" \
-			|| gen_die 'Could not copy files for EVMS2!'
-		cp -a /lib/libdl-* /lib/libdl.* "${TEMP}/initramfs-evms2-temp/lib" \
-			|| gen_die 'Could not copy files for EVMS2!'
-		cp -a /lib/libpthread* "${TEMP}/initramfs-evms2-temp/lib" \
-			|| gen_die 'Could not copy files for EVMS2!'
-		cp -a /lib/libuuid*so* "${TEMP}/initramfs-evms2-temp/lib" \
-			|| gen_die 'Could not copy files for EVMS2!'
-		cp -a /lib/libevms*so* "${TEMP}/initramfs-evms2-temp/lib" \
-			|| gen_die 'Could not copy files for EVMS2!'
-		cp -a /lib/evms "${TEMP}/initramfs-evms2-temp/lib" \
-			|| gen_die 'Could not copy files for EVMS2!'
-		cp -a /lib/evms/* "${TEMP}/initramfs-evms2-temp/lib/evms" \
-			|| gen_die 'Could not copy files for EVMS2!'
-		cp -a /etc/evms.conf "${TEMP}/initramfs-evms2-temp/etc" \
-			|| gen_die 'Could not copy files for EVMS2!'
-		cp /sbin/evms_activate "${TEMP}/initramfs-evms2-temp/sbin" \
+		cp -a /lib/libc-* /lib/libc.* "${TEMP}/initramfs-evms-temp/lib" \
+			|| gen_die 'Could not copy files for EVMS!'
+		cp -a /lib/libdl-* /lib/libdl.* "${TEMP}/initramfs-evms-temp/lib" \
+			|| gen_die 'Could not copy files for EVMS!'
+		cp -a /lib/libpthread* "${TEMP}/initramfs-evms-temp/lib" \
+			|| gen_die 'Could not copy files for EVMS!'
+		cp -a /lib/libuuid*so* "${TEMP}/initramfs-evms-temp/lib" \
+			|| gen_die 'Could not copy files for EVMS!'
+		cp -a /lib/libevms*so* "${TEMP}/initramfs-evms-temp/lib" \
+			|| gen_die 'Could not copy files for EVMS!'
+		cp -a /lib/evms "${TEMP}/initramfs-evms-temp/lib" \
+			|| gen_die 'Could not copy files for EVMS!'
+		cp -a /lib/evms/* "${TEMP}/initramfs-evms-temp/lib/evms" \
+			|| gen_die 'Could not copy files for EVMS!'
+		cp -a /etc/evms.conf "${TEMP}/initramfs-evms-temp/etc" \
+			|| gen_die 'Could not copy files for EVMS!'
+		cp /sbin/evms_activate "${TEMP}/initramfs-evms-temp/sbin" \
 			|| gen_die 'Could not copy over evms_activate!'
 
-		# Fix EVMS2 complaining that it can't find the swap utilities.
+		# Fix EVMS complaining that it can't find the swap utilities.
 		# These are not required in the initramfs
-		for swap_libs in "${TEMP}/initramfs-evms2-temp/lib/evms/*/swap*.so"
+		for swap_libs in "${TEMP}/initramfs-evms-temp/lib/evms/*/swap*.so"
 		do
 			rm ${swap_libs}
 		done
 	fi
-	cd "${TEMP}/initramfs-evms2-temp/"
+	cd "${TEMP}/initramfs-evms-temp/"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
-	rm -r "${TEMP}/initramfs-evms2-temp/"
+	rm -r "${TEMP}/initramfs-evms-temp/"
 }
 
 append_gensplash(){
@@ -433,9 +433,9 @@ create_initramfs() {
 	append_data 'devfs' "${DEVFS}"
 	append_data 'unionfs_modules' "${UNIONFS}"
 	append_data 'unionfs_tools' "${UNIONFS}"
-	append_data 'lvm2' "${LVM2}"
+	append_data 'lvm' "${LVM}"
 	append_data 'dmraid' "${DMRAID}"
-	append_data 'evms2' "${EVMS2}"
+	append_data 'evms' "${EVMS}"
 	
 	if [ "${NOINITRDMODULES}" = '' ]
 	then

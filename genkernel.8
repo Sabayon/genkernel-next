@@ -190,14 +190,14 @@ Force keymap selection at boot.
 \fB\-\-dmraid\fR
 Add DMRAID support.
 .TP
-\fB\-\-evms2\fR
-Add in EVMS2 support from static binaries if they exist on the system:
-you should run "emerge evms2" first.
+\fB\-\-evms\fR
+Add in EVMS support from static binaries if they exist on the system:
+you should run "emerge evms" first.
 .TP
-\fB\-\-lvm2\fR
+\fB\-\-lvm\fR
 .RS
-Add in LVM2 support from static binaries if they exist on the system,
-or compile static LVM2 binaries if static ones do not exist.
+Add in LVM support from static binaries if they exist on the system,
+or compile static LVM binaries if static ones do not exist.
 .RE
 .TP
 \fB\-\-luks\fR
@@ -275,11 +275,11 @@ Normally used to tell the kernel that it should start a network interface. If pr
 \fBnfsroot=\fR<...>
 If present, the initrd will try to mount a livecd from that location. Otherwise the location will be deduced from the DCHP request (option root\-path)
 .TP
-\fBdoevms2\fR
-Activate EVMS2 volumes on bootup
+\fBdoevms\fR
+Activate EVMS volumes on bootup
 .TP
-\fBdolvm2\fR
-Activate LVM2 volumes on bootup
+\fBdolvm\fR
+Activate LVM volumes on bootup
 .TP
 \fBdoscsi\fR
 Activate SCSI devices on bootup, necessary when SCSI support is compiled as modules and you're using SCSI or SATA devices.

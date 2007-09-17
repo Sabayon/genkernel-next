@@ -68,14 +68,14 @@ longusage() {
   echo "	--gensplash=<theme>	Force gensplash using <theme>"
   echo "	--gensplash-res=<res>	Select gensplash resolutions"
   echo "	--do-keymap-auto	Forces keymap selection at boot"
-  echo "	--evms			Include EVMS2 support"
+  echo "	--evms			Include EVMS support"
   echo "				--> 'emerge evms' in the host operating system"
   echo "				first"
-  echo "	--evms2			Include EVMS2 support"
+  echo "	--evms2			Include EVMS support"
   echo "				--> 'emerge evms' in the host operating system"
   echo "				first"
-  echo "	--lvm			Include LVM2 support"
-  echo "	--lvm2			Include LVM2 support"
+  echo "	--lvm			Include LVM support"
+  echo "	--lvm2			Include LVM support"
   echo "	--dmraid		Include DMRAID support"
   echo "	--slowusb		Enables extra pauses for slow USB CD boots"
   echo "	--bootloader=grub	Add new kernel to GRUB configuration"
@@ -208,6 +208,8 @@ parse_cmdline() {
 	      --evms2)
 		      CMD_EVMS=1
 		      print_info 2 "CMD_EVMS: ${CMD_EVMS}"
+			  echo
+			  print_warning 1 "Please use --evms, as --evms2 is deprecated."
 	      ;;
 	      --unionfs)
 		      CMD_UNIONFS=1
@@ -220,9 +222,15 @@ parse_cmdline() {
 		      print_warning 1 "This code is subject to change at any time."
 		      echo
 	      ;;
+	      --lvm)
+		      CMD_LVM=1
+		      print_info 2 "CMD_LVM: ${CMD_LVM}"
+	      ;;
 	      --lvm2)
-		      CMD_LVM2=1
-		      print_info 2 "CMD_LVM2: ${CMD_LVM2}"
+		      CMD_LVM=1
+		      print_info 2 "CMD_LVM: ${CMD_LVM}"
+			  echo
+			  print_warning 1 "Please use --lvm, as --lvm2 is deprecated."
 	      ;;
 	      --no-busybox)
 		      CMD_NO_BUSYBOX=1

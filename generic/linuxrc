@@ -107,8 +107,8 @@ do
 			fi
 		;;
 		# Start Volume manager options 
-		dolvm2)
-			USE_LVM2_NORMAL=1
+		dolvm)
+			USE_LVM_NORMAL=1
 		;;
 		dodmraid)
 			USE_DMRAID_NORMAL=1
@@ -117,8 +117,8 @@ do
 			DMRAID_OPTS=`parse_opt "${x}"`
 			USE_DMRAID_NORMAL=1
 		;;
-		doevms2)
-			USE_EVMS2_NORMAL=1
+		doevms)
+			USE_EVMS_NORMAL=1
 		;;
 		# Debug Options
 		debug)

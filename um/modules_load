@@ -3,9 +3,9 @@
 # RAID
 MODULES_ATARAID="ataraid pdcraid hptraid"
 MODULES_DMRAID="dm-mod dm-mirror"
-MODULES_EVMS2="dm-mod dm-snapshot dm-mirror dm-bbr raid0 raid1 raid456 \
+MODULES_EVMS="dm-mod dm-snapshot dm-mirror dm-bbr raid0 raid1 raid456 \
 raid5 raid6 raid10"
-MODULES_LVM2="dm-mod dm-snapshot dm-mirror dm-bbr"
+MODULES_LVM="dm-mod dm-snapshot dm-mirror dm-bbr"
 MODULES_MDRAID="dm-mod dm-snapshot dm-mirror dm-bbr raid0 raid1 raid456 \
 raid5 raid6 raid10"
 

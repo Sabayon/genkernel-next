@@ -474,43 +474,43 @@ compile_busybox() {
 	rm -rf "${BUSYBOX_DIR}" > /dev/null
 }
 
-compile_lvm2() {
+compile_lvm() {
 	compile_device_mapper
-	if [ ! -f "${LVM2_BINCACHE}" ]
+	if [ ! -f "${LVM_BINCACHE}" ]
 	then
-		[ -f "${LVM2_SRCTAR}" ] ||
-			gen_die "Could not find LVM2 source tarball: ${LVM2_SRCTAR}! Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
+		[ -f "${LVM_SRCTAR}" ] ||
+			gen_die "Could not find LVM source tarball: ${LVM_SRCTAR}! Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
 		cd "${TEMP}"
-		rm -rf ${LVM2_DIR} > /dev/null
-		/bin/tar -zxpf ${LVM2_SRCTAR} ||
-			gen_die 'Could not extract LVM2 source tarball!'
-		[ -d "${LVM2_DIR}" ] ||
-			gen_die 'LVM2 directory ${LVM2_DIR} is invalid!'
+		rm -rf ${LVM_DIR} > /dev/null
+		/bin/tar -zxpf ${LVM_SRCTAR} ||
+			gen_die 'Could not extract LVM source tarball!'
+		[ -d "${LVM_DIR}" ] ||
+			gen_die 'LVM directory ${LVM_DIR} is invalid!'
 		rm -rf "${TEMP}/device-mapper" > /dev/null
 		/bin/tar -jxpf "${DEVICE_MAPPER_BINCACHE}" -C "${TEMP}" ||
 			gen_die "Could not extract device-mapper binary cache!";
 		
-		cd "${LVM2_DIR}"
-		print_info 1 'lvm2: >> Configuring...'
+		cd "${LVM_DIR}"
+		print_info 1 'lvm: >> Configuring...'
 			LDFLAGS="-L${TEMP}/device-mapper/lib" \
 			CFLAGS="-I${TEMP}/device-mapper/include" \
 			CPPFLAGS="-I${TEMP}/device-mapper/include" \
-			./configure --enable-static_link --prefix=${TEMP}/lvm2 >> ${DEBUGFILE} 2>&1 ||
-				gen_die 'Configure of lvm2 failed!'
-		print_info 1 'lvm2: >> Compiling...'
+			./configure --enable-static_link --prefix=${TEMP}/lvm >> ${DEBUGFILE} 2>&1 ||
+				gen_die 'Configure of lvm failed!'
+		print_info 1 'lvm: >> Compiling...'
 			compile_generic '' utils
 			compile_generic 'install' utils
 
-		cd "${TEMP}/lvm2"
+		cd "${TEMP}/lvm"
 		print_info 1 '      >> Copying to bincache...'
 		strip "sbin/lvm.static" ||
 			gen_die 'Could not strip lvm.static!'
-		/bin/tar -cjf "${LVM2_BINCACHE}" sbin/lvm.static ||
+		/bin/tar -cjf "${LVM_BINCACHE}" sbin/lvm.static ||
 			gen_die 'Could not create binary cache'
 
 		cd "${TEMP}"
 		rm -rf "${TEMP}/device-mapper" > /dev/null
-		rm -rf "${LVM2_DIR}" lvm2
+		rm -rf "${LVM_DIR}" lvm
 	fi
 }
 

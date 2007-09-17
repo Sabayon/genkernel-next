@@ -200,7 +200,7 @@ determine_real_args() {
 	DEVFSD_BINCACHE=`cache_replace "${DEVFSD_BINCACHE}"`
 	DEVFSD_CONF_BINCACHE=`cache_replace "${DEVFSD_CONF_BINCACHE}"`
 	DEVICE_MAPPER_BINCACHE=`cache_replace "${DEVICE_MAPPER_BINCACHE}"`
-	LVM2_BINCACHE=`cache_replace "${LVM2_BINCACHE}"`
+	LVM_BINCACHE=`cache_replace "${LVM_BINCACHE}"`
 	DMRAID_BINCACHE=`cache_replace "${DMRAID_BINCACHE}"`
 	UNIONFS_BINCACHE=`cache_replace "${UNIONFS_BINCACHE}"`
 	UNIONFS_MODULES_BINCACHE=`cache_replace "${UNIONFS_MODULES_BINCACHE}"`
@@ -210,7 +210,7 @@ determine_real_args() {
 	BUSYBOX_CONFIG=`arch_replace "${BUSYBOX_CONFIG}"`
 	BUSYBOX_BINCACHE=`arch_replace "${BUSYBOX_BINCACHE}"`
 	DEVICE_MAPPER_BINCACHE=`arch_replace "${DEVICE_MAPPER_BINCACHE}"`
-	LVM2_BINCACHE=`arch_replace "${LVM2_BINCACHE}"`
+	LVM_BINCACHE=`arch_replace "${LVM_BINCACHE}"`
 	DMRAID_BINCACHE=`arch_replace "${DMRAID_BINCACHE}"`
 	UNIONFS_BINCACHE=`arch_replace "${UNIONFS_BINCACHE}"`
 	UNIONFS_MODULES_BINCACHE=`arch_replace "${UNIONFS_MODULES_BINCACHE}"`
@@ -377,18 +377,18 @@ determine_real_args() {
 		OLDCONFIG=0
 	fi
 
-	if isTrue "${CMD_LVM2}"
+	if isTrue "${CMD_LVM}"
 	then
-		LVM2=1
+		LVM=1
 	else
-		LVM2=0
+		LVM=0
 	fi
 
 	if isTrue "${CMD_EVMS}"
 	then
-		EVMS2=1
+		EVMS=1
 	else
-		EVMS2=0
+		EVMS=0
 	fi
 	
 	if isTrue "${CMD_UNIONFS}"
