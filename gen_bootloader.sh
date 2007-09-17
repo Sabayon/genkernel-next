@@ -90,7 +90,7 @@ EOF
 		if [ "$?" -eq '0' ]
 		then
 			local LIMIT=$(wc -l ${GRUB_CONF}.bak)
-			awk -f ${GK_BIN}/gen_bootloader_grub.awk LIMIT=${LIMIT/ */} KNAME=${KNAME} ARCH=${ARCH} KV=${KV} TYPE=${TYPE} ${GRUB_CONF}.bak > ${GRUB_CONF}
+			awk -f ${GK_SHARE}/gen_bootloader_grub.awk LIMIT=${LIMIT/ */} KNAME=${KNAME} ARCH=${ARCH} KV=${KV} TYPE=${TYPE} ${GRUB_CONF}.bak > ${GRUB_CONF}
 		else
 			print_info 1 "GRUB: Definition found, not duplicating."
 		fi

@@ -16,17 +16,17 @@ small_die() {
 }
 
 source /etc/genkernel.conf || small_die "Could not read /etc/genkernel.conf"
-source ${GK_BIN}/gen_funcs.sh || small_die "Could not read ${GK_BIN}/gen_funcs.sh"
-source ${GK_BIN}/gen_cmdline.sh || gen_die "Could not read ${GK_BIN}/gen_cmdline.sh"
-source ${GK_BIN}/gen_arch.sh || gen_die "Could not read ${GK_BIN}/gen_arch.sh"
-source ${GK_BIN}/gen_determineargs.sh || gen_die "Could not read ${GK_BIN}/gen_determineargs.sh"
-source ${GK_BIN}/gen_compile.sh || gen_die "Could not read ${GK_BIN}/gen_compile.sh"
-source ${GK_BIN}/gen_configkernel.sh || gen_die "Could not read ${GK_BIN}/gen_configkernel.sh"
-source ${GK_BIN}/gen_initrd.sh || gen_die "Could not read ${GK_BIN}/gen_initrd.sh"
-source ${GK_BIN}/gen_initramfs.sh || gen_die "Could not read ${GK_BIN}/gen_initramfs.sh"
-source ${GK_BIN}/gen_moddeps.sh || gen_die "Could not read ${GK_BIN}/gen_moddeps.sh"
-source ${GK_BIN}/gen_package.sh || gen_die "Could not read ${GK_BIN}/gen_package.sh"
-source ${GK_BIN}/gen_bootloader.sh || gen_die "Could not read ${GK_BIN}/gen_bootloader.sh"
+source ${GK_SHARE}/gen_funcs.sh || small_die "Could not read ${GK_BIN}/gen_funcs.sh"
+source ${GK_SHARE}/gen_cmdline.sh || gen_die "Could not read ${GK_BIN}/gen_cmdline.sh"
+source ${GK_SHARE}/gen_arch.sh || gen_die "Could not read ${GK_BIN}/gen_arch.sh"
+source ${GK_SHARE}/gen_determineargs.sh || gen_die "Could not read ${GK_BIN}/gen_determineargs.sh"
+source ${GK_SHARE}/gen_compile.sh || gen_die "Could not read ${GK_BIN}/gen_compile.sh"
+source ${GK_SHARE}/gen_configkernel.sh || gen_die "Could not read ${GK_BIN}/gen_configkernel.sh"
+source ${GK_SHARE}/gen_initrd.sh || gen_die "Could not read ${GK_BIN}/gen_initrd.sh"
+source ${GK_SHARE}/gen_initramfs.sh || gen_die "Could not read ${GK_BIN}/gen_initramfs.sh"
+source ${GK_SHARE}/gen_moddeps.sh || gen_die "Could not read ${GK_BIN}/gen_moddeps.sh"
+source ${GK_SHARE}/gen_package.sh || gen_die "Could not read ${GK_BIN}/gen_package.sh"
+source ${GK_SHARE}/gen_bootloader.sh || gen_die "Could not read ${GK_BIN}/gen_bootloader.sh"
 
 TEMP=${TMPDIR}/$RANDOM.$RANDOM.$RANDOM.$$
 

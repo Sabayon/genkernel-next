@@ -2,6 +2,10 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  17 Sep 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_bootloader.sh,
+  genkernel, genkernel.conf:
+  Removed the use of GK_BIN variable, since it isn't necessary.
+
   17 Sep 2007; Chris Gianelloni <wolf31o2@gentoo.org> TODO, genkernel.conf:
   Updated TODO and cleaning up genkernel.conf a bit.
 
