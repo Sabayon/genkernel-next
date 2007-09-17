@@ -377,28 +377,6 @@ create_initrd() {
 		mv ${TMPDIR}/initrd-${KV}.gz ${TMPDIR}/initrd-${KV}
 	fi
 
-	if [ "${BOOTSPLASH}" -eq "1" ]
-	then
-		if [ -x /sbin/splash ]
-		then
-			[ -z "${BOOTSPLASH_THEME}" ] && [ -e /etc/conf.d/bootsplash.conf ] && source /etc/conf.d/bootsplash.conf
-			[ -z "${BOOTSPLASH_THEME}" ] && [ -e /etc/conf.d/bootsplash ] && source /etc/conf.d/bootsplash
-			[ -z "${BOOTSPLASH_THEME}" ] && BOOTSPLASH_THEME=default
-			print_info 1 "        >> Installing bootsplash [ using the ${BOOTSPLASH_THEME} theme ]..."
-			for bootRes in '800x600' '1024x768' '1280x1024' '1600x1200'
-			do
-				if [ -f "/etc/bootsplash/${BOOTSPLASH_THEME}/config/bootsplash-${bootRes}.cfg" ]
-				then
-					/sbin/splash -s -f /etc/bootsplash/${BOOTSPLASH_THEME}/config/bootsplash-${bootRes}.cfg >> ${TMPDIR}/initrd-${KV} ||
-						gen_die "Error: could not copy ${bootRes} bootsplash!"
-				else
-					print_warning 1 "splash: Did not find a bootsplash for the ${bootRes} resolution..."
-				fi
-			done
-		else
-			print_warning 1 '        >> No bootsplash detected; skipping!'
-		fi
-	fi
 	if ! isTrue "${CMD_NOINSTALL}"
 	then
 		copy_image_with_preserve "initrd" \

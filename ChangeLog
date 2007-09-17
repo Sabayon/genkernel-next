@@ -2,6 +2,17 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  17 Sep 2007; Chris Gianelloni <wolf31o2@gentoo.org> README,
+  alpha/config.sh, gen_bootloader.sh, gen_cmdline.sh, gen_configkernel.sh,
+  gen_determineargs.sh, gen_initrd.sh, gen_package.sh, genkernel,
+  genkernel.8, genkernel.conf, ia64/config.sh, mips/config.sh,
+  parisc/config.sh, parisc64/config.sh, ppc/config.sh, ppc64/config.sh,
+  sparc/config.sh, sparc64/config.sh, um/config.sh, x86/config.sh,
+  x86_64/config.sh, xen0/config.sh, xenU/config.sh:
+  Removing bootsplash support since it hasn't been in a kernel we've supported
+  for years now, causes confusion amongst users, and really wasn't being used
+  and caused issues with 2.6/initrd creation in some corner cases.
+
   17 Sep 2007; Chris Gianelloni <wolf31o2@gentoo.org>
   -pkg/genkernel-svn-suspend.patch:
   Removing the reversal patch for the suspend removal, since it will no longer

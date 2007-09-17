@@ -216,18 +216,6 @@ determine_real_args() {
 	UNIONFS_MODULES_BINCACHE=`arch_replace "${UNIONFS_MODULES_BINCACHE}"`
 	BLKID_BINCACHE=`arch_replace "${BLKID_BINCACHE}"`
 	
-	if [ "${CMD_BOOTSPLASH}" != '' ]
-	then
-		BOOTSPLASH=${CMD_BOOTSPLASH}
-	fi
-
-	if isTrue ${BOOTSPLASH}
-	then
-		BOOTSPLASH=1
-	else
-		BOOTSPLASH=0
-	fi
-
 	if [ "${CMD_GENSPLASH}" != '' ]
 	then
 		GENSPLASH=${CMD_GENSPLASH}

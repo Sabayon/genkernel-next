@@ -1,5 +1,4 @@
 #!/bin/bash
-# genkernel config.sh for mips systems
 
 # Kernel Build Info
 KERNEL_MAKE=make
@@ -16,7 +15,6 @@ USE_DIETLIBC=0
 
 # Initrd/Initramfs Options
 COMPRESS_INITRD="yes"
-BOOTSPLASH=0
 GENSPLASH=0
 USECOLOR="yes"
 NOINITRDMODULES="yes"

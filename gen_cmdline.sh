@@ -30,8 +30,6 @@ longusage() {
   echo "	--no-clean		Do not run make clean before compilation"
   echo "	--no-mrproper		Do not run make mrproper before compilation"
   echo "	--oldconfig		Implies --no-clean and runs a 'make oldconfig'"
-  echo "	--bootsplash		Install bootsplash support to the initrd"
-  echo "	--no-bootsplash		Do not use bootsplash"
   echo "	--gensplash		Install gensplash support into bzImage"
   echo "	--no-gensplash		Do not use gensplash"
   echo "	--install		Install the kernel after building"
@@ -67,7 +65,6 @@ longusage() {
   echo "	--no-mountboot		Don't mount BOOTDIR automatically"  
   echo "	--bootdir=<dir>		Set the location of the boot-directory, default is /boot"
   echo "  Initialization"
-  echo "	--bootsplash=<theme>	Force bootsplash using <theme>"
   echo "	--gensplash=<theme>	Force gensplash using <theme>"
   echo "	--gensplash-res=<res>	Select gensplash resolutions"
   echo "	--do-keymap-auto	Forces keymap selection at boot"
@@ -110,8 +107,7 @@ longusage() {
   echo "				will be made against a kernel source tree"
   echo "	--initramfs-overlay=<dir>"
   echo "				Directory structure to include in the initramfs,"
-  echo "				only available on 2.6 kernels that do not use"
-  echo "				bootsplash"
+  echo "				only available on 2.6 kernels"
 }
 
 usage() {

@@ -26,7 +26,7 @@ gen_minkernpackage()
 	
 	if [ "${GENERATE_Z_IMAGE}" != '1' ]
 	then
-	    if [ "${KERN_24}" != '1' -a  "${CMD_BOOTSPLASH}" != '1' ]
+	    if [ "${KERN_24}" != '1' ]
 	    then
 		    [ "${BUILD_INITRD}" -ne 0 ] && { cp "${TMPDIR}/initramfs-${KV}" "${TEMP}/minkernpackage/initramfs-${ARCH}-${KV}" || gen_die 'Could not copy the initramfs for the kernel package!'; }
 	    else

@@ -1,13 +1,8 @@
 #!/bin/bash
-# x86/config.sh
 
 KERNEL_MAKE_DIRECTIVE="bzImage"
 KERNEL_MAKE_DIRECTIVE_2=""
 KERNEL_BINARY="arch/i386/boot/bzImage"
-
-# The dietlibc portion of busybox is commented out right now
-# other stuff seems to compile fine though
-USE_DIETLIBC=1
 
 [ -z "${MAKEOPTS}" ] && MAKEOPTS="-j2"
 

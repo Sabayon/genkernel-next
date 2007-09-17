@@ -17,11 +17,11 @@ parameters to be used.
 All that is needed to run genkernel is just ``genkernel'' with an action
 and any flags you might need:
 .PP
-# genkernel --menuconfig --no-clean --no-install --bootsplash all
+# genkernel --menuconfig --no-clean --no-install all
 .PP
 This would produce a kernel, asking you what how to configure it
-to your desire, leaving alone any existing compiled object files, enabling
-bootsplash support but not installing anything.
+to your desire, leaving alone any existing compiled object files, butt not
+installing anything.
 .SH ACTIONS
 An action tells genkernel what you want it to do - the following
 actions are supported:
@@ -175,12 +175,6 @@ module compilation stage of 2.4 series kernels to avoid bottlenecks; the
 .PP
 .BR Initialization
 .TP
-\fB\-\-\fR[no\-]\fBbootsplash=\fR<theme>
-If the extra argument is specified, bootsplash is forced using <theme>
-rather than the default theme specified in your bootsplash
-configuration. If \fB\-\-no-bootsplash\fR is specified, then
-bootsplash is disabled.
-.TP
 \fB\-\-\fR[no\-]\fBgensplash=\fR<theme>
 If the extra argument is specified, gensplash is forced using <theme>
 rather than the default theme specified in your gensplash
@@ -253,8 +247,7 @@ against a kernel source tree.
 .TP
 \fB\-\-initramfs\-overlay=\fR<dir>
 Directory structure to inject into the initramfs.
-Only available on 2.6 kernels that don't use bootsplash; use a CPIO
-archive as a parameter.
+use a CPIO archive as a parameter.
 .SH INITRD OPTIONS
 The following options can be passed as kernel parameters from the
 bootloader, which the initrd scripts would recognize.
