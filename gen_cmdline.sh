@@ -15,8 +15,8 @@ longusage() {
   echo "  Configuration settings"
   echo "	--config=<file>	genkernel configuration file to use"
   echo "  Debug settings"
-  echo "	--debuglevel=<0-5>	Debug Verbosity Level"
-  echo "	--debugfile=<outfile>	Output file for debug info"
+  echo "	--loglevel=<0-5>	Debug Verbosity Level"
+  echo "	--logfile=<outfile>	Output file for debug info"
   echo "	--color			Output debug in color"
   echo "	--no-color		Do not output debug in color"
   echo "  Kernel Configuration settings"
@@ -251,10 +251,10 @@ parse_cmdline() {
 			CMD_BOOTLOADER=`parse_opt "$*"`
 			print_info 2 "CMD_BOOTLOADER: ${CMD_BOOTLOADER}"
 			;;
-		--debuglevel=*)
-			CMD_DEBUGLEVEL=`parse_opt "$*"`
-			DEBUGLEVEL="${CMD_DEBUGLEVEL}"
-			print_info 2 "CMD_DEBUGLEVEL: ${CMD_DEBUGLEVEL}"
+		--loglevel=*)
+			CMD_LOGLEVEL=`parse_opt "$*"`
+			LOGLEVEL="${CMD_LOGLEVEL}"
+			print_info 2 "CMD_LOGLEVEL: ${CMD_LOGLEVEL}"
 			;;
 		--menuconfig)
 			TERM_LINES=`stty -a | head -n 1 | cut -d\  -f5 | cut -d\; -f1`
@@ -398,11 +398,11 @@ parse_cmdline() {
 			print_info 2 "USECOLOR: ${USECOLOR}"
 			setColorVars
 			;;
-		--debugfile=*)
-			CMD_DEBUGFILE=`parse_opt "$*"`
-			DEBUGFILE=`parse_opt "$*"`
-			print_info 2 "CMD_DEBUGFILE: ${CMD_DEBUGFILE}"
-			print_info 2 "DEBUGFILE: ${CMD_DEBUGFILE}"
+		--logfile=*)
+			CMD_LOGFILE=`parse_opt "$*"`
+			LOGFILE=`parse_opt "$*"`
+			print_info 2 "CMD_LOGFILE: ${CMD_LOGFILE}"
+			print_info 2 "LOGFILE: ${CMD_LOGFILE}"
 			;;
 		--kerneldir=*)
 			CMD_KERNELDIR=`parse_opt "$*"`

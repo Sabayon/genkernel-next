@@ -6,11 +6,11 @@ create_initrd_loop() {
 	[ "$#" -ne '1' ] && gen_die 'create_initrd_loop(): Not enough arguments!'
 	mkdir -p ${TEMP}/initrd-mount ||
 		gen_die 'Could not create loopback mount directory!'
-	dd if=/dev/zero of=${TMPDIR}/initrd-${KV} bs=1k count=${1} >> "${DEBUGFILE}" 2>&1 ||
+	dd if=/dev/zero of=${TMPDIR}/initrd-${KV} bs=1k count=${1} >> "${LOGFILE}" 2>&1 ||
 		gen_die "Could not zero initrd-${KV}"
-	mke2fs -F -N750 -q "${TMPDIR}/initrd-${KV}" >> "${DEBUGFILE}" 2>&1 ||
+	mke2fs -F -N750 -q "${TMPDIR}/initrd-${KV}" >> "${LOGFILE}" 2>&1 ||
 		gen_die "Could not format initrd-${KV}!"
-	mount -t ext2 -o loop "${TMPDIR}/initrd-${KV}" "${TEMP}/initrd-mount" >> "${DEBUGFILE}" 2>&1 ||
+	mount -t ext2 -o loop "${TMPDIR}/initrd-${KV}" "${TEMP}/initrd-mount" >> "${LOGFILE}" 2>&1 ||
 		gen_die 'Could not mount the initrd filesystem!'
 }
 
@@ -22,7 +22,7 @@ create_initrd_unmount_loop() {
 
 move_initrd_to_loop() {
 	cd "${TEMP}/initrd-temp"
-	mv * "${TEMP}/initrd-mount" >> ${DEBUGFILE} 2>&1
+	mv * "${TEMP}/initrd-mount" >> ${LOGFILE} 2>&1
 }
 
 # check for static linked file with objdump

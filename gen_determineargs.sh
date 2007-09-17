@@ -78,9 +78,9 @@ get_KV() {
 }
 
 determine_real_args() {
-	if [ "${CMD_DEBUGFILE}" != '' ]
+	if [ "${CMD_LOGFILE}" != '' ]
 	then
-		DEBUGFILE="${CMD_DEBUGFILE}"
+		LOGFILE="${CMD_LOGFILE}"
 	fi
 
 	if [ "${CMD_MAKEOPTS}" != '' ]

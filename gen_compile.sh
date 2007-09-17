@@ -216,16 +216,16 @@ compile_generic() {
 		print_info 2 "COMMAND: ${MAKE} ${MAKEOPTS/-j?/j1} ${ARGS} ${target} $*" 1 0 1
 		eval ${MAKE} -s ${MAKEOPTS/-j?/-j1} "${ARGS}" ${target} $*
 		RET=$?
-	elif [ "${DEBUGLEVEL}" -gt "1" ]
+	elif [ "${LOGLEVEL}" -gt "1" ]
 	then
-		# Output to stdout and debugfile
+		# Output to stdout and logfile
 		print_info 2 "COMMAND: ${MAKE} ${MAKEOPTS} ${ARGS} ${target} $*" 1 0 1
-		eval ${MAKE} ${MAKEOPTS} ${ARGS} ${target} $* 2>&1 | tee -a ${DEBUGFILE}
+		eval ${MAKE} ${MAKEOPTS} ${ARGS} ${target} $* 2>&1 | tee -a ${LOGFILE}
 		RET=${PIPESTATUS[0]}
 	else
-		# Output to debugfile only
+		# Output to logfile only
 		print_info 2 "COMMAND: ${MAKE} ${MAKEOPTS} ${ARGS} ${1} $*" 1 0 1
-		eval ${MAKE} ${MAKEOPTS} ${ARGS} ${target} $* >> ${DEBUGFILE} 2>&1
+		eval ${MAKE} ${MAKEOPTS} ${ARGS} ${target} $* >> ${LOGFILE} 2>&1
 		RET=$?
 	fi
 	[ "${RET}" -ne '0' ] &&
@@ -495,7 +495,7 @@ compile_lvm() {
 			LDFLAGS="-L${TEMP}/device-mapper/lib" \
 			CFLAGS="-I${TEMP}/device-mapper/include" \
 			CPPFLAGS="-I${TEMP}/device-mapper/include" \
-			./configure --enable-static_link --prefix=${TEMP}/lvm >> ${DEBUGFILE} 2>&1 ||
+			./configure --enable-static_link --prefix=${TEMP}/lvm >> ${LOGFILE} 2>&1 ||
 				gen_die 'Configure of lvm failed!'
 		print_info 1 'lvm: >> Compiling...'
 			compile_generic '' utils
@@ -536,7 +536,7 @@ compile_dmraid() {
 			LDFLAGS="-L${TEMP}/device-mapper/lib" \
 			CFLAGS="-I${TEMP}/device-mapper/include" \
 			CPPFLAGS="-I${TEMP}/device-mapper/include" \
-			./configure --enable-static_link --prefix=${TEMP}/dmraid >> ${DEBUGFILE} 2>&1 ||
+			./configure --enable-static_link --prefix=${TEMP}/dmraid >> ${LOGFILE} 2>&1 ||
 				gen_die 'Configure of dmraid failed!'
 				
 			# We dont necessarily have selinux installed yet... look into
@@ -600,7 +600,7 @@ compile_device_mapper() {
 			gen_die "device-mapper directory ${DEVICE_MAPPER_DIR} invalid"
 		cd "${DEVICE_MAPPER_DIR}"
 		./configure --prefix=${TEMP}/device-mapper --enable-static_link \
-			--disable-selinux >> ${DEBUGFILE} 2>&1 ||
+			--disable-selinux >> ${LOGFILE} 2>&1 ||
 			gen_die 'Configuring device-mapper failed!'
 		print_info 1 'device-mapper: >> Compiling...'
 		compile_generic '' utils
@@ -633,7 +633,7 @@ compile_e2fsprogs() {
 			gen_die "e2fsprogs directory ${E2FSPROGS_DIR} invalid"
 		cd "${E2FSPROGS_DIR}"
 		print_info 1 'e2fsprogs: >> Configuring...'
-		./configure  --with-ldopts=-static >> ${DEBUGFILE} 2>&1 ||
+		./configure  --with-ldopts=-static >> ${LOGFILE} 2>&1 ||
 			gen_die 'Configuring e2fsprogs failed!'
 		print_info 1 'e2fsprogs: >> Compiling...'
 		MAKE=${UTILS_MAKE} compile_generic "" ""

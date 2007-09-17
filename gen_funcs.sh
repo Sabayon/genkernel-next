@@ -43,10 +43,10 @@ setColorVars
 
 dump_debugcache() {
 	TODEBUGCACHE=0
-	echo "${DEBUGCACHE}" >> ${DEBUGFILE}
+	echo "${DEBUGCACHE}" >> ${LOGFILE}
 }
 
-# print_info(debuglevel, print [, newline [, prefixline [, forcefile ] ] ])
+# print_info(loglevel, print [, newline [, prefixline [, forcefile ] ] ])
 print_info() {
 	local NEWLINE=1
 	local FORCEFILE=0
@@ -91,9 +91,9 @@ print_info() {
 		fi
 	fi
 
-	# PRINT TO SCREEN ONLY IF PASSED DEBUGLEVEL IS HIGHER THAN
+	# PRINT TO SCREEN ONLY IF PASSED LOGLEVEL IS HIGHER THAN
 	# OR EQUAL TO SET DEBUG LEVEL
-	if [ "$1" -lt "${DEBUGLEVEL}" -o "$1" -eq "${DEBUGLEVEL}" ]
+	if [ "$1" -lt "${LOGLEVEL}" -o "$1" -eq "${LOGLEVEL}" ]
 	then
 		SCRPRINT='1'
 	fi
@@ -142,13 +142,13 @@ print_info() {
 			if [ "${TODEBUGCACHE}" -eq 1 ]; then
 				DEBUGCACHE="${DEBUGCACHE}${STR}"
 			else
-				echo -ne "${STR}" >> ${DEBUGFILE}
+				echo -ne "${STR}" >> ${LOGFILE}
 			fi	
 		else
 			if [ "${TODEBUGCACHE}" -eq 1 ]; then
 				DEBUGCACHE="${DEBUGCACHE}${STR}"$'\n'
 			else
-				echo "${STR}" >> ${DEBUGFILE}
+				echo "${STR}" >> ${LOGFILE}
 			fi
 		fi
 	fi
@@ -194,9 +194,9 @@ cache_replace() {
 }
 
 clear_log() {
-    if [ -f "${DEBUGFILE}" ]
+    if [ -f "${LOGFILE}" ]
     then
-	(echo > "${DEBUGFILE}") 2>/dev/null || small_die "Genkernel: Could not write to ${DEBUGFILE}."
+	(echo > "${LOGFILE}") 2>/dev/null || small_die "Genkernel: Could not write to ${LOGFILE}."
     fi   
 }
 
@@ -213,20 +213,20 @@ gen_die() {
 
 	if isTrue ${USECOLOR}
 	then
-		GREP_COLOR='1' grep -B5 -E --colour=always "([Ww][Aa][Rr][Nn][Ii][Nn][Gg]|[Ee][Rr][Rr][Oo][Rr][ :,!]|[Ff][Aa][Ii][Ll][Ee]?[Dd]?)" ${DEBUGFILE}
+		GREP_COLOR='1' grep -B5 -E --colour=always "([Ww][Aa][Rr][Nn][Ii][Nn][Gg]|[Ee][Rr][Rr][Oo][Rr][ :,!]|[Ff][Aa][Ii][Ll][Ee]?[Dd]?)" ${LOGFILE}
 	else
-		grep -B5 -E "([Ww][Aa][Rr][Nn][Ii][Nn][Gg]|[Ee][Rr][Rr][Oo][Rr][ :,!]|[Ff][Aa][Ii][Ll][Ee]?[Dd]?)" ${DEBUGFILE}
+		grep -B5 -E "([Ww][Aa][Rr][Nn][Ii][Nn][Gg]|[Ee][Rr][Rr][Oo][Rr][ :,!]|[Ff][Aa][Ii][Ll][Ee]?[Dd]?)" ${LOGFILE}
 	fi
 	echo
 	print_info 1 "-- End log... --"
 	echo
-	print_info 1 "Please consult ${DEBUGFILE} for more information and any"
+	print_info 1 "Please consult ${LOGFILE} for more information and any"
 	print_info 1 "errors that were reported above."
 	echo
 	print_info 1 "Report any genkernel bugs to bugs.gentoo.org and"
 	print_info 1 "assign your bug to genkernel@gentoo.org. Please include"
 	print_info 1 "as much information as you can in your bug report; attaching"
-	print_info 1 "${DEBUGFILE} so that your issue can be dealt with effectively."
+	print_info 1 "${LOGFILE} so that your issue can be dealt with effectively."
 	print_info 1 ''
 	print_info 1 'Please do *not* report compilation failures as genkernel bugs!'
 	print_info 1 ''

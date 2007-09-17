@@ -3,6 +3,11 @@
 # $Header: $
 
   17 Sep 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_cmdline.sh,
+  gen_compile.sh, gen_determineargs.sh, gen_funcs.sh, gen_initrd.sh,
+  genkernel, genkernel.8, genkernel.conf:
+  Rename DEBUGLEVEL/DEBUGFILE to LOGLEVEL/LOGFILE to help reduce confusion.
+
+  17 Sep 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_cmdline.sh,
   gen_configkernel.sh, genkernel:
   Some more generalcleanup and adding support for using a config file other
   than /etc/genkernel.conf to add flexibility.
