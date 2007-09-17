@@ -2,6 +2,11 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  17 Sep 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_cmdline.sh,
+  gen_configkernel.sh, genkernel:
+  Some more generalcleanup and adding support for using a config file other
+  than /etc/genkernel.conf to add flexibility.
+
   17 Sep 2007; Chris Gianelloni <wolf31o2@gentoo.org>
   -pkg/module-init-tools-0.9.15-pre4.tar.bz2,
   -pkg/klibc-1.1.16-sparc2.patch, -pkg/klibc-1.2.1-nostdinc-flags.patch,

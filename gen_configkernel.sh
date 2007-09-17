@@ -35,7 +35,7 @@ config_kernel() {
 		compile_generic mrproper kernel
 	fi
 
-	# If we're not cleaning, then we don't want to try to overwrite the configs there
+	# If we're not cleaning, then we don't want to try to overwrite the configs
 	# or we might remove configurations someone is trying to test.
 
 	if isTrue "${CLEAN}"
@@ -52,7 +52,7 @@ config_kernel() {
 		else
 			print_info 1 '        >> Running oldconfig...'
 		fi
-		yes '' 2>/dev/null | compile_generic oldconfig kernel 2>/dev/null # Nullify to stop broken pipe messages
+		yes '' 2>/dev/null | compile_generic oldconfig kernel 2>/dev/null
 	fi
 	if isTrue "${CLEAN}"
 	then
@@ -98,8 +98,9 @@ config_kernel() {
 	# TODO: force on with --genzimage
 	if [ "${KERN_24}" -eq '1' ]
 	then
-	    # Make sure Ext2 support is on...
-	    sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_EXT2_FS[ =].*/CONFIG_EXT2_FS=y/g'
+		# Make sure Ext2 support is on...
+		sed -e 's/#\? \?CONFIG_EXT2_FS[ =].*/CONFIG_EXT2_FS=y/g' \
+			-i ${KERNEL_DIR}/.config 
 	fi
 
 	# Make sure lvm modules are on if --lvm/--lvm
@@ -120,11 +121,4 @@ config_kernel() {
 	then
 		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_FB_SPLASH is.*/CONFIG_FB_SPLASH=y/g'
 	fi
-
-	# This check isn't complete: SOFTWARE_SUSPEND has extra deps on some systems such as CPU hotplug
-#	if isTrue ${CMD_SUSPEND}
-#	then
-#		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_SOFTWARE_SUSPEND is.*/CONFIG_SOFTWARE_SUSPEND=y/g'
-#	fi
-
 }

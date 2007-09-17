@@ -1,5 +1,4 @@
 #!/bin/bash
-# Genkernel v3
 
 PATH="/bin:/usr/bin:/sbin:/usr/sbin"
 GK_V='3.4.9_pre3'
@@ -15,7 +14,25 @@ small_die() {
   exit 1
 }
 
-source /etc/genkernel.conf || small_die "Could not read /etc/genkernel.conf"
+parse_opt() {
+	case "$1" in
+		*\=*)
+			echo "$1" | cut -f2- -d=
+		;;
+	esac
+}
+
+# We don't know where our config is, so we check for it, and default to using
+# /etc/genkernel.conf if nobody has specified one.
+case "$*" in
+	--config=*)
+		CMD_GK_CONFIG=`parse_opt "$*"`
+		;;
+	esac
+}
+
+source ${CMD_GK_CONFIG:-/etc/genkernel.conf} || small_die "Could not read /etc/genkernel.conf"
+
 source ${GK_SHARE}/gen_funcs.sh || small_die "Could not read ${GK_SHARE}/gen_funcs.sh"
 source ${GK_SHARE}/gen_cmdline.sh || gen_die "Could not read ${GK_SHARE}/gen_cmdline.sh"
 source ${GK_SHARE}/gen_arch.sh || gen_die "Could not read ${GK_SHARE}/gen_arch.sh"
