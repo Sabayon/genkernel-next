@@ -1,8 +1,5 @@
 #!/bin/ash
 
-# Copyright 2001-2006 Gentoo Technologies, Inc.
-# Distributed under the terms of the GNU General Public License, v2 or later
-
 MYIP=""
 MYGW=""
 

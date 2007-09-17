@@ -2,6 +2,11 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  17 Sep 2007; Chris Gianelloni <wolf31o2@gentoo.org> generic/linuxrc,
+  netboot/misc/bin/net-setup, netboot/misc/etc/fstab:
+  Remove some unnecessary copyright dates from a few files so we don't keep
+  forgetting to update them when we modify the files.
+
   17 Sep 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_cmdline.sh,
   gen_configkernel.sh, gen_determineargs.sh, gen_initramfs.sh, genkernel,
   genkernel.8, mips/config.sh:
