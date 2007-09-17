@@ -1,4 +1,8 @@
 - Need configs for other currently-unsupported arches.
 - Make configs stackable
 - Remove 2.4 kernel support
+- Create arch/modules subdirs and move all arches under arch
 - Refactor code to be more simple and extendable
+- Fix all TODO sections in the code
+- Add all options to genkernel.conf
+
