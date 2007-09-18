@@ -430,7 +430,7 @@ create_initramfs() {
 	append_data 'base_layout'
 	append_data 'auxilary'
 	append_data 'busybox' "${BUSYBOX}"
-	append_data 'devfs' "${DEVFS}"
+#	append_data 'devfs' "${DEVFS}"
 	append_data 'unionfs_modules' "${UNIONFS}"
 	append_data 'unionfs_tools' "${UNIONFS}"
 	append_data 'lvm' "${LVM}"

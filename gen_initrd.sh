@@ -85,7 +85,7 @@ create_base_initrd_sys() {
 	chmod +x "${TEMP}/initrd-temp/bin/busybox"
 
 	# devfsd
-	if [ "${DEVFS}" -eq '1' ]
+	if [ "${KERN_24}" -eq '1' ]
 	then
 		cp "${DEVFSD_BINCACHE}" "${TEMP}/initrd-temp/bin/devfsd.bz2" || gen_die 'Could not copy devfsd executable from bincache!'
 		bunzip2 "${TEMP}/initrd-temp/bin/devfsd.bz2" || gen_die 'Could not uncompress devfsd!'

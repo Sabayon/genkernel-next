@@ -2,6 +2,11 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  18 Sep 2007; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh,
+  gen_initrd.sh:
+  we don't ever want devfs in an initramfs
+  check KERN_24 instead of DEVFS for 2.4 initrd generation
+
   17 Sep 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_cmdline.sh,
   gen_compile.sh, gen_determineargs.sh, gen_funcs.sh, gen_initrd.sh,
   genkernel, genkernel.8, genkernel.conf:
