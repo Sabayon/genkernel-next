@@ -405,6 +405,7 @@ append_auxilary() {
 	chmod +x "${TEMP}/initramfs-aux-temp/sbin/modprobe"
 	cd "${TEMP}/initramfs-aux-temp/"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	cd "${TEMP}"
 	rm -r "${TEMP}/initramfs-aux-temp/"	
 }
 
