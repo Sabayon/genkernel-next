@@ -367,12 +367,6 @@ append_auxilary() {
 	done
 	echo '"' >> "${TEMP}/initramfs-aux-temp/etc/initrd.defaults"	
 
-	if [ -f "${GK_SHARE}/${ARCH}/modprobe" ]
-	then
-		cp "${GK_SHARE}/${ARCH}/modprobe" "${TEMP}/initramfs-aux-temp/sbin/modprobe"
-	else
-		cp "${GK_SHARE}/generic/modprobe" "${TEMP}/initramfs-aux-temp/sbin/modprobe"
-	fi
 	if isTrue $CMD_DOKEYMAPAUTO
 	then
 		echo 'MY_HWOPTS="${MY_HWOPTS} keymap"' >> ${TEMP}/initramfs-aux-temp/etc/initrd.defaults
@@ -402,7 +396,6 @@ append_auxilary() {
 	chmod +x "${TEMP}/initramfs-aux-temp/init"
 	chmod +x "${TEMP}/initramfs-aux-temp/etc/initrd.scripts"
 	chmod +x "${TEMP}/initramfs-aux-temp/etc/initrd.defaults"
-	chmod +x "${TEMP}/initramfs-aux-temp/sbin/modprobe"
 	cd "${TEMP}/initramfs-aux-temp/"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
 	cd "${TEMP}"

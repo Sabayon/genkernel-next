@@ -310,12 +310,6 @@ create_initrd_aux() {
 	done
 	echo '"' >> "${TEMP}/initrd-temp/etc/initrd.defaults"	
 
-	if [ -f "${GK_SHARE}/${ARCH}/modprobe" ]
-	then
-		cp "${GK_SHARE}/${ARCH}/modprobe" "${TEMP}/initrd-temp/sbin/modprobe"
-	else
-		cp "${GK_SHARE}/generic/modprobe" "${TEMP}/initrd-temp/sbin/modprobe"
-	fi
 	if isTrue $CMD_DOKEYMAPAUTO
 	then
 		echo 'MY_HWOPTS="${MY_HWOPTS} keymap"' >> ${TEMP}/initrd-temp/etc/initrd.defaults
@@ -332,7 +326,6 @@ create_initrd_aux() {
 	chmod +x "${TEMP}/initrd-temp/linuxrc"
 	chmod +x "${TEMP}/initrd-temp/etc/initrd.scripts"
 	chmod +x "${TEMP}/initrd-temp/etc/initrd.defaults"
-	chmod +x "${TEMP}/initrd-temp/sbin/modprobe"
 }
 
 calc_initrd_size() {
