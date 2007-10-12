@@ -2,6 +2,9 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  12 Oct 2007; Andrew Gaffney <agaffney@gentoo.org> genkernel.8:
+  update description for --initramfs-overlay in man page to match --help
+
   05 Oct 2007; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh,
   gen_initrd.sh:
   remove generic/modprobe and all supporting code, since busybox has modprobe
