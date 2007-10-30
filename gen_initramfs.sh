@@ -226,6 +226,23 @@ append_evms(){
 	rm -r "${TEMP}/initramfs-evms-temp/"
 }
 
+append_mdadm(){
+	if [ -d "${TEMP}/initramfs-mdadm-temp" ]
+	then
+		rm -r "${TEMP}/initramfs-mdadm-temp/"
+	fi
+	cd ${TEMP}
+	mkdir -p "${TEMP}/initramfs-mdadm-temp/etc/"
+	if [ "${MDADM}" -eq '1' ]
+	then
+		cp -a /etc/mdadm.conf "${TEMP}/initramfs-udev-temp/etc" \
+			|| gen_die "Could not copy mdadm.conf!"; }
+	fi
+	cd "${TEMP}/initramfs-mdadm-temp/"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	rm -rf "${TEMP}/initramfs-mdadm-temp" > /dev/null
+}
+
 append_splash(){
 	if [ -x /usr/bin/splash_geninitramfs ] || [ -x /sbin/splash_geninitramfs ]
 	then
@@ -430,6 +447,7 @@ create_initramfs() {
 	append_data 'lvm' "${LVM}"
 	append_data 'dmraid' "${DMRAID}"
 	append_data 'evms' "${EVMS}"
+	append_data 'mdadm' "${MDADM}"
 	
 	if [ "${NOINITRDMODULES}" = '' ]
 	then

@@ -81,6 +81,7 @@ longusage() {
   echo "				first"
   echo "	--lvm			Include LVM support"
   echo "	--lvm2			Include LVM support"
+  echo "	--mdadm			Copy /etc/mdadm.conf to initramfs"
   echo "	--dmraid		Include DMRAID support"
   echo "	--slowusb		Enables extra pauses for slow USB CD boots"
   echo "	--bootloader=grub	Add new kernel to GRUB configuration"
@@ -228,6 +229,10 @@ parse_cmdline() {
 			print_info 2 "CMD_LVM: ${CMD_LVM}"
 			echo
 			print_warning 1 "Please use --lvm, as --lvm2 is deprecated."
+			;;
+		--mdadm)
+			CMD_MDADM=1
+			print_info 2 "CMD_MDADM: $CMD_MDADM"
 			;;
 		--no-busybox)
 			CMD_NO_BUSYBOX=1

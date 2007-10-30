@@ -412,6 +412,13 @@ determine_real_args() {
 		DMRAID=0
 	fi
 	
+	if isTrue "${CMD_MDADM}"
+	then
+		MDADM=1
+	else
+		MDADM=0
+	fi
+
 	get_KV
 	UNIONFS_MODULES_BINCACHE=`kv_replace "${UNIONFS_MODULES_BINCACHE}"`
 }

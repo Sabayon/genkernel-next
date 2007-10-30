@@ -2,6 +2,20 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  30 Oct 2007; Chris Gianelloni <wolf31o2@gentoo.org>
+  -pkg/suspend-0.5-Makefile.patch, -pkg/busybox-1.1.3+gentoo.tar.bz2,
+  -pkg/devfsd-1.3.25-dietlibc.patch,
+  -pkg/devfsd-1.3.25-dietlibc-kernel25.tar.bz2, alpha/busy-config,
+  gen_cmdline.sh, gen_compile.sh, gen_determineargs.sh, gen_initramfs.sh,
+  generic/initrd.defaults, generic/initrd.scripts, generic/linuxrc,
+  genkernel, ia64/busy-config, mips/busy-config, parisc/busy-config,
+  parisc64/busy-config, ppc/busy-config, ppc64/busy-config,
+  sparc/busy-config, sparc64/busy-config, um/busy-config, x86/busy-config,
+  x86/modules_load, x86_64/busy-config, xen0/busy-config, xenU/busy-config:
+  Added a patch from Alan Hourihane <alanh@fairlite.demon.co.uk> for mdadm
+  support in busybox from bug #172128. This is genkernel 3.4.9_pre4 for
+  testing.
+
   30 Oct 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_initramfs.sh,
   generic/initrd.scripts, generic/linuxrc:
   Made a few minor cleanups here and there.

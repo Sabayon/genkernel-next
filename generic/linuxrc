@@ -108,6 +108,9 @@ do
 		dolvm)
 			USE_LVM_NORMAL=1
 		;;
+		domdadm)
+			USE_MDADM=1
+		;;
 		dodmraid)
 			USE_DMRAID_NORMAL=1
 		;;

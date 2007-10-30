@@ -602,6 +602,15 @@ startVolumes() {
 		ln -sf /dev/device-mapper /dev/mapper/control
 	fi
 	
+	if [ "${USE_MDADM}" -eq '1' ]
+	then
+		if [ ! -e '/etc/mdadm.conf' ]
+		then
+			/sbin/mdadm --examine > /etc/mdadm.conf
+		fi
+		/sbin/mdadm --assemble
+	fi
+
 	if [ "${USE_DMRAID_NORMAL}" -eq '1' ]
 	then
 		if [ -e '/sbin/dmraid' ]
