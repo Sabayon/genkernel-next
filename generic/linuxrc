@@ -132,14 +132,14 @@ do
 		# Module no-loads
 		doload\=*)
 			MDOLIST=`parse_opt "${x}"`
-			MDOLIST="`echo ${MDOLIST} | sed -e \"s/,/ /g\"`"
+			MDOLIST="`echo ${MDOLIST} | sed -e 's/,/ /g'`"
 		;;
 		nodetect)
 			NODETECT=1
 		;;
 		noload\=*)
 			MLIST=`parse_opt "${x}"`
-			MLIST="`echo ${MLIST} | sed -e \"s/,/ /g\"`"
+			MLIST="`echo ${MLIST} | sed -e 's/,/ /g'`"
 			export MLIST
 		;;
 		# Redirect output to a specific tty
@@ -245,7 +245,6 @@ fi
 # Run debug shell if requested
 rundebugshell
 
-#suspend_resume
 suspend2_resume
 
 if [ "${CDROOT}" -eq '1' ]
