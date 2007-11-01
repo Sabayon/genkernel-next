@@ -608,7 +608,7 @@ compile_device_mapper() {
 		compile_generic 'install' utils
 		print_info 1 '        >> Copying to cache...'
 		cd "${TEMP}"
-		rm -r "${TEMP}/device-mapper/man" ||
+		rm -rf "${TEMP}/device-mapper/man" ||
 			gen_die 'Could not remove manual pages!'
 		strip "${TEMP}/device-mapper/sbin/dmsetup" ||
 			gen_die 'Could not strip dmsetup binary!'

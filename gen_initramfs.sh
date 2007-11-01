@@ -235,8 +235,8 @@ append_mdadm(){
 	mkdir -p "${TEMP}/initramfs-mdadm-temp/etc/"
 	if [ "${MDADM}" -eq '1' ]
 	then
-		cp -a /etc/mdadm.conf "${TEMP}/initramfs-udev-temp/etc" \
-			|| gen_die "Could not copy mdadm.conf!"; }
+		cp -a /etc/mdadm.conf "${TEMP}/initramfs-mdadm-temp/etc" \
+			|| gen_die "Could not copy mdadm.conf!"
 	fi
 	cd "${TEMP}/initramfs-mdadm-temp/"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
