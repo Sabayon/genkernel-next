@@ -1,0 +1,143 @@
+#!/bin/ash
+# Apparently, this is required for proper functionality with busybox 1.1.3
+# Check out bug #197730 for more details.
+
+. /etc/initrd.defaults
+
+usage() {
+	echo 'Usage:'
+	echo '  modprobe moduleprefix'
+	echo
+	echo 'Example:'
+	echo '  modprobe eepro100'
+	echo
+	echo 'Note: Do not pass the suffix to modprobe!'
+	exit 1
+}
+
+# Pass module name to this function
+modules_dep_list() {
+	if [ "$#" -lt '1' ]
+	then
+		echo 'modules_dep_list(): Improper usage!'
+		exit 1
+	fi
+	cat /lib/modules/${KV}/modules.dep | grep ${1}${KSUFF}\: | cut -d\:  -f2
+}
+
+
+# Pass module deps list
+strip_mod_paths() {
+	local x
+	local ret
+	local myret
+
+	[ "$#" -lt '1' ] && return
+
+	for x in ${*}
+	do
+		ret=`basename ${x} | cut -d. -f1`
+		myret="${myret} ${ret}"
+	done
+	echo "${myret}"
+}
+
+LOADED_MODULES=''
+is_module_already_loaded() {
+	local x
+	if [ "$#" != '1' ]
+	then
+		echo 'is_module_already_loaded(): Improper usage!'
+	fi
+
+	for x in ${LOADED_MODULES}
+	do
+		if [ "${x}" = "${1}" ]
+		then
+			# Yep, module is loaded
+			return 0
+		fi
+	done
+	return 1
+}
+
+real_mod_path() {
+	# Find -name is no good since the return status is always zero
+	find /lib/modules | grep /"${1}${KSUFF}"
+}
+
+modprobe2() {
+	local x
+	local deps
+	local real_path
+	local modlist
+	local ret
+
+	local echoAppend
+	local echoFlags
+
+	if [ "$#" -lt '1' ]
+	then
+		usage
+		exit 1
+	fi
+	real_path=`real_mod_path ${1}`
+	if [ "${real_path}" = '' -o "${real_path}" = ' ' ]
+	then
+		echo ' module not found.'
+		exit 2
+	fi
+	modlist=`modules_dep_list ${1}`
+	if [ "${modlist}" != '' -a "${modlist}" != ' ' ]
+	then
+		deps=`strip_mod_paths ${modlist}`
+	else
+		deps=''
+	fi
+	# Make sure we don't do any endless loops!
+
+	LOADED_MODULES="${LOADED_MODULES} ${1}"
+	for x in ${deps}
+	do
+		if ! is_module_already_loaded ${x}
+		then
+			if [ "${x}" != '' -a "${x}" != ' ' ]
+			then
+				modprobe2 "${x}" -n
+			fi
+		else
+			filler=1
+		fi
+	done
+	${INSMOD} ${real_path} > /dev/null 2>&1
+	ret=$?
+	if [ "$ret" -eq '0' ]
+	then
+		echoAppend=' loaded.'
+		[ "${2}" = '-n' ] && echoFlags='-n' && echoAppend=', '
+		echo ${echoFlags} "${1}${echoAppend}"
+	fi
+	return $ret
+}
+
+if [ "$#" -lt '1' ]
+then
+	usage
+fi
+
+[ -f '/modules.cache' ] || touch /modules.cache
+for x in `cat /modules.cache`
+do
+	LOADED_MODULES="${LOADED_MODULES} ${x}"
+done
+
+modprobe2 ${1}
+modprobe_ret=$?
+
+[ -f '/modules.cache' ] && rm -f /modules.cache > /dev/null 2>&1
+for x in ${LOADED_MODULES}
+do
+	echo $x >> /modules.cache
+done
+
+exit $modprobe_ret

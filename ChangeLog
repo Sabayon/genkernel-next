@@ -2,6 +2,11 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  02 Nov 2007; Chris Gianelloni <wolf31o2@gentoo.org> ++, gen_initramfs.sh,
+  gen_initrd.sh, genkernel:
+  Reverting the removal of generic/modprobe for bug #197730. This is genkernel
+  3.4.9_pre6 for testing.
+
   01 Nov 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_compile.sh,
   gen_initramfs.sh, genkernel:
   Fixed device-mapper/man removal for bug #196087, fixed mdadm.conf copying,
