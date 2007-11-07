@@ -1,7 +1,6 @@
 #!/bin/bash
 
-compile_kernel_args()
-{
+compile_kernel_args() {
 	local ARGS
 
 	ARGS=''
@@ -206,7 +205,6 @@ compile_generic() {
 		*) ARGS="" ;; # includes runtask
 	esac
 	shift 2
-
 
 	# the eval usage is needed in the next set of code
 	# as ARGS can contain spaces and quotes, eg:
@@ -534,22 +532,22 @@ compile_dmraid() {
 		cd "${DMRAID_DIR}"
 		print_info 1 'dmraid: >> Configuring...'
 		
-			LDFLAGS="-L${TEMP}/device-mapper/lib" \
-			CFLAGS="-I${TEMP}/device-mapper/include" \
-			CPPFLAGS="-I${TEMP}/device-mapper/include" \
-			./configure --enable-static_link --prefix=${TEMP}/dmraid >> ${LOGFILE} 2>&1 ||
-				gen_die 'Configure of dmraid failed!'
-				
-			# We dont necessarily have selinux installed yet... look into
-			# selinux global support in the future.
-			sed -i tools/Makefile -e "s|DMRAIDLIBS += -lselinux||g"
-			###echo "DMRAIDLIBS += -lselinux -lsepol" >> tools/Makefile
+		LDFLAGS="-L${TEMP}/device-mapper/lib" \
+		CFLAGS="-I${TEMP}/device-mapper/include" \
+		CPPFLAGS="-I${TEMP}/device-mapper/include" \
+		./configure --enable-static_link --prefix=${TEMP}/dmraid >> ${LOGFILE} 2>&1 ||
+			gen_die 'Configure of dmraid failed!'
+
+		# We dont necessarily have selinux installed yet... look into
+		# selinux global support in the future.
+		sed -i tools/Makefile -e "s|DMRAIDLIBS += -lselinux||g"
+		###echo "DMRAIDLIBS += -lselinux -lsepol" >> tools/Makefile
 		mkdir -p "${TEMP}/dmraid"
 		print_info 1 'dmraid: >> Compiling...'
-			compile_generic '' utils
-			#compile_generic 'install' utils
-			mkdir ${TEMP}/dmraid/sbin
-			install -m 0755 -s tools/dmraid "${TEMP}/dmraid/sbin/dmraid"
+		compile_generic '' utils
+		#compile_generic 'install' utils
+		mkdir ${TEMP}/dmraid/sbin
+		install -m 0755 -s tools/dmraid "${TEMP}/dmraid/sbin/dmraid"
 		print_info 1 '      >> Copying to bincache...'
 		cd "${TEMP}/dmraid"
 		/bin/tar -cjf "${DMRAID_BINCACHE}" sbin/dmraid ||

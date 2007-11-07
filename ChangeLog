@@ -2,6 +2,13 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  07 Nov 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_compile.sh,
+  generic/initrd.scripts, generic/linuxrc:
+  Make sure we still allow dolvm2/doevms2 on the kernel command line and give
+  a warning. I've also added a 2 second delay between vgscan and vgchange.
+  Thanks to Robin H. Johnson <robbat2@gentoo.org> for suggesting the changes
+  and testing.
+
   02 Nov 2007; Chris Gianelloni <wolf31o2@gentoo.org> ++, gen_initramfs.sh,
   gen_initrd.sh, genkernel:
   Reverting the removal of generic/modprobe for bug #197730. This is genkernel
