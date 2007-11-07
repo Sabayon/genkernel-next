@@ -2,6 +2,10 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  07 Nov 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_arch.sh:
+  Added a simple patch from Andrew Gaffney <agaffney@gentoo.org> to ensure
+  that we export ARCH before running menuconfig. This is from bug #190327.
+
   07 Nov 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_compile.sh,
   generic/initrd.scripts, generic/linuxrc:
   Make sure we still allow dolvm2/doevms2 on the kernel command line and give
