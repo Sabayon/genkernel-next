@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PATH="/bin:/usr/bin:/sbin:/usr/sbin"
-GK_V='3.4.9_pre6'
+GK_V='3.4.9_pre7'
 
 # Set the default for TMPDIR.  May be modified by genkernel.conf or the
 # --tempdir command line option.
@@ -231,7 +231,7 @@ then
 
 	# Compile kernel; If using --genzimage, or building a mips kernel, skip compile
 	# till after initrd/initramfs is done
-	[ "${GENERATE_Z_IMAGE}" = '' -a ${BUILD_INITRAMFS} -eq 0 ] && compile_kernel
+	[ "${ENABLE_PEGASOS_HACKS}" != 'yes' -a ${BUILD_INITRAMFS} -eq 0 ] && compile_kernel
 
 	# Compile modules
 	if [ ${BUILD_MODULES} -eq 1 -a ${BUILD_STATIC} -eq 0 ]
@@ -247,7 +247,7 @@ then
 	fi
 	if [ "${KERNCACHE}" != "" ]
 	then
-		if [ "${GENERATE_Z_IMAGE}" = '' -a ${BUILD_INITRAMFS} -eq 0 ]
+		if [ "${ENABLE_PEGASOS_HACKS}" != 'yes' -a ${BUILD_INITRAMFS} -eq 0 ]
 		then
 			gen_kerncache
 		fi
@@ -331,7 +331,7 @@ else
 fi
 
 # Pegasos fix
-if [ "${GENERATE_Z_IMAGE}" != '' -o ${BUILD_INITRAMFS} -eq 1 ]
+if [ "${ENABLE_PEGASOS_HACKS}" = 'yes' -o ${BUILD_INITRAMFS} -eq 1 ]
 then
 	# Compile kernel, intergrating the initrd into it for Pegasos & mips
 	compile_kernel

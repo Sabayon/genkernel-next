@@ -384,13 +384,10 @@ create_initrd() {
 			"initrd-${KNAME}-${ARCH}-${KV}"
 	fi
 
-	# Pegasos hack for merging the initrd into the kernel at compile time
-	[ "${KERNEL_MAKE_DIRECTIVE}" == 'zImage.initrd' -a "${GENERATE_Z_IMAGE}" = '1' ] ||
-		[ "${KERNEL_MAKE_DIRECTIVE_2}" == 'zImage.initrd' -a "${GENERATE_Z_IMAGE}" = '1' ] &&
+        if [ "${ENABLE_PEGASOS_HACKS}" = 'yes' ]
+        then
+		# Pegasos hack for merging the initramfs into the kernel at compile time
 		cp ${TMPDIR}/initrd-${KV} ${KERNEL_DIR}/arch/${ARCH}/boot/images/ramdisk.image.gz &&
 		rm ${TMPDIR}/initrd-${KV}
-
-	# Mips also mimics Pegasos to merge the initrd into the kernel
-	[ ${BUILD_INITRAMFS} -eq 1 ] \
-		&& cp ${TMPDIR}/initrd-${KV} ${KERNEL_DIR}/mips/ramdisk/initrd.img.gz
+	fi
 }

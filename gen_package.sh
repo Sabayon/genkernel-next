@@ -7,36 +7,35 @@ gen_minkernpackage()
 	mkdir "${TEMP}/minkernpackage" || gen_die 'Could not make a directory for the kernel package!'
 	if [ "${CMD_KERNCACHE}" != "" ]
 	then
-	    /bin/tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} kernel-${ARCH}-${KV}
-	    /bin/tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} config-${ARCH}-${KV}
-	    if [ "${KERNEL_BINARY_2}" != '' -a "${GENERATE_Z_IMAGE}" = '1' ]
-            then
-	    	/bin/tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} kernelz-${ARCH}-${KV}
-            fi
+		/bin/tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} kernel-${ARCH}-${KV}
+		/bin/tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} config-${ARCH}-${KV}
+		if [ "${ENABLE_PEGASOS_HACKS}" = 'yes' ]
+		then
+			/bin/tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} kernelz-${ARCH}-${KV}
+		fi
 	else
-	    cd "${KERNEL_DIR}"
-	    cp "${KERNEL_BINARY}" "${TEMP}/minkernpackage/kernel-${KV}" || gen_die 'Could not the copy kernel for the min kernel package!'
-	    cp ".config" "${TEMP}/minkernpackage/config-${ARCH}-${KV}" || gen_die 'Could not the copy kernel config for the min kernel package!'
-	    if [ "${KERNEL_BINARY_2}" != '' -a "${GENERATE_Z_IMAGE}" = '1' ]
-            then
-            	cp "${KERNEL_BINARY_2}" "${TEMP}/minkernpackage/kernelz-${KV}" || gen_die "Could not copy the kernelz for the min kernel package"
-            fi
-
+		cd "${KERNEL_DIR}"
+		cp "${KERNEL_BINARY}" "${TEMP}/minkernpackage/kernel-${KV}" || gen_die 'Could not the copy kernel for the min kernel package!'
+		cp ".config" "${TEMP}/minkernpackage/config-${ARCH}-${KV}" || gen_die 'Could not the copy kernel config for the min kernel package!'
+		if [ "${ENABLE_PEGASOS_HACKS}" = 'yes' ]
+		then
+			cp "${KERNEL_BINARY_2}" "${TEMP}/minkernpackage/kernelz-${KV}" || gen_die "Could not copy the kernelz for the min kernel package"
+		fi
 	fi
 	
-	if [ "${GENERATE_Z_IMAGE}" != '1' ]
+	if [ "${ENABLE_PEGASOS_HACKS}" != 'yes' ]
 	then
-	    if [ "${KERN_24}" != '1' ]
-	    then
-		    [ "${BUILD_INITRD}" -ne 0 ] && { cp "${TMPDIR}/initramfs-${KV}" "${TEMP}/minkernpackage/initramfs-${ARCH}-${KV}" || gen_die 'Could not copy the initramfs for the kernel package!'; }
-	    else
-		    [ "${BUILD_INITRD}" -ne 0 ] && { cp "${TMPDIR}/initrd-${KV}" "${TEMP}/minkernpackage/initrd-${ARCH}-${KV}" || gen_die 'Could not copy the initrd for the kernel package!'; }
-	    fi
+		if [ "${KERN_24}" != '1' ]
+		then
+			[ "${BUILD_INITRD}" -ne 0 ] && { cp "${TMPDIR}/initramfs-${KV}" "${TEMP}/minkernpackage/initramfs-${ARCH}-${KV}" || gen_die 'Could not copy the initramfs for the kernel package!'; }
+		else
+			[ "${BUILD_INITRD}" -ne 0 ] && { cp "${TMPDIR}/initrd-${KV}" "${TEMP}/minkernpackage/initrd-${ARCH}-${KV}" || gen_die 'Could not copy the initrd for the kernel package!'; }
+		fi
 	fi
 
 	if [ "${CMD_KERNCACHE}" != "" ]
 	then
-	    /bin/tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} System.map-${ARCH}-${KV}
+		/bin/tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} System.map-${ARCH}-${KV}
 	else
 		cp "${KERNEL_DIR}/System.map" "${TEMP}/minkernpackage/System.map-${ARCH}-${KV}" || gen_die 'Could not copy System.map for the kernel package!';
 	fi
@@ -71,7 +70,7 @@ gen_kerncache()
 	cp "${KERNEL_BINARY}" "${TEMP}/kerncache/kernel-${ARCH}-${KV}" || gen_die 'Could not the copy kernel for the kernel package!'
 	cp "${KERNEL_DIR}/.config" "${TEMP}/kerncache/config-${ARCH}-${KV}"
 	cp "${KERNEL_DIR}/System.map" "${TEMP}/kerncache/System.map-${ARCH}-${KV}"
-	if [ "${KERNEL_BINARY_2}" != '' -a "${GENERATE_Z_IMAGE}" = '1' ]
+	if [ "${ENABLE_PEGASOS_HACKS}" = 'yes' ]
         then
         	cp "${KERNEL_BINARY_2}" "${TEMP}/kerncache/kernelz-${ARCH}-${KV}" || gen_die "Could not copy the kernelz for the kernel package"
         fi
@@ -95,17 +94,17 @@ gen_kerncache()
 
 gen_kerncache_extract_kernel()
 {
-    /bin/tar -f ${KERNCACHE} -C ${TEMP} -xj 
+	/bin/tar -f ${KERNCACHE} -C ${TEMP} -xj 
 	copy_image_with_preserve "kernel" \
 		"${TEMP}/kernel-${ARCH}-${KV}" \
 		"kernel-${KNAME}-${ARCH}-${KV}"
 
-	if [ "${KERNEL_BINARY_2}" != '' -a "${GENERATE_Z_IMAGE}" = '1' ]
-    then
+	if [ "${ENABLE_PEGASOS_HACKS}" = 'yes']
+	then
 		copy_image_with_preserve "kernelz" \
 			"${TEMP}/kernelz-${ARCH}-${KV}" \
 			"kernelz-${KNAME}-${ARCH}-${KV}"
-    fi
+	fi
     
 	copy_image_with_preserve "System.map" \
 		"${TEMP}/System.map-${ARCH}-${KV}" \

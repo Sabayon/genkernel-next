@@ -464,8 +464,8 @@ parse_cmdline() {
 		--genzimage)
 			KERNEL_MAKE_DIRECTIVE_2='zImage.initrd'
 			KERNEL_BINARY_2='arch/powerpc/boot/zImage.initrd'
-			GENERATE_Z_IMAGE=1
-			print_info 2 "GENERATE_Z_IMAGE: ${GENERATE_Z_IMAGE}"
+			ENABLE_PEGASOS_HACKS="yes"
+			print_info 2 "ENABLE_PEGASOS_HACKS: ${ENABLE_PEGASOS_HACKS}"
 			;;
 		--disklabel)
 			CMD_DISKLABEL=1
