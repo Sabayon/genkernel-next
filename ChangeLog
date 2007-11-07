@@ -3,6 +3,11 @@
 # $Header: $
 
   07 Nov 2007; Chris Gianelloni <wolf31o2@gentoo.org>
+  generic/initrd.scripts:
+  Fixed the noload module code. Thanks to Mijail Fedorovich
+  <mfedorovich@gmail.com> for pointing it out in bug #198187.
+
+  07 Nov 2007; Chris Gianelloni <wolf31o2@gentoo.org>
   generic/initrd.scripts, generic/linuxrc:
   Added an update patch from Alon Bar-Lev <alonbl@gentoo.org> in bug #197244
   to clean up the suspend2 code and rename the functions to tuxonice to match

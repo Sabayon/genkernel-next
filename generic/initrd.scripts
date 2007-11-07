@@ -43,7 +43,7 @@ modules_scan() {
 	for x in ${MODS}
 	do
 		MLOAD=`echo ${MLIST} | sed -e "s/.*${x}.*/${x}/"`
-		if [ "${MLIST}" = "${x}" ] # Only module to no-load
+		if [ "${MLOAD}" = "${x}" ] # Only module to no-load
 		then
 			echo -e "${BOLD}   ::${NORMAL} Skipping ${x}..."
 		elif [ "${MLOAD}" = "${MLIST}" ] # == No change == No specified no-load
