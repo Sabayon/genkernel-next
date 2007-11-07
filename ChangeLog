@@ -2,6 +2,17 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  07 Nov 2007; Chris Gianelloni <wolf31o2@gentoo.org> alpha/config.sh,
+  gen_cmdline.sh, gen_determineargs.sh, gen_funcs.sh, gen_initramfs.sh,
+  gen_initrd.sh, gen_package.sh, genkernel, genkernel.conf, ia64/config.sh,
+  mips/config.sh, parisc/config.sh, parisc64/config.sh, ppc/config.sh,
+  ppc64/config.sh, sparc/config.sh, sparc64/config.sh, um/config.sh,
+  x86/config.sh, x86_64/config.sh, xen0/config.sh, xenU/config.sh:
+  Added a nice patch from John R. Graham <john_r_graham@mindspring.com> to
+  allow all command line options to be configurable from within the
+  genkernel.conf file. This is for bug #182616. This is genkernel 3.4.9_pre8
+  for testing.
+
   07 Nov 2007; Chris Gianelloni <wolf31o2@gentoo.org>
   generic/initrd.scripts:
   Fixed the noload module code. Thanks to Mijail Fedorovich

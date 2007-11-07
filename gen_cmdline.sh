@@ -90,6 +90,7 @@ longusage() {
   echo "				initrd"
   echo "	--luks			Include LUKS support"
   echo "				--> 'emerge cryptsetup-luks' with USE=-dynamic"
+  echo "    --no-busybox    Do not include busybox in the initrd or initramfs."
   echo "  Internals"
   echo "	--arch-override=<arch>	Force to arch instead of autodetect"
   echo "	--cachedir=<dir>	Override the default cache location"
@@ -192,8 +193,8 @@ parse_cmdline() {
 			print_info 2 "CMD_MOUNTBOOT: ${CMD_MOUNTBOOT}"
 			;;
 		--bootdir=*)
-			BOOTDIR=`parse_opt "$*"`
-			print_info 2 "BOOTDIR: ${BOOTDIR}"
+			CMD_BOOTDIR=`parse_opt "$*"`
+			print_info 2 "CMD_BOOTDIR: ${CMD_BOOTDIR}"
 			;;
 		--do-keymap-auto)
 			CMD_DOKEYMAPAUTO=1
@@ -235,8 +236,8 @@ parse_cmdline() {
 			print_info 2 "CMD_MDADM: $CMD_MDADM"
 			;;
 		--no-busybox)
-			CMD_NO_BUSYBOX=1
-			print_info 2 "CMD_NO_BUSYBOX: ${CMD_NO_BUSYBOX}"
+			CMD_BUSYBOX=0
+			print_info 2 "CMD_BUSYBOX: ${CMD_BUSYBOX}"
 			;;
 		--slowusb)
 			CMD_SLOWUSB=1

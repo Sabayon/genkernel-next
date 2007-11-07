@@ -59,7 +59,7 @@ create_base_initrd_sys() {
 
 	# SGI LiveCDs need the following binary (no better place for it than here)
 	# getdvhoff is a DEPEND of genkernel, so it *should* exist
-	if [ ${BUILD_INITRAMFS} -eq 1 ]
+	if [ ${BUILD_INITRAMFS} -eq '1' ]
 	then
 		[ -e /usr/lib/getdvhoff/getdvhoff ] \
 			&& cp /usr/lib/getdvhoff/getdvhoff ${TEMP}/initrd-temp/bin \
@@ -111,7 +111,7 @@ create_base_initrd_sys() {
 	fi
 
 	# DMRAID 
-	if [ "${DMRAID}" = '1' ]
+	if [ "${DMRAID}" -eq '1' ]
 	then
 		print_info 1 'DMRAID: Adding support (compiling binaries)...'
 		compile_dmraid
@@ -120,7 +120,7 @@ create_base_initrd_sys() {
 	fi
 
 	# LVM
-	if [ "${LVM}" = '1' ]
+	if [ "${LVM}" -eq '1' ]
 	then
 		if [ -e '/sbin/lvm' ] && LC_ALL="C" ldd /sbin/lvm|grep -q 'not a dynamic executable';
 		then
@@ -156,7 +156,7 @@ create_base_initrd_sys() {
 	fi
 	
 	# EVMS
-	if [ "${EVMS}" = '1' ]
+	if [ "${EVMS}" -eq '1' ]
 	then
 		if [ -e '/sbin/evms_activate' ]
 		then
@@ -348,7 +348,7 @@ create_initrd() {
 	print_info 1 "initrd: >> Initializing..."
 	create_base_initrd_sys
 
-	if [ "${NOINITRDMODULES}" = '' ]
+	if [ "${NOINITRDMODULES}" -eq '0' ]
 	then
 		print_info 1 "        >> Copying modules..."
 		create_initrd_modules

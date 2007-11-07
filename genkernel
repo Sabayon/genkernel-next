@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PATH="/bin:/usr/bin:/sbin:/usr/sbin"
-GK_V='3.4.9_pre7'
+GK_V='3.4.9_pre8'
 
 # Set the default for TMPDIR.  May be modified by genkernel.conf or the
 # --tempdir command line option.
@@ -84,7 +84,7 @@ do
 done
 
 # Check if no action is specified...
-if [ "${BUILD_KERNEL}" -eq 0 -a "${BUILD_INITRD}" -eq 0 ]
+if [ "${BUILD_KERNEL}" -eq '0' -a "${BUILD_INITRD}" -eq '0' ]
 then
 	usage
 	exit 1
@@ -212,7 +212,7 @@ then
     gen_kerncache_is_valid
 fi
 
-if [ ${BUILD_KERNEL} -eq 1 -a "${KERNCACHE_IS_VALID}" == "0" ]
+if [ ${BUILD_KERNEL} -eq '1' -a "${KERNCACHE_IS_VALID}" == "0" ]
 then
 	# Configure kernel
 	config_kernel
@@ -229,17 +229,17 @@ then
 	# KV may have changed due to the configuration
 	get_KV
 
-	# Compile kernel; If using --genzimage, or building a mips kernel, skip compile
-	# till after initrd/initramfs is done
-	[ "${ENABLE_PEGASOS_HACKS}" != 'yes' -a ${BUILD_INITRAMFS} -eq 0 ] && compile_kernel
+	# Compile kernel; If using --genzimage, or building a mips kernel, skip
+	# compile until after initrd/initramfs is done
+	[ "${ENABLE_PEGASOS_HACKS}" != 'yes' -a ${BUILD_INITRAMFS} -eq '0' ] && compile_kernel
 
 	# Compile modules
-	if [ ${BUILD_MODULES} -eq 1 -a ${BUILD_STATIC} -eq 0 ]
+	if [ ${BUILD_MODULES} -eq '1' -a ${BUILD_STATIC} -eq '0' ]
 	then
 		compile_modules
 	fi
 
-	if [ ${SAVE_CONFIG} -eq 1 ]
+	if [ ${SAVE_CONFIG} -eq '1' ]
 	then
 		print_info 1 "Copying config for successful build to /etc/kernels/kernel-config-${ARCH}-${KV}"
 		[ ! -e '/etc/kernels' ] && mkdir -p /etc/kernels
@@ -264,10 +264,9 @@ fi
 
 if [ "${KERNCACHE}" != "" -a "${KERNCACHE_IS_VALID}" != "0" ] 
 then
-	[ ${BUILD_STATIC} -eq 0 ] && gen_kerncache_extract_modules
+	[ ${BUILD_STATIC} -eq '0' ] && gen_kerncache_extract_modules
 	gen_kerncache_extract_config
 fi
-
 
 # Run callback
 if [ "${CMD_CALLBACK}" != "" ]
@@ -279,13 +278,13 @@ then
 	CALLBACK_COUNT=0
 
 	trap "CALLBACK_ESCAPE=1" TERM KILL INT QUIT ABRT
-	while [[ ${CALLBACK_ESCAPE} -eq 0 && ${CALLBACK_COUNT} -lt 5 ]]
+	while [[ ${CALLBACK_ESCAPE} -eq '0' && ${CALLBACK_COUNT} -lt 5 ]]
 	do
 		sleep 1; echo -n '.';
 		let CALLBACK_COUNT=${CALLBACK_COUNT}+1
 	done
 
-	if [ "${CALLBACK_ESCAPE}" -eq 0 ]
+	if [ "${CALLBACK_ESCAPE}" -eq '0' ]
 	then
 		echo
 		echo

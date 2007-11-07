@@ -61,139 +61,64 @@ get_KV() {
 			KERN_24=1
 			KV=${VER}.${PAT}.${SUB}${EXV}
 		fi
-
-	fi
-
-	if isTrue "${CMD_DISKLABEL}"
-	then
-		DISKLABEL=1
-	else
-		DISKLABEL=0
-	fi
-
-	if isTrue "${CMD_LUKS}"
-	then
-		LUKS=1
 	fi
 }
 
 determine_real_args() {
-	if [ "${CMD_LOGFILE}" != '' ]
-	then
-		LOGFILE="${CMD_LOGFILE}"
-	fi
+	print_info 4 "Resolving config file, command line, and arch default settings."
 
-	if [ "${CMD_MAKEOPTS}" != '' ]
-	then
-		MAKEOPTS="${CMD_MAKEOPTS}"
-	fi
+	#                          Config File          Command Line             Arch Default
+	#                          -----------          ------------             ------------
+	set_config_with_override 2 DEBUGFILE            CMD_DEBUGFILE
+	set_config_with_override 2 KERNEL_DIR           CMD_KERNEL_DIR           "${DEFAULT_KERNEL_SOURCE}"
+	set_config_with_override 1 NO_KERNEL_SOURCES    CMD_NO_KERNEL_SOURCES
+	set_config_with_override 2 KERNCACHE            CMD_KERNCACHE
+	set_config_with_override 2 KNAME                CMD_KNAME                "genkernel"
 
-	if [ "${CMD_KERNELDIR}" != '' ]
-	then
-		KERNEL_DIR=${CMD_KERNELDIR}
-	else
-		KERNEL_DIR=${DEFAULT_KERNEL_SOURCE}
-	fi
+	set_config_with_override 2 MAKEOPTS             CMD_MAKEOPTS             "$DEFAULT_MAKEOPTS"
+	set_config_with_override 2 KERNEL_MAKE          CMD_KERNEL_MAKE          "$DEFAULT_KERNEL_MAKE"
+	set_config_with_override 2 UTILS_MAKE           CMD_UTILS_MAKE           "$DEFAULT_UTILS_MAKE"
+	set_config_with_override 2 KERNEL_CC            CMD_KERNEL_CC            "$DEFAULT_KERNEL_CC"
+	set_config_with_override 2 KERNEL_LD            CMD_KERNEL_LD            "$DEFAULT_KERNEL_LD"
+	set_config_with_override 2 KERNEL_AS            CMD_KERNEL_AS            "$DEFAULT_KERNEL_AS"
+	set_config_with_override 2 UTILS_CC             CMD_UTILS_CC             "$DEFAULT_UTILS_CC"
+	set_config_with_override 2 UTILS_LD             CMD_UTILS_LD             "$DEFAULT_UTILS_LD"
+	set_config_with_override 2 UTILS_AS             CMD_UTILS_AS             "$DEFAULT_UTILS_AS"
+
+	set_config_with_override 2 KERNEL_CROSS_COMPILE CMD_KERNEL_CROSS_COMPILE
+	set_config_with_override 2 UTILS_CROSS_COMPILE  CMD_UTILS_CROSS_COMPILE
+	set_config_with_override 2 BOOTDIR              CMD_BOOTDIR              "/boot"
+
+	set_config_with_override 1 SPLASH               CMD_SPLASH
+	set_config_with_override 1 POSTCLEAR            CMD_POSTCLEAR
+	set_config_with_override 1 MRPROPER             CMD_MRPROPER
+	set_config_with_override 1 MENUCONFIG           CMD_MENUCONFIG
+	set_config_with_override 1 CLEAN                CMD_CLEAN
+
+	set_config_with_override 2 MINKERNPACKAGE       CMD_MINKERNPACKAGE
+	set_config_with_override 2 MODULESPACKAGE       CMD_MODULESPACKAGE
+	set_config_with_override 2 KERNCACHE            CMD_KERNCACHE
+	set_config_with_override 1 NOINITRDMODULES      CMD_NOINITRDMODULES
+	set_config_with_override 2 INITRAMFS_OVERLAY    CMD_INITRAMFS_OVERLAY
+	set_config_with_override 1 MOUNTBOOT            CMD_MOUNTBOOT
+	set_config_with_override 1 BUILD_STATIC         CMD_STATIC
+	set_config_with_override 1 BUILD_INITRAMFS      CMD_INITRAMFS
+	set_config_with_override 1 SAVE_CONFIG          CMD_SAVE_CONFIG
+ 	set_config_with_override 1 SYMLINK              CMD_SYMLINK
+	set_config_with_override 2 INSTALL_MOD_PATH     CMD_INSTALL_MOD_PATH
+	set_config_with_override 1 OLDCONFIG            CMD_OLDCONFIG
+	set_config_with_override 1 LVM                  CMD_LVM
+	set_config_with_override 1 EVMS                 CMD_EVMS
+	set_config_with_override 1 UNIONFS              CMD_UNIONFS
+	set_config_with_override 1 DMRAID               CMD_DMRAID
+	set_config_with_override 1 BUSYBOX              CMD_BUSYBOX              "yes"
+	set_config_with_override 1 DEVFS                CMD_UNDEFINED_CMD        "no"
 	
-	if [ "${CMD_NO_KERNEL_SOURCES}" != "1" ]
-	then
-		if [ ! -d ${KERNEL_DIR} ]
-		then
-			gen_die "kernel source directory \"${KERNEL_DIR}\" was not found!"
-		fi
-	fi
+	set_config_with_override 1 DISKLABEL            CMD_DISKLABEL
+	set_config_with_override 1 LUKS                 CMD_LUKS
 
-	if [ "${CMD_KERNCACHE}" != "" ]
-	then	
-		if [ "${KERNEL_DIR}" = '' -a "${CMD_NO_KERNEL_SOURCES}" != "1" ]
-		then
-			gen_die 'No kernel source directory!'
-		fi
-		if [ ! -e "${KERNEL_DIR}" -a "${CMD_NO_KERNEL_SOURCES}" != "1" ]
-		then
-			gen_die 'No kernel source directory!'
-		fi
-	else	
-		if [ "${KERNEL_DIR}" = '' ]
-		then
-			gen_die 'Kernel Cache specified but no kernel tree to verify against!'
-		fi
-	fi
-	
-	if [ "${CMD_KERNNAME}" != "" ]
-	then
-		KNAME=${CMD_KERNNAME}
-	else
-		KNAME="genkernel"
-	fi
-	
-	if [ "${CMD_KERNEL_MAKE}" != '' ]
-	then
-		KERNEL_MAKE="${CMD_KERNEL_MAKE}"
-	fi
-
-	if [ "${KERNEL_MAKE}" = '' ]
-	then
-		KERNEL_MAKE='make'
-	fi
-
-	if [ "${CMD_UTILS_MAKE}" != '' ]
-	then
-		UTILS_MAKE="${CMD_UTILS_MAKE}"
-	fi
-
-	if [ "${UTILS_MAKE}" = '' ]
-	then
-		UTILS_MAKE='make'
-	fi
-
-	if [ "${CMD_KERNEL_CC}" != '' ]
-	then
-		KERNEL_CC="${CMD_KERNEL_CC}"
-	fi
-
-	if [ "${CMD_KERNEL_LD}" != '' ]
-	then
-		KERNEL_LD="${CMD_KERNEL_LD}"
-	fi
-
-	if [ "${CMD_KERNEL_AS}" != '' ]
-	then
-		KERNEL_AS="${CMD_KERNEL_AS}"
-	fi
-	
-	if [ "${CMD_KERNEL_CROSS_COMPILE}" != '' ]
-	then
-		KERNEL_CROSS_COMPILE="${CMD_KERNEL_CROSS_COMPILE}"
-	fi
-
-	if [ "${CMD_UTILS_CC}" != '' ]
-	then
-		UTILS_CC="${CMD_UTILS_CC}"
-	fi
-
-	if [ "${CMD_UTILS_LD}" != '' ]
-	then
-		UTILS_LD="${CMD_UTILS_LD}"
-	fi
-
-	if [ "${CMD_UTILS_AS}" != '' ]
-	then
-		UTILS_AS="${CMD_UTILS_AS}"
-	fi
-	
-	if [ "${CMD_UTILS_CROSS_COMPILE}" != '' ]
-	then
-		UTILS_CROSS_COMPILE="${CMD_UTILS_CROSS_COMPILE}"
-	fi
-
-	if [ "${BOOTDIR}" != '' ]
-	then
 		BOOTDIR=`arch_replace "${BOOTDIR}"`
 		BOOTDIR=${BOOTDIR%/}    # Remove any trailing slash
-	else
-		BOOTDIR="/boot"
-	fi
 
 	CACHE_DIR=`arch_replace "${CACHE_DIR}"`
 	BUSYBOX_BINCACHE=`cache_replace "${BUSYBOX_BINCACHE}"`
@@ -216,200 +141,66 @@ determine_real_args() {
 	UNIONFS_MODULES_BINCACHE=`arch_replace "${UNIONFS_MODULES_BINCACHE}"`
 	BLKID_BINCACHE=`arch_replace "${BLKID_BINCACHE}"`
 	
-	if [ "${CMD_SPLASH}" != '' ]
-	then
-		SPLASH=${CMD_SPLASH}
-	fi
-
-	if isTrue ${SPLASH}
-	then
-		SPLASH=1
-	else
-		SPLASH=0
-	fi
-
-	if isTrue ${COMPRESS_INITRD}
-	then
-		COMPRESS_INITRD=1
-	else
-		COMPRESS_INITRD=0
-	fi
-
-	if isTrue ${CMD_POSTCLEAR}
-	then
-		POSTCLEAR=1
-	else
-		POSTCLEAR=0
-	fi
-	
-	if [ "${CMD_MRPROPER}" != '' ]
-	then
-		MRPROPER="${CMD_MRPROPER}"
-	fi
-
-	if [ "${CMD_MENUCONFIG}" != '' ]
-	then
-		MENUCONFIG="${CMD_MENUCONFIG}"
-	fi
-
-	if [ "${CMD_CLEAN}" != '' ]
-	then
-		CLEAN="${CMD_CLEAN}"
-		if ! isTrue ${CLEAN}
-		then
-			MRPROPER=0
-		fi
-	fi
-
-	if [ "${CMD_MINKERNPACKAGE}" != '' ]
-	then
-		MINKERNPACKAGE="${CMD_MINKERNPACKAGE}"
-		mkdir -p `dirname ${MINKERNPACKAGE}`
-	fi
-	
-	if [ "${CMD_MODULESPACKAGE}" != '' ]
-	then
-		MODULESPACKAGE="${CMD_MODULESPACKAGE}"
-		mkdir -p `dirname ${MODULESPACKAGE}`
-	fi
-
-	if [ "${CMD_KERNCACHE}" != '' ]
-	then
-		KERNCACHE="${CMD_KERNCACHE}"
-		mkdir -p `dirname ${KERNCACHE}`
-	fi
-	
-	if [ "${CMD_NOINITRDMODULES}" != '' ]
-	then
-		NOINITRDMODULES="${CMD_NOINITRDMODULES}"
-	fi
-	
-	if [ "${CMD_INITRAMFS_OVERLAY}" != '' ]
-	then
-		INITRAMFS_OVERLAY="${CMD_INITRAMFS_OVERLAY}"
-	fi
-
-	if [ "${CMD_MOUNTBOOT}" != '' ]
-	then
-		MOUNTBOOT="${CMD_MOUNTBOOT}"
-	fi
-
-	if isTrue ${MOUNTBOOT}
-	then
-		MOUNTBOOT=1
-	else
-		MOUNTBOOT=0
-	fi
-
-	if [ "${CMD_STATIC}" != '' ]
-	then
-		BUILD_STATIC=${CMD_STATIC}
-	fi
-
-	if isTrue ${BUILD_STATIC}
-	then
-		BUILD_STATIC=1
-	else
-		BUILD_STATIC=0
-	fi
-
-	if [ "${CMD_INITRAMFS}" != '' ]
-	then
-		BUILD_INITRAMFS=${CMD_INITRAMFS}
-	fi
-
-	if isTrue ${BUILD_INITRAMFS}
-	then
-		BUILD_INITRAMFS=1
-	else
-		BUILD_INITRAMFS=0
-	fi
-
-	if [ "${CMD_SAVE_CONFIG}" != '' ]
-	then
-		SAVE_CONFIG="${CMD_SAVE_CONFIG}"
-	fi
-
-	if isTrue "${SAVE_CONFIG}"
-	then
-		SAVE_CONFIG=1
-	else
-		SAVE_CONFIG=0
-	fi
-  
-	if [ "${CMD_SYMLINK}" != '' ]
-	then
-		SYMLINK="${CMD_SYMLINK}"
-	fi
-
-	if isTrue "${SYMLINK}"
-	then
-		SYMLINK=1
-	else
-		SYMLINK=0
-	fi
-	
-	if [ "${CMD_INSTALL_MOD_PATH}" != '' ]
-	then
-		INSTALL_MOD_PATH="${CMD_INSTALL_MOD_PATH}"
-	fi
 
 	if [ "${CMD_BOOTLOADER}" != '' ]
 	then
 		BOOTLOADER="${CMD_BOOTLOADER}"
-                
+
 		if [ "${CMD_BOOTLOADER}" != "${CMD_BOOTLOADER/:/}" ]
-		then
+	then
 			BOOTFS=`echo "${CMD_BOOTLOADER}" | cut -f2- -d:`
 			BOOTLOADER=`echo "${CMD_BOOTLOADER}" | cut -f1 -d:`
-		fi
+	fi
 	fi
 
-	if [ "${CMD_OLDCONFIG}" != '' ]
+	if [ "${NO_KERNEL_SOURCES}" != "1" ]
 	then
-		OLDCONFIG="${CMD_OLDCONFIG}"
+		if [ ! -d ${KERNEL_DIR} ]
+	then
+			gen_die "kernel source directory \"${KERNEL_DIR}\" was not found!"
+	fi
 	fi
 
-	if isTrue "${OLDCONFIG}"
+	if [ -z "${KERNCACHE}" ]
 	then
-		OLDCONFIG=1
+		if [ "${KERNEL_DIR}" = '' -a "${NO_KERNEL_SOURCES}" != "1" ]
+	then
+			gen_die 'No kernel source directory!'
+	fi
+		if [ ! -e "${KERNEL_DIR}" -a "${NO_KERNEL_SOURCES}" != "1" ]
+	then
+			gen_die 'No kernel source directory!'
+	fi
 	else
-		OLDCONFIG=0
+		if [ "${KERNEL_DIR}" = '' ]
+		then
+			gen_die 'Kernel Cache specified but no kernel tree to verify against!'
+	fi
 	fi
 
-	if isTrue "${CMD_LVM}"
+	# Special case:  If --no-clean is specified on the command line, 
+	# imply --no-mrproper.
+	if [ "${CMD_CLEAN}" != '' ]
 	then
-		LVM=1
-	else
-		LVM=0
+		if ! isTrue ${CLEAN}
+	then
+			MRPROPER=0
 	fi
-
-	if isTrue "${CMD_EVMS}"
-	then
-		EVMS=1
-	else
-		EVMS=0
 	fi
 	
-	if isTrue "${CMD_UNIONFS}"
+	if [ -n "${MINKERNPACKAGE}" ]
 	then
-		UNIONFS=1
-	else
-		UNIONFS=0
+		mkdir -p `dirname ${MINKERNPACKAGE}`
 	fi
 	
-	if isTrue "${CMD_NO_BUSYBOX}"
+	if [ -n "${MODULESPACKAGE}" ]
 	then
-		BUSYBOX=0
-	else
-		BUSYBOX=1
+		mkdir -p `dirname ${MODULESPACKAGE}`
 	fi
 
-	if isTrue "${CMD_DMRAID}"
+	if [ -n "${KERNCACHE}" ]
 	then
-		DMRAID=1
-	else
-		DMRAID=0
+		mkdir -p `dirname ${KERNCACHE}`
 	fi
 	
 	if isTrue "${CMD_MDADM}"

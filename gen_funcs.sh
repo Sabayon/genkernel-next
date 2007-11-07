@@ -139,13 +139,13 @@ print_info() {
 
 		if [ "${NEWLINE}" = '0' ]
 		then
-			if [ "${TODEBUGCACHE}" -eq 1 ]; then
+			if [ "${TODEBUGCACHE}" -eq '1' ]; then
 				DEBUGCACHE="${DEBUGCACHE}${STR}"
 			else
 				echo -ne "${STR}" >> ${LOGFILE}
 			fi	
 		else
-			if [ "${TODEBUGCACHE}" -eq 1 ]; then
+			if [ "${TODEBUGCACHE}" -eq '1' ]; then
 				DEBUGCACHE="${DEBUGCACHE}${STR}"$'\n'
 			else
 				echo "${STR}" >> ${LOGFILE}
@@ -426,5 +426,88 @@ copy_image_with_preserve() {
 		fi
 		popd >/dev/null
 	fi
+}
+
+#
+# Helper function to allow command line arguments to override configuration
+# file specified values and to apply defaults.
+#
+# Arguments:
+#     $1  Argument type:
+#           1  Switch type arguments (e.g., --color / --no-color).
+#           2  Value type arguments (e.g., --debuglevel=5).
+#     $2  Config file variable name.
+#     $3  Command line variable name.
+#     $4  Default.  If both the config file variable and the command line
+#         option are not present, then the config file variable is set to
+#         this default value.  Optional.
+#
+# The order of priority of these three sources (highest first) is:
+#     Command line, which overrides
+#     Config file (/etc/genkernel.conf), which overrides
+#     Default.
+#
+# Arguments $2 and $3 are variable *names*, not *values*.  This function uses
+# various forms of indirection to access the values.
+#
+# For switch type arguments, all forms of "True" are converted to a numeric 1
+# and all forms of "False" (everything else, really) to a numeric 0.
+#
+# - JRG
+#
+set_config_with_override() {
+	local VarType=$1
+	local CfgVar=$2
+	local OverrideVar=$3
+	local Default=$4
+	local Result
+
+	#
+	# Syntax check the function arguments.
+	#
+	case "$VarType" in
+		1|2)
+			;;
+		*)
+			gen_die "Illegal variable type \"$VarType\" passed to set_config_with_override()."
+			;;
+	esac
+
+	if [ -n "${!OverrideVar}" ]
+	then
+		Result=${!OverrideVar}
+		if [ -n "${!CfgVar}" ]
+		then
+			print_info 5 "  $CfgVar overridden on command line to \"$Result\"."
+		else
+			print_info 5 "  $CfgVar set on command line to \"$Result\"."
+		fi
+	else
+		if [ -n "${!CfgVar}" ]
+		then
+			Result=${!CfgVar}
+			print_info 5 "  $CfgVar set in config file to \"${Result}\"."
+		else
+			if [ -n "$Default" ]
+			then
+				Result=${Default}
+				print_info 5 "  $CfgVar defaulted to \"${Result}\"."
+			else
+				print_info 5 "  $CfgVar not set."
+			fi
+		fi
+	fi
+
+	if [ "$VarType" -eq "1" ]
+	then
+		if isTrue "${Result}"
+		then
+			Result=1
+		else
+			Result=0
+		fi
+	fi
+
+	eval ${CfgVar}=${Result}
 }
 

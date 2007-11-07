@@ -1,17 +1,16 @@
 #!/bin/bash
 
-gen_minkernpackage()
-{
+gen_minkernpackage() {
 	print_info 1 'Creating minimal kernel package'
 	rm -rf "${TEMP}/minkernpackage" > /dev/null 2>&1
 	mkdir "${TEMP}/minkernpackage" || gen_die 'Could not make a directory for the kernel package!'
-	if [ "${CMD_KERNCACHE}" != "" ]
+	if [ "${KERNCACHE}" != "" ]
 	then
-		/bin/tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} kernel-${ARCH}-${KV}
-		/bin/tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} config-${ARCH}-${KV}
+		/bin/tar -xj -C ${TEMP}/minkernpackage -f ${KERNCACHE} kernel-${ARCH}-${KV}
+		/bin/tar -xj -C ${TEMP}/minkernpackage -f ${KERNCACHE} config-${ARCH}-${KV}
 		if [ "${ENABLE_PEGASOS_HACKS}" = 'yes' ]
 		then
-			/bin/tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} kernelz-${ARCH}-${KV}
+			/bin/tar -xj -C ${TEMP}/minkernpackage -f ${KERNCACHE} kernelz-${ARCH}-${KV}
 		fi
 	else
 		cd "${KERNEL_DIR}"
@@ -33,9 +32,9 @@ gen_minkernpackage()
 		fi
 	fi
 
-	if [ "${CMD_KERNCACHE}" != "" ]
+	if [ "${KERNCACHE}" != "" ]
 	then
-		/bin/tar -xj -C ${TEMP}/minkernpackage -f ${CMD_KERNCACHE} System.map-${ARCH}-${KV}
+		/bin/tar -xj -C ${TEMP}/minkernpackage -f ${KERNCACHE} System.map-${ARCH}-${KV}
 	else
 		cp "${KERNEL_DIR}/System.map" "${TEMP}/minkernpackage/System.map-${ARCH}-${KV}" || gen_die 'Could not copy System.map for the kernel package!';
 	fi
@@ -44,8 +43,8 @@ gen_minkernpackage()
 	/bin/tar -jcpf ${MINKERNPACKAGE} * || gen_die 'Could not compress the kernel package!'
 	cd "${TEMP}" && rm -rf "${TEMP}/minkernpackage" > /dev/null 2>&1
 }
-gen_modulespackage()
-{
+
+gen_modulespackage() {
 	print_info 1 'Creating modules package'
 	rm -rf "${TEMP}/modulespackage" > /dev/null 2>&1
 	mkdir "${TEMP}/modulespackage" || gen_die 'Could not make a directory for the kernel package!'
@@ -139,7 +138,7 @@ gen_kerncache_extract_config()
 gen_kerncache_is_valid()
 {
 	KERNCACHE_IS_VALID=0
-	if [ "${CMD_NO_KERNEL_SOURCES}" = '1' ]
+	if [ "${NO_KERNEL_SOURCES}" = '1' ]
 	then
 		
 		BUILD_KERNEL=0

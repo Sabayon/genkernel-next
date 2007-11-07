@@ -456,7 +456,7 @@ create_initramfs() {
 	append_data 'evms' "${EVMS}"
 	append_data 'mdadm' "${MDADM}"
 	
-	if [ "${NOINITRDMODULES}" = '' ]
+	if [ "${NOINITRDMODULES}" -eq '0' ]
 	then
 		append_data 'modules'
 	else
@@ -480,7 +480,7 @@ create_initramfs() {
 			# Pegasos hack for merging the initramfs into the kernel at compile time
 			cp ${TMPDIR}/initramfs-${KV} ${KERNEL_DIR}/arch/powerpc/boot/ramdisk.image.gz &&
 			rm ${TMPDIR}/initramfs-${KV}
-	elif [ ${BUILD_INITRAMFS} -eq 1 ]
+	elif [ ${BUILD_INITRAMFS} -eq '1' ]
 	then
 		# Mips also mimics Pegasos to merge the initramfs into the kernel
 		cp ${TMPDIR}/initramfs-${KV} ${KERNEL_DIR}/initramfs.cpio.gz
