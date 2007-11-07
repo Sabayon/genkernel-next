@@ -2,6 +2,12 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  07 Nov 2007; Chris Gianelloni <wolf31o2@gentoo.org>
+  generic/initrd.scripts, generic/linuxrc:
+  Added an update patch from Alon Bar-Lev <alonbl@gentoo.org> in bug #197244
+  to clean up the suspend2 code and rename the functions to tuxonice to match
+  the upstream rename.
+
   07 Nov 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_cmdline.sh,
   gen_compile.sh, gen_initramfs.sh, gen_initrd.sh, gen_package.sh,
   genkernel:

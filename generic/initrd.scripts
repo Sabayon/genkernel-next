@@ -857,39 +857,43 @@ setup_unionfs() {
 	fi
 }
 
-suspend2_resume() {
-	if [ -d /proc/suspend2 ] || [ -d /sys/power/suspend2 ]; then
-		local splash_theme
+tuxonice_resume() {
+	[ -d /proc/suspend2 -o -d /sys/power/suspend2 -o -d /sys/power/tuxonice ] || return
 
-		if grep "splash=" /proc/cmdline > /dev/null 2>&1; then
-			splash_theme=`cat /proc/cmdline | sed 's/.*splash=/splash=/' | sed 's/ .*//' | sed 's/.*theme://' | sed 's/,.*//'`
-		fi
+	local splash_theme
 
-		local suspend2_userui_program="/sys/power/suspend2/user_interface/program"
-		local suspend2_do_resume="/sys/power/suspend2/do_resume"
+	if grep "splash=" /proc/cmdline > /dev/null 2>&1; then
+		splash_theme=$(cat /proc/cmdline | sed 's/.*splash=/splash=/' | sed 's/ .*//' | sed 's/.*theme://' | sed 's/,.*//')
+	fi
 
-		#
-		# Backward compatibility
-		#
-		if [ -e /proc/suspend2 ]; then
-			suspend2_userui_program="/proc/suspend2/userui_program"
-			suspend2_do_resume="/proc/suspend2/do_resume"
-		fi
+	local tuxonice_userui_program="/sys/power/tuxonice/user_interface/program"
+	local tuxonice_do_resume="/sys/power/tuxonice/do_resume"
 
-		modules_scan suspend2
+	#
+	# Backward compatibility
+	#
+	if [ -e /sys/power/suspend2 ]; then
+		tuxonice_userui_program="/sys/power/suspend2/user_interface/program"
+		tuxonice_do_resume="/sys/power/suspend2/do_resume"
+	elif [ -e /proc/suspend2 ]; then
+		tuxonice_userui_program="/proc/suspend2/userui_program"
+		tuxonice_do_resume="/proc/suspend2/do_resume"
+	fi
 
-		if which suspend2ui_text > /dev/null 2>&1; then
-			which suspend2ui_text > "${suspend2_userui_program}"
-		fi
+	modules_scan tuxonice
+
+	if ! grep suspend_noui /proc/cmdline > /dev/null 2>&1; then
+		which suspend2ui_text > /dev/null 2>&1 && which suspend2ui_text > "${tuxonice_userui_program}"
+		which tuxoniceui_text > /dev/null 2>&1 && which tuxoniceui_text > "${tuxonice_userui_program}"
 
 		if [ -n "${splash_theme}" ]; then
 			ln -s /etc/splash/${splash_theme} /etc/splash/suspend2
+			ln -s /etc/splash/${splash_theme} /etc/splash/tuxonice
 
-			if which suspend2ui_fbsplash > /dev/null 2>&1; then
-				which suspend2ui_fbsplash > "${suspend2_userui_program}"
-			fi
+			which suspend2ui_fbsplash > /dev/null 2>&1 && which suspend2ui_fbsplash > "${tuxonice_userui_program}"
+			which tuxoniceui_fbsplash > /dev/null 2>&1 && which tuxoniceui_fbsplash > "${tuxonice_userui_program}"
 		fi
 
-		echo > "${suspend2_do_resume}"
+		echo > "${tuxonice_do_resume}"
 	fi
 }

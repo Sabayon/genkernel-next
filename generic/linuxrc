@@ -256,7 +256,7 @@ fi
 # Run debug shell if requested
 rundebugshell
 
-suspend2_resume
+tuxonice_resume
 
 if [ "${CDROOT}" -eq '1' ]
 then
