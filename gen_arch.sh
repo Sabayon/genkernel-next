@@ -22,7 +22,6 @@ get_official_arch() {
 			esac
 		fi
 	fi
-	export ARCH
 
 	if [ "${CMD_UTILS_ARCH}" != '' ]
 	then
