@@ -3,13 +3,13 @@
 # $Header: $
 
   13 Nov 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_determineargs.sh,
-  genkernel.conf:
+  genkernel.conf, genkernel:
   Added config defaulting for --mdadm for bug #198694. Thanks to John R.
   Graham <john_r_graham@mindspring.com> for providing the patch. This is
   3.4.9_pre9 for testing.
 
   08 Nov 2007; Andrew Gaffney <agaffney@gentoo.org> gen_arch.sh:
-  Revert patch from bug 190327 as it breaks well more than it fixed.
+  Revert patch from bug #190327 as it breaks well more than it fixed.
 
   07 Nov 2007; Chris Gianelloni <wolf31o2@gentoo.org> alpha/config.sh,
   gen_cmdline.sh, gen_determineargs.sh, gen_funcs.sh, gen_initramfs.sh,
