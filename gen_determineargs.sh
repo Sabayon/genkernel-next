@@ -116,6 +116,7 @@ determine_real_args() {
 	
 	set_config_with_override 1 DISKLABEL            CMD_DISKLABEL
 	set_config_with_override 1 LUKS                 CMD_LUKS
+	set_config_with_override 1 MDADM                CMD_MDADM
 
 		BOOTDIR=`arch_replace "${BOOTDIR}"`
 		BOOTDIR=${BOOTDIR%/}    # Remove any trailing slash
@@ -203,13 +204,6 @@ determine_real_args() {
 		mkdir -p `dirname ${KERNCACHE}`
 	fi
 	
-	if isTrue "${CMD_MDADM}"
-	then
-		MDADM=1
-	else
-		MDADM=0
-	fi
-
 	get_KV
 	UNIONFS_MODULES_BINCACHE=`kv_replace "${UNIONFS_MODULES_BINCACHE}"`
 }
