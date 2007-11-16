@@ -2,6 +2,11 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  16 Nov 2007; Chris Gianelloni <wolf31o2@gentoo.org> genkernel.conf:
+  My original sed of LVM2->LVM caught a few too many things. Thanks to Robin
+  Johnson <robbat2@gentoo.org> for pointing them out and providing the fix in
+  bug #198546.
+
   13 Nov 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_determineargs.sh,
   genkernel.conf, genkernel:
   Added config defaulting for --mdadm for bug #198694. Thanks to John R.
