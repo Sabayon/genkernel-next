@@ -216,8 +216,14 @@ create_base_initrd_sys() {
 			rm -f ${TEMP}/initrd-temp/sbin/cryptsetup
 			cp /bin/cryptsetup ${TEMP}/initrd-temp/sbin/cryptsetup
 			chmod +x "${TEMP}/initrd-temp/sbin/cryptsetup"
+		elsif is_static /sbin/cryptsetup
+		then
+			print_info 1 "Including LUKS support"
+			rm -f ${TEMP}/initrd-temp/sbin/cryptsetup
+			cp /sbin/cryptsetup ${TEMP}/initrd-temp/sbin/cryptsetup
+			chmod +x "${TEMP}/initrd-temp/sbin/cryptsetup"
 		else
-			print_info 1 "LUKS support requires static cryptsetup at /bin/cryptsetup"
+			print_info 1 "LUKS support requires static cryptsetup at /bin/cryptsetup or /sbin/cryptsetup"
 			print_info 1 "Not including LUKS support"
 		fi
 	fi

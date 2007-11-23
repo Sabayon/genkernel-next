@@ -2,6 +2,10 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  23 Nov 2007; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh,
+  gen_initrd.sh:
+  look for cryptsetup in /bin and /sbin
+
   17 Nov 2007; Andrew Gaffney <agaffney@gentoo.org> gen_compile.sh:
   Force dmraid to be built with -j1 for bug #188273
 
