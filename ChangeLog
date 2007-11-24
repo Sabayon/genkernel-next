@@ -2,16 +2,20 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  24 Nov 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_funcs.sh:
+  Added a small patch from John R. Graham <john_r_graham@mindspring.com> to
+  fix arguments with spaces for bug #200161.
+
   24 Nov 2007; Andrew Gaffney <agaffney@gentoo.org> generic/linuxrc:
-  use 'read' to get a line at a time to account for directories with spaces in
-  the name. this fixes bug 199701
+  Use 'read' to get a line at a time to account for directories with spaces in
+  the name. This fixes bug 199701.
 
   23 Nov 2007; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh,
   gen_initrd.sh:
-  look for cryptsetup in /bin and /sbin
+  Look for cryptsetup in /bin and /sbin.
 
   17 Nov 2007; Andrew Gaffney <agaffney@gentoo.org> gen_compile.sh:
-  Force dmraid to be built with -j1 for bug #188273
+  Force dmraid to be built with -j1 for bug #188273.
 
   16 Nov 2007; Chris Gianelloni <wolf31o2@gentoo.org> genkernel.conf:
   My original sed of LVM2->LVM caught a few too many things. Thanks to Robin

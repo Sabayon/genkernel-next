@@ -508,6 +508,6 @@ set_config_with_override() {
 		fi
 	fi
 
-	eval ${CfgVar}=${Result}
+	eval ${CfgVar}=\"${Result}\"
 }
 
