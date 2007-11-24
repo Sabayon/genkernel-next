@@ -641,7 +641,7 @@ then
 				ln -s "`readlink ${NEW_ROOT}/${FS_LOCATION}/${x}`" "${x}" 2>/dev/null
 			else
 				# List all subdirectories of x
-				for directory in `find "${NEW_ROOT}/${FS_LOCATION}/${x}" -type d 2>/dev/null`
+				find "${NEW_ROOT}/${FS_LOCATION}/${x}" -type d 2>/dev/null | while read directory
 				do
 					## Strip the prefix of the FS_LOCATION
 					directory=${directory#${NEW_ROOT}/${FS_LOCATION}/}
