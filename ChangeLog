@@ -2,6 +2,11 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  28 Nov 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_compile.sh,
+  genkernel:
+  Added a patch line for busybox for bug #198892. This is 3.4.9_pre10 for
+  testing.
+
   24 Nov 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_funcs.sh:
   Added a small patch from John R. Graham <john_r_graham@mindspring.com> to
   fix arguments with spaces for bug #200161.

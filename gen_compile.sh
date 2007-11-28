@@ -439,6 +439,7 @@ compile_busybox() {
 	sed -i ${BUSYBOX_DIR}/.config -e 's/#\? \?CONFIG_FEATURE_INSTALLER[ =].*/CONFIG_FEATURE_INSTALLER=y/g'
 	cd "${BUSYBOX_DIR}"
 	patch -p1 < "${GK_SHARE}/pkg/busybox-1.1.3+gentoo-mdadm.patch"
+	patch -p1 < "${GK_SHARE}/pkg/busybox-1.1.3+gentoo-mdadm2.patch"
 	print_info 1 'busybox: >> Configuring...'
 	yes '' 2>/dev/null | compile_generic oldconfig utils
 
