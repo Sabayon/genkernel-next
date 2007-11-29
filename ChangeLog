@@ -2,6 +2,11 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  29 Nov 2007; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh,
+  gen_initrd.sh:
+  s/elsif/elif/ because I use too many languages and random bash tutorials
+  online can't be trusted
+
   28 Nov 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_compile.sh,
   genkernel:
   Added a patch line for busybox for bug #198892. This is 3.4.9_pre10 for

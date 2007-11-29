@@ -408,7 +408,7 @@ append_auxilary() {
 			rm -f ${TEMP}/initramfs-aux-temp/sbin/cryptsetup
 			cp /bin/cryptsetup ${TEMP}/initramfs-aux-temp/sbin/cryptsetup
 			chmod +x "${TEMP}/initramfs-aux-temp/sbin/cryptsetup"
-		elsif is_static /sbin/cryptsetup
+		elif is_static /sbin/cryptsetup
 		then
 			print_info 1 "Including LUKS support"
 			rm -f ${TEMP}/initramfs-aux-temp/sbin/cryptsetup

@@ -216,7 +216,7 @@ create_base_initrd_sys() {
 			rm -f ${TEMP}/initrd-temp/sbin/cryptsetup
 			cp /bin/cryptsetup ${TEMP}/initrd-temp/sbin/cryptsetup
 			chmod +x "${TEMP}/initrd-temp/sbin/cryptsetup"
-		elsif is_static /sbin/cryptsetup
+		elif is_static /sbin/cryptsetup
 		then
 			print_info 1 "Including LUKS support"
 			rm -f ${TEMP}/initrd-temp/sbin/cryptsetup
