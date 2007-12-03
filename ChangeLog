@@ -2,6 +2,9 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  03 Dec 2007; Chris Gianelloni <wolf31o2@gentoo.org> genkernel:
+  This is genkernel 3.4.9_pre11 for testing.
+
   29 Nov 2007; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh,
   gen_initrd.sh:
   s/elsif/elif/ because I use too many languages and random bash tutorials

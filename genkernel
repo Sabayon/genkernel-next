@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PATH="/bin:/usr/bin:/sbin:/usr/sbin"
-GK_V='3.4.9_pre10'
+GK_V='3.4.9_pre11'
 
 # Set the default for TMPDIR.  May be modified by genkernel.conf or the
 # --tempdir command line option.
@@ -32,6 +32,7 @@ esac
 
 source ${CMD_GK_CONFIG:-/etc/genkernel.conf} || small_die "Could not read /etc/genkernel.conf"
 
+# Start sourcing other scripts
 source ${GK_SHARE}/gen_funcs.sh || small_die "Could not read ${GK_SHARE}/gen_funcs.sh"
 source ${GK_SHARE}/gen_cmdline.sh || gen_die "Could not read ${GK_SHARE}/gen_cmdline.sh"
 source ${GK_SHARE}/gen_arch.sh || gen_die "Could not read ${GK_SHARE}/gen_arch.sh"
