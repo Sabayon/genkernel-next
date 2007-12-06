@@ -411,8 +411,8 @@ parse_cmdline() {
 			print_info 2 "LOGFILE: ${CMD_LOGFILE}"
 			;;
 		--kerneldir=*)
-			CMD_KERNELDIR=`parse_opt "$*"`
-			print_info 2 "CMD_KERNELDIR: ${CMD_KERNELDIR}"
+			CMD_KERNEL_DIR=`parse_opt "$*"`
+			print_info 2 "CMD_KERNEL_DIR: ${CMD_KERNEL_DIR}"
 			;;
 		--kernel-config=*)
 			CMD_KERNEL_CONFIG=`parse_opt "$*"`
