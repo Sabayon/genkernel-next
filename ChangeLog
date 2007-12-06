@@ -2,6 +2,9 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  06 Dec 2007; Andrew Gaffney <agaffney@gentoo.org> generic/initrd.scripts:
+  fix typo for bug 201442. thanks to Michael Hordijk <hoffbrinkle@hotmail.com>
+
   03 Dec 2007; Chris Gianelloni <wolf31o2@gentoo.org> genkernel:
   This is genkernel 3.4.9_pre11 for testing.
 

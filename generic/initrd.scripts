@@ -247,7 +247,7 @@ findnfsmount() {
 					bad_msg "NFS Mounting failed. Is the path corrent ?"
 				fi
 			else	
-				good_msg "Attemping to mount NFS root on ${NFSROOT}"
+				good_msg "Attempting to mount NFS root on ${NFSROOT}"
 				mount -t nfs -o ro,nolock,rsize=1024,wsize=1024 ${NFSROOT} ${NEW_ROOT}
 				if [ "$?" = '0' ]
 				then
