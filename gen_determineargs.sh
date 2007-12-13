@@ -73,7 +73,7 @@ determine_real_args() {
 	set_config_with_override 2 KERNEL_DIR           CMD_KERNEL_DIR           "${DEFAULT_KERNEL_SOURCE}"
 	set_config_with_override 1 NO_KERNEL_SOURCES    CMD_NO_KERNEL_SOURCES
 	set_config_with_override 2 KERNCACHE            CMD_KERNCACHE
-	set_config_with_override 2 KNAME                CMD_KNAME                "genkernel"
+	set_config_with_override 2 KNAME                CMD_KERNNAME             "genkernel"
 
 	set_config_with_override 2 MAKEOPTS             CMD_MAKEOPTS             "$DEFAULT_MAKEOPTS"
 	set_config_with_override 2 KERNEL_MAKE          CMD_KERNEL_MAKE          "$DEFAULT_KERNEL_MAKE"
