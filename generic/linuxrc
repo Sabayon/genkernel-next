@@ -44,6 +44,7 @@ CMDLINE="`cat /proc/cmdline`"
 REAL_ROOT=''
 FAKE_ROOT=''
 REAL_ROOTFLAGS=''
+CRYPT_SILENT=0
 for x in ${CMDLINE}
 do
 	case "${x}" in
@@ -174,13 +175,31 @@ do
 			NFSROOT=`parse_opt "${x}"`
 		;;
 		crypt_root\=*)
-			LUKS_ROOT=`parse_opt "${x}"`
+			CRYPT_ROOT=`parse_opt "${x}"`
 		;;
 		crypt_swap\=*)
-			LUKS_SWAP=`parse_opt "${x}"`
+			CRYPT_SWAP=`parse_opt "${x}"`
 		;;
-		crypt_silent\=*)
-			LUKS_SILENT=`parse_opt "${x}"`
+		root_key\=*)
+			CRYPT_ROOT_KEY=`parse_opt "${x}"`
+		;;
+		root_keydev\=*)
+			CRYPT_ROOT_KEYDEV=`parse_opt "${x}"`
+		;;
+		swap_key\=*)
+			CRYPT_SWAP_KEY=`parse_opt "${x}"`
+		;;
+		swap_keydev\=*)
+			CRYPT_SWAP_KEYDEV=`parse_opt "${x}"`
+		;;
+		real_resume\=*)
+			REAL_RESUME=`parse_opt "${x}"`
+		;;
+		noresume)
+			NORESUME=1
+		;;
+		crypt_silent)
+			CRYPT_SILENT=1
 		;;
 		real_rootflags\=*)
 			REAL_ROOTFLAGS=`parse_opt "${x}"`
@@ -203,7 +222,7 @@ if [ -d '/lib/modules' ]
 then
 	good_msg 'Loading modules'
 	# Load appropriate kernel modules
-	if [ "${NODETECT}" -ne '1' ]
+	if [ "${NODETECT}" != '1' ]
 	then
 		for modules in $MY_HWOPTS
 		do
@@ -237,7 +256,7 @@ setup_md_device
 startVolumes
 
 # Initialize LUKS root device except for livecd's
-if [ "${CDROOT}" -ne '1' ]
+if [ "${CDROOT}" != 1 ]
 then
 	startLUKS
 fi
@@ -246,7 +265,7 @@ fi
 mkdir -p ${NEW_ROOT}
 setup_unionfs
 
-if [ "${USE_UNIONFS_NORMAL}" -eq '1' ]
+if [ "${USE_UNIONFS_NORMAL}" = '1' ]
 then
 	CHROOT=${UNION}
 else
@@ -256,17 +275,23 @@ fi
 # Run debug shell if requested
 rundebugshell
 
-tuxonice_resume
-
-if [ "${CDROOT}" -eq '1' ]
+if [ "${NORESUME}" != '1' ]
 then
-	if [ ! "${USE_UNIONFS_NORMAL}" -eq '1' ]
+	swsusp_resume
+#	suspend_resume
+#	suspend2_resume
+	tuxonice_resume
+fi
+
+if [ "${CDROOT}" = '1' ]
+then
+	if [ ! "${USE_UNIONFS_NORMAL}" = '1' ]
 	then
 		good_msg "Making tmpfs for ${NEW_ROOT}"
 		mount -t tmpfs tmpfs ${NEW_ROOT}
 	fi
 	
-	for i in dev mnt mnt/cdrom mnt/livecd mnt/keydev tmp tmp/.initrd mnt/gentoo sys
+	for i in dev mnt mnt/cdrom mnt/livecd mnt/key tmp tmp/.initrd mnt/gentoo sys
 	do
 		mkdir -p ${NEW_ROOT}/$i
 		chmod 755 ${NEW_ROOT}/$i
@@ -357,31 +382,17 @@ do
 					good_msg "Detected real_root=${ROOT_DEV}"
 					REAL_ROOT="${ROOT_DEV}"
 				else
-					bad_msg "Could not find root block device: ${REAL_ROOT}"
-					echo '   Please specify a device to boot, or "shell" for a shell...'
-					echo -n 'boot() :: '
-					read REAL_ROOT
+					whereis "REAL_ROOT" "root block device"
 					got_good_root=0
 					continue
 				fi
 				;;
 		esac
 				
-		if [ "${REAL_ROOT}" = 'shell' ]
-		then
-			run_shell
-
-			REAL_ROOT=''
-			got_good_root=0
-			continue
-		
-		elif [ "${REAL_ROOT}" = '' ]
+		if [ "${REAL_ROOT}" = '' ]
 		then
 			# No REAL_ROOT determined/specified. Prompt user for root block device.
-			bad_msg "The root block device is unspecified or not detected."
-			echo '   Please specify a device to boot, or "shell" for a shell...'
-			echo -n 'boot() :: '
-			read REAL_ROOT
+			whereis "REAL_ROOT" "root block device"
 			got_good_root=0
 
 		# Check for a block device or /dev/nfs
@@ -397,7 +408,7 @@ do
 	done
 
 
-	if [ "${CDROOT}" -eq '1' -a "${got_good_root}" = '1' -a "${REAL_ROOT}" != "/dev/nfs" ]
+	if [ "${CDROOT}" = 1 -a "${got_good_root}" = '1' -a "${REAL_ROOT}" != "/dev/nfs" ]
 	then
 		# CD already mounted; no further checks necessary
 		break
@@ -441,7 +452,7 @@ done
 
 #verbose_kmsg
 
-# If cdroot is set determine the looptype to boot
+# If cd root is set determine the looptype to boot
 if [ "${CDROOT}" = '1' ]
 then
 	good_msg 'Determining looptype ...'
@@ -495,28 +506,19 @@ then
 	fi
 
 	cache_cd_contents
-	
 
         # If encrypted, find key and mount, otherwise mount as usual
-	if [ "${LUKS_ROOT}" != '' ] 
+	if [ -n "${CRYPT_ROOT}" ] 
 	then
-		if [ "${LUKS_SILENT}" = '' ]
-		then
-			good_msg 'You booted an encrypted livecd'
-		fi
+		good_msg 'You booted an encrypted livecd' ${CRYPT_SILENT}
 
-		LUKS_ROOT_KEY=$(head -n 1 ${NEW_ROOT}/mnt/cdrom/livecd)
-
-		if [ "${LUKS_ROOT_KEY}" ]
-		then
-			bootstrapKey
-		fi
+		CRYPT_ROOT_KEY=$(head -n 1 ${NEW_ROOT}/mnt/cdrom/livecd)
 		
 		losetup /dev/loop0 ${NEW_ROOT}/mnt/cdrom/${LOOPEXT}${LOOP}
 		
 		test_success 'Preparing loop filesystem'
 		
-		LUKS_ROOT='/dev/loop0'
+		CRYPT_ROOT='/dev/loop0'
 		
 		startLUKS
 		
@@ -601,7 +603,7 @@ then
 # End cdrom looptype determination and mounting if necessary
 #
 
-	if [ "${USE_UNIONFS_NORMAL}" -eq '1' ]
+	if [ "${USE_UNIONFS_NORMAL}" = '1' ]
 	then
 		union_insert_dir ${UNION} ${NEW_ROOT}/${FS_LOCATION}
 		
@@ -627,7 +629,7 @@ then
 	fi
 
 	
-	if [ ! "${USE_UNIONFS_NORMAL}" -eq '1' ]
+	if [ "${USE_UNIONFS_NORMAL}" != '1' ]
 	then
 		good_msg "Copying read-write image contents to tmpfs"
 		# Copy over stuff that should be writable
@@ -695,7 +697,7 @@ then
 		sleep 10
 	fi
 else
-	if [ "${USE_UNIONFS_NORMAL}" -eq '1' ]
+	if [ "${USE_UNIONFS_NORMAL}" = '1' ]
 	then
 		union_insert_dir ${UNION} ${NEW_ROOT}
 		mkdir -p ${UNION}/tmp/.initrd
@@ -717,7 +719,7 @@ verbose_kmsg
 # init scripts will be able to unmount it properly at next reboot
 #
 # Eventually, all "unions over /" mounts should go in that /.unions/
-if [ "${USE_UNIONFS_NORMAL}" -eq '1' ]
+if [ "${USE_UNIONFS_NORMAL}" = '1' ]
 then
 	mkdir -p /${CHROOT}/.unions/memory 2>/dev/null
 	mount -o move /memory /${CHROOT}/.unions/memory || echo '*: Failed to move unionfs /memory into the system root!'
@@ -737,12 +739,12 @@ then
 	fi
 	echo -ne "${BOLD}.${NORMAL}"
 
-	if /tmp/.initrd/bin/[ "${USE_DEVFS_NORMAL}" -eq '1' -a "${CDROOT}" -eq '0' ]
+	if /tmp/.initrd/bin/[ "${USE_DEVFS_NORMAL}" = '1' -a "${CDROOT}" = 0 ]
 	then
 		umount /tmp/.initrd/proc || echo '*: Failed to unmount the initrd /proc!'
 		mount -n --move /tmp/.initrd/dev dev || echo '*: Failed to move over the /dev tree!'
 		rm -rf /tmp/.initrd/dev || echo '*: Failed to remove the initrd /dev!'
-	elif /tmp/.initrd/bin/[ "${USE_UDEV_NORMAL}" -eq '1' ]
+	elif /tmp/.initrd/bin/[ "${USE_UDEV_NORMAL}" = '1' ]
 	then
 		/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/fd ] && rm /tmp/.initrd/dev/fd
 		/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/stdin ] && rm /tmp/.initrd/dev/stdin
@@ -752,7 +754,7 @@ then
 		umount /tmp/.initrd/dev || echo '*: Failed to unmount the initrd /dev!'
 		umount /tmp/.initrd/proc || echo '*: Failed to unmount the initrd /proc!'
 		umount /tmp/.initrd/sys || echo '*: Failed to unmount the initrd /sys!'
-	elif /tmp/.initrd/bin/[ "${CDROOT}" -eq '1' ]
+	elif /tmp/.initrd/bin/[ "${CDROOT}" -eq 1 ]
 	then
 		umount /tmp/.initrd/proc || echo "*: Failed to unmount the initrd /proc!"
 		umount /dev 2>/dev/null

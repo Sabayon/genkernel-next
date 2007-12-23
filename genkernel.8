@@ -259,6 +259,26 @@ Specifies the device node of the root filesystem to mount.
 This specifies the device encrypted by Luks, which contains the root 
 filesystem to mount.
 .TP
+\fBcrypt_swap=\fR<...>
+This specifies the swap device encrypted by Luks.
+.TP
+\fBroot_key=\fR<...>
+In case your root is encrypted with a key, you can use a device like a usb pen to store the key. 
+This value should be the key path relative to the mount point.
+.TP
+\fBroot_keydev=\fR<...>
+If necessary provide the name of the device that carries the root_key.
+If unset while using root_key, it will automatically look for the device in every boot.
+.TP
+\fBswap_key=\fR<...>
+Same as root_key for swap.
+.TP
+\fBswap_keydev=\fR<...>
+Same as root_keydev for swap.
+.TP
+\fBcrypt_silent\fR
+Set this to silent all the output related to the cryptographic software, and in case your encrypted device isn't open with the key, it opens a shell in the initrd quietly.
+.TP
 \fBdodmraid=\fR<...>
 Passes arguments to dmraid on bootup.
 .TP

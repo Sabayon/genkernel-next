@@ -2,6 +2,11 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  23 Dec 2007; Andrew Gaffney <agaffney@gentoo.org> generic/initrd.scripts,
+  generic/linuxrc, genkernel.8:
+  apply LUKS key patch from bug 162962 from Nelson Batalha
+  <nelson_batalha@hotmail.com>
+
   14 Dec 2007; Andrew Gaffney <agaffney@gentoo.org> generic/linuxrc:
   fix text bolding on serial console for bug 202266 thanks to Michael Hordijk
   <hoffbrinkle@hotmail.com>
