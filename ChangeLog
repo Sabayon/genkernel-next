@@ -2,31 +2,35 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  27 Dec 2007; Chris Gianelloni <wolf31o2@gentoo.org> genkernel:
+  This is 3.4.9_pre12 for testing.
+
   23 Dec 2007; Andrew Gaffney <agaffney@gentoo.org> generic/initrd.scripts,
   generic/linuxrc, genkernel.8:
-  apply LUKS key patch from bug 162962 from Nelson Batalha
+  Apply LUKS key patch from bug #162962 from Nelson Batalha
   <nelson_batalha@hotmail.com>
 
   14 Dec 2007; Andrew Gaffney <agaffney@gentoo.org> generic/linuxrc:
-  fix text bolding on serial console for bug 202266 thanks to Michael Hordijk
-  <hoffbrinkle@hotmail.com>
+  Fix text bolding on serial console for bug #202266 thanks to Michael Hordijk
+  <hoffbrinkle@hotmail.com>.
 
   13 Dec 2007; Andrew Gaffney <agaffney@gentoo.org> gen_determineargs.sh:
-  apply patch from John R. Graham <john_r_graham@mindspring.com> for bug 201482
+  Apply a patch from John R. Graham <john_r_graham@mindspring.com> for bug
+  #201482.
 
   06 Dec 2007; Andrew Gaffney <agaffney@gentoo.org> gen_cmdline.sh:
-  s/KERNELDIR/KERNEL_DIR/ for bug 201159
+  Do s/KERNELDIR/KERNEL_DIR/ for bug #201159.
 
   06 Dec 2007; Andrew Gaffney <agaffney@gentoo.org> generic/initrd.scripts:
-  fix typo for bug 201442. thanks to Michael Hordijk <hoffbrinkle@hotmail.com>
+  Fix typo for bug #201442. Thanks to Michael Hordijk <hoffbrinkle@hotmail.com>.
 
   03 Dec 2007; Chris Gianelloni <wolf31o2@gentoo.org> genkernel:
   This is genkernel 3.4.9_pre11 for testing.
 
   29 Nov 2007; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh,
   gen_initrd.sh:
-  s/elsif/elif/ because I use too many languages and random bash tutorials
-  online can't be trusted
+  Do s/elsif/elif/ because I use too many languages and random bash tutorials
+  online can't be trusted.
 
   28 Nov 2007; Chris Gianelloni <wolf31o2@gentoo.org> gen_compile.sh,
   genkernel:
