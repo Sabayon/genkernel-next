@@ -45,6 +45,7 @@ REAL_ROOT=''
 FAKE_ROOT=''
 REAL_ROOTFLAGS=''
 CRYPT_SILENT=0
+CDROOT_TYPE='iso9660'
 for x in ${CMDLINE}
 do
 	case "${x}" in
@@ -70,6 +71,9 @@ do
 		cdroot\=*)
 			CDROOT=1
 			CDROOT_DEV=`parse_opt "${x}"`
+		;;
+		cdroot_type\=*)
+			CDROOT_TYPE=`parse_opt "${x}"`
 		;;
 		# Start livecd loop, looptype options
 		loop\=*)
