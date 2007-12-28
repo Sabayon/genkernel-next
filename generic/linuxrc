@@ -45,7 +45,6 @@ REAL_ROOT=''
 FAKE_ROOT=''
 REAL_ROOTFLAGS=''
 CRYPT_SILENT=0
-CDROOT_TYPE='iso9660'
 for x in ${CMDLINE}
 do
 	case "${x}" in

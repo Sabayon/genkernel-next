@@ -138,11 +138,10 @@ devicelist(){
 }
 
 bootstrapCD() {
-	
 	local DEVICES=`devicelist`
-	# The device was specified on the command line.  Shold we even be doing a
-	# scan at this point?  I think not.
-	[ -n "${CDROOT_DEV}" ] && DEVICES="$DEVICES ${CDROOT_DEV}"
+	# The device was specified on the command line, so there's no need to scan
+	# a bunch of extra devices
+	[ -n "${CDROOT_DEV}" ] && DEVICES="${CDROOT_DEV}"
 
 	findmediamount "cdrom" "${SUBDIR}/livecd" "REAL_ROOT" "${NEW_ROOT}" ${DEVICES}
 }

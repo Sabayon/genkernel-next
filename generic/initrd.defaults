@@ -73,6 +73,7 @@ fi
 REAL_ROOT=''
 CDROOT=0
 CDROOT_DEV=''
+CDROOT_TYPE='iso9660'
 NEW_ROOT="/newroot"
 CONSOLE="/dev/console"
 

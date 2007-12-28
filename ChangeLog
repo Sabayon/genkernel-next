@@ -2,6 +2,10 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  28 Dec 2007; Andrew Gaffney <agaffney@gentoo.org> generic/initrd.defaults,
+  generic/initrd.scripts, generic/linuxrc:
+  don't scan a bunch of extra devices when CDROOT_DEV is defined
+
   28 Dec 2007; Andrew Gaffney <agaffney@gentoo.org> generic/initrd.scripts,
   generic/linuxrc:
   add new cdroot_type=foo kernel commandline parameter to override -t iso9660
