@@ -2,6 +2,9 @@
 # Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  28 Dec 2007; Andrew Gaffney <agaffney@gentoo.org> generic/initrd.scripts:
+  put -t auto back to -t iso9660 for mounting a cdrom. this is for bug 162962
+
   27 Dec 2007; Andrew Gaffney <agaffney@gentoo.org> genkernel.8:
   fix description of --kernel-config for bug 194752
 

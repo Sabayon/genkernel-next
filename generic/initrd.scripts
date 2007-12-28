@@ -93,12 +93,12 @@ findmediamount() {
 			if [ -b "${x}" ]
 			then
 				good_msg "Attempting to mount media:- ${x}" ${CRYPT_SILENT}
-	
-				if [ -n "${CDROOT_DEV}" -a \( ${media}="cdrom" \) ]; then
-					mount -r -t auto ${x} ${NEW_ROOT}/mnt/cdrom >/dev/null 2>&1
+
+				if [ "${media}" = "cdrom" ]; then
+					mount -r -t iso9660 ${x} ${mntdir} &>/dev/null
 				else
-					mount -r -t auto ${x} ${mntdir} >/dev/null 2>&1
-				fi				
+					mount -r -t auto ${x} ${mntdir} &>/dev/null
+				fi
 				if [ "$?" = '0' ]
 				then
 					# Check for the media
