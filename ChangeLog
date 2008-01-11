@@ -1,21 +1,29 @@
 # ChangeLog for genkernel
-# Copyright 2006-2007 Gentoo Foundation; Distributed under the GPL v2
+# Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
+
+  11 Jan 2008; Chris Gianelloni <wolf31o2@gentoo.org> gen_initramfs.sh,
+  gen_initrd.sh, genkernel:
+  Fixing a problem where we were copying the busybox binary cache into the
+  busybox temporary directory. I am assuming that this was a result of all of
+  the changes we've been doing, and it simply just got everlooked. Thanks to
+  Marek Szuba <cyberman@if.pw.edu.pl> for pointing it out in bug #204087. This
+  is genkernel 3.4.9 FINAL. Enjoy.
 
   28 Dec 2007; Andrew Gaffney <agaffney@gentoo.org> generic/initrd.defaults,
   generic/initrd.scripts, generic/linuxrc:
-  don't scan a bunch of extra devices when CDROOT_DEV is defined
+  Don't scan a bunch of extra devices when CDROOT_DEV is defined.
 
   28 Dec 2007; Andrew Gaffney <agaffney@gentoo.org> generic/initrd.scripts,
   generic/linuxrc:
-  add new cdroot_type=foo kernel commandline parameter to override -t iso9660
-  for bug 182818
+  Add new cdroot_type=foo kernel commandline parameter to override -t iso9660
+  for bug #182818.
 
   28 Dec 2007; Andrew Gaffney <agaffney@gentoo.org> generic/initrd.scripts:
-  put -t auto back to -t iso9660 for mounting a cdrom. this is for bug 162962
+  Put -t auto back to -t iso9660 for mounting a cdrom. This is for bug #162962.
 
   27 Dec 2007; Andrew Gaffney <agaffney@gentoo.org> genkernel.8:
-  fix description of --kernel-config for bug 194752
+  Fix description of --kernel-config for bug #194752.
 
   27 Dec 2007; Chris Gianelloni <wolf31o2@gentoo.org> genkernel:
   This is 3.4.9_pre12 for testing.
