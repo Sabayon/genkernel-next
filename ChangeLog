@@ -2,6 +2,10 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  02 Feb 2008; Chris Gianelloni <wolf31o2@gentoo.org>
+  generic/initrd.defaults, generic/initrd.scripts:
+  Removed runUdev, since we no longer use it.
+
   11 Jan 2008; Chris Gianelloni <wolf31o2@gentoo.org> gen_initramfs.sh,
   gen_initrd.sh, genkernel:
   Fixing a problem where we were copying the busybox binary cache into the

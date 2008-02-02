@@ -269,8 +269,8 @@ findnfsmount() {
 				else
 					bad_msg "NFS Mounting failed. Is the path correct ?"
 				fi
-				# FIXME: Need to start portmap and the other rpc daemons in order to
-				# FIXME: remount rw.
+				# FIXME: Need to start portmap and the other rpc daemons in
+				# order to remount rw.
 			fi
 
 		fi
@@ -295,32 +295,6 @@ check_loop() {
 
 run_shell() {
 	/bin/ash
-}
-
-runUdev() {
-	mount -t tmpfs -o size=100k udev /dev
-	mkdir /dev/pts
-	mkdir /dev/shm
-	echo  > /proc/sys/kernel/hotplug 
-	/sbin/udevd --daemon
-	mkdir -p /dev/.udev/queue
-	/sbin/udevtrigger
-
-	good_msg 'Letting udev process events'
-	loop=0
-	while test -d /dev/.udev/queue; do
-		sleep 1;
-		test "$loop" -gt 30 && break
-		loop=$(($loop + 1))
-	done
-	good_msg "Udev finished proccsing after $loop iterations"
-
-	killall udevd > /dev/null 2>&1
-	ln -snf /proc/self/fd /dev/fd
-	ln -snf /proc/self/fd/0 /dev/stdin
-	ln -snf /proc/self/fd/1 /dev/stdout
-	ln -snf /proc/self/fd/2 /dev/stderr
-	ln -snf /proc/kcore /dev/core
 }
 
 runmdev() {
@@ -379,7 +353,8 @@ crypt_filter() {
 }
 
 whereis(){
-	# $1 = variable whose value is the path (examples: "REAL_ROOT", "LUKS_KEYDEV")
+	# $1 = variable whose value is the path (examples: "REAL_ROOT",
+	#      "LUKS_KEYDEV")
 	# $2 = label
 	# $3 = optional explanations for failure
 
@@ -431,7 +406,6 @@ start_dev_mgr() {
 		[ "${DO_slowusb}" ] && sleep 10
 		kill_devfsd
 		good_msg 'Activating mdev'
-#		runUdev
 		runmdev
 		[ "${DO_slowusb}" ] && sleep 20
 		cd /

@@ -52,7 +52,7 @@ KV="`uname -r`"
 KMAJOR=`echo $KV | cut -f1 -d.`
 KMINOR=`echo $KV | cut -f2 -d.`
 KVER="${KMAJOR}.${KMINOR}"
-MISCOPTS='idebug detect'
+MISCOPTS='debug detect'
 
 if [ "${KMAJOR}" -eq 2 -a "${KMINOR}" -ge '6' ]
 then
