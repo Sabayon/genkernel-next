@@ -26,7 +26,7 @@ dtc fdomain gdth pas16 pci2220i pci2000 psi240i qlogicfas qlogicfc qlogicisp \
 seagate t128 u14-34f ultrastor wd7000 NCR53c406a sym53c8xx dmx3191d imm \
 in2000 ips qla1280 sim710 sym53c416 dc395x atp870u mptbase mptscsih \
 mptspi mptfc mptsas 3w-xxxx 3w-9xxx cpqarray cciss DAC960 sx8 aacraid \
-megaraid_mbox megaraid_mm megaraid_sas lpfc scsi_transport_fc scsi_wait_scan"
+megaraid megaraid_mbox megaraid_mm megaraid_sas lpfc scsi_transport_fc scsi_wait_scan"
 
 # Hardware (Network)
 MODULES_NET="e1000 tg3"
