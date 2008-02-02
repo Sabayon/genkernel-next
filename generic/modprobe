@@ -63,7 +63,7 @@ is_module_already_loaded() {
 
 real_mod_path() {
 	# Find -name is no good since the return status is always zero
-	find /lib/modules | grep /"${1}${KSUFF}"
+	find "/lib/modules/${KV}" | grep /"${1}${KSUFF}"
 }
 
 modprobe2() {
