@@ -262,6 +262,13 @@ startVolumes
 if [ "${CDROOT}" != 1 ]
 then
 	startLUKS
+	if [ "${NORESUME}" != '1' ] && [ -n "${REAL_RESUME}" ]
+	then
+		swsusp_resume
+#		suspend_resume
+#		suspend2_resume
+		tuxonice_resume
+	fi
 fi
 
 # Set up unionfs
@@ -277,14 +284,6 @@ fi
 
 # Run debug shell if requested
 rundebugshell
-
-if [ "${NORESUME}" != '1' ]
-then
-	swsusp_resume
-#	suspend_resume
-#	suspend2_resume
-	tuxonice_resume
-fi
 
 if [ "${CDROOT}" = '1' ]
 then
