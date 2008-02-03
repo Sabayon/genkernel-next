@@ -2,6 +2,9 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  03 Feb 2008; Andrew Gaffney <agaffney@gentoo.org> sparc64/modules_load:
+  Add qla2xxx to sparc64's MODULES_SCSI
+
   03 Feb 2008; Andrew Gaffney <agaffney@gentoo.org> gen_cmdline.sh,
   gen_determineargs.sh, gen_moddeps.sh:
   Add --all-initrd-modules option to copy all kernel modules into
