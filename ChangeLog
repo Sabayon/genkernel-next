@@ -2,6 +2,11 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  03 Feb 2008; Andrew Gaffney <agaffney@gentoo.org> gen_cmdline.sh,
+  gen_determineargs.sh, gen_moddeps.sh:
+  Add --all-initrd-modules option to copy all kernel modules into
+  initrd/ramfs. This is useful for netboot images
+
   03 Feb 2008; Andrew Gaffney <agaffney@gentoo.org> generic/initrd.scripts,
   generic/linuxrc:
   Add setup_hotplug() function that runs before the modules are loaded to

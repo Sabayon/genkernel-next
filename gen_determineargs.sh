@@ -99,6 +99,7 @@ determine_real_args() {
 	set_config_with_override 2 MODULESPACKAGE       CMD_MODULESPACKAGE
 	set_config_with_override 2 KERNCACHE            CMD_KERNCACHE
 	set_config_with_override 1 NOINITRDMODULES      CMD_NOINITRDMODULES
+	set_config_with_override 1 ALLINITRDMODULES     CMD_ALLINITRDMODULES
 	set_config_with_override 2 INITRAMFS_OVERLAY    CMD_INITRAMFS_OVERLAY
 	set_config_with_override 1 MOUNTBOOT            CMD_MOUNTBOOT
 	set_config_with_override 1 BUILD_STATIC         CMD_STATIC

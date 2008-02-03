@@ -1,6 +1,6 @@
 #!/bin/bash
 
-modules_dep_list()
+modules_kext()
 {
 	if [ "${PAT}" -gt "4" ]
 	then
@@ -8,6 +8,12 @@ modules_dep_list()
 	else
 		KEXT=".o"
 	fi
+	echo ${KEXT}
+}
+
+modules_dep_list()
+{
+	KEXT=$(modules_kext)
 	if [ -f ${INSTALL_MOD_PATH}/lib/modules/${KV}/modules.dep ]
 	then
 		cat ${INSTALL_MOD_PATH}/lib/modules/${KV}/modules.dep | grep ${1}${KEXT}\: | cut -d\:  -f2
@@ -54,16 +60,20 @@ gen_deps()
 
 gen_dep_list()
 {
-	local group_modules	
-	rm -f ${TEMP}/moddeps > /dev/null
+	if [ "${ALLINITRDMODULES}" = "1" ]; then
+		strip_mod_paths $(find "${INSTALL_MOD_PATH}/lib/modules/${KV}" -name "*$(modules_kext)") | sort
+	else
+		local group_modules	
+		rm -f ${TEMP}/moddeps > /dev/null
 	
-	for group_modules in ${!MODULES_*}; do
-		gen_deps ${!group_modules}
-	done
+		for group_modules in ${!MODULES_*}; do
+			gen_deps ${!group_modules}
+		done
 
-	# Only list each module once
-	if [ -f ${TEMP}/moddeps ]
-	then
-	    cat ${TEMP}/moddeps | sort | uniq
+		# Only list each module once
+		if [ -f ${TEMP}/moddeps ]
+		then
+		    cat ${TEMP}/moddeps | sort | uniq
+		fi
 	fi
 }

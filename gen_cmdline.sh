@@ -40,6 +40,7 @@ longusage() {
   echo "	--symlink		Manage symlinks in /boot for installed images"
   echo "	--no-symlink		Do not manage symlinks"
   echo "	--no-initrdmodules	Don't copy any modules to the initrd"
+  echo "	--all-initrd-modules	Copy all kernel modules to the initrd"
   echo "	--callback=<...>	Run the specified arguments after the"
   echo "				kernel and modules have been compiled"
   echo "	--static		Build a static (monolithic kernel)."
@@ -367,6 +368,10 @@ parse_cmdline() {
 		--no-initrdmodules)
 			CMD_NOINITRDMODULES=1
 			print_info 2 "CMD_NOINITRDMODULES: ${CMD_NOINITRDMODULES}"
+			;;
+		--all-initrd-modules)
+			CMD_ALLINITRDMODULES=1
+			print_info 2 "CMD_ALLINITRDMODULES: ${CMD_ALLINITRDMODULES}"
 			;;
 		--callback=*)
 			CMD_CALLBACK=`parse_opt "$*"`
