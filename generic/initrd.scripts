@@ -50,7 +50,7 @@ modules_scan() {
 		then
 			[ -n "${DEBUG}" ] && echo -ne "${BOLD}   ::${NORMAL} Checking for ${x}..."
 			# find -name does not work since the return status is always zero
-			if find /lib/modules | grep /"${x}${KSUFF}" >/dev/null 2>&1
+			if find /lib/modules/${KV} | grep /"${x}${KSUFF}" >/dev/null 2>&1
 			then
 				echo -ne "${BOLD}   ::${NORMAL} Scanning for ${x}..."
 				modprobe ${x} -n
@@ -300,9 +300,6 @@ run_shell() {
 runmdev() {
 	# busybox udev replacement
 	mdev -s
-
-	# catch udev hotplug events
-	echo /sbin/mdev > /proc/sys/kernel/hotplug
 }
 
 test_success() {
@@ -391,6 +388,22 @@ bind_mount_dev() {
 	mount -o bind ${NEW_ROOT}/dev /dev
 }
 
+setup_hotplug() {
+	# Check udev is available...
+	if [ "${KV_2_6_OR_GREATER}" -a "${USE_UDEV_NORMAL}" != '0' ]
+	then
+		USE_UDEV_NORMAL=1
+	else
+		USE_UDEV_NORMAL=0
+	fi
+
+	if [ "${USE_UDEV_NORMAL}" = '1' ]
+	then
+		# catch udev hotplug events
+		echo /sbin/mdev > /proc/sys/kernel/hotplug
+	fi
+}
+
 start_dev_mgr() {
 	# Check udev is available...
 	if [ "${KV_2_6_OR_GREATER}" -a "${USE_UDEV_NORMAL}" != '0' ]
@@ -460,9 +473,9 @@ cmdline_hwopts() {
 }
 
 load_modules() {
-	# Load modules listed in MY_HWOPTS if /lib/modules exists
+	# Load modules listed in MY_HWOPTS if /lib/modules exists for the running kernel
 	
-	if [ -d '/lib/modules' ]
+	if [ -d '/lib/modules/${KV}' ]
 	then
 		good_msg 'Loading modules'
 		# Load appropriate kernel modules

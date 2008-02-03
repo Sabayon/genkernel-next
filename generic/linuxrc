@@ -220,8 +220,11 @@ splash 'init'
 detect_sbp2_devices
 cmdline_hwopts
 
-# Load modules listed in MY_HWOPTS if /lib/modules exists
-if [ -d '/lib/modules' ]
+# Setup hotplugging for firmware loading
+setup_hotplug
+
+# Load modules listed in MY_HWOPTS if /lib/modules exists for the running kernel
+if [ -d '/lib/modules/${KV}' ]
 then
 	good_msg 'Loading modules'
 	# Load appropriate kernel modules
