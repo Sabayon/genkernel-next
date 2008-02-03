@@ -2,6 +2,10 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  03 Feb 2008; Andrew Gaffney <agaffney@gentoo.org> gen_configkernel.sh,
+  genkernel.conf:
+  Clean up OLDCONFIG logic and default to OLDCONFIG=yes. This is for bug 207895
+
   02 Feb 2008; Chris Gianelloni <wolf31o2@gentoo.org> generic/linuxrc:
   Moving the code to start resume operations so it doesn't run when booting
   from CD. We also don't execute the code if there's no real_resume set on the

@@ -44,14 +44,9 @@ config_kernel() {
 		print_info 1 '        Previous config backed up to .config.bak'
 		cp "${KERNEL_CONFIG}" "${KERNEL_DIR}/.config" || gen_die 'Could not copy configuration file!'
 	fi
-	if isTrue "${CLEAN}" || isTrue "${OLDCONFIG}"
+	if isTrue "${OLDCONFIG}"
 	then
-		if ! isTrue "${CLEAN}"
-		then
-			print_info 1 'config: >> Running oldconfig...'
-		else
-			print_info 1 '        >> Running oldconfig...'
-		fi
+		print_info 1 '        >> Running oldconfig...'
 		yes '' 2>/dev/null | compile_generic oldconfig kernel 2>/dev/null
 	fi
 	if isTrue "${CLEAN}"
