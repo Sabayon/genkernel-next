@@ -2,6 +2,9 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  04 Feb 2008; Andrew Gaffney <agaffney@gentoo.org> generic/initrd.scripts:
+  Change &>/dev/null to >/dev/null 2>&1 because busybox ash sucks
+
   04 Feb 2008; Andrew Gaffney <agaffney@gentoo.org> generic/initrd.scripts,
   generic/linuxrc:
   Switch to double quotes where we're interpolating variables, because I suck

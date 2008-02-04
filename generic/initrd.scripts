@@ -99,7 +99,7 @@ findmediamount() {
 #				else
 #					mount -r -t auto ${x} ${mntdir} &>/dev/null
 #				fi
-				mount -r -t ${CDROOT_TYPE} ${x} ${mntdir} &>/dev/null
+				mount -r -t ${CDROOT_TYPE} ${x} ${mntdir} >/dev/null 2>&1
 				if [ "$?" = '0' ]
 				then
 					# Check for the media
