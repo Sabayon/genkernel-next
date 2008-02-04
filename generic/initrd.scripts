@@ -475,7 +475,7 @@ cmdline_hwopts() {
 load_modules() {
 	# Load modules listed in MY_HWOPTS if /lib/modules exists for the running kernel
 	
-	if [ -d '/lib/modules/${KV}' ]
+	if [ -d "/lib/modules/${KV}" ]
 	then
 		good_msg 'Loading modules'
 		# Load appropriate kernel modules
