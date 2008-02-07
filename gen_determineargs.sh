@@ -1,9 +1,9 @@
 #!/bin/bash
 
 get_KV() {
-	if [ "${CMD_NO_KERNEL_SOURCES}" = '1' -a -e "${CMD_KERNCACHE}" ]
+	if [ "${NO_KERNEL_SOURCES}" = '1' -a -e "${KERNCACHE}" ]
 	then
-		/bin/tar -xj -C ${TEMP} -f ${CMD_KERNCACHE} kerncache.config 
+		/bin/tar -xj -C ${TEMP} -f ${KERNCACHE} kerncache.config 
 		if [ -e ${TEMP}/kerncache.config ]
 		then
 			KERN_24=0
@@ -72,7 +72,6 @@ determine_real_args() {
 	set_config_with_override 2 DEBUGFILE            CMD_DEBUGFILE
 	set_config_with_override 2 KERNEL_DIR           CMD_KERNEL_DIR           "${DEFAULT_KERNEL_SOURCE}"
 	set_config_with_override 1 NO_KERNEL_SOURCES    CMD_NO_KERNEL_SOURCES
-	set_config_with_override 2 KERNCACHE            CMD_KERNCACHE
 	set_config_with_override 2 KNAME                CMD_KERNNAME             "genkernel"
 
 	set_config_with_override 2 MAKEOPTS             CMD_MAKEOPTS             "$DEFAULT_MAKEOPTS"
@@ -158,26 +157,26 @@ determine_real_args() {
 	if [ "${NO_KERNEL_SOURCES}" != "1" ]
 	then
 		if [ ! -d ${KERNEL_DIR} ]
-	then
+		then
 			gen_die "kernel source directory \"${KERNEL_DIR}\" was not found!"
-	fi
+		fi
 	fi
 
 	if [ -z "${KERNCACHE}" ]
 	then
 		if [ "${KERNEL_DIR}" = '' -a "${NO_KERNEL_SOURCES}" != "1" ]
-	then
+		then
 			gen_die 'No kernel source directory!'
-	fi
+		fi
 		if [ ! -e "${KERNEL_DIR}" -a "${NO_KERNEL_SOURCES}" != "1" ]
-	then
+		then
 			gen_die 'No kernel source directory!'
-	fi
+		fi
 	else
 		if [ "${KERNEL_DIR}" = '' ]
 		then
 			gen_die 'Kernel Cache specified but no kernel tree to verify against!'
-	fi
+		fi
 	fi
 
 	# Special case:  If --no-clean is specified on the command line, 
@@ -185,9 +184,9 @@ determine_real_args() {
 	if [ "${CMD_CLEAN}" != '' ]
 	then
 		if ! isTrue ${CLEAN}
-	then
+		then
 			MRPROPER=0
-	fi
+		fi
 	fi
 	
 	if [ -n "${MINKERNPACKAGE}" ]
