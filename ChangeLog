@@ -2,6 +2,10 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  14 Feb 2008; Chris Gianelloni <wolf31o2@gentoo.org>
+  generic/initrd.scripts, generic/linuxrc:
+  Performed some minor cleanup.
+
   14 Feb 2008; Chris Gianelloni <wolf31o2@gentoo.org> generic/linuxrc:
   Move busybox --install -s to outside the /init check. Fix problems with
   running mknod on a non-CD root filesystem, which will be read-only, for bug
@@ -1306,7 +1310,7 @@
   Fix #100637.
 
   05 Dec 2005; Tim Yamin <plasmaroo@gentoo.org> generic/linuxrc:
-  Back out suspend2 support temporarily as per #114266c10.
+  Back out suspend2 support temporarily as per #114266 comment 10.
 
   05 Dec 2005; Tim Yamin <plasmaroo@gentoo.org> generic/linuxrc:
   Fix #113634, #114266.

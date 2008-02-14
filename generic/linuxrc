@@ -203,18 +203,18 @@ then
 	# Load appropriate kernel modules
 	if [ "${NODETECT}" != '1' ]
 	then
-		for modules in $MY_HWOPTS
+		for modules in ${MY_HWOPTS}
 		do
-			modules_scan $modules
-			eval DO_`echo $modules | sed 's/-//'`=1
+			modules_scan ${modules}
+			eval DO_`echo ${modules} | sed 's/-//'`=1
 		done
 	fi
 	# Always eval doload=...
-	modules_load $MDOLIST
+	modules_load ${MDOLIST}
 else
-	for modules in $MY_HWOPTS
+	for modules in ${MY_HWOPTS}
 	do
-		eval DO_`echo $modules | sed 's/-//'`=1
+		eval DO_`echo ${modules} | sed 's/-//'`=1
 	done
 	good_msg 'Skipping module load; no modules in the initrd!'
 fi
@@ -242,13 +242,12 @@ then
 	then
 		swsusp_resume
 #		suspend_resume
-#		suspend2_resume
 		tuxonice_resume
 	fi
 fi
 
-mkdir -p ${NEW_ROOT}
-CHROOT=${NEW_ROOT}
+mkdir -p "${NEW_ROOT}"
+CHROOT="${NEW_ROOT}"
 
 # Run debug shell if requested
 rundebugshell
@@ -256,28 +255,28 @@ rundebugshell
 if [ "${CDROOT}" = '1' ]
 then
 	good_msg "Making tmpfs for ${NEW_ROOT}"
-	mount -t tmpfs tmpfs ${NEW_ROOT}
+	mount -t tmpfs tmpfs "${NEW_ROOT}"
 	
 	for i in dev mnt mnt/cdrom mnt/livecd mnt/key tmp tmp/.initrd mnt/gentoo sys
 	do
-		mkdir -p ${NEW_ROOT}/$i
-		chmod 755 ${NEW_ROOT}/$i
+		mkdir -p "${NEW_ROOT}/${i}"
+		chmod 755 "${NEW_ROOT}/${i}"
 	done
-	[ ! -e ${NEW_ROOT}/dev/null ] && mknod ${NEW_ROOT}/dev/null c 1 3
-	[ ! -e ${NEW_ROOT}/dev/console ] && mknod ${NEW_ROOT}/dev/console c 5 1
+	[ ! -e "${NEW_ROOT}/dev/null" ] && mknod "${NEW_ROOT}"/dev/null c 1 3
+	[ ! -e "${NEW_ROOT}/dev/console" ] && mknod "${NEW_ROOT}"/dev/console c 5 1
 
 	# For SGI LiveCDs ...
 	if [ "${LOOPTYPE}" = "sgimips" ]
 	then
-		[ ! -e ${NEW_ROOT}/dev/sr0 ] && mknod ${NEW_ROOT}/dev/sr0 b 11 0
-		[ ! -e ${NEW_ROOT}/dev/loop0 ] && mknod ${NEW_ROOT}/dev/loop0 b 7 0
+		[ ! -e "${NEW_ROOT}/dev/sr0" ] && mknod "${NEW_ROOT}/dev/sr0" b 11 0
+		[ ! -e "${NEW_ROOT}/dev/loop0" ] && mknod "${NEW_ROOT}/dev/loop0" b 7 0
 	fi
 
-	# Required for gensplash to work.  Not an issue with the initrd as this
+	# Required for splash to work.  Not an issue with the initrd as this
 	# device isn't created there and is not needed.
 	if [ -e /dev/tty1 ]
 	then
-		[ ! -e ${NEW_ROOT}/dev/tty1 ] && mknod ${NEW_ROOT}/dev/tty1 c 4 1
+		[ ! -e "${NEW_ROOT}/dev/tty1" ] && mknod "${NEW_ROOT}/dev/tty1" c 4 1
 	fi
 
 	if [ "${REAL_ROOT}" != "/dev/nfs" ] && [ "${LOOPTYPE}" != "sgimips" ]
@@ -290,12 +289,12 @@ then
 		echo -n -e "${WARN}>>${NORMAL}${BOLD} No bootable medium found. Waiting for new devices"
 		
 		COUNTER=0
-		while [ $COUNTER -lt 3 ]; do
+		while [ ${COUNTER} -lt 3 ]; do
 			sleep 3
 			echo -n '.'
-			let COUNTER=$COUNTER+1
-		done	
-		
+			let COUNTER=${COUNTER}+1
+		done
+
 		sleep 1
 		echo -e "${NORMAL}"
 		bootstrapCD
@@ -304,12 +303,12 @@ then
 	if [ "${REAL_ROOT}" = '' ]
 	then
 		# Undo stuff
-		umount  ${NEW_ROOT}/dev 2>/dev/null
-		umount  ${NEW_ROOT}/sys 2>/dev/null
+		umount  "${NEW_ROOT}/dev" 2>/dev/null
+		umount  "${NEW_ROOT}/sys" 2>/dev/null
 		umount /sys 2>/dev/null
 
-		umount  ${NEW_ROOT}
-		rm -rf  ${NEW_ROOT}/*
+		umount  "${NEW_ROOT}"
+		rm -rf  "${NEW_ROOT}/*"
 
 		bad_msg 'Could not find CD to boot, something else needed!'
 		CDROOT=0
@@ -392,8 +391,6 @@ do
 			findnfsmount
 		else
 			# mount ro so fsck doesn't barf later
-#			REAL_ROOT_TYPE=`vol_id -t ${REAL_ROOT}`
-#			mount -t ${REAL_ROOT_TYPE} -o ro ${REAL_ROOT} ${NEW_ROOT}
 			if [ "${REAL_ROOTFLAGS}" = '' ]; then
 				mount -o ro ${REAL_ROOT} ${NEW_ROOT}
 			else
@@ -404,7 +401,6 @@ do
 		
 		# If mount is successful break out of the loop 
 		# else not a good root and start over.
-
 		if [ "$?" = '0' ]
 		then
 			break
@@ -419,11 +415,11 @@ done
 
 #verbose_kmsg
 
-# If cd root is set determine the looptype to boot
+# If CD root is set determine the looptype to boot
 if [ "${CDROOT}" = '1' ]
 then
 	good_msg 'Determining looptype ...'
-	cd ${NEW_ROOT}
+	cd "${NEW_ROOT}"
 
 	# Find loop and looptype if we have NFS-mounted a livecd
 	if  [ "${LOOP}" = '' ] && [ "${REAL_ROOT}" = '/dev/nfs' ]
@@ -474,21 +470,18 @@ then
 
 	cache_cd_contents
 
-        # If encrypted, find key and mount, otherwise mount as usual
+	# If encrypted, find key and mount, otherwise mount as usual
 	if [ -n "${CRYPT_ROOT}" ] 
 	then
-		good_msg 'You booted an encrypted livecd' ${CRYPT_SILENT}
-
-		CRYPT_ROOT_KEY=$(head -n 1 ${NEW_ROOT}/mnt/cdrom/livecd)
-		
-		losetup /dev/loop0 ${NEW_ROOT}/mnt/cdrom/${LOOPEXT}${LOOP}
-		
-		test_success 'Preparing loop filesystem'
-		
+		CRYPT_ROOT_KEY="$(head -n 1 ${NEW_ROOT}/mnt/cdrom/livecd)"
 		CRYPT_ROOT='/dev/loop0'
-		
+		good_msg 'You booted an encrypted livecd' "${CRYPT_SILENT}"
+
+		losetup /dev/loop0 "${NEW_ROOT}/mnt/cdrom/${LOOPEXT}${LOOP}"
+		test_success 'Preparing loop filesystem'
+
 		startLUKS
-		
+
 		case ${LOOPTYPE} in
 			normal)
 				MOUNTTYPE="ext2"
@@ -496,52 +489,41 @@ then
 			*)
 				MOUNTTYPE="${LOOPTYPE}"
 				;;
-		esac		
+		esac
 
+		mount -t "${MOUNTTYPE}" -o ro /dev/mapper/root "${NEW_ROOT}/mnt/livecd"
 
-		mount -t ${MOUNTTYPE} -o ro /dev/mapper/root ${NEW_ROOT}/mnt/livecd 
-		
-		test_success 'Mount filesystem'	
+		test_success 'Mount filesystem'
 		FS_LOCATION='mnt/livecd'
-
-
-
 	# Setup the loopback mounts, if unencrypted
 	else
 		if [ "${LOOPTYPE}" = 'normal' ]
 		then
 			good_msg 'Mounting loop filesystem'
-			mount -t ext2 -o loop,ro ${NEW_ROOT}/mnt/cdrom/${LOOPEXT}${LOOP} ${NEW_ROOT}/mnt/livecd
+			mount -t ext2 -o loop,ro "${NEW_ROOT}/mnt/cdrom/${LOOPEXT}${LOOP}" "${NEW_ROOT}/mnt/livecd"
 			test_success 'Mount filesystem'
 			FS_LOCATION='mnt/livecd'
-	
-	
 		elif [ "${LOOPTYPE}" = 'squashfs' ]
 		then
 			good_msg 'Mounting squashfs filesystem'
-			mount -t squashfs -o loop,ro ${NEW_ROOT}/mnt/cdrom/${LOOPEXT}${LOOP} ${NEW_ROOT}/mnt/livecd
-			
+			mount -t squashfs -o loop,ro "${NEW_ROOT}/mnt/cdrom/${LOOPEXT}${LOOP}" "${NEW_ROOT}/mnt/livecd"
 			test_success 'Mount filesystem'
 			FS_LOCATION='mnt/livecd'
-		
 		elif [ "${LOOPTYPE}" = 'gcloop' ]
 		then
 			good_msg 'Mounting gcloop filesystem'
-			echo ' ' | losetup -E 19 -e ucl-0 -p0 ${NEW_ROOT}/dev/loop0 ${NEW_ROOT}/mnt/cdrom/${LOOPEXT}${LOOP}
+			echo ' ' | losetup -E 19 -e ucl-0 -p0 "${NEW_ROOT}/dev/loop0" "${NEW_ROOT}/mnt/cdrom/${LOOPEXT}${LOOP}"
 			test_success 'losetup the loop device'
-	
-			mount -t ext2 -o ro ${NEW_ROOT}/dev/loop0 ${NEW_ROOT}/mnt/livecd
+
+			mount -t ext2 -o ro "${NEW_ROOT}/dev/loop0" "${NEW_ROOT}/mnt/livecd"
 			test_success 'Mount the losetup loop device'
 			FS_LOCATION='mnt/livecd'
-		
 		elif [ "${LOOPTYPE}" = 'zisofs' ]
 		then
 			FS_LOCATION="mnt/cdrom/${LOOPEXT}${LOOP}"
-		
 		elif [ "${LOOPTYPE}" = 'noloop' ]
 		then
 			FS_LOCATION='mnt/cdrom'
-	
 		elif [ "${LOOPTYPE}" = 'sgimips' ]
 		then
 			# getdvhoff finds the starting offset (in bytes) of the squashfs
@@ -555,21 +537,17 @@ then
 			# the LiveCD rootfs
 			good_msg 'Locating the SGI LiveCD Root Partition'
 			echo ' ' | \
-				losetup -o $(/bin/getdvhoff ${NEW_ROOT}${REAL_ROOT} 0) \
-					${NEW_ROOT}${CDROOT_DEV} \
-					${NEW_ROOT}${REAL_ROOT}
+				losetup -o $(/bin/getdvhoff "${NEW_ROOT}${REAL_ROOT}" 0) \
+					"${NEW_ROOT}${CDROOT_DEV}" \
+					"${NEW_ROOT}${REAL_ROOT}"
 			test_success 'losetup /dev/sr0 /dev/loop0'
 	
 			good_msg 'Mounting the Root Partition'
-			mount -t squashfs -o ro ${NEW_ROOT}${CDROOT_DEV} ${NEW_ROOT}/mnt/livecd
+			mount -t squashfs -o ro "${NEW_ROOT}${CDROOT_DEV}" "${NEW_ROOT}/mnt/livecd"
 			test_success 'mount /dev/loop0 /'
 			FS_LOCATION='mnt/livecd'
 		fi
 	fi
-
-#
-# End cdrom looptype determination and mounting if necessary
-#
 
 	# Unpacking additional packages from NFS mount
 	# This is useful for adding kernel modules to /lib
@@ -590,7 +568,7 @@ then
 	
 	good_msg "Copying read-write image contents to tmpfs"
 	# Copy over stuff that should be writable
-	(cd ${NEW_ROOT}/${FS_LOCATION}; cp -a ${ROOT_TREES} ${NEW_ROOT})
+	(cd "${NEW_ROOT}/${FS_LOCATION}"; cp -a "${ROOT_TREES}" "${NEW_ROOT}")
 
 	# Now we do the links.
 	for x in ${ROOT_LINKS}
@@ -602,17 +580,17 @@ then
 			# List all subdirectories of x
 			find "${NEW_ROOT}/${FS_LOCATION}/${x}" -type d 2>/dev/null | while read directory
 			do
-				## Strip the prefix of the FS_LOCATION
-				directory=${directory#${NEW_ROOT}/${FS_LOCATION}/}
+				# Strip the prefix of the FS_LOCATION
+				directory="${directory#${NEW_ROOT}/${FS_LOCATION}/}"
 
-				## Skip this directory if we already linked a parent directory
+				# Skip this directory if we already linked a parent directory
 				if [ "${curent_parrent}" != '' ]; then
 					var=`echo "${directory}" | grep "^${curent_parrent}"`
 					if [ "${var}" != '' ]; then
 						continue
 					fi
 				fi
-				## Test if the directory exists already
+				# Test if the directory exists already
 				if [ -e "/${NEW_ROOT}/${directory}" ]
 				then
 					# It does exist, link all the individual files
@@ -625,7 +603,7 @@ then
 				else
 					# It does not exist, make a link to the livecd
 					ln -s "/${FS_LOCATION}/${directory}" "${directory}" 2>/dev/null
-					current_parent=${directory}
+					current_parent="${directory}"
 				fi
 			done
 		fi
@@ -660,23 +638,23 @@ cdupdate
 if [ "${SUBDIR}" != '' -a -e "${CHROOT}/${SUBDIR}" ]
 then
 	good_msg "Entering ${SUBDIR} to boot"
-	CHROOT=${CHROOT}/${SUBDIR}
+	CHROOT="${CHROOT}/${SUBDIR}"
 fi
 
 verbose_kmsg
 
 if [ "$0" = '/linuxrc' ] || [ "$0" = 'linuxrc' ]
 then
-	if [ ! -e ${CHROOT}/dev/console ] || [ ! -e ${CHROOT}/dev/null ] \
-	|| [ ! -e ${CHROOT}/dev/tty1 ]
+	if [ ! -e "${CHROOT}/dev/console" ] || [ ! -e "${CHROOT}/dev/null" ] \
+	|| [ ! -e "${CHROOT}/dev/tty1" ]
 	then
 		echo -ne "${BAD}>>{NORMAL}${BOLD} ERROR: /dev is broken!${NORMAL}"
 	else
 		echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting${NORMAL}"
 	fi
 
-	cd ${CHROOT}
-	mkdir ${CHROOT}/proc ${CHROOT}/sys 2>/dev/null
+	cd "${CHROOT}"
+	mkdir "${CHROOT}/proc" "${CHROOT}/sys" 2>/dev/null
 	pivot_root . tmp/.initrd
 	if [ "${DO_slowusb}" ] || [ "${FORCE_slowusb}" ]
 	then
@@ -719,26 +697,26 @@ then
 	exec chroot . /bin/sh <<- EOF
 		umount /tmp/.initrd || echo "*: Failed to unmount the initrd!"
 		/sbin/blockdev --flushbufs /dev/ram0 >/dev/null 2>&1
-		exec ${REAL_INIT:-/sbin/init} ${INIT_OPTS}
+		exec "${REAL_INIT:-/sbin/init}" "${INIT_OPTS}"
 EOF
 elif [ "$0" = '/init' ]
 then
-	if [ ! -e ${CHROOT}/dev/console ] || [ ! -e ${CHROOT}/dev/null ] \
-	|| [ ! -e ${CHROOT}/dev/tty1 ]
+	if [ ! -e "${CHROOT}/dev/console" ] || [ ! -e "${CHROOT}/dev/null" ] \
+	|| [ ! -e "${CHROOT}/dev/tty1" ]
 	then
 		echo -ne "${BAD}>>{NORMAL}${BOLD} ERROR: /dev is broken!${NORMAL}"
 	else
 		echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting (initramfs)${NORMAL}"
 	fi
 
-	cd ${CHROOT}
-	mkdir ${CHROOT}/proc ${CHROOT}/sys 2>/dev/null
+	cd "${CHROOT}"
+	mkdir "${CHROOT}/proc" "${CHROOT}/sys" 2>/dev/null
 	echo -ne "${BOLD}.${NORMAL}"
 		umount /sys || echo '*: Failed to unmount the initrd /sys!'
 		umount /proc || echo '*: Failed to unmount the initrd /proc!'
 	echo -e "${BOLD}.${NORMAL}"
 
-	exec switch_root -c "/dev/console" "${CHROOT}" ${REAL_INIT:-/sbin/init} ${INIT_OPTS}
+	exec switch_root -c "/dev/console" "${CHROOT}" "${REAL_INIT:-/sbin/init}" "${INIT_OPTS}"
 fi
 
 splash 'verbose'

@@ -892,7 +892,7 @@ rundebugshell() {
 }
 
 swsusp_resume() {
-	### determine swap resume partition
+	# determine swap resume partition
 	local device=$(ls -l "${REAL_RESUME}" | sed 's/\ */ /g' | cut -d \  -f 6-7 | sed 's/,\ */:/')
 	[ -f /sys/power/resume ] && echo "${device}" > /sys/power/resume
 	return 0
