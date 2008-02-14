@@ -175,6 +175,7 @@ cache_cd_contents() {
 			then
 				bad_msg "Failed to cache the loop file! Lack of space?"
 				rm -rf ${NEW_ROOT}/mnt/livecd.* 2>/dev/null
+				rm -rf ${NEW_ROOT}/mnt/image.* 2>/dev/null
 				rm -rf ${NEW_ROOT}/mnt/zisofs 2>/dev/null
 			else
 				LOOPEXT='../'
