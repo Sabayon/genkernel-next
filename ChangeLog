@@ -2,6 +2,11 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  14 Feb 2008; Chris Gianelloni <wolf31o2@gentoo.org> genkernel:
+  We only need to make sure that we have /sbin and /usr/sbin in our PATH for
+  bug #97378, not reset it. Thanks to Justin Bronder <jsbronder@gentoo.org> in
+  bug #209182 for pointing it out. This is genkernel 3.4.10_pre1 for testing.
+
   14 Feb 2008; Chris Gianelloni <wolf31o2@gentoo.org> gen_cmdline.sh,
   gen_compile.sh, gen_determineargs.sh, gen_initramfs.sh, gen_initrd.sh,
   generic/initrd.scripts, generic/linuxrc, genkernel, genkernel.conf,
