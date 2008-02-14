@@ -2,6 +2,12 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  14 Feb 2008; Chris Gianelloni <wolf31o2@gentoo.org> -um/kernel-config-2.4,
+  -alpha/kernel-config-2.4, -parisc64/kernel-config-2.4,
+  -xenU/kernel-config-2.4, -parisc/kernel-config-2.4,
+  -x86/kernel-config-2.4, -xen0/kernel-config-2.4:
+  Removing 2.4 kernel configs, since we aren't supporting 2.4 from here on out.
+
   14 Feb 2008; Chris Gianelloni <wolf31o2@gentoo.org> genkernel:
   We only need to make sure that we have /sbin and /usr/sbin in our PATH for
   bug #97378, not reset it. Thanks to Justin Bronder <jsbronder@gentoo.org> in
