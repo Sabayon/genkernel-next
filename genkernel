@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PATH="${PATH}:/sbin:/usr/sbin"
-GK_V='3.4.10_pre1'
+GK_V='3.4.10_pre2'
 
 # Set the default for TMPDIR.  May be modified by genkernel.conf or the
 # --tempdir command line option.
@@ -305,11 +305,6 @@ fi
 if [ "${BUILD_INITRD}" -eq '1' ]
 then
 	[ "${DISKLABEL}" -eq '1' ] && compile_e2fsprogs
-
-	if [ "${KERN_24}" -eq '1' ] 
-	then
-		compile_devfsd
-	fi
 
 	if [ "${KERN_24}" != '1' ]
 	then

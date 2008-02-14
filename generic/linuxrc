@@ -225,7 +225,7 @@ mount_sysfs
 # Delay if needed for USB hardware
 sdelay
 
-# Start udev/devfs
+# Start device manager
 start_dev_mgr
 
 # Setup md device nodes if they dont exist
@@ -581,6 +581,7 @@ then
 	# Let Init scripts know that we booted from CD
 	export CDBOOT
 	CDBOOT=1
+	check_slowusb
 	if [ "${DO_slowusb}" ] || [ "${FORCE_slowusb}" ]
 	then
 		sleep 10
@@ -617,31 +618,14 @@ then
 	fi
 	echo -ne "${BOLD}.${NORMAL}"
 
-	if /tmp/.initrd/bin/[ "${USE_DEVFS_NORMAL}" = '1' -a "${CDROOT}" = 0 ]
-	then
-		umount /tmp/.initrd/proc || echo '*: Failed to unmount the initrd /proc!'
-		mount -n --move /tmp/.initrd/dev dev || echo '*: Failed to move over the /dev tree!'
-		rm -rf /tmp/.initrd/dev || echo '*: Failed to remove the initrd /dev!'
-	elif /tmp/.initrd/bin/[ "${USE_UDEV_NORMAL}" = '1' ]
-	then
-		/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/fd ] && rm /tmp/.initrd/dev/fd
-		/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/stdin ] && rm /tmp/.initrd/dev/stdin
-		/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/stdout ] && rm /tmp/.initrd/dev/stdout
-		/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/stderr ] && rm /tmp/.initrd/dev/stderr
-		/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/core ] && rm /tmp/.initrd/dev/core 
-		umount /tmp/.initrd/dev || echo '*: Failed to unmount the initrd /dev!'
-		umount /tmp/.initrd/proc || echo '*: Failed to unmount the initrd /proc!'
-		umount /tmp/.initrd/sys || echo '*: Failed to unmount the initrd /sys!'
-	elif /tmp/.initrd/bin/[ "${CDROOT}" -eq 1 ]
-	then
-		umount /tmp/.initrd/proc || echo "*: Failed to unmount the initrd /proc!"
-		umount /dev 2>/dev/null
-		mount -n --move /tmp/.initrd/dev dev 2>/dev/null
-		rm -rf /tmp/.initrd/dev || echo '*: Failed to remove the initrd /dev!'
-
-		umount /sys 2>/dev/null
-		umount /tmp/.initrd/sys 2>/dev/null
-	fi
+	/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/fd ] && rm /tmp/.initrd/dev/fd
+	/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/stdin ] && rm /tmp/.initrd/dev/stdin
+	/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/stdout ] && rm /tmp/.initrd/dev/stdout
+	/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/stderr ] && rm /tmp/.initrd/dev/stderr
+	/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/core ] && rm /tmp/.initrd/dev/core 
+	umount /tmp/.initrd/dev || echo '*: Failed to unmount the initrd /dev!'
+	umount /tmp/.initrd/proc || echo '*: Failed to unmount the initrd /proc!'
+	umount /tmp/.initrd/sys || echo '*: Failed to unmount the initrd /sys!'
 	echo -ne "${BOLD}.${NORMAL}"
 
 	# /usr/src/linux/Documentation/initrd.txt:

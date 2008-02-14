@@ -187,17 +187,13 @@ cache_cd_contents() {
 mount_sysfs() {
 	if [ "${KV_2_6_OR_GREATER}" ]
 	then
-		# Udev is semi-broken on non /sys sysfs mount points.
 		mount -t sysfs /sys /sys >/dev/null 2>&1
 		ret=$?
-	
-		# sysfs mount failed .. udev wont work fall back to devfs if available
-		[ "$ret" -eq '0' ] || USE_UDEV_NORMAL=0
+		[ "$ret" -eq '0' ] || bad_msg "Failed to mount /sys!"
 	fi
 }
 
 findnfsmount() {
-
 	if [ "${IP}" != '' ] || busybox udhcpc -R rootpath -n -s /bin/udhcpc.scripts
 	then
 		[ -e /rootpath ] && NFSROOT=`cat /rootpath`
@@ -261,10 +257,6 @@ findnfsmount() {
 
 		fi
 	fi
-}
-
-kill_devfsd() {
-	killall devfsd > /dev/null 2>&1
 }
 
 check_loop() {
@@ -375,49 +367,37 @@ bind_mount_dev() {
 }
 
 setup_hotplug() {
-	# Check udev is available...
-	if [ "${KV_2_6_OR_GREATER}" -a "${USE_UDEV_NORMAL}" != '0' ]
+	if [ "${KV_2_6_OR_GREATER}" ]
 	then
-		USE_UDEV_NORMAL=1
-	else
-		USE_UDEV_NORMAL=0
-	fi
-
-	if [ "${USE_UDEV_NORMAL}" = '1' ]
-	then
-		# catch udev hotplug events
 		echo /sbin/mdev > /proc/sys/kernel/hotplug
 	fi
 }
 
-start_dev_mgr() {
-	# Check udev is available...
-	if [ "${KV_2_6_OR_GREATER}" -a "${USE_UDEV_NORMAL}" != '0' ]
-	then
-		USE_UDEV_NORMAL=1
-	else
-		USE_UDEV_NORMAL=0
-	fi
+check_slowusb() {
+	[ "${DO_slowusb}" ] || \
+	for dir in /sys/bus/usb/drivers/usb-storage/*
+	do
+		[ -d "${dir}" ] && FORCE_slowusb="1"
+	done
+}
 
-	if [ "${USE_UDEV_NORMAL}" = '1' ]
+start_dev_mgr() {
+	if [ "${KV_2_6_OR_GREATER}" ]
 	then
 		cd /sys
 		[ "${DO_slowusb}" ] && sleep 10
-		kill_devfsd
+		check_slowusb
+		[ "${FORCE_slowusb}" ] && sleep 10
 		good_msg 'Activating mdev'
 		runmdev
-		[ "${DO_slowusb}" ] && sleep 20
+		[ "${DO_slowusb}" ] || \
+		[ "${FORCE_slowusb}" ] && sleep 20
 		cd /
-	else
-		good_msg 'Activating devfs'
-		mount -t devfs devfs /dev 2>/dev/null
-		devfsd /dev -np
 	fi
 }
 
 cmdline_hwopts() {
 	# Scan CMDLINE for any "doscsi" or "noscsi"-type arguments
-	
 	local FOUND
 	local TMP_HWOPTS
 

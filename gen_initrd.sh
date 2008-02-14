@@ -49,14 +49,6 @@ create_base_initrd_sys() {
 	echo "/dev/ram0     /           ext2    defaults	0 0" > ${TEMP}/initrd-temp/etc/fstab
 	echo "proc          /proc       proc    defaults    0 0" >> ${TEMP}/initrd-temp/etc/fstab
 
-	if [ "${NODEVFSD}" = '' ]
-	then
-		echo "REGISTER        .*           MKOLDCOMPAT" > ${TEMP}/initrd-temp/etc/devfsd.conf
-		echo "UNREGISTER      .*           RMOLDCOMPAT" >> ${TEMP}/initrd-temp/etc/devfsd.conf
-		echo "REGISTER        .*           MKNEWCOMPAT" >> ${TEMP}/initrd-temp/etc/devfsd.conf
-		echo "UNREGISTER      .*           RMNEWCOMPAT" >> ${TEMP}/initrd-temp/etc/devfsd.conf
-	fi
-
 	# SGI LiveCDs need the following binary (no better place for it than here)
 	# getdvhoff is a DEPEND of genkernel, so it *should* exist
 	if [ ${BUILD_INITRAMFS} -eq '1' ]
@@ -81,14 +73,6 @@ create_base_initrd_sys() {
 	tar -xjf "${BUSYBOX_BINCACHE}" -C "${TEMP}/initrd-temp/bin" busybox ||
 		gen_die 'Could not extract busybox bincache!'
 	chmod +x "${TEMP}/initrd-temp/bin/busybox"
-
-	# devfsd
-	if [ "${KERN_24}" -eq '1' ]
-	then
-		cp "${DEVFSD_BINCACHE}" "${TEMP}/initrd-temp/bin/devfsd.bz2" || gen_die 'Could not copy devfsd executable from bincache!'
-		bunzip2 "${TEMP}/initrd-temp/bin/devfsd.bz2" || gen_die 'Could not uncompress devfsd!'
-		chmod +x "${TEMP}/initrd-temp/bin/devfsd"
-	fi
 
 	# DMRAID 
 	if [ "${DMRAID}" -eq '1' ]

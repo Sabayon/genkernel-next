@@ -462,34 +462,6 @@ compile_dmraid() {
 	fi
 }
 
-compile_devfsd() {
-	local ARGS
-	if [ ! -f "${DEVFSD_BINCACHE}" ]
-	then
-		[ ! -f "${DEVFSD_SRCTAR}" ] &&
-			gen_die "Could not find devfsd source tarball: ${DEVFSD_SRCTAR}"
-		cd "${TEMP}"
-		rm -rf "${DEVFSD_DIR}"
-		/bin/tar -jxpf "${DEVFSD_SRCTAR}"
-		[ ! -d "${DEVFSD_DIR}" ] &&
-			gen_die "Devfsd directory ${DEVFSD_DIR} invalid"
-		cd "${DEVFSD_DIR}"
-
-		print_info 1 'devfsd: >> Compiling...'
-		compile_generic 'LDFLAGS=-static' utils
-
-		print_info 1 '        >> Copying to cache...'
-		[ -f "${TEMP}/${DEVFSD_DIR}/devfsd" ] || gen_die 'The devfsd executable does not exist after the compilation of devfsd!'
-		strip "${TEMP}/${DEVFSD_DIR}/devfsd" || gen_die 'Could not strip devfsd!'
-		bzip2 "${TEMP}/${DEVFSD_DIR}/devfsd" || gen_die 'Compression of devfsd failed!'
-		[ -f "${TEMP}/${DEVFSD_DIR}/devfsd.bz2" ] || gen_die 'Could not find compressed devfsd.bz2 binary!'
-		mv "${TEMP}/${DEVFSD_DIR}/devfsd.bz2" "${DEVFSD_BINCACHE}" || gen_die 'Could not move compressed binary to the package cache!'
-
-		cd "${TEMP}"
-		rm -rf "${DEVFSD_DIR}" > /dev/null
-	fi
-}
-
 compile_device_mapper() {
 	if [ ! -f "${DEVICE_MAPPER_BINCACHE}" ]
 	then

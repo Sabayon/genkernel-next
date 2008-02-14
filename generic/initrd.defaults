@@ -2,9 +2,6 @@
 
 PATH="/usr/sbin:/usr/bin:/sbin:/bin"
 
-# Default to the udev device manager
-USE_UDEV_NORMAL='1'
-
 # Insert ctrl character
 # ctrl-V then esc will print ^[
 # ctrl-V then ctrl-shift-m will print ^M

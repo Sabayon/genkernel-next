@@ -111,8 +111,6 @@ determine_real_args() {
 	set_config_with_override 1 EVMS                 CMD_EVMS
 	set_config_with_override 1 DMRAID               CMD_DMRAID
 	set_config_with_override 1 BUSYBOX              CMD_BUSYBOX              "yes"
-	set_config_with_override 1 DEVFS                CMD_UNDEFINED_CMD        "no"
-	
 	set_config_with_override 1 DISKLABEL            CMD_DISKLABEL
 	set_config_with_override 1 LUKS                 CMD_LUKS
 	set_config_with_override 1 MDADM                CMD_MDADM
@@ -122,8 +120,6 @@ determine_real_args() {
 
 	CACHE_DIR=`arch_replace "${CACHE_DIR}"`
 	BUSYBOX_BINCACHE=`cache_replace "${BUSYBOX_BINCACHE}"`
-	DEVFSD_BINCACHE=`cache_replace "${DEVFSD_BINCACHE}"`
-	DEVFSD_CONF_BINCACHE=`cache_replace "${DEVFSD_CONF_BINCACHE}"`
 	DEVICE_MAPPER_BINCACHE=`cache_replace "${DEVICE_MAPPER_BINCACHE}"`
 	LVM_BINCACHE=`cache_replace "${LVM_BINCACHE}"`
 	DMRAID_BINCACHE=`cache_replace "${DMRAID_BINCACHE}"`

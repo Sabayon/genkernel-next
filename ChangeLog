@@ -2,6 +2,13 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  14 Feb 2008; Chris Gianelloni <wolf31o2@gentoo.org> gen_compile.sh,
+  gen_determineargs.sh, gen_funcs.sh, gen_initramfs.sh, gen_initrd.sh,
+  generic/initrd.defaults, generic/initrd.scripts, generic/linuxrc,
+  genkernel, genkernel.8, genkernel.conf:
+  Removing DEVFS support from genkernel since we don't support 2.4 kernels
+  anymore. This is 3.4.10_pre2.
+
   14 Feb 2008; Chris Gianelloni <wolf31o2@gentoo.org>
   generic/initrd.scripts:
   Added a line to make sure we remove image.squashfs as well as the other loop
