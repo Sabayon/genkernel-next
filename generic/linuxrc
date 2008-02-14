@@ -24,10 +24,10 @@ mount -t proc proc /proc >/dev/null 2>&1
 mount -o remount,rw / >/dev/null 2>&1
 
 # Set up symlinks
+/bin/busybox --install -s
+
 if [ "$0" = '/init' ]
 then
-	/bin/busybox --install -s
-
 	[ -e /linuxrc ] && rm /linuxrc
 	 
 	if [ -e /bin/lvm ]
@@ -110,7 +110,7 @@ do
 		debug)
 			DEBUG='yes'
 		;;
-		 # Scan delay options 
+		# Scan delay options 
 		scandelay\=*)
 			SDELAY=`parse_opt "${x}"`
 		;;
@@ -131,7 +131,7 @@ do
 			export MLIST
 		;;
 		# Redirect output to a specific tty
-		CONSOLE\=*)
+		CONSOLE\=*\|console\=*)
 			CONSOLE=`parse_opt "${x}"`
 			exec >${CONSOLE} <${CONSOLE} 2>&1
 		;;
@@ -274,7 +274,7 @@ then
 	fi
 
 	# Required for gensplash to work.  Not an issue with the initrd as this
-	# device isnt created there and is not needed.
+	# device isn't created there and is not needed.
 	if [ -e /dev/tty1 ]
 	then
 		[ ! -e ${NEW_ROOT}/dev/tty1 ] && mknod ${NEW_ROOT}/dev/tty1 c 4 1
@@ -566,6 +566,7 @@ then
 			FS_LOCATION='mnt/livecd'
 		fi
 	fi
+
 #
 # End cdrom looptype determination and mounting if necessary
 #
@@ -666,8 +667,13 @@ verbose_kmsg
 
 if [ "$0" = '/linuxrc' ] || [ "$0" = 'linuxrc' ]
 then
-	[ ! -e ${CHROOT}/dev/console ] && mknod ${CHROOT}/dev/console c 5 1
-	echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting${NORMAL}"
+	if [ ! -e ${CHROOT}/dev/console ] || [ ! -e ${CHROOT}/dev/null ] \
+	|| [ ! -e ${CHROOT}/dev/tty1 ]
+	then
+		echo -ne "${BAD}>>{NORMAL}${BOLD} ERROR: /dev is broken!${NORMAL}"
+	else
+		echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting${NORMAL}"
+	fi
 
 	cd ${CHROOT}
 	mkdir ${CHROOT}/proc ${CHROOT}/sys 2>/dev/null
@@ -717,9 +723,13 @@ then
 EOF
 elif [ "$0" = '/init' ]
 then
-	[ ! -e ${CHROOT}/dev/console ] && mknod ${CHROOT}/dev/console c 5 1
-	[ ! -e ${CHROOT}/dev/tty1 ] && mknod ${CHROOT}/dev/tty1 c 4 1
-	echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting (initramfs)${NORMAL}"
+	if [ ! -e ${CHROOT}/dev/console ] || [ ! -e ${CHROOT}/dev/null ] \
+	|| [ ! -e ${CHROOT}/dev/tty1 ]
+	then
+		echo -ne "${BAD}>>{NORMAL}${BOLD} ERROR: /dev is broken!${NORMAL}"
+	else
+		echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting (initramfs)${NORMAL}"
+	fi
 
 	cd ${CHROOT}
 	mkdir ${CHROOT}/proc ${CHROOT}/sys 2>/dev/null

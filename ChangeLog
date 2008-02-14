@@ -2,6 +2,11 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  14 Feb 2008; Chris Gianelloni <wolf31o2@gentoo.org> generic/linuxrc:
+  Move busybox --install -s to outside the /init check. Fix problems with
+  running mknod on a non-CD root filesystem, which will be read-only, for bug
+  #208266.
+
   14 Feb 2008; Chris Gianelloni <wolf31o2@gentoo.org> -um/kernel-config-2.4,
   -alpha/kernel-config-2.4, -parisc64/kernel-config-2.4,
   -xenU/kernel-config-2.4, -parisc/kernel-config-2.4,
