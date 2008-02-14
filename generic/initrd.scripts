@@ -195,21 +195,6 @@ mount_sysfs() {
 	fi
 }
 
-# Insert a directory tree $2 to an union specified by $1
-# Top-level read-write branch is specified by it's index 0
-# $1 = union absolute path (starting with /)
-# $2 = path to data directory
-#
-union_insert_dir() {
-	# detect branch 0 because newer unionfs doesn't support "0,1,2"
-	BRANCH_0="/"$(/sbin/unionctl $1 --list | cut -d/ -f2- | cut -d'(' -f1)
-	/sbin/unionctl $1 --add --after $BRANCH_0 --mode ro $2
-	if [ $? = '0' ]
-	then
-		good_msg "Addition of $2 to $1 after branch $BRANCH_0 successful"
-	fi
-}
-
 findnfsmount() {
 
 	if [ "${IP}" != '' ] || busybox udhcpc -R rootpath -n -s /bin/udhcpc.scripts
@@ -903,62 +888,6 @@ rundebugshell() {
 		good_msg 'Starting debug shell as requested by "debug" option.'
 		good_msg 'Type "exit" to continue with normal bootup.'
 		[ -x /bin/sh ] && /bin/sh || /bin/ash
-	fi
-}
-
-setup_unionfs() {
-	if [ "${USE_UNIONFS_NORMAL}" = '1' ]
-	then
-		# Directory used for rw changes in union mount filesystem
-		UNION=/union
-		MEMORY=/memory
-		if [ -z "$UID" ]
-		then
-			CHANGES=$MEMORY/unionfs_changes/default
-		else
-			CHANGES=$MEMORY/unionfs_changes/$UID
-		fi
-
-		mkdir -p ${MEMORY}
-		mkdir -p ${UNION}
-		good_msg "Loading unionfs module"
-		modprobe unionfs > /dev/null 2>&1
-		if [ -n "${UNIONFS}" ]
-		then
-			CHANGESDEV=${UNIONFS}
-			good_msg "mounting $CHANGESDEV to $MEMORY for unionfs support"
-			mount -t auto $CHANGESDEV $MEMORY
-			# mount tmpfs only in the case when changes= boot parameter was
-			# empty or we were not able to mount the storage device
-			ret=$?
-			if [ "${ret}" -ne 0 ]
-			then
-				bad_msg "mount of $CHANGESDEV failed falling back to ramdisk based unionfs"
-				mount -t tmpfs tmpfs $MEMORY
-			fi
-			if [ "${CDROOT}" -eq '1' -a ! -f ${MEMORY}/livecd.unionfs  ]
-			then
-				umount $MEMORY
-				bad_msg "failed to find livecd.unionfs file on $CHANGESDEV"
-				bad_msg "create a livecd.unionfs file on this device if you wish to use it for unionfs"
-				bad_msg "falling back to ramdisk based unionfs for safety"
-				mount -t tmpfs tmpfs $MEMORY
-			fi
-		else 
-			good_msg "Mounting ramdisk to $MEMORY for unionfs support..."
-			mount -t tmpfs tmpfs $MEMORY 
-		fi 
-
-		mkdir -p $CHANGES 
-		mount -t unionfs -o dirs=$CHANGES=rw unionfs ${UNION}
-		ret=$?
-		if [ "${ret}" -ne 0 ]
-		then 
-			bad_msg "Can't setup union ${UNION} in directory!"
-			USE_UNIONFS_NORMAL=0
-		fi
-	else
-		USE_UNIONFS_NORMAL=0
 	fi
 }
 

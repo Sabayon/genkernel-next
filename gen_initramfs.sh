@@ -72,36 +72,6 @@ append_blkid(){
 	rm -rf "${TEMP}/initramfs-blkid-temp" > /dev/null
 }
 
-append_unionfs_modules(){
-	if [ -d "${TEMP}/initramfs-unionfs-modules-temp" ]
-	then
-		rm -r "${TEMP}/initramfs-unionfs-modules-temp/"
-	fi
-	print_info 1 'UNIONFS MODULES: Adding support (compiling)...'
-	compile_unionfs_modules
-	mkdir -p "${TEMP}/initramfs-unionfs-modules-temp/"
-	/bin/tar -jxpf "${UNIONFS_MODULES_BINCACHE}" -C "${TEMP}/initramfs-unionfs-modules-temp" ||
-		gen_die "Could not extract unionfs modules binary cache!";
-	cd "${TEMP}/initramfs-unionfs-modules-temp/"
-	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
-	rm -r "${TEMP}/initramfs-unionfs-modules-temp/"
-}
-
-append_unionfs_tools(){
-	if [ -d "${TEMP}/initramfs-unionfs-tools-temp" ]
-	then
-		rm -r "${TEMP}/initramfs-unionfs-tools-temp/"
-	fi
-	print_info 1 'UNIONFS TOOLS: Adding support (compiling)...'
-	compile_unionfs_utils
-	mkdir -p "${TEMP}/initramfs-unionfs-tools-temp/bin/"
-	/bin/tar -jxpf "${UNIONFS_BINCACHE}" -C "${TEMP}/initramfs-unionfs-tools-temp" ||
-		gen_die "Could not extract unionfs tools binary cache!";
-	cd "${TEMP}/initramfs-unionfs-tools-temp/"
-	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
-	rm -r "${TEMP}/initramfs-unionfs-tools-temp/"
-}
-
 #append_suspend(){
 #	if [ -d "${TEMP}/initramfs-suspend-temp" ];
 #	then
@@ -454,8 +424,6 @@ create_initramfs() {
 	append_data 'auxilary'
 	append_data 'busybox' "${BUSYBOX}"
 #	append_data 'devfs' "${DEVFS}"
-	append_data 'unionfs_modules' "${UNIONFS}"
-	append_data 'unionfs_tools' "${UNIONFS}"
 	append_data 'lvm' "${LVM}"
 	append_data 'dmraid' "${DMRAID}"
 	append_data 'evms' "${EVMS}"

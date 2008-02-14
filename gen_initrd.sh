@@ -90,24 +90,6 @@ create_base_initrd_sys() {
 		chmod +x "${TEMP}/initrd-temp/bin/devfsd"
 	fi
 
-	#unionfs modules
-	if [ "${UNIONFS}" -eq '1' ]
-	then
-		print_info 1 'UNIONFS MODULES: Adding support (compiling)...'
-		compile_unionfs_modules
-		/bin/tar -jxpf "${UNIONFS_MODULES_BINCACHE}" -C "${TEMP}/initrd-temp" ||
-			gen_die "Could not extract unionfs modules binary cache!";
-	fi
-	
-	#unionfs utils
-	if [ "${UNIONFS}" -eq '1' ]
-	then
-		print_info 1 'UNIONFS TOOLS: Adding support (compiling)...'
-		compile_unionfs_utils
-		/bin/tar -jxpf "${UNIONFS_BINCACHE}" -C "${TEMP}/initrd-temp" ||
-			gen_die "Could not extract unionfs tools binary cache!";
-	fi
-
 	# DMRAID 
 	if [ "${DMRAID}" -eq '1' ]
 	then

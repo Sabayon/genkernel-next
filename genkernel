@@ -396,8 +396,6 @@ then
 	[ "${EVMS}" -eq '1' ] && print_info 1 'add "doevms" for evms support'
 	[ "${DMRAID}" -eq '1' ] && print_info 1 'add "dodmraid" for dmraid support'
 	[ "${DMRAID}" -eq '1' ] && print_info 1 '	or "dodmraid=<additional options>"'
-	[ "${UNIONFS}" -eq '1' ] && print_info 1 'add "unionfs" for unionfs support'
-	[ "${UNIONFS}" -eq '1' ] && print_info 1 '	or "unionfs=<block_device>"'
 fi
 
 [ "${BOOTRW}" != '' ] && mount -o remount,ro ${BOOTDIR}

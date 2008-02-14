@@ -109,7 +109,6 @@ determine_real_args() {
 	set_config_with_override 1 OLDCONFIG            CMD_OLDCONFIG
 	set_config_with_override 1 LVM                  CMD_LVM
 	set_config_with_override 1 EVMS                 CMD_EVMS
-	set_config_with_override 1 UNIONFS              CMD_UNIONFS
 	set_config_with_override 1 DMRAID               CMD_DMRAID
 	set_config_with_override 1 BUSYBOX              CMD_BUSYBOX              "yes"
 	set_config_with_override 1 DEVFS                CMD_UNDEFINED_CMD        "no"
@@ -128,8 +127,6 @@ determine_real_args() {
 	DEVICE_MAPPER_BINCACHE=`cache_replace "${DEVICE_MAPPER_BINCACHE}"`
 	LVM_BINCACHE=`cache_replace "${LVM_BINCACHE}"`
 	DMRAID_BINCACHE=`cache_replace "${DMRAID_BINCACHE}"`
-	UNIONFS_BINCACHE=`cache_replace "${UNIONFS_BINCACHE}"`
-	UNIONFS_MODULES_BINCACHE=`cache_replace "${UNIONFS_MODULES_BINCACHE}"`
 	BLKID_BINCACHE=`cache_replace "${BLKID_BINCACHE}"`
   
 	DEFAULT_KERNEL_CONFIG=`arch_replace "${DEFAULT_KERNEL_CONFIG}"`
@@ -138,8 +135,6 @@ determine_real_args() {
 	DEVICE_MAPPER_BINCACHE=`arch_replace "${DEVICE_MAPPER_BINCACHE}"`
 	LVM_BINCACHE=`arch_replace "${LVM_BINCACHE}"`
 	DMRAID_BINCACHE=`arch_replace "${DMRAID_BINCACHE}"`
-	UNIONFS_BINCACHE=`arch_replace "${UNIONFS_BINCACHE}"`
-	UNIONFS_MODULES_BINCACHE=`arch_replace "${UNIONFS_MODULES_BINCACHE}"`
 	BLKID_BINCACHE=`arch_replace "${BLKID_BINCACHE}"`
 	
 
@@ -205,5 +200,4 @@ determine_real_args() {
 	fi
 	
 	get_KV
-	UNIONFS_MODULES_BINCACHE=`kv_replace "${UNIONFS_MODULES_BINCACHE}"`
 }
