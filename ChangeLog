@@ -2,6 +2,10 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  14 Feb 2008; Chris Gianelloni <wolf31o2@gentoo.org> gen_compile.sh:
+  Added another patch from Javier Miqueleiz <javier@miqueleiz.com> in bug
+  #198892 for mdadm 1.1 and 1.2 metadata support.
+
   14 Feb 2008; Chris Gianelloni <wolf31o2@gentoo.org>
   generic/initrd.defaults, generic/initrd.scripts, generic/linuxrc:
   Switch to detection for LOOP and LOOPTYPE when they are not set.

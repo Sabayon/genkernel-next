@@ -340,6 +340,7 @@ compile_busybox() {
 	cd "${BUSYBOX_DIR}"
 	patch -p1 < "${GK_SHARE}/pkg/busybox-1.1.3+gentoo-mdadm.patch"
 	patch -p1 < "${GK_SHARE}/pkg/busybox-1.1.3+gentoo-mdadm2.patch"
+	patch -p1 < "${GK_SHARE}/pkg/busybox-1.1.3+gentoo-mdadm3.patch"
 	print_info 1 'busybox: >> Configuring...'
 	yes '' 2>/dev/null | compile_generic oldconfig utils
 
