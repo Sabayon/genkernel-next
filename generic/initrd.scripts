@@ -938,3 +938,21 @@ tuxonice_resume() {
 		echo > "${tuxonice_do_resume}"
 	fi
 }
+
+find_loop() {
+	CDROM="${NEW_ROOT}/mnt/cdrom"
+	for loop in ${LOOPS}
+	do
+		if [ -e "${CDROM}""${loop}" ]
+		then
+			LOOP="${loop}"
+		fi
+	done
+}
+
+find_looptype() {
+	LOOPTYPE="${LOOP##*.}"
+	[ "${LOOPTYPE}" == "loop" ] && LOOPTYPE="normal"
+	[ "${LOOP}" == "/zisofs" ] && LOOPTYPE="${LOOP:1}"
+	[ -z "${LOOPTYPE}" ] && LOOPTYPE="noloop"
+}

@@ -421,52 +421,9 @@ then
 	good_msg 'Determining looptype ...'
 	cd "${NEW_ROOT}"
 
-	# Find loop and looptype if we have NFS-mounted a livecd
-	if  [ "${LOOP}" = '' ] && [ "${REAL_ROOT}" = '/dev/nfs' ]
-	then
-		if [ -e "${NEW_ROOT}/mnt/cdrom/livecd.loop" ]; then
-			LOOP='/livecd.loop'
-			LOOPTYPE='normal'
-				elif [ -e "${NEW_ROOT}/mnt/cdrom/zisofs" ]; then
-			LOOP='/zisofs'
-			LOOPTYPE='zisofs'
-				elif [ -e "${NEW_ROOT}/mnt/cdrom/livecd.squashfs" ]; then
-			LOOP='/livecd.squashfs'
-			LOOPTYPE='squashfs'
-				elif [ -e "${NEW_ROOT}/mnt/cdrom/image.squashfs" ]; then
-			LOOP='/image.squashfs'
-			LOOPTYPE='squashfs'
-				elif [ -e "${NEW_ROOT}/mnt/cdrom/livecd.gcloop" ]; then
-			LOOP='/livecd.gcloop'
-			LOOPTYPE='gcloop'
-				else
-			LOOPTYPE='noloop'
-		fi
-	fi
-
-	# Failsafe the loop type wasn't set
-	if [ "${LOOPTYPE}" = '' ]
-	then
-		warn_msg 'Warning: loop type unspecified!'
-		if [ "${LOOP}" = '/livecd.loop' ]
-		then
-			LOOPTYPE='normal'
-		elif [ "${LOOP}" = '/zisofs' ]
-		then
-			LOOPTYPE='zisofs'
-		elif [ "${LOOP}" = '/livecd.squashfs' ]
-		then
-			LOOPTYPE='squashfs'
-		elif [ "${LOOP}" = '/image.squashfs' ]
-		then
-			LOOPTYPE='squashfs'
-		elif [ "${LOOP}" = '/livecd.gcloop' ]
-		then
-			LOOPTYPE='gcloop'
-		else
-			LOOPTYPE='noloop'
-		fi
-	fi
+	# Find loop and looptype
+	[ -z "${LOOP}" ] && find_loop
+	[ -z "${LOOPTYPE}" ] && find_looptype
 
 	cache_cd_contents
 
@@ -490,9 +447,7 @@ then
 				MOUNTTYPE="${LOOPTYPE}"
 				;;
 		esac
-
 		mount -t "${MOUNTTYPE}" -o ro /dev/mapper/root "${NEW_ROOT}/mnt/livecd"
-
 		test_success 'Mount filesystem'
 		FS_LOCATION='mnt/livecd'
 	# Setup the loopback mounts, if unencrypted
