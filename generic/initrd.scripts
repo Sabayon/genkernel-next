@@ -934,6 +934,6 @@ find_loop() {
 find_looptype() {
 	LOOPTYPE="${LOOP##*.}"
 	[ "${LOOPTYPE}" == "loop" ] && LOOPTYPE="normal"
-	[ "${LOOP}" == "/zisofs" ] && LOOPTYPE="${LOOP:1}"
+	[ "${LOOP}" == "/zisofs" ] && LOOPTYPE="${LOOP#/}"
 	[ -z "${LOOPTYPE}" ] && LOOPTYPE="noloop"
 }
