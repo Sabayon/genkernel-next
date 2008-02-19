@@ -2,6 +2,10 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  19 Feb 2008; Andrew Gaffney <agaffney@gentoo.org> generic/linuxrc:
+  Remove quotes from around ${ROOT_TREES} so that the dirs are parsed
+  separately by bash/cp
+
   14 Feb 2008; Chris Gianelloni <wolf31o2@gentoo.org> gen_compile.sh,
   gen_determineargs.sh, gen_funcs.sh, gen_initramfs.sh, gen_initrd.sh,
   generic/initrd.defaults, generic/initrd.scripts, generic/linuxrc,
