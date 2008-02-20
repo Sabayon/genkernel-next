@@ -2,6 +2,9 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  20 Feb 2008; Andrew Gaffney <agaffney@gentoo.org> gen_package.sh:
+  Add missing space before closing ]
+
   19 Feb 2008; Andrew Gaffney <agaffney@gentoo.org> generic/initrd.scripts:
   Apply patch from bug 210457 to fix variable substitution. Thanks to Paul
   Taylor <birder@ozemail.com.au> for reporting

@@ -98,7 +98,7 @@ gen_kerncache_extract_kernel()
 		"${TEMP}/kernel-${ARCH}-${KV}" \
 		"kernel-${KNAME}-${ARCH}-${KV}"
 
-	if [ "${ENABLE_PEGASOS_HACKS}" = 'yes']
+	if [ "${ENABLE_PEGASOS_HACKS}" = 'yes' ]
 	then
 		copy_image_with_preserve "kernelz" \
 			"${TEMP}/kernelz-${ARCH}-${KV}" \
