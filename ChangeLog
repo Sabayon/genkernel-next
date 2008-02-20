@@ -2,6 +2,13 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  20 Feb 2008; Chris Gianelloni <wolf31o2@gentoo.org>
+  -xenU/kernel-config-2.6, -xen0/kernel-config-2.6, genkernel,
+  -xen0/busy-config, -xen0/config.sh, -xen0/modules_load, -xenU/busy-config,
+  -xenU/config.sh, -xenU/modules_load:
+  Removing the xen0 and xenU arches, since they didn't work, anyway. This is
+  genkernel 3.4.10_pre3 for testing.
+
   20 Feb 2008; Andrew Gaffney <agaffney@gentoo.org> gen_package.sh:
   Add missing space before closing ]
 
