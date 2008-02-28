@@ -39,7 +39,7 @@ fi
 
 quiet_kmsg
 
-CMDLINE="`cat /proc/cmdline`"
+CMDLINE=`cat /proc/cmdline`
 # Scan CMDLINE for any specified real_root= or cdroot arguments
 REAL_ROOT=''
 FAKE_ROOT=''

@@ -2,6 +2,13 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  28 Feb 2008; Chris Gianelloni <wolf31o2@gentoo.org> gen_initramfs.sh,
+  generic/linuxrc:
+  Use which to determine the location of splash_geninitramfs, rather than
+  having an endless number of conditional checks for the location. This fixes
+  bug #211521. Thanks to Uriy Zhuravlev <stalkerg@gmail.com> for finding the
+  problem and suggesting a solution.
+
   20 Feb 2008; Chris Gianelloni <wolf31o2@gentoo.org>
   -xenU/kernel-config-2.6, -xen0/kernel-config-2.6, genkernel,
   -xen0/busy-config, -xen0/config.sh, -xen0/modules_load, -xenU/busy-config,

@@ -212,7 +212,8 @@ append_mdadm(){
 }
 
 append_splash(){
-	if [ -x /usr/bin/splash_geninitramfs ] || [ -x /sbin/splash_geninitramfs ]
+	splash_geninitramfs=`which splash_geninitramfs 2>1&`
+	if [ -x ${splash_geninitramfs} ]
 	then
 		[ -z "${SPLASH_THEME}" ] && [ -e /etc/conf.d/splash ] && source /etc/conf.d/splash
 		[ -z "${SPLASH_THEME}" ] && SPLASH_THEME=default
