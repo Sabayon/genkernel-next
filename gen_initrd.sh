@@ -290,8 +290,11 @@ create_initrd_aux() {
 	then
 		echo 'MY_HWOPTS="${MY_HWOPTS} keymap"' >> ${TEMP}/initrd-temp/etc/initrd.defaults
 	fi
-	mkdir -p "${TEMP}/initrd-temp/lib/keymaps"
-	/bin/tar -C "${TEMP}/initrd-temp/lib/keymaps" -zxf "${GK_SHARE}/generic/keymaps.tar.gz"
+	if isTrue $CMD_KEYMAP
+	then
+		mkdir -p "${TEMP}/initrd-temp/lib/keymaps"
+		/bin/tar -C "${TEMP}/initrd-temp/lib/keymaps" -zxf "${GK_SHARE}/generic/keymaps.tar.gz"
+	fi
 	if isTrue $CMD_SLOWUSB
 	then
 		echo 'MY_HWOPTS="${MY_HWOPTS} slowusb"' >> ${TEMP}/initrd-temp/etc/initrd.defaults

@@ -74,6 +74,7 @@ longusage() {
   echo "	--splash=<theme>	Enable framebuffer splash using <theme>"
   echo "	--splash-res=<res>	Select splash theme resolutions to install"
   echo "	--do-keymap-auto	Forces keymap selection at boot"
+  echo "	--no-keymap		Disables keymap selection support"
   echo "	--evms			Include EVMS support"
   echo "				--> 'emerge evms' in the host operating system"
   echo "				first"
@@ -199,7 +200,12 @@ parse_cmdline() {
 			;;
 		--do-keymap-auto)
 			CMD_DOKEYMAPAUTO=1
+			CMD_KEYMAP=1
 			print_info 2 "CMD_DOKEYMAPAUTO: ${CMD_DOKEYMAPAUTO}"
+			;;
+		--no-keymap)
+			CMD_KEYMAP=0
+			print_info 2 "CMD_KEYMAP: ${CMD_KEYMAP}"
 			;;
 		--evms)
 			CMD_EVMS=1

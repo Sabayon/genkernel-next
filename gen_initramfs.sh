@@ -363,8 +363,11 @@ append_auxilary() {
 	then
 		echo 'MY_HWOPTS="${MY_HWOPTS} keymap"' >> ${TEMP}/initramfs-aux-temp/etc/initrd.defaults
 	fi
-	mkdir -p "${TEMP}/initramfs-aux-temp/lib/keymaps"
-	/bin/tar -C "${TEMP}/initramfs-aux-temp/lib/keymaps" -zxf "${GK_SHARE}/generic/keymaps.tar.gz"
+	if isTrue $CMD_KEYMAP
+	then
+		mkdir -p "${TEMP}/initramfs-aux-temp/lib/keymaps"
+		/bin/tar -C "${TEMP}/initramfs-aux-temp/lib/keymaps" -zxf "${GK_SHARE}/generic/keymaps.tar.gz"
+	fi
 	if isTrue $CMD_SLOWUSB
 	then
 		echo 'MY_HWOPTS="${MY_HWOPTS} slowusb"' >> ${TEMP}/initramfs-aux-temp/etc/initrd.defaults
