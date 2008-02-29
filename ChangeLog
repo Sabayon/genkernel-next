@@ -2,6 +2,11 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  29 Feb 2008; Chris Gianelloni <wolf31o2@gentoo.org> alpha/modules_load,
+  genkernel, ia64/modules_load, ppc/modules_load, ppc64/modules_load,
+  um/modules_load, x86_64/modules_load:
+  Changed MDRAID to MDADM for bug #211316.
+
   28 Feb 2008; Chris Gianelloni <wolf31o2@gentoo.org> gen_cmdline.sh,
   gen_initramfs.sh, gen_initrd.sh, generic/initrd.scripts:
   Added a --no-keymap option for bug #210886.
