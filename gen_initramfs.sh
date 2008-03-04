@@ -101,6 +101,13 @@ append_dmraid(){
 	/bin/tar -jxpf "${DMRAID_BINCACHE}" -C "${TEMP}/initramfs-dmraid-temp" ||
 		gen_die "Could not extract dmraid binary cache!";
 	cd "${TEMP}/initramfs-dmraid-temp/"
+	RAID456=`find . -type f -name raid456.ko`
+	if [ -n "${RAID456}" ]
+	then
+		cd "${RAID456/raid456.ko/}"
+		ln -sf raid456.kp raid45.ko
+		cd "${TEMP}/initramfs-dmraid-temp/"
+	fi
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
 	rm -r "${TEMP}/initramfs-dmraid-temp/"
 }

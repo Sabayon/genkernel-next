@@ -2,6 +2,10 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  04 Mar 2008; Chris Gianelloni <wolf31o2@gentoo.org> gen_initramfs.sh:
+  If we have a raid456.ko module, we need to create a raid45.ko symlink since
+  dmraid can be rather stupid. This should resolve bug #195804.
+
   04 Mar 2008; Chris Gianelloni <wolf31o2@gentoo.org> sparc64/kernel-config,
   alpha/kernel-config-2.6, ia64/kernel-config-2.6, x86/kernel-config-2.6,
   x86_64/kernel-config-2.6:
