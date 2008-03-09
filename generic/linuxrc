@@ -193,6 +193,9 @@ splash 'init'
 detect_sbp2_devices
 cmdline_hwopts
 
+# Mount sysfs
+mount_sysfs
+
 # Setup hotplugging for firmware loading
 setup_hotplug
 
@@ -218,9 +221,6 @@ else
 	done
 	good_msg 'Skipping module load; no modules in the initrd!'
 fi
-
-# Mount sysfs
-mount_sysfs
 
 # Delay if needed for USB hardware
 sdelay
