@@ -2,6 +2,11 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  10 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_cmdline.sh,
+  gen_determineargs.sh, gen_initramfs.sh, genkernel.conf:
+  Add support for --firmware and --firmware-dir options to include firmware in
+  the initramfs
+
   09 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> generic/linuxrc:
   Apply patch from Vince C <v_cadet@yahoo.fr> to mount sysfs prior to loading
   modules, so that the mdev firmware loading can actually work

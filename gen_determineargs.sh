@@ -114,6 +114,8 @@ determine_real_args() {
 	set_config_with_override 1 DISKLABEL            CMD_DISKLABEL
 	set_config_with_override 1 LUKS                 CMD_LUKS
 	set_config_with_override 1 MDADM                CMD_MDADM
+	set_config_with_override 1 FIRMWARE             CMD_FIRMWARE
+	set_config_with_override 2 FIRMWARE_DIR         CMD_FIRMWARE_DIR         "/lib/firmware"
 
 		BOOTDIR=`arch_replace "${BOOTDIR}"`
 		BOOTDIR=${BOOTDIR%/}    # Remove any trailing slash

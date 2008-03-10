@@ -117,6 +117,11 @@ longusage() {
   echo "	--initramfs-overlay=<dir>"
   echo "				Directory structure to include in the initramfs,"
   echo "				only available on 2.6 kernels"
+  echo "	--firmware"
+  echo "				Enable copying of firmware into initramfs"
+  echo "	--firmware-dir=<dir>"
+  echo "				Specify directory to copy firmware from (defaults"
+  echo "				to /lib/firmware)"
 }
 
 usage() {
@@ -475,6 +480,15 @@ parse_cmdline() {
 		--luks)
 			CMD_LUKS=1
 			print_info 2 "CMD_LUKS: ${CMD_LUKS}"
+			;;
+		--firmware)
+			CMD_FIRMWARE=1
+			print_info 2 "CMD_FIRMWARE: ${CMD_FIRMWARE}"
+			;;
+		--firmware-dir=*)
+			CMD_FIRMWARE_DIR=`parse_opt "$*"`
+			CMD_FIRMWARE=1
+			print_info 2 "CMD_FIRMWARE_DIR: ${CMD_FIRMWARE_DIR}"
 			;;
 		all)
 			BUILD_KERNEL=1

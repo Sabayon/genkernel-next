@@ -251,6 +251,23 @@ append_overlay(){
 	cd ${INITRAMFS_OVERLAY}
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
 }
+
+append_firmware() {
+	if [ ! -d "${FIRMWARE_DIR}" ]
+	then
+		gen_die "specified firmware directory (${FIRMWARE_DIR}) does not exist"
+	fi
+	if [ -d "${TEMP}/initramfs-firmware-temp" ]
+	then
+		rm -r "${TEMP}/initramfs-firmware-temp/"
+	fi
+	mkdir -p "${TEMP}/initramfs-firmware-temp/lib/firmware"
+	cp -a "${FIRMWARE_DIR}/*" ${TEMP}/initramfs-firmware-temp/lib/firmware/
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+		|| gen_die "appending firmware to cpio"
+	rm -r "${TEMP}/initramfs-firmware-temp/"
+}
+
 print_list()
 {
 	local x
@@ -448,6 +465,11 @@ create_initramfs() {
 
 	append_data 'blkid' "${DISKLABEL}"
 	append_data 'splash' "${SPLASH}"
+
+	if isTrue "${FIRMWARE}" && [ -n "${FIRMWARE_DIR}" ]
+	then
+		append_data 'firmware'
+	fi
 
 	# This should always be appended last
 	if [ "${INITRAMFS_OVERLAY}" != '' ]
