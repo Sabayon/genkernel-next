@@ -253,7 +253,7 @@ append_overlay(){
 }
 
 append_firmware() {
-	if [ ! -d "${FIRMWARE_DIR}" ]
+	if [ -z "${FIRMWARE_FILES}" -a ! -d "${FIRMWARE_DIR}" ]
 	then
 		gen_die "specified firmware directory (${FIRMWARE_DIR}) does not exist"
 	fi
@@ -262,7 +262,18 @@ append_firmware() {
 		rm -r "${TEMP}/initramfs-firmware-temp/"
 	fi
 	mkdir -p "${TEMP}/initramfs-firmware-temp/lib/firmware"
-	cp -a "${FIRMWARE_DIR}/*" ${TEMP}/initramfs-firmware-temp/lib/firmware/
+	if [ -n "${FIRMWARE_FILES}" ]
+	then
+		OLD_IFS=$IFS
+		IFS=","
+		for i in ${FIRMWARE_FILES}
+		do
+			cp -a "${i}" ${TEMP}/initramfs-firmware-temp/lib/firmware/
+		done
+		IFS=$OLD_IFS
+	else
+		cp -a "${FIRMWARE_DIR}/*" ${TEMP}/initramfs-firmware-temp/lib/firmware/
+	fi
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 		|| gen_die "appending firmware to cpio"
 	rm -r "${TEMP}/initramfs-firmware-temp/"

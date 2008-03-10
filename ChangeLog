@@ -4,6 +4,10 @@
 
   10 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_cmdline.sh,
   gen_determineargs.sh, gen_initramfs.sh, genkernel.conf:
+  Add support for --firmware-files option to make robbat2 happy
+
+  10 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_cmdline.sh,
+  gen_determineargs.sh, gen_initramfs.sh, genkernel.conf:
   Add support for --firmware and --firmware-dir options to include firmware in
   the initramfs
 
