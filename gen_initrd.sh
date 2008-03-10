@@ -49,15 +49,6 @@ create_base_initrd_sys() {
 	echo "/dev/ram0     /           ext2    defaults	0 0" > ${TEMP}/initrd-temp/etc/fstab
 	echo "proc          /proc       proc    defaults    0 0" >> ${TEMP}/initrd-temp/etc/fstab
 
-	# SGI LiveCDs need the following binary (no better place for it than here)
-	# getdvhoff is a DEPEND of genkernel, so it *should* exist
-	if [ ${BUILD_INITRAMFS} -eq '1' ]
-	then
-		[ -e /usr/lib/getdvhoff/getdvhoff ] \
-			&& cp /usr/lib/getdvhoff/getdvhoff ${TEMP}/initrd-temp/bin \
-			|| gen_die "sys-boot/getdvhoff not merged!"
-	fi
-
 	cd ${TEMP}/initrd-temp/dev
 	MAKEDEV std
 	MAKEDEV console

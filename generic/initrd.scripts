@@ -937,3 +937,7 @@ find_looptype() {
 	[ "${LOOP}" == "/zisofs" ] && LOOPTYPE="${LOOP#/}"
 	[ -z "${LOOPTYPE}" ] && LOOPTYPE="noloop"
 }
+
+getdvhoff() {
+	echo $(( $(hexdump -n 4 -s $((316 + 12 * $2)) -e '"%i"' $1) * 512))
+}

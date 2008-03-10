@@ -2,6 +2,15 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  10 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> alpha/busy-config,
+  gen_initrd.sh, generic/initrd.scripts, generic/linuxrc, ia64/busy-config,
+  mips/busy-config, parisc/busy-config, parisc64/busy-config,
+  ppc/busy-config, ppc64/busy-config, sparc/busy-config,
+  sparc64/busy-config, um/busy-config, x86/busy-config, x86_64/busy-config:
+  Enable CONFIG_HEXDUMP globally for busybox
+  Add getdvhoff replacement function from vapier
+  Remove copying of getdvhoff from system
+
   10 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_cmdline.sh,
   gen_determineargs.sh, gen_initramfs.sh, genkernel.conf:
   Add support for --firmware-files option to make robbat2 happy
