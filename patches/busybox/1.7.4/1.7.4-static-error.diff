@@ -1,0 +1,10 @@
+--- busybox-1.7.4.orig/applets/applets.c	2007-09-16 13:48:10.000000000 -0500
++++ busybox-1.7.4/applets/applets.c	2008-03-11 13:53:18.000000000 -0500
+@@ -23,7 +23,6 @@
+ #warning Note that glibc is unsuitable for static linking anyway.
+ #warning If you still want to do it, remove -Wl,--gc-sections
+ #warning from top-level Makefile and remove this warning.
+-#error Aborting compilation.
+ #endif
+ 
+ 
