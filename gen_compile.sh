@@ -189,7 +189,7 @@ apply_patches() {
 	if [ -d "${GK_SHARE}/patches/${util}/${version}" ]
 	then
 		print_info 1 "${util}: >> Applying patches..."
-		for i in "${GK_SHARE}/patches/${util}/${version}/*"
+		for i in ${GK_SHARE}/patches/${util}/${version}/*
 		do
 			patch_success=0
 			for j in `seq 0 5`

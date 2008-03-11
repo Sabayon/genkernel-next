@@ -2,6 +2,9 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  11 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_compile.sh:
+  Remove the quotes when trying to expand a glob
+
   11 Mar 2008; Andrew Gaffney <agaffney@gentoo.org>
   patches/busybox/1.7.4/1.7.4-mdadm.diff,
   patches/busybox/1.7.4/1.7.4-mdstart.diff:
