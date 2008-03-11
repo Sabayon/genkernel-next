@@ -2,6 +2,15 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  11 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_compile.sh,
+  genkernel.conf, +patches/busybox/1.7.4/1.7.4-ash-timeout.diff,
+  +patches/busybox/1.7.4/1.7.4-mdadm.diff,
+  +patches/busybox/1.7.4/1.7.4-mdstart.diff,
+  +patches/busybox/1.7.4/1.7.4-openvt.diff:
+  Add apply_patches() function to automagically apply patches for a given util
+  Add updated busybox patches for 1.7.4 from robbat2
+  Change BUSYBOX_VER to 1.7.4
+
   11 Mar 2008; Chris Gianelloni <wolf31o2@gentoo.org>
   generic/initrd.scripts:
   Rearrange checks so the return value is read correctly.

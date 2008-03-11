@@ -182,6 +182,32 @@ reset_args()
 	fi
 }
 
+apply_patches() {
+	util=$1
+	version=$1
+
+	if [ -d "${GK_SHARE}/patches/${util}/${version}" ]
+	then
+		for i in "${GK_SHARE}/patches/${util}/${version}/*"
+		do
+			patch_success=0
+			for j in `seq 0 5`
+			do
+				patch -p${j} -f < "${i}"
+				if [ $? = 0 ]
+				then
+					patch_success=1
+					break
+				fi
+			done
+			if [ ${patch_success} != 1 ]
+			then
+#				return 1
+				gen_die "could not apply patch ${i} for ${util}-${version}"
+			fi
+		done
+	fi
+}
 
 compile_generic() {
 	local RET
@@ -338,9 +364,10 @@ compile_busybox() {
 	cp "${BUSYBOX_CONFIG}" "${BUSYBOX_DIR}/.config"
 	sed -i ${BUSYBOX_DIR}/.config -e 's/#\? \?CONFIG_FEATURE_INSTALLER[ =].*/CONFIG_FEATURE_INSTALLER=y/g'
 	cd "${BUSYBOX_DIR}"
-	patch -p1 < "${GK_SHARE}/pkg/busybox-1.1.3+gentoo-mdadm.patch"
-	patch -p1 < "${GK_SHARE}/pkg/busybox-1.1.3+gentoo-mdadm2.patch"
-	patch -p1 < "${GK_SHARE}/pkg/busybox-1.1.3+gentoo-mdadm3.patch"
+#	patch -p1 < "${GK_SHARE}/pkg/busybox-1.1.3+gentoo-mdadm.patch"
+#	patch -p1 < "${GK_SHARE}/pkg/busybox-1.1.3+gentoo-mdadm2.patch"
+#	patch -p1 < "${GK_SHARE}/pkg/busybox-1.1.3+gentoo-mdadm3.patch"
+	apply_patches busybox ${BUSYBOX_VER}
 	print_info 1 'busybox: >> Configuring...'
 	yes '' 2>/dev/null | compile_generic oldconfig utils
 
