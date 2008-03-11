@@ -2,6 +2,13 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  11 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> alpha/busy-config,
+  gen_compile.sh, ia64/busy-config, mips/busy-config, parisc/busy-config,
+  parisc64/busy-config, ppc/busy-config, ppc64/busy-config,
+  sparc/busy-config, sparc64/busy-config, x86/busy-config,
+  x86_64/busy-config:
+  Update busy-config files for the various arches for busybox 1.7.4
+
   11 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_compile.sh,
   genkernel.conf, +patches/busybox/1.7.4/1.7.4-ash-timeout.diff,
   +patches/busybox/1.7.4/1.7.4-mdadm.diff,

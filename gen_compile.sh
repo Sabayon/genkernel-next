@@ -362,7 +362,7 @@ compile_busybox() {
 	[ -d "${BUSYBOX_DIR}" ] ||
 		gen_die 'Busybox directory ${BUSYBOX_DIR} is invalid!'
 	cp "${BUSYBOX_CONFIG}" "${BUSYBOX_DIR}/.config"
-	sed -i ${BUSYBOX_DIR}/.config -e 's/#\? \?CONFIG_FEATURE_INSTALLER[ =].*/CONFIG_FEATURE_INSTALLER=y/g'
+#	sed -i ${BUSYBOX_DIR}/.config -e 's/#\? \?CONFIG_FEATURE_INSTALLER[ =].*/CONFIG_FEATURE_INSTALLER=y/g'
 	cd "${BUSYBOX_DIR}"
 #	patch -p1 < "${GK_SHARE}/pkg/busybox-1.1.3+gentoo-mdadm.patch"
 #	patch -p1 < "${GK_SHARE}/pkg/busybox-1.1.3+gentoo-mdadm2.patch"
