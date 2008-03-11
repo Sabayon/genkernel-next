@@ -184,16 +184,17 @@ reset_args()
 
 apply_patches() {
 	util=$1
-	version=$1
+	version=$2
 
 	if [ -d "${GK_SHARE}/patches/${util}/${version}" ]
 	then
+		print_info 1 "${util}: >> Applying patches..."
 		for i in "${GK_SHARE}/patches/${util}/${version}/*"
 		do
 			patch_success=0
 			for j in `seq 0 5`
 			do
-				patch -p${j} -f < "${i}"
+				patch -p${j} --backup-if-mismatch -f < "${i}" >/dev/null
 				if [ $? = 0 ]
 				then
 					patch_success=1

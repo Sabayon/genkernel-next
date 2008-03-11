@@ -2,6 +2,11 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  11 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_compile.sh:
+  It helps if we assign the correct value to version
+  Send output of patch command to /dev/null
+  Show a message saying we're patching if there are patches for the util
+
   11 Mar 2008; Andrew Gaffney <agaffney@gentoo.org>
   +patches/busybox/1.7.4/1.7.4-static-error.diff:
   Add busybox patch to remove error about compiling statically
