@@ -17,12 +17,14 @@ diff -Nuar --exclude '*.orig' busybox-1.7.4/include/applets.h busybox-1.7.4+gent
 diff -Nuar --exclude '*.orig' busybox-1.7.4/include/usage.h busybox-1.7.4+gentoo/include/usage.h
 --- busybox-1.7.4/include/usage.h	2007-09-03 04:48:46.000000000 -0700
 +++ busybox-1.7.4+gentoo/include/usage.h	2008-03-11 10:19:04.000000000 -0700
-@@ -2072,6 +2072,9 @@
+@@ -2072,6 +2072,11 @@
         "the last line match .* to override this.)\n\n" \
  	)
  
 +#define mdstart_trivial_usage \
 +	"{[PARTITION] MD-NODE}..."
++#define mdstart_full_usage \
++	"Run the RAID_AUTORUN ioctl on the given MD number"
 +	
  #define mesg_trivial_usage \
         "[y|n]"
@@ -34,7 +36,7 @@ diff -Nuar --exclude '*.orig' busybox-1.7.4/util-linux/Config.in busybox-1.7.4+g
  	  /lib/firmware/ and if it exists, send it to the kernel for
  	  loading into the hardware.
  
-+config CONFIG_MDSTART
++config MDSTART
 +	bool "mdstart"
 +	default n
 +	help
