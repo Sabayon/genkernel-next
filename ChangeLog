@@ -2,6 +2,9 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  12 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
+  Fix another quoting malfunction
+
   12 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> alpha/busy-config,
   ia64/busy-config, mips/busy-config, parisc/busy-config,
   parisc64/busy-config, ppc/busy-config, ppc64/busy-config,

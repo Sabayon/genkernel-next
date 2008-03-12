@@ -272,7 +272,7 @@ append_firmware() {
 		done
 		IFS=$OLD_IFS
 	else
-		cp -a "${FIRMWARE_DIR}/*" ${TEMP}/initramfs-firmware-temp/lib/firmware/
+		cp -a "${FIRMWARE_DIR}"/* ${TEMP}/initramfs-firmware-temp/lib/firmware/
 	fi
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 		|| gen_die "appending firmware to cpio"
