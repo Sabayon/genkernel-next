@@ -601,6 +601,8 @@ verbose_kmsg
 
 if [ "$0" = '/linuxrc' ] || [ "$0" = 'linuxrc' ]
 then
+	# XXX: remove me!!!
+	echo "DEBUG: initrd code path"
 	if [ ! -e "${CHROOT}/dev/console" ] || [ ! -e "${CHROOT}/dev/null" ] \
 	|| [ ! -e "${CHROOT}/dev/tty1" ]
 	then

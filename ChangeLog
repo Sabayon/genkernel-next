@@ -2,11 +2,16 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  12 Mar 2008; Chris Gianelloni <wolf31o2@gentoo.org> generic/linuxrc,
+  genkernel:
+  Added a small debug statement to generic/linuxrc so we know when we're
+  hitting the initrd code path. This is genkernel 3.4.10_pre5 for testing.
+
   12 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
   Change to new temp directory so the firmware gets copied to the right place
 
   12 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
-  Copy with -L so we get the file instead of the symlink
+  Copy firmware file with -L so we get the file instead of the symlink
 
   12 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
   Fix another quoting malfunction
