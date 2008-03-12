@@ -3,6 +3,9 @@
 # $Header: $
 
   12 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
+  Copy with -L so we get the file instead of the symlink
+
+  12 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
   Fix another quoting malfunction
 
   12 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> alpha/busy-config,

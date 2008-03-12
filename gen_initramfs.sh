@@ -268,7 +268,7 @@ append_firmware() {
 		IFS=","
 		for i in ${FIRMWARE_FILES}
 		do
-			cp -a "${i}" ${TEMP}/initramfs-firmware-temp/lib/firmware/
+			cp -L "${i}" ${TEMP}/initramfs-firmware-temp/lib/firmware/
 		done
 		IFS=$OLD_IFS
 	else
