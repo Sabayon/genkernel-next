@@ -2,6 +2,13 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  12 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> alpha/busy-config,
+  ia64/busy-config, mips/busy-config, parisc/busy-config,
+  parisc64/busy-config, ppc/busy-config, ppc64/busy-config,
+  sparc/busy-config, sparc64/busy-config, x86/busy-config,
+  x86_64/busy-config:
+  Explicitly enable MDADM and MDSTART in busy-config
+
   12 Mar 2008; Andrew Gaffney <agaffney@gentoo.org>
   patches/busybox/1.7.4/1.7.4-static-error.diff:
   Update busybox static-error patch to actually work
