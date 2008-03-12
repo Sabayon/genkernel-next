@@ -262,6 +262,7 @@ append_firmware() {
 		rm -r "${TEMP}/initramfs-firmware-temp/"
 	fi
 	mkdir -p "${TEMP}/initramfs-firmware-temp/lib/firmware"
+	cd "${TEMP}/initramfs-firmware-temp/lib/firmware"
 	if [ -n "${FIRMWARE_FILES}" ]
 	then
 		OLD_IFS=$IFS

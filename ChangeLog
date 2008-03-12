@@ -3,6 +3,9 @@
 # $Header: $
 
   12 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
+  Change to new temp directory so the firmware gets copied to the right place
+
+  12 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
   Copy with -L so we get the file instead of the symlink
 
   12 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
