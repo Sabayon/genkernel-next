@@ -140,17 +140,17 @@ gen_kerncache_is_valid()
 	KERNCACHE_IS_VALID=0
 	if [ "${NO_KERNEL_SOURCES}" = '1' ]
 	then
-		
+
 		BUILD_KERNEL=0
 		# Can make this more secure ....
-		
+
 		/bin/tar -xj -f ${KERNCACHE} -C ${TEMP}
 		if [ -e ${TEMP}/config-${ARCH}-${KV} -a -e ${TEMP}/kernel-${ARCH}-${KV} ] 
-		then 	
+		then 
 			print_info 1 'Valid kernel cache found; no sources will be used'
 			KERNCACHE_IS_VALID=1
 		fi
-        else
+	else
 		if [ -e "${KERNCACHE}" ] 
 		then
 			KERNEL_CONFIG="/${KERNEL_DIR}/.config"
@@ -162,7 +162,7 @@ gen_kerncache_is_valid()
 			/bin/tar -xj -f ${KERNCACHE} -C ${TEMP}
 			if [ -e ${TEMP}/config-${ARCH}-${KV} -a -e ${KERNEL_CONFIG} ]
 			then
-	
+
 				test1=$(grep -v "^#" ${TEMP}/config-${ARCH}-${KV} | md5sum | cut -d " " -f 1)
 				test2=$(grep -v "^#" ${KERNEL_CONFIG} | md5sum | cut -d " " -f 1)
 				if [ "${test1}" == "${test2}" ]
