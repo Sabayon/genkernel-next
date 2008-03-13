@@ -2,6 +2,10 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> genkernel:
+  Move set_kernel_arch() call to after determine_real_args() so that get_KV()
+  has populated the vars we need
+
   13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_arch.sh:
   Change powerpc switch kernel version to 2.6.16 for if we ever uncomment it
 

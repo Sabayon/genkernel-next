@@ -99,7 +99,6 @@ echo
 
 # Set ${ARCH}
 get_official_arch
-set_kernel_arch
 
 # Read arch-specific config
 source ${ARCH_CONFIG} || gen_die "Could not read ${ARCH_CONFIG}"
@@ -118,6 +117,8 @@ done
 # get the real arguments for usage...
 
 determine_real_args
+
+set_kernel_arch
 
 [ ! -f "${TEMP}" ] && mkdir -p "${TEMP}"
 
