@@ -78,5 +78,5 @@ set_kernel_arch() {
 			;;
 	esac
 	export KERNEL_ARCH
-	echo "DEBUG: set_kernel_arch: KERNEL_ARCH=${KERNEL_ARCH}"
+	print_info 2 "KERNEL_ARCH=${KERNEL_ARCH}"
 }
