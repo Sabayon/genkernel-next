@@ -3,6 +3,9 @@
 # $Header: $
 
   13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> generic/linuxrc:
+  Revert last commit as it wasn't a problem
+
+  13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> generic/linuxrc:
   Remove -c "/dev/console" from switch_root command
 
   13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> generic/linuxrc:
