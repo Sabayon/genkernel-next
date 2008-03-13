@@ -20,6 +20,10 @@ compile_kernel_args() {
 		then
 			ARGS="${ARGS} AS=\"${KERNEL_AS}\""
 		fi
+		if [ -n "${KERNEL_ARCH}" ]
+		then
+			ARGS="${ARGS} ARCH=\"${KERNEL_ARCH}\""
+		fi
 	fi
 	echo -n "${ARGS}"
 }

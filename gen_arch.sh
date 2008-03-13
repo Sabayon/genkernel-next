@@ -42,3 +42,39 @@ get_official_arch() {
 	ARCH_CONFIG="${GK_SHARE}/${ARCH}/config.sh"
 	[ -f "${ARCH_CONFIG}" ] || gen_die "${ARCH} not yet supported by genkernel. Please add the arch-specific config file, ${ARCH_CONFIG}"
 }
+
+set_kernel_arch() {
+	KERNEL_ARCH=${ARCH}
+	case ${ARCH} in
+# XXX: This doesn't seem to actually be necessary, as it still works just fine without it
+#		ppc|ppc64)
+#			if [ "${VER}" -eq "2" -a "${PAT}" -ge "6" ]
+#			then
+#				if [ "${PAT}" -eq "6" -a "${SUB}" -ge "17" ] || [ "${PAT}" -gt "6" ]
+#				then
+#					KERNEL_ARCH=powerpc
+#				fi
+#			fi
+#			;;
+		x86)
+			if [ "${VER}" -eq "2" -a "${PAT}" -ge "6" ] || [ "${VER}" -gt "2" ]
+			then
+				if [ "${PAT}" -eq "6" -a "${SUB}" -ge "24" ] || [ "${PAT}" -gt "6" ]
+				then
+					KERNEL_ARCH=x86
+				else
+					KERNEL_ARCH=i386
+				fi
+			fi
+			;;
+		x86_64)
+			if [ "${VER}" -eq "2" -a "${PAT}" -ge "6" ] || [ "${VER}" -gt "2" ]
+			then
+				if [ "${PAT}" -eq "6" -a "${SUB}" -ge "24" ] || [ "${PAT}" -gt "6" ]
+				then
+					KERNEL_ARCH=x86
+				fi
+			fi
+			;;
+	esac
+}

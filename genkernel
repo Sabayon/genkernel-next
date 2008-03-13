@@ -99,6 +99,7 @@ echo
 
 # Set ${ARCH}
 get_official_arch
+set_kernel_arch
 
 # Read arch-specific config
 source ${ARCH_CONFIG} || gen_die "Could not read ${ARCH_CONFIG}"
