@@ -2,6 +2,9 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_arch.sh:
+  Add debug code for set_kernel_arch
+
   13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> genkernel:
   Add debugging code to show ARCH when running callback
   Unset ARCH when running callback and restore afterwards
