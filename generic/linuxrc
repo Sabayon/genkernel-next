@@ -606,7 +606,7 @@ then
 	if [ ! -e "${CHROOT}/dev/console" ] || [ ! -e "${CHROOT}/dev/null" ] \
 	|| [ ! -e "${CHROOT}/dev/tty1" ]
 	then
-		echo -ne "${BAD}>>{NORMAL}${BOLD} ERROR: /dev is broken!${NORMAL}"
+		echo -ne "${BAD}>>${NORMAL}${BOLD} ERROR: /dev is broken!${NORMAL}"
 	else
 		echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting${NORMAL}"
 	fi
@@ -645,7 +645,7 @@ then
 	if [ ! -e "${CHROOT}/dev/console" ] || [ ! -e "${CHROOT}/dev/null" ] \
 	|| [ ! -e "${CHROOT}/dev/tty1" ]
 	then
-		echo -ne "${BAD}>>{NORMAL}${BOLD} ERROR: /dev is broken!${NORMAL}"
+		echo -ne "${BAD}>>${NORMAL}${BOLD} ERROR: /dev is broken!${NORMAL}"
 	else
 		echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting (initramfs)${NORMAL}"
 	fi
