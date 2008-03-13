@@ -2,6 +2,9 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
+  We should edit the copy of the kconfig instead of the source file
+
   13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh,
   genkernel:
   Instead of copying the initramfs into the kernel tree, we now sed the
