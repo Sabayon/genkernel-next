@@ -3,6 +3,10 @@
 # $Header: $
 
   13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> genkernel:
+  Add debugging code to show ARCH when running callback
+  Unset ARCH when running callback and restore afterwards
+
+  13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> genkernel:
   Move set_kernel_arch() call to after determine_real_args() so that get_KV()
   has populated the vars we need
 

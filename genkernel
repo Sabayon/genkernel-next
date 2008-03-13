@@ -280,11 +280,15 @@ then
 	if [ "${CALLBACK_ESCAPE}" -eq '0' ]
 	then
 		echo
+		echo "DEBUG: callback: ARCH=${ARCH}"
+		ORIG_ARCH=${ARCH}
+		unset ARCH
 		echo
 		eval ${CMD_CALLBACK} | tee -a ${LOGFILE}
 		CMD_STATUS="${PIPESTATUS[0]}"
 		echo
 		print_info 1 "<<< Callback exit status: ${CMD_STATUS}"
+		export ARCH=${ORIG_ARCH}
 		[ "${CMD_STATUS}" -ne 0 ] && gen_die '--callback failed!'
 	else
 		echo
