@@ -50,7 +50,7 @@ set_kernel_arch() {
 #		ppc|ppc64)
 #			if [ "${VER}" -eq "2" -a "${PAT}" -ge "6" ]
 #			then
-#				if [ "${PAT}" -eq "6" -a "${SUB}" -ge "17" ] || [ "${PAT}" -gt "6" ]
+#				if [ "${PAT}" -eq "6" -a "${SUB}" -ge "16" ] || [ "${PAT}" -gt "6" ]
 #				then
 #					KERNEL_ARCH=powerpc
 #				fi

@@ -2,6 +2,9 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_arch.sh:
+  Change powerpc switch kernel version to 2.6.16 for if we ever uncomment it
+
   13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_arch.sh,
   gen_compile.sh, genkernel:
   Add set_kernel_arch(), which maps the genkernel arch to the arch that the
