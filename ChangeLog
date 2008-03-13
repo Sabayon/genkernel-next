@@ -3,6 +3,9 @@
 # $Header: $
 
   13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
+  Stick CONFIG_INITRAMFS_ROOT_GID in the .config, too
+
+  13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
   Remove existing CONFIG_INITRAMFS_SOURCE line and write new one as well as
   CONFIG_INITRAMFS_ROOT_UID line
 
