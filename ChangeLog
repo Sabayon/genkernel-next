@@ -3,6 +3,9 @@
 # $Header: $
 
   13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_arch.sh:
+  Use echo instead of print
+
+  13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_arch.sh:
   Add debug code for set_kernel_arch
 
   13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> genkernel:
