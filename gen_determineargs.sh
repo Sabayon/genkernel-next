@@ -117,6 +117,8 @@ determine_real_args() {
 	set_config_with_override 1 FIRMWARE             CMD_FIRMWARE
 	set_config_with_override 2 FIRMWARE_DIR         CMD_FIRMWARE_DIR         "/lib/firmware"
 	set_config_with_override 2 FIRMWARE_FILES       CMD_FIRMWARE_FILES
+	set_config_with_override 1 INTEGRATED_INITRAMFS CMD_INTEGRATED_INITRAMFS
+	set_config_with_override 1 GENZIMAGE            CMD_GENZIMAGE
 
 		BOOTDIR=`arch_replace "${BOOTDIR}"`
 		BOOTDIR=${BOOTDIR%/}    # Remove any trailing slash
@@ -196,6 +198,11 @@ determine_real_args() {
 	if [ -n "${KERNCACHE}" ]
 	then
 		mkdir -p `dirname ${KERNCACHE}`
+	fi
+
+	if ! isTrue "${BUILD_INITRD}"
+	then
+		INTEGRATED_INITRAMFS=0
 	fi
 	
 	get_KV

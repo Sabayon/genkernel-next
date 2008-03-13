@@ -332,7 +332,7 @@ compile_kernel() {
 			"System.map" \
 			"System.map-${KNAME}-${ARCH}-${KV}"
 
-		if [ "${ENABLE_PEGASOS_HACKS}" = 'yes' ]
+		if isTrue "${GENZIMAGE}"
 		then
 			copy_image_with_preserve "kernelz" \
 				"${KERNEL_BINARY_2}" \
@@ -343,7 +343,7 @@ compile_kernel() {
 			gen_die "Could not copy the kernel binary to ${TMPDIR}!"
 		cp "System.map" "${TMPDIR}/System.map-${KNAME}-${ARCH}-${KV}" ||
 			gen_die "Could not copy System.map to ${TMPDIR}!"
-		if [ "${ENABLE_PEGASOS_HACKS}" = 'yes' ]
+		if isTrue "${GENZIMAGE}"
 		then
 			cp "${KERNEL_BINARY_2}" "${TMPDIR}/kernelz-${KV}" ||
 				gen_die "Could not copy the kernelz binary to ${TMPDIR}!"

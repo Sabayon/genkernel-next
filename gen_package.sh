@@ -8,7 +8,7 @@ gen_minkernpackage() {
 	then
 		/bin/tar -xj -C ${TEMP}/minkernpackage -f ${KERNCACHE} kernel-${ARCH}-${KV}
 		/bin/tar -xj -C ${TEMP}/minkernpackage -f ${KERNCACHE} config-${ARCH}-${KV}
-		if [ "${ENABLE_PEGASOS_HACKS}" = 'yes' ]
+		if isTrue "${GENZIMAGE}"
 		then
 			/bin/tar -xj -C ${TEMP}/minkernpackage -f ${KERNCACHE} kernelz-${ARCH}-${KV}
 		fi
@@ -16,13 +16,13 @@ gen_minkernpackage() {
 		cd "${KERNEL_DIR}"
 		cp "${KERNEL_BINARY}" "${TEMP}/minkernpackage/kernel-${KV}" || gen_die 'Could not the copy kernel for the min kernel package!'
 		cp ".config" "${TEMP}/minkernpackage/config-${ARCH}-${KV}" || gen_die 'Could not the copy kernel config for the min kernel package!'
-		if [ "${ENABLE_PEGASOS_HACKS}" = 'yes' ]
+		if isTrue "${GENZIMAGE}"
 		then
 			cp "${KERNEL_BINARY_2}" "${TEMP}/minkernpackage/kernelz-${KV}" || gen_die "Could not copy the kernelz for the min kernel package"
 		fi
 	fi
 	
-	if [ "${ENABLE_PEGASOS_HACKS}" != 'yes' ]
+	if ! isTrue "${INTEGRATED_INITRAMFS}"
 	then
 		if [ "${KERN_24}" != '1' ]
 		then
@@ -69,7 +69,7 @@ gen_kerncache()
 	cp "${KERNEL_BINARY}" "${TEMP}/kerncache/kernel-${ARCH}-${KV}" || gen_die 'Could not the copy kernel for the kernel package!'
 	cp "${KERNEL_DIR}/.config" "${TEMP}/kerncache/config-${ARCH}-${KV}"
 	cp "${KERNEL_DIR}/System.map" "${TEMP}/kerncache/System.map-${ARCH}-${KV}"
-	if [ "${ENABLE_PEGASOS_HACKS}" = 'yes' ]
+	if isTrue "${GENZIMAGE}"
         then
         	cp "${KERNEL_BINARY_2}" "${TEMP}/kerncache/kernelz-${ARCH}-${KV}" || gen_die "Could not copy the kernelz for the kernel package"
         fi
@@ -98,7 +98,7 @@ gen_kerncache_extract_kernel()
 		"${TEMP}/kernel-${ARCH}-${KV}" \
 		"kernel-${KNAME}-${ARCH}-${KV}"
 
-	if [ "${ENABLE_PEGASOS_HACKS}" = 'yes' ]
+	if isTrue "${GENZIMAGE}"
 	then
 		copy_image_with_preserve "kernelz" \
 			"${TEMP}/kernelz-${ARCH}-${KV}" \

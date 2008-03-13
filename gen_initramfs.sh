@@ -492,21 +492,15 @@ create_initramfs() {
 	gzip -9 "${CPIO}"
 	mv -f "${CPIO}.gz" "${CPIO}"
 
-	if [ "${ENABLE_PEGASOS_HACKS}" = 'yes' ]
+	if isTrue "${INTEGRATED_INITRAMFS}"
 	then
-			# Pegasos hack for merging the initramfs into the kernel at compile time
-			cp ${TMPDIR}/initramfs-${KV} ${KERNEL_DIR}/arch/powerpc/boot/ramdisk.image.gz &&
-			rm ${TMPDIR}/initramfs-${KV}
-	elif [ ${BUILD_INITRAMFS} -eq '1' ]
-	then
-		# Mips also mimics Pegasos to merge the initramfs into the kernel
 		cp ${TMPDIR}/initramfs-${KV} ${KERNEL_DIR}/initramfs.cpio.gz
 		gunzip -f ${KERNEL_DIR}/initramfs.cpio.gz
 	fi
 
 	if ! isTrue "${CMD_NOINSTALL}"
 	then
-		if [ "${ENABLE_PEGASOS_HACKS}" != 'yes' ]
+		if ! isTrue "${INTEGRATED_INITRAMFS}"
 		then
 			copy_image_with_preserve "initramfs" \
 				"${TMPDIR}/initramfs-${KV}" \

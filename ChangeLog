@@ -2,6 +2,15 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_cmdline.sh,
+  gen_compile.sh, gen_determineargs.sh, gen_initramfs.sh, gen_initrd.sh,
+  gen_package.sh, genkernel:
+  Get rid of the ENABLE_PEGASOS_HACKS hacks Add INTEGRATED_INITRAMFS option to
+  optionally insert the generated initramfs directly into the kernel image
+  Change default build order to build the kernel last to facilitate the
+  INTEGRATED_INITRAMFS option Add GENZIMAGE option and change various checks
+  from ENABLE_PEGASOS_HACKS to GENZIMAGE
+
   13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
   Argh...Changing the right line helps
 

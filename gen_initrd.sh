@@ -348,10 +348,10 @@ create_initrd() {
 			"initrd-${KNAME}-${ARCH}-${KV}"
 	fi
 
-        if [ "${ENABLE_PEGASOS_HACKS}" = 'yes' ]
-        then
-		# Pegasos hack for merging the initramfs into the kernel at compile time
-		cp ${TMPDIR}/initrd-${KV} ${KERNEL_DIR}/arch/${ARCH}/boot/images/ramdisk.image.gz &&
-		rm ${TMPDIR}/initrd-${KV}
-	fi
+#	if [ "${ENABLE_PEGASOS_HACKS}" = 'yes' ]
+#	then
+#		# Pegasos hack for merging the initramfs into the kernel at compile time
+#		cp ${TMPDIR}/initrd-${KV} ${KERNEL_DIR}/arch/${ARCH}/boot/images/ramdisk.image.gz &&
+#		rm ${TMPDIR}/initrd-${KV}
+#	fi
 }

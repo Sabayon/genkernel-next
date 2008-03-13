@@ -126,6 +126,9 @@ longusage() {
   echo "				Specifies specific firmware files to copy. This"
   echo "				overrides --firmware-dir. For multiple files,"
   echo "				separate the filenames with a comma"
+  echo "	--integrated-initramfs"
+  echo "				Build the generated initramfs into the kernel instead of"
+  echo "				keeping it as a separate file"
 }
 
 usage() {
@@ -474,8 +477,9 @@ parse_cmdline() {
 		--genzimage)
 			KERNEL_MAKE_DIRECTIVE_2='zImage.initrd'
 			KERNEL_BINARY_2='arch/powerpc/boot/zImage.initrd'
-			ENABLE_PEGASOS_HACKS="yes"
-			print_info 2 "ENABLE_PEGASOS_HACKS: ${ENABLE_PEGASOS_HACKS}"
+			CMD_GENZIMAGE="yes"
+#			ENABLE_PEGASOS_HACKS="yes"
+#			print_info 2 "ENABLE_PEGASOS_HACKS: ${ENABLE_PEGASOS_HACKS}"
 			;;
 		--disklabel)
 			CMD_DISKLABEL=1
