@@ -494,8 +494,7 @@ create_initramfs() {
 
 	if isTrue "${INTEGRATED_INITRAMFS}"
 	then
-		cp ${TMPDIR}/initramfs-${KV} ${KERNEL_DIR}/initramfs.cpio.gz
-		gunzip -f ${KERNEL_DIR}/initramfs.cpio.gz
+		cp ${TMPDIR}/initramfs-${KV} ${KERNEL_DIR}/usr/initramfs_data.cpio.gz
 	fi
 
 	if ! isTrue "${CMD_NOINSTALL}"
