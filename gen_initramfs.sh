@@ -261,7 +261,7 @@ append_firmware() {
 	then
 		rm -r "${TEMP}/initramfs-firmware-temp/"
 	fi
-	mkdir -p "${TEMP}/initramfs-firmware-temp/lib/firmware"
+	mkdir -p "${TEMP}/initramfs-firmware-temp"
 	cd "${TEMP}/initramfs-firmware-temp/lib/firmware"
 	if [ -n "${FIRMWARE_FILES}" ]
 	then
