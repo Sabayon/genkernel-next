@@ -503,6 +503,10 @@ parse_cmdline() {
 			CMD_FIRMWARE=1
 			print_info 2 "CMD_FIRMWARE_FILES: ${CMD_FIRMWARE_FILES}"
 			;;
+		--integrated-initramfs)
+			CMD_INTEGRATED_INITRAMFS=1
+			print_info 2 "CMD_INTEGRATED_INITRAMFS=${CMD_INTEGRATED_INITRAMFS}"
+			;;
 		all)
 			BUILD_KERNEL=1
 			BUILD_MODULES=1
