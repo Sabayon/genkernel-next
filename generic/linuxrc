@@ -403,7 +403,14 @@ do
 		# else not a good root and start over.
 		if [ "$?" = '0' ]
 		then
-			break
+			if [ -d ${NEW_ROOT}/dev -a -x ${NEW_ROOT}/sbin/init ]
+			then
+				break
+			else
+				bad_msg "The filesystem mounted at ${REAL_ROOT} does not appear to be a valid /, try again"
+				got_good_root=0
+				REAL_ROOT=''
+			fi
 		else
 			bad_msg "Could not mount specified ROOT, try again"
 			got_good_root=0

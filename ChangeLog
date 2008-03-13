@@ -2,6 +2,10 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> generic/linuxrc:
+  Add a check after mounting NEW_ROOT to see if /dev exists and /sbin/init is
+  executable before moving on
+
   13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
   Change the location we copy the intiramfs to for integrated initramfs
 
