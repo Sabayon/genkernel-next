@@ -494,7 +494,9 @@ create_initramfs() {
 
 	if isTrue "${INTEGRATED_INITRAMFS}"
 	then
-		cp ${TMPDIR}/initramfs-${KV} ${KERNEL_DIR}/usr/initramfs_data.cpio.gz
+#		cp ${TMPDIR}/initramfs-${KV} ${KERNEL_DIR}/usr/initramfs_data.cpio.gz
+		mv ${TMPDIR}/initramfs-${KV} ${TMPDIR}/initramfs-${KV}.cpio.gz
+		sed -i "s/^.*CONFIG_INITRAMFS_SOURCE=.*$/CONFIG_INITRAMFS_SOURCE=\"${TMPDIR}/initramfs-${KV}.cpio.gz\"/" ${KERNEL_CONFIG}
 	fi
 
 	if ! isTrue "${CMD_NOINSTALL}"

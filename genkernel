@@ -124,7 +124,6 @@ set_kernel_arch
 
 setup_cache_dir
 
-
 dump_debugcache
 
 NORMAL=${BOLD} print_info 1 "Linux Kernel ${BOLD}${KV}${NORMAL} for ${BOLD}${ARCH}${NORMAL}..."
