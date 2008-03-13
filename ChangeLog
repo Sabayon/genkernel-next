@@ -3,6 +3,9 @@
 # $Header: $
 
   13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
+  Argh...Changing the right line helps
+
+  13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
   Change into initramfs-firmware-temp/ instead of
   initramfs-firmware-temp/lib/firmware/ before doing cpio
 
