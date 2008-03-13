@@ -3,6 +3,9 @@
 # $Header: $
 
   13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> generic/linuxrc:
+  Remove -c "/dev/console" from switch_root command
+
+  13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> generic/linuxrc:
   Add missing $ to {NORMAL} for broken /dev message
 
   13 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_package.sh:

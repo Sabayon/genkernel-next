@@ -657,7 +657,7 @@ then
 		umount /proc || echo '*: Failed to unmount the initrd /proc!'
 	echo -e "${BOLD}.${NORMAL}"
 
-	exec switch_root -c "/dev/console" "${CHROOT}" "${REAL_INIT:-/sbin/init}" "${INIT_OPTS}"
+	exec switch_root "${CHROOT}" "${REAL_INIT:-/sbin/init}" "${INIT_OPTS}"
 fi
 
 splash 'verbose'
