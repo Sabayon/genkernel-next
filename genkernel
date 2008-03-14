@@ -232,6 +232,8 @@ then
 	# KV may have changed due to the configuration
 	get_KV
 
+	compile_kernel
+
 	# Compile modules
 	if [ ${BUILD_MODULES} -eq '1' -a ${BUILD_STATIC} -eq '0' ]
 	then
@@ -316,15 +318,13 @@ else
 	print_info 1 'initrd: Not building since only the kernel was requested...'
 fi
 
-if isTrue "${INTEGRATED_INITRAMFS}" || [ ${BUILD_KERNEL} -eq '1' -a "${KERNCACHE_IS_VALID}" == "0" ]
+if isTrue "${INTEGRATED_INITRAMFS}" #|| [ ${BUILD_KERNEL} -eq '1' -a "${KERNCACHE_IS_VALID}" == "0" ]
 then
+	# We build the kernel a second time to include the initramfs
 	compile_kernel
-
-	# We skipped the kernel build and kerncache generation
-	# So do it here
-	[ "${KERNCACHE}" != "" ] && gen_kerncache
 fi
 
+[ "${KERNCACHE}" != "" ] && gen_kerncache
 [ "${MINKERNPACKAGE}" != '' ] && gen_minkernpackage
 [ "${MODULESPACKAGE}" != '' ] && gen_modulespackage
 
