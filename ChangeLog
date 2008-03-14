@@ -3,6 +3,9 @@
 # $Header: $
 
   14 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_package.sh:
+  Copy the original kconfig with a different name than the one used to build
+
+  14 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_package.sh:
   Include original kconfig in kerncache If original kconfig exists in the
   kerncache, use that for comparison to the current kconfig
 

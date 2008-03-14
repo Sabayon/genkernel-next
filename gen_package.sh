@@ -68,7 +68,7 @@ gen_kerncache()
 	cd "${KERNEL_DIR}"
 	cp "${KERNEL_BINARY}" "${TEMP}/kerncache/kernel-${ARCH}-${KV}" || gen_die 'Could not the copy kernel for the kernel package!'
 	cp "${KERNEL_DIR}/.config" "${TEMP}/kerncache/config-${ARCH}-${KV}"
-	cp "${KERNEL_CONFIG}" "${TEMP}/kerncache/config-${ARCH}-${KV}"
+	cp "${KERNEL_CONFIG}" "${TEMP}/kerncache/config-${ARCH}-${KV}.orig"
 	cp "${KERNEL_DIR}/System.map" "${TEMP}/kerncache/System.map-${ARCH}-${KV}"
 	if isTrue "${GENZIMAGE}"
         then
