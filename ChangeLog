@@ -2,6 +2,10 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  14 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_package.sh:
+  Include original kconfig in kerncache If original kconfig exists in the
+  kerncache, use that for comparison to the current kconfig
+
   14 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> genkernel:
   Switch back to building kernel first
   Optionally build the kernel a second time if we're integrating the initramfs
