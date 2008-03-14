@@ -194,7 +194,7 @@ mount_sysfs() {
 }
 
 findnfsmount() {
-	if [ "${IP}" != '' ] || busybox udhcpc -R rootpath -n -s /bin/udhcpc.scripts
+	if [ "${IP}" != '' ] || busybox udhcpc -n -T 15 -q -s /bin/udhcpc.scripts
 	then
 		[ -e /rootpath ] && NFSROOT=`cat /rootpath`
 
