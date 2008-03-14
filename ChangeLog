@@ -2,6 +2,16 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  14 Mar 2008; Chris Gianelloni <wolf31o2@gentoo.org> genkernel,
+  genkernel.conf, -pkg/alpha/README, -pkg/ia64/README, -pkg/mips/.keep,
+  -pkg/parisc/README, -pkg/parisc64/README, -pkg/ppc/README,
+  -pkg/ppc64/README, -pkg/sparc/README, -pkg/sparc64/README, -pkg/um/README,
+  -pkg/x86/README, -pkg/x86_64/README, -pkg/xen0/README, -pkg/xenU/README:
+  Removing pkg directory, since it is no longer necessary. From now on, we'll
+  just pull the tarballs from DISTDIR directly, and we've already moved our
+  caches to /var/tmp/genkernel, so there's nothing left to keep here. This is
+  genkernel 3.4.10_pre7 for testing.
+
   14 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_package.sh:
   Copy the original kconfig with a different name than the one used to build
 
