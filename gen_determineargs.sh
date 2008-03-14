@@ -102,7 +102,6 @@ determine_real_args() {
 	set_config_with_override 2 INITRAMFS_OVERLAY    CMD_INITRAMFS_OVERLAY
 	set_config_with_override 1 MOUNTBOOT            CMD_MOUNTBOOT
 	set_config_with_override 1 BUILD_STATIC         CMD_STATIC
-	set_config_with_override 1 BUILD_INITRAMFS      CMD_INITRAMFS
 	set_config_with_override 1 SAVE_CONFIG          CMD_SAVE_CONFIG
  	set_config_with_override 1 SYMLINK              CMD_SYMLINK
 	set_config_with_override 2 INSTALL_MOD_PATH     CMD_INSTALL_MOD_PATH

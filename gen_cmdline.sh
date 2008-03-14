@@ -44,8 +44,6 @@ longusage() {
   echo "	--callback=<...>	Run the specified arguments after the"
   echo "				kernel and modules have been compiled"
   echo "	--static		Build a static (monolithic kernel)."
-  echo "	--initramfs		Builds initramfs before kernel and embeds it"
-  echo "				into the kernel."
   echo "  Kernel settings"
   echo "	--kerneldir=<dir>	Location of the kernel sources"
   echo "	--kernel-config=<file>	Kernel configuration file to use for compilation"
@@ -387,10 +385,6 @@ parse_cmdline() {
 		--static)
 			CMD_STATIC=1
 			print_info 2 "CMD_STATIC: ${CMD_STATIC}"
-			;;
-		--initramfs)
-			CMD_INITRAMFS=1
-			print_info 2 "CMD_INITRAMFS: ${CMD_INITRAMFS}"
 			;;
 		--tempdir=*)
 			TMPDIR=`parse_opt "$*"`
