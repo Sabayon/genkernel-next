@@ -2,6 +2,10 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  29 Mar 2008; Andrew Gaffney <agaffney@gentoo.org>
+  +patches/busybox/1.7.4/busybox-1.7.4-signal-hack.patch:
+  Add patch from ebuild in-tree to fix build issue with signals on hppa
+
   14 Mar 2008; Andrew Gaffney <agaffney@gentoo.org> gen_cmdline.sh,
   gen_determineargs.sh:
   Get rid of --initramfs option as it doesn't do anything anymore
