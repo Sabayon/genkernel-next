@@ -46,16 +46,15 @@ get_official_arch() {
 set_kernel_arch() {
 	KERNEL_ARCH=${ARCH}
 	case ${ARCH} in
-# XXX: This doesn't seem to actually be necessary, as it still works just fine without it
-#		ppc|ppc64)
-#			if [ "${VER}" -eq "2" -a "${PAT}" -ge "6" ]
-#			then
-#				if [ "${PAT}" -eq "6" -a "${SUB}" -ge "16" ] || [ "${PAT}" -gt "6" ]
-#				then
-#					KERNEL_ARCH=powerpc
-#				fi
-#			fi
-#			;;
+		ppc|ppc64)
+			if [ "${VER}" -eq "2" -a "${PAT}" -ge "6" ]
+			then
+				if [ "${PAT}" -eq "6" -a "${SUB}" -ge "16" ] || [ "${PAT}" -gt "6" ]
+				then
+					KERNEL_ARCH=powerpc
+				fi
+			fi
+			;;
 		x86)
 			if [ "${VER}" -eq "2" -a "${PAT}" -ge "6" ] || [ "${VER}" -gt "2" ]
 			then
