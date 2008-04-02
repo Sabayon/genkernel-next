@@ -606,67 +606,25 @@ fi
 
 verbose_kmsg
 
-if [ "$0" = '/linuxrc' ] || [ "$0" = 'linuxrc' ]
+# There used to be some initrd/2.4 code here, but it's gone now :
+if [ ! -e "${CHROOT}/dev/console" ] || [ ! -e "${CHROOT}/dev/null" ] \
+|| [ ! -e "${CHROOT}/dev/tty1" ]
 then
-	# XXX: remove me!!!
-	echo "DEBUG: initrd code path"
-	if [ ! -e "${CHROOT}/dev/console" ] || [ ! -e "${CHROOT}/dev/null" ] \
-	|| [ ! -e "${CHROOT}/dev/tty1" ]
-	then
-		echo -ne "${BAD}>>${NORMAL}${BOLD} ERROR: /dev is broken!${NORMAL}"
-	else
-		echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting${NORMAL}"
-	fi
-
-	cd "${CHROOT}"
-	mkdir "${CHROOT}/proc" "${CHROOT}/sys" 2>/dev/null
-	pivot_root . tmp/.initrd
-	if [ "${DO_slowusb}" ] || [ "${FORCE_slowusb}" ]
-	then
-		sleep 10
-	fi
-	echo -ne "${BOLD}.${NORMAL}"
-
-	/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/fd ] && rm /tmp/.initrd/dev/fd
-	/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/stdin ] && rm /tmp/.initrd/dev/stdin
-	/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/stdout ] && rm /tmp/.initrd/dev/stdout
-	/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/stderr ] && rm /tmp/.initrd/dev/stderr
-	/tmp/.initrd/bin/[ -e /tmp/.initrd/dev/core ] && rm /tmp/.initrd/dev/core 
-	umount /tmp/.initrd/dev || echo '*: Failed to unmount the initrd /dev!'
-	umount /tmp/.initrd/proc || echo '*: Failed to unmount the initrd /proc!'
-	umount /tmp/.initrd/sys || echo '*: Failed to unmount the initrd /sys!'
-	echo -ne "${BOLD}.${NORMAL}"
-
-	# /usr/src/linux/Documentation/initrd.txt:
-	#	exec chroot . /sbin/init </dev/console >/dev/console 2>&1
-
-	echo -e "${BOLD}.${NORMAL}"
-	exec <dev/console >dev/console 2>&1
-	exec chroot . /bin/sh <<- EOF
-		umount /tmp/.initrd || echo "*: Failed to unmount the initrd!"
-		/sbin/blockdev --flushbufs /dev/ram0 >/dev/null 2>&1
-		exec "${REAL_INIT:-/sbin/init}" "${INIT_OPTS}"
-EOF
-elif [ "$0" = '/init' ]
-then
-	if [ ! -e "${CHROOT}/dev/console" ] || [ ! -e "${CHROOT}/dev/null" ] \
-	|| [ ! -e "${CHROOT}/dev/tty1" ]
-	then
-		echo -ne "${BAD}>>${NORMAL}${BOLD} ERROR: /dev is broken!${NORMAL}"
-	else
-		echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting (initramfs)${NORMAL}"
-	fi
-
-	cd "${CHROOT}"
-	mkdir "${CHROOT}/proc" "${CHROOT}/sys" 2>/dev/null
-	echo -ne "${BOLD}.${NORMAL}"
-		umount /sys || echo '*: Failed to unmount the initrd /sys!'
-		umount /proc || echo '*: Failed to unmount the initrd /proc!'
-	echo -e "${BOLD}.${NORMAL}"
-
-	exec switch_root -c "/dev/console" "${CHROOT}" "${REAL_INIT:-/sbin/init}" "${INIT_OPTS}"
+	echo -ne "${BAD}>>${NORMAL}${BOLD} ERROR: /dev is broken!${NORMAL}"
+else
+	echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting (initramfs)${NORMAL}"
 fi
 
+cd "${CHROOT}"
+mkdir "${CHROOT}/proc" "${CHROOT}/sys" 2>/dev/null
+echo -ne "${BOLD}.${NORMAL}"
+umount /sys || echo '*: Failed to unmount the initrd /sys!'
+umount /proc || echo '*: Failed to unmount the initrd /proc!'
+echo -e "${BOLD}.${NORMAL}"
+
+exec switch_root -c "/dev/console" "${CHROOT}" "${REAL_INIT:-/sbin/init}" "${INIT_OPTS}"
+
+# If we get here, something bad has happened
 splash 'verbose'
 
 echo 'A fatal error has probably occured since /sbin/init did not'
