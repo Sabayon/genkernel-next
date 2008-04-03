@@ -2,6 +2,9 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  03 Apr 2008; Andrew Gaffney <agaffney@gentoo.org> generic/linuxrc:
+  Split up /dev node checks into console/null and tty1
+
   02 Apr 2008; Andrew Gaffney <agaffney@gentoo.org> generic/linuxrc:
   Remove initrd-specific code from linuxrc
 

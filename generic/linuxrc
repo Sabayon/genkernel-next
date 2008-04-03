@@ -607,12 +607,13 @@ fi
 verbose_kmsg
 
 # There used to be some initrd/2.4 code here, but it's gone now :
-if [ ! -e "${CHROOT}/dev/console" ] || [ ! -e "${CHROOT}/dev/null" ] \
-|| [ ! -e "${CHROOT}/dev/tty1" ]
+echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting (initramfs)${NORMAL}"
+if [ ! -e "${CHROOT}/dev/console" ] || [ ! -e "${CHROOT}/dev/null" ]
 then
-	echo -ne "${BAD}>>${NORMAL}${BOLD} ERROR: /dev is broken!${NORMAL}"
-else
-	echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting (initramfs)${NORMAL}"
+	echo -ne "${BAD}>>${NORMAL}${BOLD} ERROR: your /dev is missing files required to boot (console and null)${NORMAL}"
+elif [ -e /etc/initrd.splash -a ! -e "${CHROOT}/dev/tty1" ]
+then
+	echo -ne "${BAD}>>${NORMAL}${BOLD} ERROR: your /dev is missing tty1, which is required for splash${NORMAL}"
 fi
 
 cd "${CHROOT}"
