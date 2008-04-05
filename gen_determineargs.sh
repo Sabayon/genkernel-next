@@ -118,6 +118,8 @@ determine_real_args() {
 	set_config_with_override 2 FIRMWARE_FILES       CMD_FIRMWARE_FILES
 	set_config_with_override 1 INTEGRATED_INITRAMFS CMD_INTEGRATED_INITRAMFS
 	set_config_with_override 1 GENZIMAGE            CMD_GENZIMAGE
+	set_config_with_override 1 KEYMAP               CMD_KEYMAP               "yes"
+	set_config_with_override 1 DOKEYMAPAUTO         CMD_DOKEYMAPAUTO
 
 		BOOTDIR=`arch_replace "${BOOTDIR}"`
 		BOOTDIR=${BOOTDIR%/}    # Remove any trailing slash
