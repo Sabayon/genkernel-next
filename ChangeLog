@@ -2,6 +2,10 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  08 Apr 2008; Chris Gianelloni <wolf31o2@gentoo.org>
+  generic/initrd.defaults, generic/initrd.scripts:
+  Added scsi to the default list of modules to load.
+
   05 Apr 2008; Andrew Gaffney <agaffney@gentoo.org> gen_determineargs.sh:
   Set CMD_KEYMAP to default to yes, so it's enabled unless specifically
   disabled
