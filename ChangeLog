@@ -2,6 +2,9 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  10 Apr 2008; Chris Gianelloni <wolf31o2@gentoo.org> TODO, genkernel:
+  Updated TODO.  This is 3.4.10_pre9 for testing.
+
   08 Apr 2008; Chris Gianelloni <wolf31o2@gentoo.org>
   generic/initrd.defaults, generic/initrd.scripts:
   Added scsi to the default list of modules to load.
