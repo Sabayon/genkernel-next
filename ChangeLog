@@ -2,6 +2,11 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  12 Apr 2008; Chris Gianelloni <wolf31o2@gentoo.org>
+  generic/initrd.defaults:
+  Move removable storage like USB and firewire after traditional fixed storage
+  like PATA/SATA/SCSI for bug #217347.
+
   10 Apr 2008; Chris Gianelloni <wolf31o2@gentoo.org> TODO, genkernel:
   Updated TODO.  This is 3.4.10_pre9 for testing.
 
