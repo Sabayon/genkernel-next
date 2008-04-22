@@ -507,7 +507,7 @@ setup_keymap() {
 		fi
 		[ ! -e /dev/tty0 ] && ln -s /dev/tty1 /dev/tty0
 
-		[ -d /lib/keymaps/keymapList ] && chooseKeymap
+		[ -f /lib/keymaps/keymapList ] && chooseKeymap
 
 		[ "${DEVBIND}" = '1' ] && umount /dev
 		

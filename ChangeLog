@@ -2,6 +2,11 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  22 Apr 2008; Chris Gianelloni <wolf31o2@gentoo.org>
+  generic/initrd.scripts:
+  Change from using a directory check to a file check. This should fix bug
+  #215822.
+
   12 Apr 2008; Chris Gianelloni <wolf31o2@gentoo.org>
   generic/initrd.defaults:
   Move removable storage like USB and firewire after traditional fixed storage
