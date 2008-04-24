@@ -486,11 +486,15 @@ set_config_with_override() {
 		if [ -n "${!CfgVar}" ]
 		then
 			Result=${!CfgVar}
+			# we need to set the CMD_* according to configfile...
+			eval ${OverrideVar}=\"${Result}\"
 			print_info 5 "  $CfgVar set in config file to \"${Result}\"."
 		else
 			if [ -n "$Default" ]
 			then
 				Result=${Default}
+				# set OverrideVar to Result, otherwise CMD_* may not be initialized...
+				eval ${OverrideVar}=\"${Result}\"
 				print_info 5 "  $CfgVar defaulted to \"${Result}\"."
 			else
 				print_info 5 "  $CfgVar not set."

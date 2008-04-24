@@ -2,6 +2,13 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  24 Apr 2008; Chris Gianelloni <wolf31o2@gentoo.org> gen_determineargs.sh,
+  gen_funcs.sh, generic/initrd.scripts, generic/linuxrc:
+  Updated the keymap-handling code so it will be installed and displayed
+  without using --do-auto-keymap with a patch from Florian Schilhabel
+  <fernsehleo@gmx.net> for bug #215822. Also, added a keymap= command line
+  option to allow setting keymap from the bootloader, also from Florian.
+
   22 Apr 2008; Chris Gianelloni <wolf31o2@gentoo.org>
   generic/initrd.scripts:
   Change from using a directory check to a file check. This should fix bug

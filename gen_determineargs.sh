@@ -121,8 +121,8 @@ determine_real_args() {
 	set_config_with_override 1 KEYMAP               CMD_KEYMAP               "yes"
 	set_config_with_override 1 DOKEYMAPAUTO         CMD_DOKEYMAPAUTO
 
-		BOOTDIR=`arch_replace "${BOOTDIR}"`
-		BOOTDIR=${BOOTDIR%/}    # Remove any trailing slash
+	BOOTDIR=`arch_replace "${BOOTDIR}"`
+	BOOTDIR=${BOOTDIR%/}    # Remove any trailing slash
 
 	CACHE_DIR=`arch_replace "${CACHE_DIR}"`
 	BUSYBOX_BINCACHE=`cache_replace "${BUSYBOX_BINCACHE}"`

@@ -180,6 +180,9 @@ do
 		real_rootflags\=*)
 			REAL_ROOTFLAGS=`parse_opt "${x}"`
 		;;
+		keymap\=*)
+			keymap=`parse_opt "${x}"`
+		;;
 	esac
 done
 
