@@ -589,6 +589,7 @@ chooseKeymap() {
 		good_msg "Keeping default keymap"
 	else
 		bad_msg "Sorry, but keymap ''${keymap}'' is invalid!"
+		unset keymap
 		chooseKeymap
 	fi
 }

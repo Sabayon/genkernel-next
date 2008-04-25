@@ -2,6 +2,11 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  25 Apr 2008; Chris Gianelloni <wolf31o2@gentoo.org>
+  generic/initrd.scripts:
+  We need to unset keymap if it doesn't match to keep from hitting an infinite
+  loop.
+
   24 Apr 2008; Chris Gianelloni <wolf31o2@gentoo.org> gen_determineargs.sh,
   gen_funcs.sh, generic/initrd.scripts, generic/linuxrc:
   Updated the keymap-handling code so it will be installed and displayed
