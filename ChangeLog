@@ -3,6 +3,11 @@
 # $Header: $
 
   25 Apr 2008; Chris Gianelloni <wolf31o2@gentoo.org>
+  generic/initrd.scripts, genkernel:
+  Enable keymap code when keymap is set on the kernel command line. This is
+  genkernel 3.4.10_pre10 for testing.
+
+  25 Apr 2008; Chris Gianelloni <wolf31o2@gentoo.org>
   generic/initrd.scripts:
   We need to unset keymap if it doesn't match to keep from hitting an infinite
   loop.
