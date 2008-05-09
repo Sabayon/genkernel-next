@@ -7,6 +7,13 @@
   parisc64/modules_load, ppc/modules_load, ppc64/modules_load,
   sparc/modules_load, sparc64/modules_load, um/modules_load,
   x86/modules_load, x86_64/modules_load:
+  Added a few SATA and PATA drivers to modules_load.
+
+  09 May 2008; Chris Gianelloni <wolf31o2@gentoo.org> alpha/modules_load,
+  ia64/modules_load, mips/modules_load, parisc/modules_load,
+  parisc64/modules_load, ppc/modules_load, ppc64/modules_load,
+  sparc/modules_load, sparc64/modules_load, um/modules_load,
+  x86/modules_load, x86_64/modules_load:
   Updated the modules_load files.
 
   25 Apr 2008; Chris Gianelloni <wolf31o2@gentoo.org>
