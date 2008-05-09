@@ -515,3 +515,12 @@ set_config_with_override() {
 	eval ${CfgVar}=\"${Result}\"
 }
 
+check_distfiles() {
+	for i in $BUSYBOX_SRCTAR $DEVICE_MAPPER_SRCTAR $LVM_SRCTAR $DMRAID_SRCTAR $E2FSPROGS_SRCTAR
+	do
+		if [ ! -f "${i}" ]
+		then
+			small_die "Could not find source tarball ${i}. Please refetch."
+		fi
+	done
+}

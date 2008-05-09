@@ -2,6 +2,11 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  09 May 2008; Andrew Gaffney <agaffney@gentoo.org> gen_funcs.sh, genkernel,
+  genkernel.conf:
+  Move distfile cache to /var/cache/genkernel/src and add check to make sure
+  all distfiles are present
+
   09 May 2008; Chris Gianelloni <wolf31o2@gentoo.org> alpha/modules_load,
   ia64/modules_load, mips/modules_load, parisc/modules_load,
   parisc64/modules_load, ppc/modules_load, ppc64/modules_load,
