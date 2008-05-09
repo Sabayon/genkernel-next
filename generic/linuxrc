@@ -203,7 +203,10 @@ mount_sysfs
 setup_hotplug
 
 # Load modules listed in MY_HWOPTS if /lib/modules exists for the running kernel
-if [ -d "/lib/modules/${KV}" ]
+if [ -z "${DO_modules}" ]
+then
+	good_msg 'Skipping module load; disabled via commandline'
+elif [ -d "/lib/modules/${KV}" ]
 then
 	good_msg 'Loading modules'
 	# Load appropriate kernel modules
@@ -212,16 +215,11 @@ then
 		for modules in ${MY_HWOPTS}
 		do
 			modules_scan ${modules}
-			eval DO_`echo ${modules} | sed 's/-//'`=1
 		done
 	fi
 	# Always eval doload=...
 	modules_load ${MDOLIST}
 else
-	for modules in ${MY_HWOPTS}
-	do
-		eval DO_`echo ${modules} | sed 's/-//'`=1
-	done
 	good_msg 'Skipping module load; no modules in the initrd!'
 fi
 

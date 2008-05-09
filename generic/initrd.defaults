@@ -77,5 +77,5 @@ LOOPS='/livecd.loop /zisofs /livecd.squashfs /image.squashfs /livecd.gcloop'
 
 # Only sections that are in by default or those that
 # are not module groups need to be defined here...
-HWOPTS='keymap cache pata sata scsi usb firewire slowusb evms lvm dmraid mdadm fs net'
-MY_HWOPTS='pata sata scsi usb firewire dmraid mdadm fs net'
+HWOPTS='keymap cache modules pata sata scsi usb firewire slowusb evms lvm dmraid mdadm fs net'
+MY_HWOPTS='modules pata sata scsi usb firewire dmraid mdadm fs net'

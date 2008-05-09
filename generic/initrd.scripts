@@ -448,13 +448,11 @@ cmdline_hwopts() {
 		do
 			if [ "${y}" = "${x}" ]
 			then 
-				FOUND=1
+				continue 2
 			fi
 		done
-		if [ ! "${FOUND}" = '1' ]
-		then
-			TMP_HWOPTS="${TMP_HWOPTS} ${x}"
-		fi
+		TMP_HWOPTS="${TMP_HWOPTS} ${x}"
+		eval DO_`echo ${x} | sed 's/-//'`=1
 	done
 
 	MY_HWOPTS=${TMP_HWOPTS}
@@ -470,7 +468,6 @@ load_modules() {
 		for modules in $MY_HWOPTS
 		do
 			modules_scan $modules
-			eval DO_`echo $modules | sed 's/-//'`=1
 		done
 	else
 		good_msg 'Skipping module load; no modules in the initrd!'
