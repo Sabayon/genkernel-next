@@ -2,6 +2,9 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  10 May 2008; Andrew Gaffney <agaffney@gentoo.org> gen_compile.sh:
+  Store pre-oldconfig busybox .config for use in bincache comparison
+
   09 May 2008; Andrew Gaffney <agaffney@gentoo.org> generic/initrd.defaults,
   generic/initrd.scripts, generic/linuxrc:
   Add nomodules kernel commandline parameter to disable loading of modules
