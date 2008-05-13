@@ -2,6 +2,9 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  13 May 2008; Andrew Gaffney <agaffney@gentoo.org> generic/linuxrc:
+  Move setup_keymap call to before LUKS setup
+
   10 May 2008; Andrew Gaffney <agaffney@gentoo.org> gen_compile.sh:
   Store pre-oldconfig busybox .config for use in bincache comparison
 

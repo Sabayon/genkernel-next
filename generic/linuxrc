@@ -235,6 +235,8 @@ setup_md_device
 # Scan volumes
 startVolumes
 
+setup_keymap
+
 # Initialize LUKS root device except for livecd's
 if [ "${CDROOT}" != 1 ]
 then
@@ -315,8 +317,6 @@ then
 		CDROOT=0
 	fi
 fi
-
-setup_keymap
 
 # Determine root device
 good_msg 'Determining root device...'
