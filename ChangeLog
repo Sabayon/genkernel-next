@@ -2,6 +2,16 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  05 Jun 2008; Chris Gianelloni <wolf31o2@gentoo.org>
+  -ppc/2.6.3-benh2-G4-SMP.autoload, -ppc/2.6.3-benh2-G4.autoload,
+  -ppc/2.6.3-benh2-G5-SMP.autoload, ia64/kernel-config-2.6,
+  -ppc/2.6.3-benh2-G5.autoload, -ppc/G4, -ppc/G4-SMP,
+  +ppc/kernel-config-2.6, x86/kernel-config-2.6, -ppc/G5, -ppc/G5-SMP,
+  alpha/kernel-config-2.6, x86_64/kernel-config-2.6, TODO, -ppc/Pegasos,
+  sparc64/kernel-config:
+  Sync kernel configs from releng/trunk/releases/2008.0/kconfig and remove
+  some unused configs.
+
   13 May 2008; Andrew Gaffney <agaffney@gentoo.org> generic/linuxrc:
   Move setup_keymap call to before LUKS setup
 
