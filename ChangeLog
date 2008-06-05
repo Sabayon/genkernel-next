@@ -2,6 +2,13 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  05 Jun 2008; Chris Gianelloni <wolf31o2@gentoo.org> -um/kernel-config-2.6,
+  -ppc/kernel-config-2.6, -alpha/kernel-config-2.6, -ia64/kernel-config-2.6,
+  -x86/kernel-config-2.6, -x86_64/kernel-config-2.6, ++, ++, ++, ++, ++, ++,
+  genkernel:
+  Rename kernel-config-2.6 to kernel-config, since we no longer support 2.4
+  kernels. This is genkernel 3.4.10 for release.
+
   05 Jun 2008; Chris Gianelloni <wolf31o2@gentoo.org>
   -ppc/2.6.3-benh2-G4-SMP.autoload, -ppc/2.6.3-benh2-G4.autoload,
   -ppc/2.6.3-benh2-G5-SMP.autoload, ia64/kernel-config-2.6,
