@@ -1,6 +1,7 @@
 - Need configs for other currently-unsupported arches
 - Make configs stackable
 - Move modules_load to /etc/genkernel
+- Move main config to /etc/genkernel
 - Remove 2.4 kernel support
 - Create arch subdir and move all arches under arch
 - Refactor code to be more simple and extendable
