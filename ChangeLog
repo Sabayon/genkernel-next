@@ -2,10 +2,53 @@
 # Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  28 Jul 2008; Chris Gianelloni <wolf31o2@gentoo.org> -alpha/busy-config,
+  -alpha/config.sh, -alpha/kernel-config, -alpha/modules_load,
+  +arch/alpha/busy-config, +arch/alpha/config.sh, +arch/alpha/kernel-config,
+  +arch/alpha/modules_load, +arch/ia64/busy-config, +arch/ia64/config.sh,
+  +arch/ia64/kernel-config, +arch/mips/ip22r4k-2006_1.cf,
+  -mips/ip22r4k-2006_1.cf, +arch/ia64/modules_load,
+  +arch/mips/ip22r5k-2006_1.cf, +arch/mips/ip27r10k-2006_1.cf,
+  +arch/mips/ip28r10k-2006_1.cf, +arch/mips/ip30r10k-2006_1.cf,
+  +arch/mips/ip32r5k-2006_1.cf, +arch/mips/ip32rm5k-2006_1.cf,
+  -mips/ip22r5k-2006_1.cf, -mips/ip27r10k-2006_1.cf,
+  -mips/ip28r10k-2006_1.cf, -mips/ip30r10k-2006_1.cf,
+  -mips/ip32r5k-2006_1.cf, -mips/ip32rm5k-2006_1.cf, +arch/mips/busy-config,
+  +arch/mips/config.sh, +arch/mips/modules_load, +arch/mips/nb-busybox.cf,
+  +arch/parisc/busy-config, +arch/parisc/config.sh,
+  +arch/parisc/modules_load, +arch/parisc64/busy-config,
+  +arch/parisc64/config.sh, +arch/parisc64/modules_load,
+  +arch/ppc/busy-config, +arch/ppc/config.sh, +arch/ppc/kernel-config,
+  +arch/ppc/modules_load, +arch/ppc64/busy-config, +arch/ppc64/config.sh,
+  +arch/ppc64/kernel-2.6-pSeries, +arch/ppc64/kernel-2.6.g5,
+  +arch/ppc64/modules_load, +arch/sparc/busy-config, +arch/sparc/config.sh,
+  +arch/sparc/kernel-config, +arch/sparc/modules_load,
+  +arch/sparc64/busy-config, +arch/sparc64/config.sh,
+  +arch/sparc64/kernel-config, +arch/sparc64/modules_load,
+  +arch/x86/busy-config, +arch/x86/config.sh, +arch/x86/kernel-config,
+  +arch/x86/modules_load, +arch/x86/nb-busybox.cf, +arch/x86_64/busy-config,
+  +arch/x86_64/config.sh, +arch/x86_64/kernel-config,
+  +arch/x86_64/modules_load, gen_configkernel.sh, genkernel.conf,
+  -ia64/busy-config, -ia64/config.sh, -ia64/kernel-config,
+  -ia64/modules_load, -mips/busy-config, -mips/config.sh,
+  -mips/modules_load, -mips/nb-busybox.cf, -parisc/busy-config,
+  -parisc/config.sh, -parisc/modules_load, -parisc64/busy-config,
+  -parisc64/config.sh, -parisc64/modules_load, -ppc/busy-config,
+  -ppc/config.sh, -ppc/kernel-config, -ppc/modules_load, -ppc64/busy-config,
+  -ppc64/config.sh, -ppc64/kernel-2.6-pSeries, -ppc64/kernel-2.6.g5,
+  -ppc64/modules_load, -sparc/busy-config, -sparc/config.sh,
+  -sparc/kernel-config, -sparc/modules_load, -sparc64/busy-config,
+  -sparc64/config.sh, -sparc64/kernel-config, -sparc64/modules_load,
+  -x86/busy-config, -x86/config.sh, -x86/kernel-config, -x86/modules_load,
+  -x86/nb-busybox.cf, -x86_64/busy-config, -x86_64/config.sh,
+  -x86_64/kernel-config, -x86_64/modules_load:
+  Moved architecture folders under the arch subfolder.
+
   05 Jun 2008; Chris Gianelloni <wolf31o2@gentoo.org> -um/kernel-config-2.6,
   -ppc/kernel-config-2.6, -alpha/kernel-config-2.6, -ia64/kernel-config-2.6,
-  -x86/kernel-config-2.6, -x86_64/kernel-config-2.6, ++, ++, ++, ++, ++, ++,
-  genkernel:
+  -x86/kernel-config-2.6, -x86_64/kernel-config-2.6, +um/kernel-config,
+  +ppc/kernel-config, +alpha/kernel-config, +ia64/kernel-config,
+  +x86/kernel-config, +x86_64/kernel-config, genkernel:
   Rename kernel-config-2.6 to kernel-config, since we no longer support 2.4
   kernels. This is genkernel 3.4.10 for release.
 

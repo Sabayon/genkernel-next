@@ -7,18 +7,18 @@ determine_config_file() {
 	elif [ -f "/etc/kernels/kernel-config-${ARCH}-${KV}" ]
 	then
 		KERNEL_CONFIG="/etc/kernels/kernel-config-${ARCH}-${KV}"
-	elif [ -f "${GK_SHARE}/${ARCH}/kernel-config-${KV}" ]
+	elif [ -f "${GK_SHARE}/arch/${ARCH}/kernel-config-${KV}" ]
 	then
-		KERNEL_CONFIG="${GK_SHARE}/${ARCH}/kernel-config-${KV}"
+		KERNEL_CONFIG="${GK_SHARE}/arch/${ARCH}/kernel-config-${KV}"
 	elif [ "${DEFAULT_KERNEL_CONFIG}" != "" -a -f "${DEFAULT_KERNEL_CONFIG}" ]
 	then
 		KERNEL_CONFIG="${DEFAULT_KERNEL_CONFIG}"
-	elif [ -f "${GK_SHARE}/${ARCH}/kernel-config-${VER}.${PAT}" ]
+	elif [ -f "${GK_SHARE}/arch/${ARCH}/kernel-config-${VER}.${PAT}" ]
 	then
-		KERNEL_CONFIG="${GK_SHARE}/${ARCH}/kernel-config-${VER}.${PAT}"
-	elif [ -f "${GK_SHARE}/${ARCH}/kernel-config" ]
+		KERNEL_CONFIG="${GK_SHARE}/arch/${ARCH}/kernel-config-${VER}.${PAT}"
+	elif [ -f "${GK_SHARE}/arch/${ARCH}/kernel-config" ]
 	then
-		KERNEL_CONFIG="${GK_SHARE}/${ARCH}/kernel-config"
+		KERNEL_CONFIG="${GK_SHARE}/arch/${ARCH}/kernel-config"
 	else
 		gen_die 'Error: No kernel .config specified, or file not found!'
 	fi
