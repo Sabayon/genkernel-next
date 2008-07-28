@@ -470,7 +470,7 @@ load_modules() {
 			modules_scan $modules
 		done
 	else
-		good_msg 'Skipping module load; no modules in the initrd!'
+		good_msg 'Skipping module load; no modules in the ramdisk!'
 	fi
 }
 
@@ -687,7 +687,7 @@ openLUKS() {
 	local DEV_ERROR=0 KEY_ERROR=0 KEYDEV_ERROR=0
 	local mntkey="/mnt/key/" cryptsetup_options=''
 
-	[ ! -e /sbin/cryptsetup ] && bad_msg "The initrd does not support LUKS" && exit 1
+	[ ! -e /sbin/cryptsetup ] && bad_msg "The ramdisk does not support LUKS" && exit 1
 	while [ 1 ]
 	do
 		# if crypt_silent=1 and some error occurs, enter shell quietly

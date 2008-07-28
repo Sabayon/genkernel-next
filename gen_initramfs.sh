@@ -468,7 +468,7 @@ create_initramfs() {
 	append_data 'evms' "${EVMS}"
 	append_data 'mdadm' "${MDADM}"
 	
-	if [ "${NOINITRDMODULES}" -eq '0' ]
+	if [ "${NORAMDISKMODULES}" -eq '0' ]
 	then
 		append_data 'modules'
 	else

@@ -60,7 +60,7 @@ gen_deps()
 
 gen_dep_list()
 {
-	if [ "${ALLINITRDMODULES}" = "1" ]; then
+	if [ "${ALLRAMDISKMODULES}" = "1" ]; then
 		strip_mod_paths $(find "${INSTALL_MOD_PATH}/lib/modules/${KV}" -name "*$(modules_kext)") | sort
 	else
 		local group_modules	

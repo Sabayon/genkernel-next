@@ -97,8 +97,8 @@ determine_real_args() {
 	set_config_with_override 2 MINKERNPACKAGE       CMD_MINKERNPACKAGE
 	set_config_with_override 2 MODULESPACKAGE       CMD_MODULESPACKAGE
 	set_config_with_override 2 KERNCACHE            CMD_KERNCACHE
-	set_config_with_override 1 NOINITRDMODULES      CMD_NOINITRDMODULES
-	set_config_with_override 1 ALLINITRDMODULES     CMD_ALLINITRDMODULES
+	set_config_with_override 1 NORAMDISKMODULES     CMD_NORAMDISKMODULES
+	set_config_with_override 1 ALLRAMDISKMODULES    CMD_ALLRAMDISKMODULES
 	set_config_with_override 2 INITRAMFS_OVERLAY    CMD_INITRAMFS_OVERLAY
 	set_config_with_override 1 MOUNTBOOT            CMD_MOUNTBOOT
 	set_config_with_override 1 BUILD_STATIC         CMD_STATIC
@@ -201,7 +201,7 @@ determine_real_args() {
 		mkdir -p `dirname ${KERNCACHE}`
 	fi
 
-	if ! isTrue "${BUILD_INITRD}"
+	if ! isTrue "${BUILD_RAMDISK}"
 	then
 		INTEGRATED_INITRAMFS=0
 	fi

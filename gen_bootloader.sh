@@ -56,7 +56,7 @@ EOF
 			echo "# Genkernel generated entry, see GRUB documentation for details" >> ${GRUB_CONF}
 			echo "title=Gentoo Linux ($KV)" >> ${GRUB_CONF}
 			echo -e "\troot (${GRUB_BOOT_DISK},${GRUB_BOOT_PARTITION})" >> ${GRUB_CONF}
-			if [ "${BUILD_INITRD}" -eq '0' ]
+			if [ "${BUILD_RAMDISK}" -eq '0' ]
 			then
 				echo -e "\tkernel /kernel-${KNAME}-${ARCH}-${KV} root=${GRUB_ROOTFS}" >> ${GRUB_CONF}
 			else

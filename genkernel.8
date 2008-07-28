@@ -28,7 +28,7 @@ actions are supported:
 .PP
 .I \fBall\fR
 .RS
-Build all steps - the kernel, modules, and the initrd.
+Build all steps - the kernel, modules, and the ramdisk.
 .RE
 .I \fBbzImage\fR
 .RS
@@ -38,9 +38,9 @@ Build only the kernel.
 .RS
 Build only the kernel and the modules.
 .RE
-.I \fBinitrd\fR
+.I \fBinitramfs\fR
 .RS
-Build only the initrd.
+Build only the ramdisk.
 .RE
 .SH OPTIONS
 Genkernel supports the following options which alter its
@@ -98,7 +98,7 @@ after building. The default is --install.  If MOUNTBOOT is set in
 then
 .I /boot
 will be automatically mounted if it is
-not already mounted before the initrd and kernel image is copied over.
+not already mounted before the ramdisk and kernel images are copied over.
 .TP
 \fB\-\-\fR[no\-]\fBsymlink\fR
 Manages, or does not manage, symlinks in 
@@ -113,16 +113,15 @@ symlink will link to the most recently built kernel image and a
 .I kernelz.old\fR)
 symlink will link to the second most recently built image, if one exists.
 Similar symlinks (both * and *.old) are managed for
-.I initramfs\fR (or
-.I initrd\fR)
+.I initramfs\fR
 and
 .I System.map\f.
-The corresponding work products (i.e., the actual kernel and inirtamfs images, 
+The corresponding work products (i.e., the actual kernel and initamfs images, 
 and System.map) are also managed accordingly.  NOTE:  Specifying --symlink 
 does nothing unless --install is also specified.
 .TP
 \fB\-\-no\-initrdmodules\fR
-Don't copy any modules to the initrd.
+Don't copy any modules to the ramdisk.
 .TP
 \fB\-\-oldconfig\fR
 Implies \fB\-\-no\-clean\fR, and thus \fB\-\-no\-mrproper\fR, running a

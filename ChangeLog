@@ -3,6 +3,18 @@
 # Distributed under the GPL v2
 
   28 Jul 2008; Chris Gianelloni <wolf31o2@wolf31o2.org> TODO,
+  arch/alpha/modules_load, arch/ia64/modules_load, arch/mips/modules_load,
+  arch/parisc/modules_load, arch/parisc64/modules_load,
+  arch/ppc/modules_load, arch/ppc64/modules_load, arch/sparc/modules_load,
+  arch/sparc64/modules_load, arch/x86/modules_load,
+  arch/x86_64/modules_load, defaults/initrd.scripts, defaults/linuxrc,
+  defaults/modules_load, gen_bootloader.sh, gen_cmdline.sh,
+  gen_determineargs.sh, gen_initramfs.sh, -gen_initrd.sh, gen_moddeps.sh,
+  gen_package.sh, genkernel, genkernel.8:
+  Removed all references to an initrd and renamed most initr{d,amfs} stuff
+  to simply 'ramdisk' to simplify things for the future.
+
+  28 Jul 2008; Chris Gianelloni <wolf31o2@wolf31o2.org> TODO,
   +defaults/initrd.defaults, +defaults/initrd.scripts,
   +defaults/keymaps.tar.gz, +defaults/linuxrc, +defaults/modprobe,
   +defaults/udhcpc.scripts, gen_initramfs.sh, -generic/initrd.defaults,

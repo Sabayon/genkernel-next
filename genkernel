@@ -40,7 +40,6 @@ source ${GK_SHARE}/gen_arch.sh || gen_die "Could not read ${GK_SHARE}/gen_arch.s
 source ${GK_SHARE}/gen_determineargs.sh || gen_die "Could not read ${GK_SHARE}/gen_determineargs.sh"
 source ${GK_SHARE}/gen_compile.sh || gen_die "Could not read ${GK_SHARE}/gen_compile.sh"
 source ${GK_SHARE}/gen_configkernel.sh || gen_die "Could not read ${GK_SHARE}/gen_configkernel.sh"
-source ${GK_SHARE}/gen_initrd.sh || gen_die "Could not read ${GK_SHARE}/gen_initrd.sh"
 source ${GK_SHARE}/gen_initramfs.sh || gen_die "Could not read ${GK_SHARE}/gen_initramfs.sh"
 source ${GK_SHARE}/gen_moddeps.sh || gen_die "Could not read ${GK_SHARE}/gen_moddeps.sh"
 source ${GK_SHARE}/gen_package.sh || gen_die "Could not read ${GK_SHARE}/gen_package.sh"
@@ -301,21 +300,14 @@ if [ "${BUILD_INITRD}" -eq '1' ]
 then
 	[ "${DISKLABEL}" -eq '1' ] && compile_e2fsprogs
 
-	if [ "${KERN_24}" != '1' ]
+	if [ "${BUSYBOX}" -eq '1' ]
 	then
-	    if [ "${BUSYBOX}" -eq '1' ]
-	    then
 		# Compile Busybox
 		compile_busybox
-	    fi
-	    
-	    # Compile initramfs
-	    create_initramfs
-	else
-	    # Create initrd
-	    compile_busybox
-	    create_initrd
 	fi
+    
+	# Compile initramfs
+	create_initramfs
 else
 	print_info 1 'initrd: Not building since only the kernel was requested...'
 fi
@@ -347,8 +339,7 @@ then
 		print_info 1 ''
 		print_info 1 '    Where $ROOT is the device node for your root partition as the'
 		print_info 1 '    one specified in /etc/fstab'
-	elif [ "${KERN_24}" != '1' ]
-	then
+	else
 		print_info 1 '    real_root=/dev/$ROOT'
 		print_info 1 ''
 		print_info 1 '    Where $ROOT is the device node for your root partition as the'
@@ -357,18 +348,7 @@ then
 		print_info 1 "If you require Genkernel's hardware detection features; you MUST"
 		print_info 1 'tell your bootloader to use the provided INITRAMFS file. Otherwise;'
 		print_info 1 'substitute the root argument for the real_root argument if you are'
-		print_info 1 'not planning to use the initrd...'
-	else	
-		print_info 1 '    root=/dev/ram0 real_root=/dev/$ROOT init=/linuxrc'
-		[ "${INITRD_SIZE}" -ge 4096 ] && print_info 1 "    ramdisk_size=${INITRD_SIZE}"
-		print_info 1 ''
-		print_info 1 '    Where $ROOT is the device node for your root partition as the'
-		print_info 1 '    one specified in /etc/fstab'
-		print_info 1 ''
-		print_info 1 "If you require Genkernel's hardware detection features; you MUST"
-		print_info 1 'tell your bootloader to use the provided INITRD file. Otherwise;'
-		print_info 1 'substitute the root argument for the real_root argument if you are'
-		print_info 1 'not planning to use the initrd...'
+		print_info 1 'not planning to use the initramfs...'
 	fi
 fi
 

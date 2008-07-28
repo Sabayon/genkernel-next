@@ -220,7 +220,7 @@ then
 	# Always eval doload=...
 	modules_load ${MDOLIST}
 else
-	good_msg 'Skipping module load; no modules in the initrd!'
+	good_msg 'Skipping module load; no modules in the ramdisk!'
 fi
 
 # Delay if needed for USB hardware
@@ -576,7 +576,7 @@ then
 	then
 		sleep 10
 	fi
-	mkdir initrd proc tmp sys 2>/dev/null
+	mkdir initramfs proc tmp sys 2>/dev/null
 	chmod 1777 tmp
 
 	#UML=`cat /proc/cpuinfo|grep UML|sed -e 's|model name.*: ||'`
@@ -607,7 +607,6 @@ fi
 
 verbose_kmsg
 
-# There used to be some initrd/2.4 code here, but it's gone now :
 echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting (initramfs)${NORMAL}"
 if [ ! -e "${CHROOT}/dev/console" ] || [ ! -e "${CHROOT}/dev/null" ]
 then
@@ -620,8 +619,8 @@ fi
 cd "${CHROOT}"
 mkdir "${CHROOT}/proc" "${CHROOT}/sys" 2>/dev/null
 echo -ne "${BOLD}.${NORMAL}"
-umount /sys || echo '*: Failed to unmount the initrd /sys!'
-umount /proc || echo '*: Failed to unmount the initrd /proc!'
+umount /sys || echo '*: Failed to unmount the ramdisk /sys!'
+umount /proc || echo '*: Failed to unmount the ramdisk /proc!'
 echo -e "${BOLD}.${NORMAL}"
 
 exec switch_root -c "/dev/console" "${CHROOT}" "${REAL_INIT:-/sbin/init}" "${INIT_OPTS}"

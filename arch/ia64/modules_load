@@ -1,4 +1,4 @@
-# Module groups for genkernel initrd/initramfs auto-loading
+# Module groups for genkernel initramfs auto-loading
 
 # RAID
 MODULES_ATARAID="ataraid pdcraid hptraid"

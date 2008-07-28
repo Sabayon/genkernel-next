@@ -9,7 +9,7 @@ longusage() {
   echo "  all				Build all steps"
   echo "  bzImage			Build only the kernel"
   echo "  kernel			Build only the kernel and modules"
-  echo "  initrd			Build only the initrd"
+  echo "  ramdisk			Build only the ramdisk/initramfs"
   echo
   echo "Available Options: "
   echo "  Configuration settings"
@@ -39,8 +39,8 @@ longusage() {
   echo "	--no-install		Do not install the kernel after building"
   echo "	--symlink		Manage symlinks in /boot for installed images"
   echo "	--no-symlink		Do not manage symlinks"
-  echo "	--no-initrdmodules	Don't copy any modules to the initrd"
-  echo "	--all-initrd-modules	Copy all kernel modules to the initrd"
+  echo "	--no-ramdisk-modules	Don't copy any modules to the ramdisk"
+  echo "	--all-ramdisk-modules	Copy all kernel modules to the ramdisk"
   echo "	--callback=<...>	Run the specified arguments after the"
   echo "				kernel and modules have been compiled"
   echo "	--static		Build a static (monolithic kernel)."
@@ -87,21 +87,21 @@ longusage() {
   echo "	--bootloader=grub	Add new kernel to GRUB configuration"
   echo "	--linuxrc=<file>	Specifies a user created linuxrc"
   echo "	--disklabel		Include disk label and uuid support in your"
-  echo "				initrd"
+  echo "				ramdisk"
   echo "	--luks			Include LUKS support"
   echo "				--> 'emerge cryptsetup-luks' with USE=-dynamic"
-  echo "    --no-busybox    Do not include busybox in the initrd or initramfs."
+  echo "    --no-busybox    Do not include busybox in the initramfs."
   echo "  Internals"
   echo "	--arch-override=<arch>	Force to arch instead of autodetect"
   echo "	--cachedir=<dir>	Override the default cache location"
   echo "	--tempdir=<dir>		Location of Genkernel's temporary directory"
   echo "	--postclear		Clear all tmp files and caches after genkernel has run"
   echo "  Output Settings"
-  echo "	--kernname=<...> 	Tag the kernel and initrd with a name:"
+  echo "	--kernname=<...> 	Tag the kernel and ramdisk with a name:"
   echo "				If not defined the option defaults to"
   echo "				'genkernel'"
-  echo "	--minkernpackage=<tbz2> File to output a .tar.bz2'd kernel and initrd:"
-  echo "				No modules outside of the initrd will be"
+  echo "	--minkernpackage=<tbz2> File to output a .tar.bz2'd kernel and ramdisk:"
+  echo "				No modules outside of the ramdisk will be"
   echo "				included..."
   echo "	--modulespackage=<tbz2> File to output a .tar.bz2'd modules after the"
   echo "				callbacks have run"
@@ -370,13 +370,13 @@ parse_cmdline() {
 			CMD_NOINSTALL=1
 			print_info 2 "CMD_NOINSTALL: ${CMD_NOINSTALL}"
 			;;
-		--no-initrdmodules)
-			CMD_NOINITRDMODULES=1
-			print_info 2 "CMD_NOINITRDMODULES: ${CMD_NOINITRDMODULES}"
+		--no-ramdisk-modules)
+			CMD_NOiRAMDISKMODULES=1
+			print_info 2 "CMD_NORAMDISKMODULES: ${CMD_NORAMDISKMODULES}"
 			;;
-		--all-initrd-modules)
-			CMD_ALLINITRDMODULES=1
-			print_info 2 "CMD_ALLINITRDMODULES: ${CMD_ALLINITRDMODULES}"
+		--all-ramdisk-modules)
+			CMD_ALLRAMDISKMODULES=1
+			print_info 2 "CMD_ALLRAMDISKMODULES: ${CMD_ALLRAMDISKMODULES}"
 			;;
 		--callback=*)
 			CMD_CALLBACK=`parse_opt "$*"`
@@ -504,22 +504,22 @@ parse_cmdline() {
 		all)
 			BUILD_KERNEL=1
 			BUILD_MODULES=1
-			BUILD_INITRD=1
+			BUILD_RAMDISK=1
 			;;
-		initrd)
-			BUILD_INITRD=1
+		ramdisk)
+			BUILD_RAMDISK=1
 			;;
 		kernel)
 			BUILD_KERNEL=1
 			BUILD_MODULES=1
-			BUILD_INITRD=0
+			BUILD_RAMDISK=0
 			;;
 		bzImage)
 			BUILD_KERNEL=1
 			BUILD_MODULES=0
-			BUILD_INITRD=1
-			CMD_NOINITRDMODULES=1
-			print_info 2 "CMD_NOINITRDMODULES: ${CMD_NOINITRDMODULES}"
+			BUILD_RAMDISK=1
+			CMD_NORAMDISKMODULES=1
+			print_info 2 "CMD_NORAMDISKMODULES: ${CMD_NORAMDISKMODULES}"
 			;;
 		--help)
 			longusage
