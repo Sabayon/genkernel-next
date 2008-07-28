@@ -2,6 +2,10 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni
 # Distributed under the GPL v2
 
+  28 Jul 2008; Chris Gianelloni <wolf31o2@wolf31o2.org> TODO, +modules/README:
+  Added the modules directory, which will be used to store the built-in
+  modules and also for external entities to add their own modules and hooks.
+
   28 Jul 2008; Chris Gianelloni <wolf31o2@wolf31o2.org> +defaults/busy-config,
   +defaults/config.sh, +defaults/kernel-config, +defaults/modules_load,
   +defaults/nb-busybox.cf:

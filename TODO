@@ -3,8 +3,11 @@
 - Move modules_load to /etc/genkernel
 - Move main config to /etc/genkernel
 - Remove 2.4 kernel support
-- Create arch subdir and move all arches under arch
 - Refactor code to be more simple and extendable
 - Fix all TODO sections in the code
 - Add all options to genkernel.conf
 - Remove initrd support
+- Add "include" options to genkernel.conf
+- Allow for architecture-specific or module-specific files to override defaults
+- Create hooks for various points in the build/install phases for modules
+
