@@ -2,7 +2,6 @@
 - Make configs stackable
 - Move modules_load to /etc/genkernel
 - Move main config to /etc/genkernel
-- Remove 2.4 kernel support
 - Refactor code to be more simple and extendable
 - Fix all TODO sections in the code
 - Add all options to genkernel.conf

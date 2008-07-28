@@ -2,6 +2,13 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni
 # Distributed under the GPL v2
 
+  28 Jul 2008; Chris Gianelloni <wolf31o2@wolf31o2.org> TODO,
+  gen_bootloader.sh, gen_compile.sh, gen_configkernel.sh,
+  gen_determineargs.sh, genkernel:
+  Removed a large chunk of 2.4 kernel support. This will still require some
+  fairly extensive cleaning to completely remove, but I'd say that without a
+  shadow of a doubt, genkernel will not function on 2.4 kernels.
+
   28 Jul 2008; Chris Gianelloni <wolf31o2@wolf31o2.org> genkernel,
   genkernel.8:
   Added a couple more places where I needed to switch INITRD with RAMDISK.

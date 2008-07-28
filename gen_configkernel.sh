@@ -87,18 +87,15 @@ config_kernel() {
 		[ "$?" ] || gen_die 'Error: xconfig failed!'
 	fi
 
-	# Force this on if we are a 2.4 kernel or less
-	# This is required for initrd support
-	# Initramfs doesn't require this
-	# TODO: force on with --genzimage
-	if [ "${KERN_24}" -eq '1' ]
+	# Force this on if we are using --genzimage
+	if isTrue ${CMD_GENZIMAGE}
 	then
 		# Make sure Ext2 support is on...
 		sed -e 's/#\? \?CONFIG_EXT2_FS[ =].*/CONFIG_EXT2_FS=y/g' \
 			-i ${KERNEL_DIR}/.config 
 	fi
 
-	# Make sure lvm modules are on if --lvm/--lvm
+	# Make sure lvm modules are on if --lvm
 	if isTrue ${CMD_LVM}
 	then
 		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_BLK_DEV_DM is.*/CONFIG_BLK_DEV_DM=m/g'

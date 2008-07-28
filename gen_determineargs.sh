@@ -6,24 +6,15 @@ get_KV() {
 		/bin/tar -xj -C ${TEMP} -f ${KERNCACHE} kerncache.config 
 		if [ -e ${TEMP}/kerncache.config ]
 		then
-			KERN_24=0
 			VER=`grep ^VERSION\ \= ${TEMP}/kerncache.config | awk '{ print $3 };'`
 			PAT=`grep ^PATCHLEVEL\ \= ${TEMP}/kerncache.config | awk '{ print $3 };'`
 			SUB=`grep ^SUBLEVEL\ \= ${TEMP}/kerncache.config | awk '{ print $3 };'`
 			EXV=`grep ^EXTRAVERSION\ \= ${TEMP}/kerncache.config | sed -e "s/EXTRAVERSION =//" -e "s/ //g"`
-			if [ "${PAT}" -gt '4' -a "${VER}" -ge '2' ]
-			then
-				LOV=`grep ^CONFIG_LOCALVERSION\= ${TEMP}/kerncache.config | sed -e "s/CONFIG_LOCALVERSION=\"\(.*\)\"/\1/"`
-				KV=${VER}.${PAT}.${SUB}${EXV}${LOV}
-			else
-				KERN_24=1
-				KV=${VER}.${PAT}.${SUB}${EXV}
-			fi
-
+			LOV=`grep ^CONFIG_LOCALVERSION\= ${TEMP}/kerncache.config | sed -e "s/CONFIG_LOCALVERSION=\"\(.*\)\"/\1/"`
+			KV=${VER}.${PAT}.${SUB}${EXV}${LOV}
 		else
 			gen_die "Could not find kerncache.config in the kernel cache! Exiting."
 		fi
-
 	else
 		# Configure the kernel
 		# If BUILD_KERNEL=0 then assume --no-clean, menuconfig is cleared
@@ -32,34 +23,27 @@ get_KV() {
 		PAT=`grep ^PATCHLEVEL\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
 		SUB=`grep ^SUBLEVEL\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
 		EXV=`grep ^EXTRAVERSION\ \= ${KERNEL_DIR}/Makefile | sed -e "s/EXTRAVERSION =//" -e "s/ //g" -e 's/\$([a-z]*)//gi'`
-		if [ "${PAT}" -gt '4' -a "${VER}" -ge '2' -a -e ${KERNEL_DIR}/.config ]
+		cd ${KERNEL_DIR}
+		#compile_generic prepare kernel > /dev/null 2>&1
+		cd - > /dev/null 2>&1
+		[ -f "${KERNEL_DIR}/include/linux/version.h" ] && \
+			VERSION_SOURCE="${KERNEL_DIR}/include/linux/version.h"
+		[ -f "${KERNEL_DIR}/include/linux/utsrelease.h" ] && \
+			VERSION_SOURCE="${KERNEL_DIR}/include/linux/utsrelease.h"
+		# Handle new-style releases where version.h doesn't have UTS_RELEASE
+		if [ -f ${KERNEL_DIR}/include/config/kernel.release ]
 		then
-			KERN_24=0
-			cd ${KERNEL_DIR}
-			#compile_generic prepare kernel > /dev/null 2>&1
-			cd - > /dev/null 2>&1
-			[ -f "${KERNEL_DIR}/include/linux/version.h" ] && \
-				VERSION_SOURCE="${KERNEL_DIR}/include/linux/version.h"
-			[ -f "${KERNEL_DIR}/include/linux/utsrelease.h" ] && \
-				VERSION_SOURCE="${KERNEL_DIR}/include/linux/utsrelease.h"
-			# Handle new-style releases where version.h doesn't have UTS_RELEASE
-			if [ -f ${KERNEL_DIR}/include/config/kernel.release ]
-			then
-				UTS_RELEASE=`cat ${KERNEL_DIR}/include/config/kernel.release`
-				LOV=`echo ${UTS_RELEASE}|sed -e "s/${VER}.${PAT}.${SUB}${EXV}//"`
-				KV=${VER}.${PAT}.${SUB}${EXV}${LOV}
-			elif [ -n "${VERSION_SOURCE}" ]
-			then
-				UTS_RELEASE=`grep UTS_RELEASE ${VERSION_SOURCE} | sed -e 's/#define UTS_RELEASE "\(.*\)"/\1/'`
-				LOV=`echo ${UTS_RELEASE}|sed -e "s/${VER}.${PAT}.${SUB}${EXV}//"`
-				KV=${VER}.${PAT}.${SUB}${EXV}${LOV}
-			else
-				LCV=`grep ^CONFIG_LOCALVERSION= ${KERNEL_DIR}/.config | sed -r -e "s/.*=\"(.*)\"/\1/"`
-				KV=${VER}.${PAT}.${SUB}${EXV}${LCV}
-			fi
+			UTS_RELEASE=`cat ${KERNEL_DIR}/include/config/kernel.release`
+			LOV=`echo ${UTS_RELEASE}|sed -e "s/${VER}.${PAT}.${SUB}${EXV}//"`
+			KV=${VER}.${PAT}.${SUB}${EXV}${LOV}
+		elif [ -n "${VERSION_SOURCE}" ]
+		then
+			UTS_RELEASE=`grep UTS_RELEASE ${VERSION_SOURCE} | sed -e 's/#define UTS_RELEASE "\(.*\)"/\1/'`
+			LOV=`echo ${UTS_RELEASE}|sed -e "s/${VER}.${PAT}.${SUB}${EXV}//"`
+			KV=${VER}.${PAT}.${SUB}${EXV}${LOV}
 		else
-			KERN_24=1
-			KV=${VER}.${PAT}.${SUB}${EXV}
+			LCV=`grep ^CONFIG_LOCALVERSION= ${KERNEL_DIR}/.config | sed -r -e "s/.*=\"(.*)\"/\1/"`
+			KV=${VER}.${PAT}.${SUB}${EXV}${LCV}
 		fi
 	fi
 }

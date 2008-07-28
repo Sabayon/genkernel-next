@@ -74,8 +74,7 @@ EOF
 	else
 		# grub.conf already exists; so...
 		# ... Clone the first boot definition and change the version.
-		local TYPE
-		[ "${KERN_24}" -eq '1' ] && TYPE='rd' || TYPE='ramfs'
+		local TYPE='ramfs'
 
 		cp -f ${GRUB_CONF} ${GRUB_CONF}.bak
 		awk 'BEGIN { RS="\n"; }

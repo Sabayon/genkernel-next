@@ -221,9 +221,6 @@ then
 	# Configure kernel
 	config_kernel
 	
-	# Make deps
-	compile_dep
-
 	# Make prepare [2.6]
 	if [ "${ARCH_HAVENOPREPARE}" = '' ]
 	then
