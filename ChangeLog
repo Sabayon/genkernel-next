@@ -2,6 +2,10 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni
 # Distributed under the GPL v2
 
+  28 Jul 2008; Chris Gianelloni <wolf31o2@wolf31o2.org> genkernel,
+  genkernel.8:
+  Added a couple more places where I needed to switch INITRD with RAMDISK.
+
   28 Jul 2008; Chris Gianelloni <wolf31o2@wolf31o2.org> TODO,
   arch/alpha/modules_load, arch/ia64/modules_load, arch/mips/modules_load,
   arch/parisc/modules_load, arch/parisc64/modules_load,

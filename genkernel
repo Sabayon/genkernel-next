@@ -73,7 +73,7 @@ cleanup(){
 
 trap trap_cleanup SIGHUP SIGQUIT SIGINT SIGTERM SIGKILL
 BUILD_KERNEL=0
-BUILD_INITRD=0
+BUILD_RAMDISK=0
 BUILD_MODULES=0
 
 # Parse all command line options...
@@ -85,7 +85,7 @@ do
 done
 
 # Check if no action is specified...
-if [ "${BUILD_KERNEL}" -eq '0' -a "${BUILD_INITRD}" -eq '0' ]
+if [ "${BUILD_KERNEL}" -eq '0' -a "${BUILD_RAMDISK}" -eq '0' ]
 then
 	usage
 	exit 1
@@ -129,7 +129,7 @@ dump_debugcache
 
 NORMAL=${BOLD} print_info 1 "Linux Kernel ${BOLD}${KV}${NORMAL} for ${BOLD}${ARCH}${NORMAL}..."
 
-if [ "${BUILD_INITRD}" -ne '0' ]
+if [ "${BUILD_RAMDISK}" -ne '0' ]
 then
 	if ! has_loop
 	then
@@ -296,7 +296,7 @@ then
 	print_info 1 "" 1 0
 fi
 
-if [ "${BUILD_INITRD}" -eq '1' ]
+if [ "${BUILD_RAMDISK}" -eq '1' ]
 then
 	[ "${DISKLABEL}" -eq '1' ] && compile_e2fsprogs
 
@@ -332,7 +332,7 @@ then
 	print_info 1 "Kernel compiled successfully!"
 	print_info 1 ''
 	print_info 1 'Required Kernel Parameters:'
-	if [ "${BUILD_INITRD}" -eq '0' ]
+	if [ "${BUILD_RAMDISK}" -eq '0' ]
 	then
 		print_info 1 '    root=/dev/$ROOT'
 		print_info 1 '    [ And "vga=0x317 splash=verbose" if you use a framebuffer ]'
@@ -352,7 +352,7 @@ then
 	fi
 fi
 
-if [ "${BUILD_INITRD}" -eq '1' ]
+if [ "${BUILD_RAMDISK}" -eq '1' ]
 then
 	echo
 	print_info 1 'WARNING... WARNING... WARNING...'
