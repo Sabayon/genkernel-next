@@ -271,22 +271,6 @@ compile_generic() {
 	fi
 }
 
-extract_dietlibc_bincache() {
-	cd "${TEMP}"
-	rm -rf "${TEMP}/diet" > /dev/null
-	/bin/tar -jxpf "${DIETLIBC_BINCACHE}" ||
-		gen_die 'Could not extract dietlibc bincache!'
-	[ ! -d "${TEMP}/diet" ] &&
-		gen_die "${TEMP}/diet directory not found!"
-	cd - > /dev/null
-}
-
-clean_dietlibc_bincache() {
-	cd "${TEMP}"
-	rm -rf "${TEMP}/diet" > /dev/null
-	cd - > /dev/null
-}
-
 compile_modules() {
 	print_info 1 "        >> Compiling ${KV} modules..."
 	cd ${KERNEL_DIR}
