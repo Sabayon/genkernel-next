@@ -40,7 +40,7 @@ append_busybox() {
 	fi
 	mkdir -p "${TEMP}/initramfs-busybox-temp/bin/" 
 
-	cp "${GK_SHARE}/generic/udhcpc.scripts" ${TEMP}/initramfs-busybox-temp/bin/
+	cp "${GK_SHARE}/defaults/udhcpc.scripts" ${TEMP}/initramfs-busybox-temp/bin/
 	chmod +x "${TEMP}/initramfs-busybox-temp/bin/udhcpc.scripts"
 	tar -xjf "${BUSYBOX_BINCACHE}" -C "${TEMP}/initramfs-busybox-temp/bin" busybox ||
 		gen_die 'Could not extract busybox bincache!'
@@ -351,11 +351,11 @@ append_auxilary() {
 		cp "${CMD_LINUXRC}" "${TEMP}/initramfs-aux-temp/init"
 		print_info 2 "        >> Copying user specified linuxrc: ${CMD_LINUXRC} to init"
 	else	
-		if [ -f "${GK_SHARE}/${ARCH}/linuxrc" ]
+		if [ -f "${GK_SHARE}/arch/${ARCH}/linuxrc" ]
 		then
-			cp "${GK_SHARE}/${ARCH}/linuxrc" "${TEMP}/initramfs-aux-temp/init"
+			cp "${GK_SHARE}/arch/${ARCH}/linuxrc" "${TEMP}/initramfs-aux-temp/init"
 		else
-			cp "${GK_SHARE}/generic/linuxrc" "${TEMP}/initramfs-aux-temp/init"
+			cp "${GK_SHARE}/defaults/linuxrc" "${TEMP}/initramfs-aux-temp/init"
 		fi
 	fi
 
@@ -368,18 +368,18 @@ append_auxilary() {
 	ln -s init linuxrc
 #	ln ${TEMP}/initramfs-aux-temp/init ${TEMP}/initramfs-aux-temp/linuxrc 
 
-	if [ -f "${GK_SHARE}/${ARCH}/initrd.scripts" ]
+	if [ -f "${GK_SHARE}/arch/${ARCH}/initrd.scripts" ]
 	then
-		cp "${GK_SHARE}/${ARCH}/initrd.scripts" "${TEMP}/initramfs-aux-temp/etc/initrd.scripts"
+		cp "${GK_SHARE}/arch/${ARCH}/initrd.scripts" "${TEMP}/initramfs-aux-temp/etc/initrd.scripts"
 	else	
-		cp "${GK_SHARE}/generic/initrd.scripts" "${TEMP}/initramfs-aux-temp/etc/initrd.scripts"
+		cp "${GK_SHARE}/defaults/initrd.scripts" "${TEMP}/initramfs-aux-temp/etc/initrd.scripts"
 	fi
 
-	if [ -f "${GK_SHARE}/${ARCH}/initrd.defaults" ]
+	if [ -f "${GK_SHARE}/arch/${ARCH}/initrd.defaults" ]
 	then
-		cp "${GK_SHARE}/${ARCH}/initrd.defaults" "${TEMP}/initramfs-aux-temp/etc/initrd.defaults"
+		cp "${GK_SHARE}/arch/${ARCH}/initrd.defaults" "${TEMP}/initramfs-aux-temp/etc/initrd.defaults"
 	else
-		cp "${GK_SHARE}/generic/initrd.defaults" "${TEMP}/initramfs-aux-temp/etc/initrd.defaults"
+		cp "${GK_SHARE}/defaults/initrd.defaults" "${TEMP}/initramfs-aux-temp/etc/initrd.defaults"
 	fi
 	
 	echo -n 'HWOPTS="$HWOPTS ' >> "${TEMP}/initramfs-aux-temp/etc/initrd.defaults"	
@@ -389,11 +389,11 @@ append_auxilary() {
 	done
 	echo '"' >> "${TEMP}/initramfs-aux-temp/etc/initrd.defaults"	
 
-	if [ -f "${GK_SHARE}/${ARCH}/modprobe" ]
+	if [ -f "${GK_SHARE}/arch/${ARCH}/modprobe" ]
 	then
-		cp "${GK_SHARE}/${ARCH}/modprobe" "${TEMP}/initramfs-aux-temp/sbin/modprobe"
+		cp "${GK_SHARE}/arch/${ARCH}/modprobe" "${TEMP}/initramfs-aux-temp/sbin/modprobe"
 	else
-		cp "${GK_SHARE}/generic/modprobe" "${TEMP}/initramfs-aux-temp/sbin/modprobe"
+		cp "${GK_SHARE}/defaults/modprobe" "${TEMP}/initramfs-aux-temp/sbin/modprobe"
 	fi
 	if isTrue $CMD_DOKEYMAPAUTO
 	then
@@ -402,7 +402,7 @@ append_auxilary() {
 	if isTrue $CMD_KEYMAP
 	then
 		mkdir -p "${TEMP}/initramfs-aux-temp/lib/keymaps"
-		/bin/tar -C "${TEMP}/initramfs-aux-temp/lib/keymaps" -zxf "${GK_SHARE}/generic/keymaps.tar.gz"
+		/bin/tar -C "${TEMP}/initramfs-aux-temp/lib/keymaps" -zxf "${GK_SHARE}/defaults/keymaps.tar.gz"
 	fi
 	if isTrue $CMD_SLOWUSB
 	then
