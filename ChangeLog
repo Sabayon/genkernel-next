@@ -1,8 +1,16 @@
 # ChangeLog for genkernel
-# Copyright 2006-2008 Gentoo Foundation; Distributed under the GPL v2
-# $Header: $
+# Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni
+# Distributed under the GPL v2
 
-  28 Jul 2008; Chris Gianelloni <wolf31o2@gentoo.org> -alpha/busy-config,
+  28 Jul 2008; Chris Gianelloni <wolf31o2@wolf31o2.org> +defaults/busy-config,
+  +defaults/config.sh, +defaults/kernel-config, +defaults/modules_load,
+  +defaults/nb-busybox.cf:
+  Added a defaults directory to store default files for builds. These are
+  overridden by architecture or module specific parameters. This should end
+  up reducing the amount of architecture-specific files needed, especially
+  as most of them have files which are (nearly) identical.
+
+  28 Jul 2008; Chris Gianelloni <wolf31o2@wolf31o2.org> -alpha/busy-config,
   -alpha/config.sh, -alpha/kernel-config, -alpha/modules_load,
   +arch/alpha/busy-config, +arch/alpha/config.sh, +arch/alpha/kernel-config,
   +arch/alpha/modules_load, +arch/ia64/busy-config, +arch/ia64/config.sh,

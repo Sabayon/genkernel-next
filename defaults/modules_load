@@ -1,0 +1,24 @@
+# Module groups for genkernel initrd/initramfs auto-loading
+
+# RAID
+MODULES_ATARAID="ataraid pdcraid hptraid"
+MODULES_DMRAID="dm-mod dm-mirror"
+MODULES_EVMS="dm-mod dm-snapshot dm-mirror dm-bbr raid0 raid1 raid456 raid5 raid6 raid10"
+MODULES_LVM="dm-mod dm-snapshot dm-mirror dm-bbr"
+MODULES_MDADM="dm-mod dm-snapshot dm-mirror dm-bbr raid0 raid1 raid456 raid5 raid6 raid10"
+
+# Hardware (IDE/SCSI/SATA)
+MODULES_PATA="pata_mpiix pata_pdc2027x pata_radisys pata_sil680 pata_rz1000 pata_efar pata_cmd64x pata_hpt366 pata_hpt37x pata_hpt3x3 pata_hpt3x2n pata_optidma pata_it821x pata_artop pata_oldpiix pata_cypress pata_platform pata_serverworks pata_legacy pata_ns87410 pata_ns87415 pata_pcmcia pata_isapnp pata_it8213 pata_ali pata_amd pata_opti pata_atiixp pata_triflex pata_pdc202xx_old pata_sc1200 pata_qdi pata_netcell pata_sis pata_hpt3x2n pata_marvell pata_jmicron pata_via pata_cs5520 pata_cs5530 pata_cs5535 pata_sl82c105 libata scsi_wait_scan"
+MODULES_SATA="sata_promise sata_sil sata_sil24 sata_svw sata_via sata_nv sata_sx4 sata_sis sata_uli sata_vsc sata_qstor ahci libata ata_piix sata_mv sata_inic162x pdc_adma scsi_wait_scan"
+MODULES_SCSI="sd_mod sg sr_mod aic79xx aic7xxx aic7xxx_old arcmsr BusLogic ncr53c8xx NCR53c406a initio advansys aha1740 aha1542 aha152x dtc fdomain gdth pas16 pci2220i pci2000 psi240i qlogicfas qlogicfc qlogicisp qlogicpti seagate t128 u14-34f ultrastor wd7000 NCR53c406a sym53c8xx dmx3191d imm in2000 ips qla1280 sim710 sym53c416 dc395x atp870u mptbase mptscsih mptspi mptfc mptsas 3w-xxxx 3w-9xxx cpqarray cciss DAC960 sx8 aacraid megaraid megaraid_mbox megaraid_mm megaraid_sas qla2xxx lpfc scsi_transport_fc scsi_wait_scan"
+
+# Hardware (Network)
+MODULES_NET="e1000 tg3"
+
+# Hardware (Pluggable)
+MODULES_FIREWIRE="ieee1394 ohci1394 sbp2"
+MODULES_PCMCIA="pcmcia pcmcia_core yenta_socket pd6729 i82092 i82365 tcic ds ide-cs firmware_class"
+MODULES_USB="ehci-hcd uhci usb-ohci hid usb-storage uhci-hcd ohci-hcd usbhid sl811-hcd"
+
+# Filesystems
+MODULES_FS="ext2 ext3 reiserfs jfs nfs xfs"
