@@ -9,6 +9,21 @@ case ${1} in
 		#[ -n "$dns" ] && echo "$dns" > /dns
 
 		busybox ifconfig $interface $ip $BROADCAST $NETMASK
+		if [ -n "${router}" ]
+		then
+			for i in ${router}
+			do
+				busybox route add default gw ${i}
+			done
+		fi
+		[ -n "$domain" ] && echo "domain ${domain}" >> /etc/resolv.conf
+		if [ -n "${dns}" ]
+		then
+			for i in ${dns}
+			do
+				echo "nameserver ${i}" >> /etc/resolv.conf
+			done
+		fi
 	;;
 	deconfig)
 		busybox ifconfig $interface 0.0.0.0

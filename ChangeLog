@@ -2,6 +2,9 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni
 # Distributed under the GPL v2
 
+  29 Jul 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/udhcpc.scripts:
+  Add support to udhcpc.scripts for default route and DNS servers/domain
+
   29 Jul 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts:
   Remove check for >=2.6 for mounting sysfs
 
