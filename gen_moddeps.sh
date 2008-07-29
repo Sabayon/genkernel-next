@@ -2,12 +2,7 @@
 
 modules_kext()
 {
-	if [ "${PAT}" -gt "4" ]
-	then
-		KEXT=".ko"
-	else
-		KEXT=".o"
-	fi
+	KEXT=".ko"
 	echo ${KEXT}
 }
 

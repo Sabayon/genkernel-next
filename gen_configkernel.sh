@@ -64,20 +64,11 @@ config_kernel() {
 		[ "$?" ] || gen_die 'Error: menuconfig failed!'
 	elif isTrue ${CMD_GCONFIG}
 	then
-		if [ "${VER}" == '2' ] && [ "${PAT}" -lt '6' ]
-		then
-			print_warning 1 'config: gconfig is not available in 2.4 series kernels. Running xconfig'
-			print_warning 1 '        instead...'
+		print_info 1 'config: >> Invoking gconfig...'
+		compile_generic gconfig kernel
+		[ "$?" ] || gen_die 'Error: gconfig failed!'
 
-			CMD_GCONFIG=0
-			CMD_XCONFIG=1
-		else
-			print_info 1 'config: >> Invoking gconfig...'
-			compile_generic gconfig kernel
-			[ "$?" ] || gen_die 'Error: gconfig failed!'
-
-			CMD_XCONFIG=0
-		fi
+		CMD_XCONFIG=0
 	fi
 
 	if isTrue ${CMD_XCONFIG}

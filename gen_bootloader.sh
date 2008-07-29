@@ -61,10 +61,7 @@ EOF
 				echo -e "\tkernel /kernel-${KNAME}-${ARCH}-${KV} root=${GRUB_ROOTFS}" >> ${GRUB_CONF}
 			else
 				echo -e "\tkernel /kernel-${KNAME}-${ARCH}-${KV} root=/dev/ram0 init=/linuxrc real_root=${GRUB_ROOTFS}" >> ${GRUB_CONF}
-				if [ "${PAT}" -gt '4' ]
-				then
-				    echo -e "\tinitrd /initramfs-${KNAME}-${ARCH}-${KV}" >> ${GRUB_CONF}
-				fi
+			    echo -e "\tinitrd /initramfs-${KNAME}-${ARCH}-${KV}" >> ${GRUB_CONF}
 			fi
 			echo >> ${GRUB_CONF}
 		else
