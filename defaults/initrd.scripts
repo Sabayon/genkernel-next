@@ -202,12 +202,9 @@ cache_cd_contents() {
 }
 
 mount_sysfs() {
-	if [ "${KV_2_6_OR_GREATER}" ]
-	then
-		mount -t sysfs /sys /sys >/dev/null 2>&1
-		ret=$?
-		[ "$ret" -eq '0' ] || bad_msg "Failed to mount /sys!"
-	fi
+	mount -t sysfs /sys /sys >/dev/null 2>&1
+	ret=$?
+	[ "$ret" -eq '0' ] || bad_msg "Failed to mount /sys!"
 }
 
 findnfsmount() {
