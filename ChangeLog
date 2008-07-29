@@ -2,6 +2,9 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni
 # Distributed under the GPL v2
 
+  29 Jul 2008; Andrew Gaffney <agaffney@gentoo.org> gen_arch.sh, genkernel:
+  Cleanup remaining references to ${ARCH}/ without arch/ prefix
+
   29 Jul 2008; Andrew Gaffney <agaffney@gentoo.org> +arch/um/busy-config,
   +arch/um/config.sh, +arch/um/kernel-config, +arch/um/modules_load,
   -um/busy-config, -um/config.sh, -um/kernel-config, -um/modules_load:
