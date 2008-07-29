@@ -2,6 +2,9 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni
 # Distributed under the GPL v2
 
+  29 Jul 2008; Andrew Gaffney <agaffney@gentoo.org> genkernel:
+  Remove check for >=2.6 for 'make prepare'
+
   29 Jul 2008; Andrew Gaffney <agaffney@gentoo.org> gen_bootloader.sh,
   gen_configkernel.sh, gen_moddeps.sh, genkernel.8:
   Remove a few more 2.4 kernel support remnants

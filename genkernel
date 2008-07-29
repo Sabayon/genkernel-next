@@ -221,10 +221,10 @@ then
 	# Configure kernel
 	config_kernel
 	
-	# Make prepare [2.6]
+	# Make prepare
 	if [ "${ARCH_HAVENOPREPARE}" = '' ]
 	then
-		[ "${VER}" -gt '2' ] || [ "${VER}" -eq '2' -a "${PAT}" -ge '6' ] && compile_generic prepare kernel
+		compile_generic prepare kernel
 	fi
 	
 	# KV may have changed due to the configuration
