@@ -101,7 +101,7 @@ get_official_arch
 
 # Read arch-specific config
 source ${ARCH_CONFIG} || gen_die "Could not read ${ARCH_CONFIG}"
-source ${GK_SHARE}/${ARCH}/modules_load || gen_die "Could not read ${GK_SHARE}/${ARCH}/modules_load"
+source ${GK_SHARE}/arch/${ARCH}/modules_load || gen_die "Could not read ${GK_SHARE}/arch/${ARCH}/modules_load"
 
 # Merge modules_load from config
 for group_modules in ${!AMODULES_*}; do
