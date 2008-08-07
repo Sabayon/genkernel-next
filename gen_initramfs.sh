@@ -476,7 +476,11 @@ create_initramfs() {
 	fi
 
 	append_data 'blkid' "${DISKLABEL}"
-	append_data 'splash' "${SPLASH}"
+
+	if isTrue "${SPLASH}"
+	then
+		append_data 'splash' "${SPLASH}"
+	fi
 
 	if isTrue "${FIRMWARE}" && [ -n "${FIRMWARE_DIR}" ]
 	then

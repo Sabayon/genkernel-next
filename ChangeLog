@@ -2,6 +2,9 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni
 # Distributed under the GPL v2
 
+  07 Aug 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
+  Only append splash portion to initramfs if SPLASH is set
+
   29 Jul 2008; Andrew Gaffney <agaffney@gentoo.org> genkernel.8:
   Fix typo in man page, butt -> but
 
