@@ -84,7 +84,6 @@ longusage() {
   echo "	--mdadm			Copy /etc/mdadm.conf to initramfs"
   echo "	--dmraid		Include DMRAID support"
   echo "	--slowusb		Enables extra pauses for slow USB CD boots"
-  echo "	--bootloader=grub	Add new kernel to GRUB configuration"
   echo "	--linuxrc=<file>	Specifies a user created linuxrc"
   echo "	--disklabel		Include disk label and uuid support in your"
   echo "				ramdisk"
@@ -258,10 +257,6 @@ parse_cmdline() {
 			fi
 			CMD_DMRAID=1
 			print_info 2 "CMD_DMRAID: ${CMD_DMRAID}"
-			;;
-		--bootloader=*)
-			CMD_BOOTLOADER=`parse_opt "$*"`
-			print_info 2 "CMD_BOOTLOADER: ${CMD_BOOTLOADER}"
 			;;
 		--loglevel=*)
 			CMD_LOGLEVEL=`parse_opt "$*"`

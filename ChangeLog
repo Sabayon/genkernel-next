@@ -2,6 +2,10 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni
 # Distributed under the GPL v2
 
+  21 Aug 2008; Andrew Gaffney <agaffney@gentoo.org> gen_cmdline.sh,
+  gen_determineargs.sh, genkernel, genkernel.conf:
+  Remove broken grub code
+
   07 Aug 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
   Only append splash portion to initramfs if SPLASH is set
 
