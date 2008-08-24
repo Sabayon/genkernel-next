@@ -2,6 +2,9 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni
 # Distributed under the GPL v2
 
+  24 Aug 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/linuxrc:
+  Fix CONSOLE= handling code for bug 232012
+
   21 Aug 2008; Andrew Gaffney <agaffney@gentoo.org> -gen_bootloader.sh,
   -gen_bootloader_grub.awk:
   Remove unneeded files for broken grub code

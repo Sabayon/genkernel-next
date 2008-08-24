@@ -131,7 +131,7 @@ do
 			export MLIST
 		;;
 		# Redirect output to a specific tty
-		CONSOLE\=*\|console\=*)
+		CONSOLE\=*|console\=*)
 			CONSOLE=`parse_opt "${x}"`
 			exec >${CONSOLE} <${CONSOLE} 2>&1
 		;;
