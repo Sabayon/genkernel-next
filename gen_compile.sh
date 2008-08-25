@@ -193,7 +193,7 @@ apply_patches() {
 	if [ -d "${GK_SHARE}/patches/${util}/${version}" ]
 	then
 		print_info 1 "${util}: >> Applying patches..."
-		for i in ${GK_SHARE}/patches/${util}/${version}/*
+		for i in ${GK_SHARE}/patches/${util}/${version}/*{diff,patch}
 		do
 			patch_success=0
 			for j in `seq 0 5`
@@ -207,7 +207,6 @@ apply_patches() {
 			done
 			if [ ${patch_success} != 1 ]
 			then
-#				return 1
 				gen_die "could not apply patch ${i} for ${util}-${version}"
 			fi
 		done

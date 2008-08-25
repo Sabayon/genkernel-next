@@ -2,6 +2,9 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni
 # Distributed under the GPL v2
 
+  25 Aug 2008; Andrew Gaffney <agaffney@gentoo.org> gen_compile.sh:
+  Only apply files from patch dir ending in diff/patch
+
   24 Aug 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/linuxrc:
   Fix CONSOLE= handling code for bug 232012
 
