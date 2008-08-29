@@ -5,8 +5,7 @@ case ${1} in
 		[ -n "$broadcast" ] && BROADCAST="broadcast $broadcast"
 		[ -n "$subnet" ] && NETMASK="netmask $subnet"
 		[ -n "$rootpath" ] && echo "$rootpath" > /rootpath
-		#[ -n "$router" ] && echo "$router" > /router
-		#[ -n "$dns" ] && echo "$dns" > /dns
+		[ -n "$hostname" ] && hostname ${hostname}
 
 		busybox ifconfig $interface $ip $BROADCAST $NETMASK
 		if [ -n "${router}" ]
