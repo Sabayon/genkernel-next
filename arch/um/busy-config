@@ -289,7 +289,7 @@ CONFIG_HOSTNAME=y
 # CONFIG_NETSTAT is not set
 # CONFIG_NSLOOKUP is not set
 # CONFIG_PING is not set
-# CONFIG_ROUTE is not set
+CONFIG_ROUTE=y
 # CONFIG_TELNET is not set
 # CONFIG_TELNETD is not set
 # CONFIG_TFTP is not set

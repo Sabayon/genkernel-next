@@ -2,6 +2,14 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni
 # Distributed under the GPL v2
 
+  31 Aug 2008; Andrew Gaffney <agaffney@gentoo.org> arch/alpha/busy-config,
+  arch/ia64/busy-config, arch/mips/busy-config, arch/parisc/busy-config,
+  arch/parisc64/busy-config, arch/ppc/busy-config, arch/ppc64/busy-config,
+  arch/sparc/busy-config, arch/sparc64/busy-config, arch/um/busy-config,
+  arch/x86/busy-config, arch/x86_64/busy-config, defaults/busy-config,
+  genkernel.conf:
+  Enable CONFIG_ROUTE in busy-configs
+
   29 Aug 2008; Andrew Gaffney <agaffney@gentoo.org> arch/alpha/busy-config,
   arch/ia64/busy-config, arch/mips/busy-config, arch/parisc/busy-config,
   arch/parisc64/busy-config, arch/ppc/busy-config, arch/ppc64/busy-config,
