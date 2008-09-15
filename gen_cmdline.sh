@@ -496,6 +496,9 @@ parse_cmdline() {
 			CMD_INTEGRATED_INITRAMFS=1
 			print_info 2 "CMD_INTEGRATED_INITRAMFS=${CMD_INTEGRATED_INITRAMFS}"
 			;;
+		--config=*)
+			print_info 2 "CMD_GK_CONFIG: `parse_opt "$*"`"
+			;;
 		all)
 			BUILD_KERNEL=1
 			BUILD_MODULES=1

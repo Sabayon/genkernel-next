@@ -2,6 +2,9 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni
 # Distributed under the GPL v2
 
+  15 Sep 2008; Andrew Gaffney <agaffney@gentoo.org> gen_cmdline.sh:
+  Add dummy handler for --config in gen_cmdline.sh for bug 237541
+
   12 Sep 2008; Chris Gianelloni <wolf31o2@wolf31o2.org>
   arch/alpha/modules_load, arch/ia64/modules_load, arch/mips/modules_load,
   arch/parisc/modules_load, arch/parisc64/modules_load,
