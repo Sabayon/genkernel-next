@@ -1,12 +1,16 @@
 # ChangeLog for genkernel
-# Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni
+# Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
+
+  31 Oct 2008; Chris Gianelloni <wolf31o2@wolf31o2.org> genkernel:
+  Tagging a 3.4.10.901 release, for testing. Adding periods to ChangeLog to
+  fix syntax hilighting.
 
   15 Sep 2008; Chris Gianelloni <wolf31o2@wolf31o2.org> AUTHORS:
   Adding Andrew and Robin to AUTHORS.
 
   15 Sep 2008; Andrew Gaffney <agaffney@gentoo.org> gen_cmdline.sh:
-  Add dummy handler for --config in gen_cmdline.sh for Gentoo bug #237541
+  Add dummy handler for --config in gen_cmdline.sh for Gentoo bug #237541.
 
   12 Sep 2008; Chris Gianelloni <wolf31o2@wolf31o2.org>
   arch/alpha/modules_load, arch/ia64/modules_load, arch/mips/modules_load,
@@ -26,7 +30,7 @@
   arch/sparc/busy-config, arch/sparc64/busy-config, arch/um/busy-config,
   arch/x86/busy-config, arch/x86_64/busy-config, defaults/busy-config,
   genkernel.conf:
-  Enable CONFIG_ROUTE in busy-configs
+  Enable CONFIG_ROUTE in busy-configs.
 
   29 Aug 2008; Andrew Gaffney <agaffney@gentoo.org> arch/alpha/busy-config,
   arch/ia64/busy-config, arch/mips/busy-config, arch/parisc/busy-config,
@@ -34,57 +38,57 @@
   arch/sparc/busy-config, arch/sparc64/busy-config, arch/um/busy-config,
   arch/x86/busy-config, arch/x86_64/busy-config, defaults/busy-config,
   defaults/udhcpc.scripts:
-  Enable CONFIG_HOSTNAME in all busy-configs
-  Call 'hostname' with value from DHCP
+  Enable CONFIG_HOSTNAME in all busy-configs and call 'hostname' with value
+  from DHCP.
 
   28 Aug 2008; Andrew Gaffney <agaffney@gentoo.org> arch/x86/kernel-config,
   arch/x86_64/kernel-config:
-  Disabled CONFIG_DEBUG_INFO in x86{,_64} kconfigs
+  Disabled CONFIG_DEBUG_INFO in x86{,_64} kconfigs.
 
   25 Aug 2008; Andrew Gaffney <agaffney@gentoo.org>
   +patches/busybox/1.7.4/README:
-  Add README to busybox patches dir
+  Add README to busybox patches dir.
 
   25 Aug 2008; Andrew Gaffney <agaffney@gentoo.org> gen_compile.sh:
-  Only apply files from patch dir ending in diff/patch
+  Only apply files from patch dir ending in diff/patch.
 
   24 Aug 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/linuxrc:
-  Fix CONSOLE= handling code for bug 232012
+  Fix CONSOLE= handling code for bug 232012.
 
   21 Aug 2008; Andrew Gaffney <agaffney@gentoo.org> -gen_bootloader.sh,
   -gen_bootloader_grub.awk:
-  Remove unneeded files for broken grub code
+  Remove unneeded files for broken grub code.
 
   21 Aug 2008; Andrew Gaffney <agaffney@gentoo.org> gen_cmdline.sh,
   gen_determineargs.sh, genkernel, genkernel.conf:
-  Remove broken grub code
+  Remove broken grub code.
 
   07 Aug 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
-  Only append splash portion to initramfs if SPLASH is set
+  Only append splash portion to initramfs if SPLASH is set.
 
   29 Jul 2008; Andrew Gaffney <agaffney@gentoo.org> genkernel.8:
-  Fix typo in man page, butt -> but
+  Fix typo in man page, butt -> but.
 
   29 Jul 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/udhcpc.scripts:
-  Add support to udhcpc.scripts for default route and DNS servers/domain
+  Add support to udhcpc.scripts for default route and DNS servers/domain.
 
   29 Jul 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts:
-  Remove check for >=2.6 for mounting sysfs
+  Remove check for >=2.6 for mounting sysfs.
 
   29 Jul 2008; Andrew Gaffney <agaffney@gentoo.org> genkernel:
-  Remove check for >=2.6 for 'make prepare'
+  Remove check for >=2.6 for 'make prepare'.
 
   29 Jul 2008; Andrew Gaffney <agaffney@gentoo.org> gen_bootloader.sh,
   gen_configkernel.sh, gen_moddeps.sh, genkernel.8:
-  Remove a few more 2.4 kernel support remnants
+  Remove a few more 2.4 kernel support remnants.
 
   29 Jul 2008; Andrew Gaffney <agaffney@gentoo.org> gen_arch.sh, genkernel:
-  Cleanup remaining references to ${ARCH}/ without arch/ prefix
+  Cleanup remaining references to ${ARCH}/ without arch/ prefix.
 
   29 Jul 2008; Andrew Gaffney <agaffney@gentoo.org> +arch/um/busy-config,
   +arch/um/config.sh, +arch/um/kernel-config, +arch/um/modules_load,
   -um/busy-config, -um/config.sh, -um/kernel-config, -um/modules_load:
-  Move um/ underneath arch/ where it belongs
+  Move um/ underneath arch/ where it belongs.
 
   28 Jul 2008; Chris Gianelloni <wolf31o2@wolf31o2.org> gen_compile.sh:
   Removed some unused dietlibc code.
@@ -194,19 +198,19 @@
   some unused configs.
 
   13 May 2008; Andrew Gaffney <agaffney@gentoo.org> generic/linuxrc:
-  Move setup_keymap call to before LUKS setup
+  Move setup_keymap call to before LUKS setup.
 
   10 May 2008; Andrew Gaffney <agaffney@gentoo.org> gen_compile.sh:
-  Store pre-oldconfig busybox .config for use in bincache comparison
+  Store pre-oldconfig busybox .config for use in bincache comparison.
 
   09 May 2008; Andrew Gaffney <agaffney@gentoo.org> generic/initrd.defaults,
   generic/initrd.scripts, generic/linuxrc:
-  Add nomodules kernel commandline parameter to disable loading of modules
+  Add nomodules kernel commandline parameter to disable loading of modules.
 
   09 May 2008; Andrew Gaffney <agaffney@gentoo.org> gen_funcs.sh, genkernel,
   genkernel.conf:
   Move distfile cache to /var/cache/genkernel/src and add check to make sure
-  all distfiles are present
+  all distfiles are present.
 
   09 May 2008; Chris Gianelloni <wolf31o2@gentoo.org> alpha/modules_load,
   ia64/modules_load, mips/modules_load, parisc/modules_load,
