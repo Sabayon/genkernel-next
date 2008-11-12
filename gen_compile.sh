@@ -520,3 +520,61 @@ compile_e2fsprogs() {
 		rm -rf "${E2FSPROGS_DIR}" > /dev/null
 	fi
 }
+
+compile_fuse() {
+	if [ ! -f "${FUSE_BINCACHE}" ]
+	then
+		[ ! -f "${FUSE_SRCTAR}" ] &&
+			gen_die "Could not find fuse source tarball: ${FUSE_SRCTAR}. Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
+		cd "${TEMP}"
+		rm -rf "${FUSE_DIR}"
+		tar -zxpf "${FUSE_SRCTAR}"
+		[ ! -d "${FUSE_DIR}" ] &&
+			gen_die "fuse directory ${FUSE_DIR} invalid"
+		cd "${FUSE_DIR}"
+		print_info 1 'fuse: >> Configuring...'
+		./configure  --disable-kernel-module --disable-example >> ${LOGFILE} 2>&1 ||
+			gen_die 'Configuring fuse failed!'
+		print_info 1 'fuse: >> Compiling...'
+		MAKE=${UTILS_MAKE} compile_generic "" ""
+		print_info 1 'libfuse: >> Copying to cache...'
+		[ -f "${TEMP}/${FUSE_DIR}/lib/.libs/libfuse.so" ] ||
+			gen_die 'libfuse.so does not exist!'
+		strip "${TEMP}/${FUSE_DIR}/lib/.libs/libfuse.so" ||
+			gen_die 'Could not strip libfuse.so!'
+		cd "${TEMP}/${FUSE_DIR}/lib/.libs"
+		tar -cjf "${FUSE_BINCACHE}" libfuse*so* ||
+			gen_die 'Could not create fuse bincache!'
+
+		cd "${TEMP}"
+		rm -rf "${FUSE_DIR}" > /dev/null
+	fi
+}
+
+compile_unionfs_fuse() {
+	if [ ! -f "${UNIONFS_FUSE_BINCACHE}" ]
+	then
+		[ ! -f "${UNIONFS_FUSE_SRCTAR}" ] &&
+			gen_die "Could not find unionfs-fuse source tarball: ${UNIONFS_FUSE_SRCTAR}. Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
+		cd "${TEMP}"
+		rm -rf "${UNIONFS_FUSE_DIR}"
+		tar -zxpf "${UNIONFS_FUSE_SRCTAR}"
+		[ ! -d "${UNIONFS_FUSE_DIR}" ] &&
+			gen_die "unionfs-fuse directory ${UNIONFS_FUSE_DIR} invalid"
+		cd "${UNIONFS_FUSE_DIR}"
+		print_info 1 'unionfs-fuse: >> Compiling...'
+		MAKE=${UTILS_MAKE} compile_generic "" ""
+		print_info 1 'unionfs-fuse: >> Copying to cache...'
+		[ -f "${TEMP}/${UNIONFS_FUSE_DIR}/src/unionfs" ] ||
+			gen_die 'unionfs binary does not exist!'
+		strip "${TEMP}/${UNIONFS_FUSE_DIR}/src/unionfs" ||
+			gen_die 'Could not strip unionfs binary!'
+		bzip2 "${TEMP}/${UNIONFS_FUSE_DIR}/src/unionfs" ||
+			gen_die 'bzip2 compression of unionfs binary failed!'
+		mv "${TEMP}/${UNIONFS_FUSE_DIR}/src/unionfs.bz2" "${UNIONFS_FUSE_BINCACHE}" ||
+			gen_die 'Could not copy the unionfs binary to the package directory, does the directory exist?'
+
+		cd "${TEMP}"
+		rm -rf "${UNIONFS_FUSE_DIR}" > /dev/null
+	fi
+}
