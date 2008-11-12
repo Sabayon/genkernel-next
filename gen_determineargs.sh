@@ -114,6 +114,8 @@ determine_real_args() {
 	LVM_BINCACHE=`cache_replace "${LVM_BINCACHE}"`
 	DMRAID_BINCACHE=`cache_replace "${DMRAID_BINCACHE}"`
 	BLKID_BINCACHE=`cache_replace "${BLKID_BINCACHE}"`
+	FUSE_BINCACHE=`cache_replace "${FUSE_BINCACHE}"`
+	UNIONFS_FUSE_BINCACHE=`cache_replace "${UNIONFS_FUSE_BINCACHE}"`
   
 	DEFAULT_KERNEL_CONFIG=`arch_replace "${DEFAULT_KERNEL_CONFIG}"`
 	BUSYBOX_CONFIG=`arch_replace "${BUSYBOX_CONFIG}"`
@@ -122,6 +124,8 @@ determine_real_args() {
 	LVM_BINCACHE=`arch_replace "${LVM_BINCACHE}"`
 	DMRAID_BINCACHE=`arch_replace "${DMRAID_BINCACHE}"`
 	BLKID_BINCACHE=`arch_replace "${BLKID_BINCACHE}"`
+	FUSE_BINCACHE=`arch_replace "${FUSE_BINCACHE}"`
+	UNIONFS_FUSE_BINCACHE=`arch_replace "${UNIONFS_FUSE_BINCACHE}"`
 	
 	if [ "${NO_KERNEL_SOURCES}" != "1" ]
 	then
