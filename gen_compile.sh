@@ -558,7 +558,7 @@ compile_unionfs_fuse() {
 			gen_die "Could not find unionfs-fuse source tarball: ${UNIONFS_FUSE_SRCTAR}. Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
 		cd "${TEMP}"
 		rm -rf "${UNIONFS_FUSE_DIR}"
-		tar -zxpf "${UNIONFS_FUSE_SRCTAR}"
+		tar -jxpf "${UNIONFS_FUSE_SRCTAR}"
 		[ ! -d "${UNIONFS_FUSE_DIR}" ] &&
 			gen_die "unionfs-fuse directory ${UNIONFS_FUSE_DIR} invalid"
 		cd "${UNIONFS_FUSE_DIR}"
