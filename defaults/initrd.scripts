@@ -961,3 +961,62 @@ find_looptype() {
 getdvhoff() {
 	echo $(( $(hexdump -n 4 -s $((316 + 12 * $2)) -e '"%i"' $1) * 512))
 }
+
+setup_unionfs() {
+	local rw_dir=$1
+	local ro_dir=$2
+	if [ "${USE_UNIONFS_NORMAL}" = '1' ]
+	then
+		# Directory used for rw changes in union mount filesystem
+		UNION=/union
+		MEMORY=/memory
+		if [ -z "$UID" ]
+		then
+			CHANGES=$MEMORY/unionfs_changes/default
+		else
+			CHANGES=$MEMORY/unionfs_changes/$UID
+		fi
+
+		mkdir -p ${MEMORY}
+		mkdir -p ${UNION}
+		good_msg "Loading fuse module"
+		modprobe fuse > /dev/null 2>&1
+#                 if [ -n "${UNIONFS}" ] 	 
+#                 then 	 
+#                         CHANGESDEV=${UNIONFS} 	 
+#                         good_msg "mounting $CHANGESDEV to $MEMORY for unionfs support" 	 
+#                         mount -t auto $CHANGESDEV $MEMORY 	 
+#                         # mount tmpfs only in the case when changes= boot parameter was 	 
+#                         # empty or we were not able to mount the storage device 	 
+#                         ret=$? 	 
+#                         if [ "${ret}" -ne 0 ] 	 
+#                         then 	 
+#                                 bad_msg "mount of $CHANGESDEV failed falling back to ramdisk based unionfs" 	 
+#                                 mount -t tmpfs tmpfs $MEMORY 	 
+#                         fi 	 
+#                         if [ "${CDROOT}" -eq '1' -a ! -f ${MEMORY}/livecd.unionfs  ] 	 
+#                         then 	 
+#                                 umount $MEMORY 	 
+#                                 bad_msg "failed to find livecd.unionfs file on $CHANGESDEV" 	 
+#                                 bad_msg "create a livecd.unionfs file on this device if you wish to use it for unionfs" 	 
+#                                 bad_msg "falling back to ramdisk based unionfs for safety" 	 
+#                                 mount -t tmpfs tmpfs $MEMORY 	 
+#                         fi 	 
+#                 else 	 
+                         good_msg "Mounting ramdisk to $MEMORY for unionfs support..." 	 
+                         mount -t tmpfs tmpfs $MEMORY 	 
+#                 fi 	 
+  	 
+		mkdir -p $CHANGES
+#		mount -t unionfs -o dirs=$CHANGES=rw unionfs ${UNION}
+		unionfs -o allow_others,allow_root,cow,noinitgroups ${rw_dir}=RW:${ro_dir} ${UNION}
+		ret=$?
+		if [ "${ret}" -ne 0 ]
+		then
+			bad_msg "Can't setup union ${UNION} in directory!"
+			USE_UNIONFS_NORMAL=0
+		fi
+	else
+		USE_UNIONFS_NORMAL=0
+	fi
+}

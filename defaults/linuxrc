@@ -183,6 +183,33 @@ do
 		keymap\=*)
 			keymap=`parse_opt "${x}"`
 		;;
+		unionfs)
+			if [ ! -x /sbin/unionfs ]
+			then
+				USE_UNIONFS_NORMAL=0
+				bad_msg 'Unionctl not found: aborting use of unionfs!'
+			else
+				USE_UNIONFS_NORMAL=1
+			fi
+			;;
+#                 unionfs\=*) 	 
+#                         if [ ! -x /sbin/unionctl ] 	 
+#                         then 	 
+#                                 USE_UNIONFS_NORMAL=0 	 
+#                                 bad_msg 'Unionctl not found: aborting use of unionfs!' 	 
+#                         else 	 
+#                                 USE_UNIONFS_NORMAL=1 	 
+#                                 CMD_UNIONFS=`parse_opt "${x}"` 	 
+#                                 echo ${CMD_UNIONFS}|grep , >/dev/null 2>&1 	 
+#                                 if [ "$?" -eq '0' ] 	 
+#                                 then 	 
+#                                         UID=`echo ${CMD_UNIONFS#*,}` 	 
+#                                         UNIONFS=`echo ${CMD_UNIONFS%,*}` 	 
+#                                 else 	 
+#                                         UNIONFS=${CMD_UNIONFS} 	 
+#                                 fi 	 
+#                         fi 	 
+#                 ;;
 	esac
 done
 
@@ -436,7 +463,7 @@ then
 	cache_cd_contents
 
 	# If encrypted, find key and mount, otherwise mount as usual
-	if [ -n "${CRYPT_ROOT}" ] 
+	if [ -n "${CRYPT_ROOT}" ]
 	then
 		CRYPT_ROOT_KEY="$(head -n 1 ${NEW_ROOT}/mnt/cdrom/livecd)"
 		CRYPT_ROOT='/dev/loop0'
@@ -512,22 +539,30 @@ then
 		fi
 	fi
 
+
+
 	# Unpacking additional packages from NFS mount
 	# This is useful for adding kernel modules to /lib
 	# We do this now, so that additional packages can add whereever they want.
 	if [ "${REAL_ROOT}" = '/dev/nfs' ]
 	then
-		if [ -e "${CHROOT}/mnt/cdrom/add" ]
+		if [ -e "${NEW_ROOT}/mnt/cdrom/add" ]
 		then
-				for targz in `ls ${CHROOT}/mnt/cdrom/add/*.tar.gz`
+				for targz in `ls ${NEW_ROOT}/mnt/cdrom/add/*.tar.gz`
 				do	
 					tarname=`basename ${targz}`
 					good_msg "Adding additional package ${tarname}"
-					(cd ${CHROOT} ; /bin/tar -xzf ${targz})
+					(cd ${NEW_ROOT} ; /bin/tar -xzf ${targz})
 				done
 		fi
 	fi
 
+
+	if [ "${USE_UNIONFS_NORMAL}" = '1' ]
+	then
+		setup_unionfs ${NEW_ROOT} ${NEW_ROOT}/${FS_LOCATION}
+		CHROOT=/union
+	else
 	
 	good_msg "Copying read-write image contents to tmpfs"
 	# Copy over stuff that should be writable
@@ -579,6 +614,8 @@ then
 	mkdir initramfs proc tmp sys 2>/dev/null
 	chmod 1777 tmp
 
+	fi
+
 	#UML=`cat /proc/cpuinfo|grep UML|sed -e 's|model name.*: ||'`
 	#if [ "${UML}" = 'UML' ]
 	#then
@@ -593,6 +630,14 @@ then
 	if [ "${DO_slowusb}" ] || [ "${FORCE_slowusb}" ]
 	then
 		sleep 10
+	fi
+else
+	if [ "${USE_UNIONFS_NORMAL}" = '1' ]
+	then
+		mkdir /union_changes
+		mount -t tmpfs tmpfs /union_changes
+		setup_unionfs /union_changes ${NEW_ROOT}
+		mkdir -p ${UNION}/tmp/.initrd
 	fi
 fi
 
