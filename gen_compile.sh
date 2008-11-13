@@ -547,7 +547,7 @@ compile_fuse() {
 			gen_die 'Could not create fuse bincache!'
 
 		cd "${TEMP}"
-		rm -rf "${FUSE_DIR}" > /dev/null
+#		rm -rf "${FUSE_DIR}" > /dev/null
 	fi
 }
 
@@ -562,12 +562,12 @@ compile_unionfs_fuse() {
 		[ ! -d "${UNIONFS_FUSE_DIR}" ] &&
 			gen_die "unionfs-fuse directory ${UNIONFS_FUSE_DIR} invalid"
 		cd "${UNIONFS_FUSE_DIR}"
-		mkdir "fuse_tmp"
-		cd "fuse_tmp"
-		tar -zxpf "${FUSE_SRCTAR}"
-		cd ..
+#		mkdir "fuse_tmp"
+#		cd "fuse_tmp"
+#		tar -zxpf "${FUSE_SRCTAR}"
+#		cd ..
 		print_info 1 'unionfs-fuse: >> Compiling...'
-		sed -i "/^\(CFLAGS\|CPPFLAGS\)/s:^\\(.*\\)$:\\1 -Ifuse_tmp/${FUSE_DIR}/include:" Makefile src/Makefile
+		sed -i "/^\(CFLAGS\|CPPFLAGS\)/s:^\\(.*\\)$:\\1 -I${TEMP}/${FUSE_DIR}/include -L${TEMP}/${FUSE_DIR}/lib/.libs:" Makefile src/Makefile
 		cat Makefile src/Makefile
 		bash
 		MAKE=${UTILS_MAKE} compile_generic "" ""
