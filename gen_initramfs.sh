@@ -91,8 +91,8 @@ append_unionfs_fuse() {
 		rm -r "${TEMP}/initramfs-unionfs-fuse-temp"
 	fi
 	cd ${TEMP}
-	mkdir -p "${TEMP}/initramfs-unionfs-fuse-temp/bin/"
-	bzip2 -dc "${UNIONFS_FUSE_BINCACHE}" > "${TEMP}/initramfs-uniwonfs-fuse-temp/bin/unionfs" ||
+	mkdir -p "${TEMP}/initramfs-unionfs-fuse-temp/sbin/"
+	bzip2 -dc "${UNIONFS_FUSE_BINCACHE}" > "${TEMP}/initramfs-unionfs-fuse-temp/sbin/unionfs" ||
 		gen_die 'Could not extract unionfs-fuse binary cache!'
 	cd "${TEMP}/initramfs-unionfs-fuse-temp/"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
