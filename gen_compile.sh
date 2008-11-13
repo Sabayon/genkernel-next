@@ -562,8 +562,12 @@ compile_unionfs_fuse() {
 		[ ! -d "${UNIONFS_FUSE_DIR}" ] &&
 			gen_die "unionfs-fuse directory ${UNIONFS_FUSE_DIR} invalid"
 		cd "${UNIONFS_FUSE_DIR}"
+		mkdir "fuse_tmp"
+		cd "fuse_tmp"
+		tar -zxpf "${FUSE_SRCTAR}"
+		cd ..
 		print_info 1 'unionfs-fuse: >> Compiling...'
-		MAKE=${UTILS_MAKE} compile_generic "" ""
+		CFLAGS="-Ifuse_tmp/${FUSE_DIR}/include" MAKE=${UTILS_MAKE} compile_generic "" ""
 		print_info 1 'unionfs-fuse: >> Copying to cache...'
 		[ -f "${TEMP}/${UNIONFS_FUSE_DIR}/src/unionfs" ] ||
 			gen_die 'unionfs binary does not exist!'
