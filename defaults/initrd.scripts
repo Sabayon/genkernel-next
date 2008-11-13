@@ -1007,6 +1007,8 @@ setup_unionfs() {
                          mount -t tmpfs tmpfs $MEMORY 	 
 #                 fi 	 
   	 
+		mkdir /tmp
+		mkdir -p ${UNION}
 		mkdir -p $CHANGES
 #		mount -t unionfs -o dirs=$CHANGES=rw unionfs ${UNION}
 		unionfs -o allow_others,allow_root,cow,noinitgroups ${rw_dir}=RW:${ro_dir} ${UNION}
