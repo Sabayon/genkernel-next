@@ -567,7 +567,8 @@ compile_unionfs_fuse() {
 		tar -zxpf "${FUSE_SRCTAR}"
 		cd ..
 		print_info 1 'unionfs-fuse: >> Compiling...'
-		sed -i "/^CFLAGS/s:^\\(.*\\)$:\\1 -Ifuse_tmp/${FUSE_DIR}/include:" Makefile
+		sed -i "/^\(CFLAGS\|CPPFLAGS\)/s:^\\(.*\\)$:\\1 -Ifuse_tmp/${FUSE_DIR}/include:" Makefile src/Makefile
+		cat Makefile src/Makefile
 		MAKE=${UTILS_MAKE} compile_generic "" ""
 		print_info 1 'unionfs-fuse: >> Copying to cache...'
 		[ -f "${TEMP}/${UNIONFS_FUSE_DIR}/src/unionfs" ] ||
