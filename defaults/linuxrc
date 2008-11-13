@@ -187,7 +187,7 @@ do
 			if [ ! -x /sbin/unionfs ]
 			then
 				USE_UNIONFS_NORMAL=0
-				bad_msg 'Unionctl not found: aborting use of unionfs!'
+				bad_msg 'unionfs binary not found: aborting use of unionfs!'
 			else
 				USE_UNIONFS_NORMAL=1
 			fi
