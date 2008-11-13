@@ -2,6 +2,10 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  13 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts,
+  patches/busybox/1.7.4/1.7.4-simplify-path-debug.diff:
+  Change typo in unionfs-fuse mount opt and add -i support to umount
+
   13 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> arch/alpha/busy-config,
   arch/ia64/busy-config, arch/mips/busy-config, arch/parisc/busy-config,
   arch/parisc64/busy-config, arch/ppc/busy-config, arch/ppc64/busy-config,
