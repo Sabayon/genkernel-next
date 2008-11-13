@@ -2,6 +2,9 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  13 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts:
+  Remove allow_root mount opt, since it conflicts with allow_other
+
   13 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts,
   patches/busybox/1.7.4/1.7.4-simplify-path-debug.diff:
   Change typo in unionfs-fuse mount opt and add -i support to umount
