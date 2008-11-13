@@ -2,6 +2,9 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  13 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> gen_compile.sh:
+  Compile unionfs-fuse statically
+
   13 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/linuxrc,
   gen_initramfs.sh:
   Make sure that /sbin/unionfs is +x
