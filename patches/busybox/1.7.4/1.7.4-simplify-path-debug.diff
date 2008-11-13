@@ -1,0 +1,11 @@
+--- busybox-1.7.4.orig/libbb/simplify_path.c	2007-09-03 06:48:42.000000000 -0500
++++ busybox-1.7.4/libbb/simplify_path.c	2008-11-13 14:58:24.000000000 -0600
+@@ -13,6 +13,8 @@
+ {
+ 	char *s, *start, *p;
+ 
++	printf("bb_simplify_path(): path='%s'\n", path);
++
+ 	if (path[0] == '/')
+ 		start = xstrdup(path);
+ 	else {
