@@ -1011,7 +1011,7 @@ setup_unionfs() {
 		mkdir -p ${UNION}
 		mkdir -p $CHANGES
 #		mount -t unionfs -o dirs=$CHANGES=rw unionfs ${UNION}
-		unionfs -o allow_other,cow,noinitgroups ${rw_dir}=RW:${ro_dir} ${UNION}
+		unionfs -o allow_other,cow,noinitgroups,suid,dev ${rw_dir}=RW:${ro_dir} ${UNION}
 		ret=$?
 		if [ "${ret}" -ne 0 ]
 		then

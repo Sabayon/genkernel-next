@@ -3,6 +3,9 @@
 # Distributed under the GPL v2
 
   13 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts:
+  Add suid,dev to unionfs mount opts
+
+  13 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts:
   Remove allow_root mount opt, since it conflicts with allow_other
 
   13 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts,
