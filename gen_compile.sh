@@ -568,6 +568,7 @@ compile_unionfs_fuse() {
 #		cd ..
 		print_info 1 'unionfs-fuse: >> Compiling...'
 		sed -i "/^\(CFLAGS\|CPPFLAGS\)/s:^\\(.*\\)$:\\1 -I${TEMP}/${FUSE_DIR}/include -L${TEMP}/${FUSE_DIR}/lib/.libs:" Makefile src/Makefile
+		sed -i "/^LIB = /s:^LIB = \(.*\)$:LIB = -L${TEMP}/${FUSE_DIR}/lib/.libs \1:" Makefile src/Makefile
 		cat Makefile src/Makefile
 		bash
 		MAKE=${UTILS_MAKE} compile_generic "" ""
