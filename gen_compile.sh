@@ -563,8 +563,8 @@ compile_unionfs_fuse() {
 			gen_die "unionfs-fuse directory ${UNIONFS_FUSE_DIR} invalid"
 		cd "${UNIONFS_FUSE_DIR}"
 		print_info 1 'unionfs-fuse: >> Compiling...'
-		sed -i "/^\(CFLAGS\|CPPFLAGS\)/s:^\\(.*\\)$:\\1 -I${TEMP}/${FUSE_DIR}/include -L${TEMP}/${FUSE_DIR}/lib/.libs:" Makefile src/Makefile
-		sed -i "/^LIB = /s:^LIB = \(.*\)$:LIB = -static -ldl -lrt -L${TEMP}/${FUSE_DIR}/lib/.libs \1:" Makefile src/Makefile
+		sed -i "/^\(CFLAGS\|CPPFLAGS\)/s:^\\(.*\\)$:\\1 -static -I${TEMP}/${FUSE_DIR}/include -L${TEMP}/${FUSE_DIR}/lib/.libs:" Makefile src/Makefile
+		sed -i "/^LIB = /s:^LIB = \(.*\)$:LIB = -static -L${TEMP}/${FUSE_DIR}/lib/.libs \1 -ldl -lrt:" Makefile src/Makefile
 		MAKE=${UTILS_MAKE} compile_generic "" ""
 		print_info 1 'unionfs-fuse: >> Copying to cache...'
 		[ -f "${TEMP}/${UNIONFS_FUSE_DIR}/src/unionfs" ] ||
