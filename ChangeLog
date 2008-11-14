@@ -2,6 +2,10 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  14 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts,
+  defaults/linuxrc:
+  Call switch_root with full path
+
   14 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/linuxrc:
   Call switch_root with 'env -i' to clean out the kernel-defined key/value
   pairs

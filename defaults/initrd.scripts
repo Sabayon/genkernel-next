@@ -991,8 +991,8 @@ setup_unionfs() {
 #                                 mount -t tmpfs tmpfs $MEMORY 	 
 #                         fi 	 
 #                 else 	 
-                         good_msg "Mounting ramdisk to $MEMORY for unionfs support..." 	 
-                         mount -t tmpfs tmpfs $MEMORY 	 
+#                         good_msg "Mounting ramdisk to $MEMORY for unionfs support..." 	 
+#                         mount -t tmpfs tmpfs $MEMORY 	 
 #                 fi 	 
   	 
 		mkdir /tmp
