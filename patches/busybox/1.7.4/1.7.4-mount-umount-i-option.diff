@@ -1,0 +1,24 @@
+diff -ru busybox-1.7.4.orig/util-linux/mount.c busybox-1.7.4/util-linux/mount.c
+--- busybox-1.7.4.orig/util-linux/mount.c	2007-09-03 06:48:56.000000000 -0500
++++ busybox-1.7.4/util-linux/mount.c	2008-11-13 21:12:06.000000000 -0600
+@@ -1554,7 +1554,7 @@
+ 
+ 	// Parse remaining options
+ 
+-	opt = getopt32(argv, "o:t:rwanfvs", &opt_o, &fstype);
++	opt = getopt32(argv, "o:t:rwanfvsi", &opt_o, &fstype);
+ 	if (opt & 0x1) append_mount_options(&cmdopts, opt_o); // -o
+ 	//if (opt & 0x2) // -t
+ 	if (opt & 0x4) append_mount_options(&cmdopts, "ro"); // -r
+diff -ru busybox-1.7.4.orig/util-linux/umount.c busybox-1.7.4/util-linux/umount.c
+--- busybox-1.7.4.orig/util-linux/umount.c	2007-09-03 06:48:56.000000000 -0500
++++ busybox-1.7.4/util-linux/umount.c	2008-11-13 16:13:03.000000000 -0600
+@@ -12,7 +12,7 @@
+ #include <getopt.h>
+ #include "libbb.h"
+ 
+-#define OPTION_STRING		"flDnravdt:"
++#define OPTION_STRING		"flDnravdt:i"
+ #define OPT_FORCE			1
+ #define OPT_LAZY			2
+ #define OPT_DONTFREELOOP	4

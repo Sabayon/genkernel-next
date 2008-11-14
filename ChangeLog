@@ -2,6 +2,12 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  14 Nov 2008; Andrew Gaffney <agaffney@gentoo.org>
+  +patches/busybox/1.7.4/1.7.4-mount-umount-i-option.diff,
+  -patches/busybox/1.7.4/1.7.4-simplify-path-debug.diff:
+  Replace debug patch with simple patch to add trivial support for -i option
+  to mount/umount
+
   13 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts:
   Add suid,dev to unionfs mount opts
 
