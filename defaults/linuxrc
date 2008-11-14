@@ -193,10 +193,10 @@ do
 			fi
 			;;
 #                 unionfs\=*) 	 
-#                         if [ ! -x /sbin/unionctl ] 	 
+#                         if [ ! -x /sbin/unionfs ] 	 
 #                         then 	 
 #                                 USE_UNIONFS_NORMAL=0 	 
-#                                 bad_msg 'Unionctl not found: aborting use of unionfs!' 	 
+#                                 bad_msg 'unionfs binary not found: aborting use of unionfs!'
 #                         else 	 
 #                                 USE_UNIONFS_NORMAL=1 	 
 #                                 CMD_UNIONFS=`parse_opt "${x}"` 	 
@@ -285,7 +285,7 @@ rundebugshell
 if [ "${CDROOT}" = '1' ]
 then
 	good_msg "Making tmpfs for ${NEW_ROOT}"
-	mount -t tmpfs tmpfs "${NEW_ROOT}"
+	mount -n -t tmpfs tmpfs "${NEW_ROOT}"
 	
 	for i in dev mnt mnt/cdrom mnt/livecd mnt/key tmp tmp/.initrd mnt/gentoo sys
 	do

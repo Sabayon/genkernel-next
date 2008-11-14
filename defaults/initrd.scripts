@@ -969,15 +969,15 @@ setup_unionfs() {
 	then
 		# Directory used for rw changes in union mount filesystem
 		UNION=/union
-		MEMORY=/memory
-		if [ -z "$UID" ]
-		then
-			CHANGES=$MEMORY/unionfs_changes/default
-		else
-			CHANGES=$MEMORY/unionfs_changes/$UID
-		fi
+#		MEMORY=/memory
+#		if [ -z "$UID" ]
+#		then
+#			CHANGES=$MEMORY/unionfs_changes/default
+#		else
+#			CHANGES=$MEMORY/unionfs_changes/$UID
+#		fi
 
-		mkdir -p ${MEMORY}
+#		mkdir -p ${MEMORY}
 		mkdir -p ${UNION}
 		good_msg "Loading fuse module"
 		modprobe fuse > /dev/null 2>&1
@@ -1009,9 +1009,9 @@ setup_unionfs() {
   	 
 		mkdir /tmp
 		mkdir -p ${UNION}
-		mkdir -p $CHANGES
+#		mkdir -p $CHANGES
 #		mount -t unionfs -o dirs=$CHANGES=rw unionfs ${UNION}
-		unionfs -o allow_other,cow,noinitgroups,suid,dev ${rw_dir}=RW:${ro_dir} ${UNION}
+		unionfs -o allow_other,cow,noinitgroups,suid,dev ${rw_dir}=RW:${ro_dir}=RO ${UNION}
 		ret=$?
 		if [ "${ret}" -ne 0 ]
 		then
