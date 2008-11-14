@@ -537,14 +537,16 @@ compile_fuse() {
 			gen_die 'Configuring fuse failed!'
 		print_info 1 'fuse: >> Compiling...'
 		MAKE=${UTILS_MAKE} compile_generic "" ""
-		print_info 1 'libfuse: >> Copying to cache...'
-		[ -f "${TEMP}/${FUSE_DIR}/lib/.libs/libfuse.so" ] ||
-			gen_die 'libfuse.so does not exist!'
-		strip "${TEMP}/${FUSE_DIR}/lib/.libs/libfuse.so" ||
-			gen_die 'Could not strip libfuse.so!'
-		cd "${TEMP}/${FUSE_DIR}/lib/.libs"
-		tar -cjf "${FUSE_BINCACHE}" libfuse*so* ||
-			gen_die 'Could not create fuse bincache!'
+
+		# Since we're linking statically against libfuse, we don't need to cache the .so
+#		print_info 1 'libfuse: >> Copying to cache...'
+#		[ -f "${TEMP}/${FUSE_DIR}/lib/.libs/libfuse.so" ] ||
+#			gen_die 'libfuse.so does not exist!'
+#		strip "${TEMP}/${FUSE_DIR}/lib/.libs/libfuse.so" ||
+#			gen_die 'Could not strip libfuse.so!'
+#		cd "${TEMP}/${FUSE_DIR}/lib/.libs"
+#		tar -cjf "${FUSE_BINCACHE}" libfuse*so* ||
+#			gen_die 'Could not create fuse bincache!'
 
 		cd "${TEMP}"
 #		rm -rf "${FUSE_DIR}" > /dev/null
@@ -554,6 +556,10 @@ compile_fuse() {
 compile_unionfs_fuse() {
 	if [ ! -f "${UNIONFS_FUSE_BINCACHE}" ]
 	then
+
+		# We'll call compile_fuse() from here, since it's not needed directly by anything else
+		compile_fuse
+
 		[ ! -f "${UNIONFS_FUSE_SRCTAR}" ] &&
 			gen_die "Could not find unionfs-fuse source tarball: ${UNIONFS_FUSE_SRCTAR}. Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
 		cd "${TEMP}"

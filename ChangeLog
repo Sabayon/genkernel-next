@@ -2,6 +2,17 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  14 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> arch/alpha/modules_load,
+  arch/ia64/modules_load, arch/mips/modules_load, arch/parisc/modules_load,
+  arch/parisc64/modules_load, arch/ppc/modules_load,
+  arch/ppc64/modules_load, arch/sparc/modules_load,
+  arch/sparc64/modules_load, arch/um/modules_load, arch/x86/modules_load,
+  arch/x86_64/modules_load, defaults/modules_load, gen_compile.sh,
+  gen_initramfs.sh, genkernel:
+  Add fuse to MODULES_FS Remove direct calls to compile_fuse() and
+  append_fuse() Disable bincache for fuse, since we don't need any files at
+  runtime from it
+
   14 Nov 2008; Andrew Gaffney <agaffney@gentoo.org>
   +patches/busybox/1.7.4/1.7.4-mount-umount-i-option.diff,
   -patches/busybox/1.7.4/1.7.4-simplify-path-debug.diff:

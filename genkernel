@@ -302,7 +302,6 @@ then
 		compile_busybox
 	fi
 
-	compile_fuse
 	compile_unionfs_fuse
     
 	# Compile initramfs

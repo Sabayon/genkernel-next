@@ -72,18 +72,18 @@ append_blkid(){
 	rm -rf "${TEMP}/initramfs-blkid-temp" > /dev/null
 }
 
-append_fuse() {
-	if [ -d "${TEMP}/initramfs-fuse-temp" ]
-	then
-		rm -r "${TEMP}/initramfs-fuse-temp"
-	fi
-	cd ${TEMP}
-	mkdir -p "${TEMP}/initramfs-fuse-temp/lib/"
-	tar -C "${TEMP}/initramfs-fuse-temp/lib/" -xjf "${FUSE_BINCACHE}"
-	cd "${TEMP}/initramfs-fuse-temp/"
-	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
-	rm -rf "${TEMP}/initramfs-fuse-temp" > /dev/null
-}
+#append_fuse() {
+#	if [ -d "${TEMP}/initramfs-fuse-temp" ]
+#	then
+#		rm -r "${TEMP}/initramfs-fuse-temp"
+#	fi
+#	cd ${TEMP}
+#	mkdir -p "${TEMP}/initramfs-fuse-temp/lib/"
+#	tar -C "${TEMP}/initramfs-fuse-temp/lib/" -xjf "${FUSE_BINCACHE}"
+#	cd "${TEMP}/initramfs-fuse-temp/"
+#	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+#	rm -rf "${TEMP}/initramfs-fuse-temp" > /dev/null
+#}
 
 append_unionfs_fuse() {
 	if [ -d "${TEMP}/initramfs-unionfs-fuse-temp" ]
@@ -505,7 +505,6 @@ create_initramfs() {
 
 	append_data 'blkid' "${DISKLABEL}"
 
-	append_data 'fuse'
 	append_data 'unionfs_fuse'
 
 	if isTrue "${SPLASH}"
