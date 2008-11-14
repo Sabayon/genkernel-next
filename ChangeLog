@@ -3,6 +3,9 @@
 # Distributed under the GPL v2
 
   14 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts:
+  Add good_msg for creating the union mount
+
+  14 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts:
   Pipe stderr for unionfs mount call to /dev/null to supress getcwd message
 
   14 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts,
