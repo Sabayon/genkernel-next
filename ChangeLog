@@ -2,6 +2,11 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  14 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/linuxrc,
+  gen_cmdline.sh, gen_determineargs.sh, genkernel:
+  Add --unionfs commandline option to enable building of unionfs-fuse Add
+  nounionfs boot option
+
   14 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts:
   Add good_msg for creating the union mount
 

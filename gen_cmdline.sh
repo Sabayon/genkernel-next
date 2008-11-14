@@ -90,6 +90,7 @@ longusage() {
   echo "	--luks			Include LUKS support"
   echo "				--> 'emerge cryptsetup-luks' with USE=-dynamic"
   echo "    --no-busybox    Do not include busybox in the initramfs."
+  echo "    --unionfs       Include support for unionfs"
   echo "  Internals"
   echo "	--arch-override=<arch>	Force to arch instead of autodetect"
   echo "	--cachedir=<dir>	Override the default cache location"
@@ -243,6 +244,10 @@ parse_cmdline() {
 		--no-busybox)
 			CMD_BUSYBOX=0
 			print_info 2 "CMD_BUSYBOX: ${CMD_BUSYBOX}"
+			;;
+		--unionfs)
+			CMD_UNIONFS=1
+			print_info 2 "CMD_UNIONFS: ${CMD_UNIONFS}"
 			;;
 		--slowusb)
 			CMD_SLOWUSB=1

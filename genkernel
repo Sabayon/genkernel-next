@@ -302,8 +302,11 @@ then
 		compile_busybox
 	fi
 
-	compile_unionfs_fuse
-    
+	if isTrue "${UNIONFS}"
+	then
+		compile_unionfs_fuse
+	fi
+
 	# Compile initramfs
 	create_initramfs
 else

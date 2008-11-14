@@ -192,6 +192,9 @@ do
 				USE_UNIONFS_NORMAL=1
 			fi
 			;;
+		nounionfs)
+			USE_UNIONFS_NORMAL=0
+			;;
 #                 unionfs\=*) 	 
 #                         if [ ! -x /sbin/unionfs ] 	 
 #                         then 	 
