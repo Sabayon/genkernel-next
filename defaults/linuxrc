@@ -668,7 +668,7 @@ umount /sys || echo '*: Failed to unmount the ramdisk /sys!'
 umount /proc || echo '*: Failed to unmount the ramdisk /proc!'
 echo -e "${BOLD}.${NORMAL}"
 
-exec switch_root -c "/dev/console" "${CHROOT}" "${REAL_INIT:-/sbin/init}" "${INIT_OPTS}"
+exec env -i switch_root -c "/dev/console" "${CHROOT}" "${REAL_INIT:-/sbin/init}" "${INIT_OPTS}"
 
 # If we get here, something bad has happened
 splash 'verbose'
