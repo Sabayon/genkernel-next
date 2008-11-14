@@ -505,12 +505,9 @@ create_initramfs() {
 
 	append_data 'blkid' "${DISKLABEL}"
 
-	append_data 'unionfs_fuse'
+	append_data 'unionfs_fuse' "${UNIONFS}"
 
-	if isTrue "${SPLASH}"
-	then
-		append_data 'splash' "${SPLASH}"
-	fi
+	append_data 'splash' "${SPLASH}"
 
 	if isTrue "${FIRMWARE}" && [ -n "${FIRMWARE_DIR}" ]
 	then
