@@ -2,6 +2,9 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  15 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/linuxrc:
+  Applied patch for UUID support for real_resume= from gentoo bug #239687
+
   15 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> gen_determineargs.sh:
   Added modified version of patch from gentoo bug #238707
 

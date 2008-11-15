@@ -273,6 +273,34 @@ then
 	startLUKS
 	if [ "${NORESUME}" != '1' ] && [ -n "${REAL_RESUME}" ]
 	then
+		case "${REAL_RESUME}" in
+			LABEL\=*|UUID\=*)
+
+				RESUME_DEV=""
+				retval=1
+				
+				if [ "${retval}" -ne '0' ]; then
+					RESUME_DEV=`findfs "${REAL_RESUME}" 2>/dev/null`
+					retval=$?
+				fi
+				
+				if [ "$retval" -ne '0' ]; then
+					RESUME_DEV=`busybox findfs "${REAL_RESUME}" 2>/dev/null`
+					retval=$?
+				fi
+				
+				if [ "${retval}" -ne '0' ]; then
+					RESUME_DEV=`blkid -t "${REAL_RESUME}" | cut -d ":" -f 1 2>/dev/null`
+					retval=$?
+				fi
+				
+				if [ "${retval}" -eq '0' ] && [ -n "${RESUME_DEV}" ]; then
+					good_msg "Detected real_resume=${RESUME_DEV}"
+					REAL_RESUME="${RESUME_DEV}"
+				fi
+				;;
+		esac
+
 		swsusp_resume
 #		suspend_resume
 		tuxonice_resume
