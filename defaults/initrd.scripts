@@ -628,6 +628,17 @@ startVolumes() {
 	fi
 }
 
+startiscsi() {
+	
+	if [ -n "${ISCSI_I}" ] && [ -n "${ISCSI_T}" ] && [ -n "${ISCSI_A}" ]
+	then
+		good_msg "Activating ISCSI"
+		iscsistart -i "${ISCSI_I}" -t "${ISCSI_T}" -g 1 -a ${ISCSI_A}
+	fi
+
+}
+
+
 # Open a LUKS device
 # It is either the root or a swap, other devices are supported in the scripts provided with sys-fs/cryptsetup-luks
 # $1 - root/swap

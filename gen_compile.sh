@@ -619,3 +619,45 @@ compile_unionfs_fuse() {
 		rm -rf "${UNIONFS_FUSE_DIR}" > /dev/null
 	fi
 }
+
+compile_iscsi() {
+	if [ ! -f "${ISCSI_BINCACHE}" ]
+	then
+		[ ! -f "${ISCSI_SRCTAR}" ] &&
+			gen_die "Could not find ISCSI source tarball: ${ISCSI_SRCTAR}. Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
+		cd "${TEMP}"
+		rm -rf "${ISCSI_DIR}"
+		tar -zxpf "${ISCSI_SRCTAR}"
+		[ ! -d "${ISCSI_DIR}" ] &&
+			gen_die "ISCSI directory ${ISCSI_DIR} invalid"
+				print_info 1 'ISCSI: >> Compiling...'
+		cd "${TEMP}/${ISCSI_DIR}/utils/fwparam_ibft"
+		MAKE=${UTILS_MAKE} compile_generic "" ""
+		cd "${TEMP}/${ISCSI_DIR}/usr"
+		MAKE=${UTILS_MAKE} compile_generic "" ""
+		cd "${TEMP}/${ISCSI_DIR}/kernel"
+
+		# Find out target kernel Version, make modules for that version
+		RELEASE=$(head -n 4 ${CMD_KERNEL_DIR}/Makefile | sed  -r -e 's/^VERSION = (.*)/\1./g' -e 's/PATCHLEVEL = (.*)/\1./g' -e 's/SUBLEVEL = (.*)/\1/g' -e 's/EXTRAVERSION = (.*)/\1/g' | tr -d '\n')
+		KERNELRELEASE=${RELEASE} MAKE=${UTILS_MAKE} compile_generic "" ""
+
+		# copy kernel modules to initramfs
+		mkdir -p "${TEMP}/initramfs-iscsi-temp/lib/modules/${RELEASE}/kernel/drivers/scsi/"
+		cp *.ko "${TEMP}/initramfs-iscsi-temp/lib/modules/${RELEASE}/kernel/drivers/scsi/"
+
+	        cd "${TEMP}/initramfs-iscsi-temp/"
+		print_info 1 'iscsistart: >> Copying to cache...'
+		[ -f "${TEMP}/${ISCSI_DIR}/usr/iscsistart" ] ||
+			gen_die 'iscsistart executable does not exist!'
+		strip "${TEMP}/${ISCSI_DIR}/usr/iscsistart" ||
+			gen_die 'Could not strip iscsistart binary!'
+		bzip2 "${TEMP}/${ISCSI_DIR}/usr/iscsistart" ||
+			gen_die 'bzip2 compression of iscsistart failed!'
+		mv "${TEMP}/${ISCSI_DIR}/usr/iscsistart.bz2" "${ISCSI_BINCACHE}" ||
+			gen_die 'Could not copy the iscsistart binary to the package directory, does the directory exist?'
+
+		cd "${TEMP}"
+		rm -rf "${ISCSI_DIR}" > /dev/null
+	fi
+}
+

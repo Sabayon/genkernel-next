@@ -84,6 +84,7 @@ longusage() {
   echo "	--mdadm			Copy /etc/mdadm.conf to initramfs"
   echo "	--dmraid		Include DMRAID support"
   echo "	--multipath		Include Multipath support"
+  echo "	--iscsi			Include ISCSI support"
   echo "	--slowusb		Enables extra pauses for slow USB CD boots"
   echo "	--bootloader=grub	Add new kernel to GRUB configuration"
   echo "	--linuxrc=<file>	Specifies a user created linuxrc"
@@ -289,6 +290,9 @@ parse_cmdline() {
 		--bootloader=*)
 			CMD_BOOTLOADER=`parse_opt "$*"`
 			print_info 2 "CMD_BOOTLOADER: ${CMD_BOOTLOADER}"
+		--iscsi)
+			CMD_ISCSI=1
+			print_info 2 "CMD_ISCSI: ${CMD_ISCSI}"
 			;;
 		--loglevel=*)
 			CMD_LOGLEVEL=`parse_opt "$*"`

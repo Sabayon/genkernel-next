@@ -149,6 +149,17 @@ do
 		nfsroot\=*)
 			NFSROOT=`parse_opt "${x}"`
 		;;
+		# ISCSI
+		iscsi_i\=*)
+			ISCSI_I=`parse_opt "${x}"`
+		;;
+		iscsi_t\=*)
+			ISCSI_T=`parse_opt "${x}"`
+		;;
+		iscsi_a\=*)
+			ISCSI_A=`parse_opt "${x}"`
+		;;
+		# Crypto
 		crypt_root\=*)
 			CRYPT_ROOT=`parse_opt "${x}"`
 		;;
@@ -262,6 +273,9 @@ setup_md_device
 
 # Scan volumes
 startVolumes
+
+# Start ISCSI
+startiscsi
 
 setup_keymap
 
