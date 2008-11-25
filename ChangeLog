@@ -2,6 +2,10 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  25 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> netboot/linuxrc.x:
+  Use symlinks for busybox utils Use full path to mount since it gets grumpy
+  without it in later bb versions for some reason
+
   17 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
   Break apart cryptsetup stuff into separate append_luks() and make
   append_auxillary() dependent on ${BUSYBOX} for gentoo bug #247052

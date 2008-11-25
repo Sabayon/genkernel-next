@@ -27,12 +27,12 @@ BasicSetup() {
 StartUp() {
 	if [ ! -f "/tmp/.startup" ]; then
 		#// Mount proc && sys
-		mount proc	/proc		-t proc			# /proc
-		mount sys	/sys		-t sysfs		# /sys
-		mount mdev	/dev		-t tmpfs  -o size=800k	# /dev for mdev
+		/bin/mount proc	/proc		-t proc			# /proc
+		/bin/mount sys	/sys		-t sysfs		# /sys
+		/bin/mount mdev	/dev		-t tmpfs  -o size=800k	# /dev for mdev
 
 		#// Let busybox build its applets
-		/bin/busybox --install
+		/bin/busybox --install -s
 
 		#// Create additional mount points
 		mkdir		/dev/pts
