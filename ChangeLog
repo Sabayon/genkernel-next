@@ -2,6 +2,9 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  04 Dec 2008; Chris Gianelloni <wolf31o2@wolf31o2.org> genkernel:
+  Bumping version for release.
+
   25 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> netboot/linuxrc.x:
   Use symlinks for busybox utils Use full path to mount since it gets grumpy
   without it in later bb versions for some reason
