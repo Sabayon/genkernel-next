@@ -3,14 +3,12 @@
 # Copyright 2001-2007 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License, v2 or later
 
-
+export PATH="/usr/sbin:/usr/bin:/sbin:/bin"
 
 #// Path, basic vars
 #//--------------------------------------------------------------------------------
 
 BasicSetup() {
-	export PATH=/usr/sbin:/usr/bin:/sbin:/bin
-
 	#// Copyright year, Build date in YYYYMMDD format, and in MMDDYYYY to make busybox 'date' happy
 	MYDATE="`cat /etc/build_date`"
 	CPYYEAR="$(echo ${MYDATE} | cut -c 1-4)"
@@ -27,9 +25,9 @@ BasicSetup() {
 StartUp() {
 	if [ ! -f "/tmp/.startup" ]; then
 		#// Mount proc && sys
-		/bin/mount proc	/proc		-t proc			# /proc
-		/bin/mount sys	/sys		-t sysfs		# /sys
-		/bin/mount mdev	/dev		-t tmpfs  -o size=800k	# /dev for mdev
+		mount proc	/proc		-t proc			# /proc
+		mount sys	/sys		-t sysfs		# /sys
+		mount mdev	/dev		-t tmpfs  -o size=800k	# /dev for mdev
 
 		#// Let busybox build its applets
 		/bin/busybox --install -s
