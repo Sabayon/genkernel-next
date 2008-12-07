@@ -7,6 +7,7 @@ append_base_layout() {
 	then
 		rm -rf "${TEMP}/initramfs-base-temp" > /dev/null
 	fi
+
 	mkdir -p ${TEMP}/initramfs-base-temp/dev
 	mkdir -p ${TEMP}/initramfs-base-temp/bin
 	mkdir -p ${TEMP}/initramfs-base-temp/etc
@@ -28,6 +29,9 @@ append_base_layout() {
 	mknod -m 660 console c 5 1
 	mknod -m 660 null c 1 3
 	mknod -m 600 tty1 c 4 1
+
+	date '+%Y%m%d' > ${TEMP}/initramfs-base-temp/etc/build_date
+
 	cd "${TEMP}/initramfs-base-temp/"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
 	rm -rf "${TEMP}/initramfs-base-temp" > /dev/null
@@ -412,11 +416,16 @@ append_auxilary() {
 		cp "${CMD_LINUXRC}" "${TEMP}/initramfs-aux-temp/init"
 		print_info 2 "        >> Copying user specified linuxrc: ${CMD_LINUXRC} to init"
 	else	
-		if [ -f "${GK_SHARE}/arch/${ARCH}/linuxrc" ]
+		if isTrue ${NETBOOT}
 		then
-			cp "${GK_SHARE}/arch/${ARCH}/linuxrc" "${TEMP}/initramfs-aux-temp/init"
+			cp "${GK_SHARE}/netboot/linuxrc.x" "${TEMP}/initramfs-aux-temp/init"
 		else
-			cp "${GK_SHARE}/defaults/linuxrc" "${TEMP}/initramfs-aux-temp/init"
+			if [ -f "${GK_SHARE}/arch/${ARCH}/linuxrc" ]
+			then
+				cp "${GK_SHARE}/arch/${ARCH}/linuxrc" "${TEMP}/initramfs-aux-temp/init"
+			else
+				cp "${GK_SHARE}/defaults/linuxrc" "${TEMP}/initramfs-aux-temp/init"
+			fi
 		fi
 	fi
 
@@ -476,6 +485,13 @@ append_auxilary() {
 	chmod +x "${TEMP}/initramfs-aux-temp/etc/initrd.scripts"
 	chmod +x "${TEMP}/initramfs-aux-temp/etc/initrd.defaults"
 	chmod +x "${TEMP}/initramfs-aux-temp/sbin/modprobe"
+
+	if isTrue ${NETBOOT}
+	then
+		cd "${GK_SHARE}/netboot/misc"
+		cp -pPRf * "${TEMP}/initramfs-aux-temp/"
+	fi
+
 	cd "${TEMP}/initramfs-aux-temp/"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
 	cd "${TEMP}"

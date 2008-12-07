@@ -2,6 +2,10 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  07 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh,
+  netboot/linuxrc.x:
+  Move all netboot logic from catalyst into gk
+
   07 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/udhcpc.scripts,
   gen_cmdline.sh, gen_determineargs.sh, netboot/linuxrc.x:
   Initial support for --netboot option integrate functionality from netboot
