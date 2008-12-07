@@ -84,7 +84,7 @@ StartUp() {
 		syslogd
 
 		#// Hostname
-		hostname netboot-@@RELVER@@
+		hostname netboot
 
 		#// Setup dropbear (sshd)
 		echo -e ""
