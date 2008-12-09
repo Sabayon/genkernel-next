@@ -296,15 +296,15 @@ append_luks() {
 		if is_static /bin/cryptsetup
 		then
 			print_info 1 "Including LUKS support"
-			rm -f ${TEMP}/initramfs-aux-temp/sbin/cryptsetup
-			cp /bin/cryptsetup ${TEMP}/initramfs-aux-temp/sbin/cryptsetup
-			chmod +x "${TEMP}/initramfs-aux-temp/sbin/cryptsetup"
+			rm -f ${TEMP}/initramfs-luks-temp/sbin/cryptsetup
+			cp /bin/cryptsetup ${TEMP}/initramfs-luks-temp/sbin/cryptsetup
+			chmod +x "${TEMP}/initramfs-luks-temp/sbin/cryptsetup"
 		elif is_static /sbin/cryptsetup
 		then
 			print_info 1 "Including LUKS support"
-			rm -f ${TEMP}/initramfs-aux-temp/sbin/cryptsetup
-			cp /sbin/cryptsetup ${TEMP}/initramfs-aux-temp/sbin/cryptsetup
-		chmod +x "${TEMP}/initramfs-aux-temp/sbin/cryptsetup"
+			rm -f ${TEMP}/initramfs-luks-temp/sbin/cryptsetup
+			cp /sbin/cryptsetup ${TEMP}/initramfs-luks-temp/sbin/cryptsetup
+		chmod +x "${TEMP}/initramfs-luks-temp/sbin/cryptsetup"
 
 		else
 			print_info 1 "LUKS support requires static cryptsetup at /bin/cryptsetup or /sbin/cryptsetup"
