@@ -328,12 +328,12 @@ compile_busybox() {
 	then
 		[ -f "${BUSYBOX_CONFIG}" ] ||
 			gen_die "Could not find busybox config file: ${BUSYBOX_CONFIG}"
-	elif [ -f "${GK_SHARE}/defaults/busy-config" ]
-	then
-		BUSYBOX_CONFIG="${GK_SHARE}/defaults/busy-config"
 	elif [ -f "$(arch_replace "${GK_SHARE}/arch/%%ARCH%%/busy-config")" ]
 	then
 		BUSYBOX_CONFIG="$(arch_replace "${GK_SHARE}/arch/%%ARCH%%/busy-config")"
+	elif [ -f "${GK_SHARE}/defaults/busy-config" ]
+	then
+		BUSYBOX_CONFIG="${GK_SHARE}/defaults/busy-config"
 	else
 		gendie "Could not find a busybox config file"
 	fi
