@@ -2,6 +2,13 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  12 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> arch/alpha/busy-config,
+  arch/ia64/busy-config, arch/mips/busy-config, arch/parisc/busy-config,
+  arch/parisc64/busy-config, arch/ppc/busy-config, arch/ppc64/busy-config,
+  arch/sparc/busy-config, arch/sparc64/busy-config, arch/um/busy-config,
+  arch/x86/busy-config, arch/x86_64/busy-config, defaults/busy-config:
+  Enable CONFIG_MAKEDEVS in busy-config for netboot
+
   09 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
   s/aux/luks/ for gentoo bug #250330
 

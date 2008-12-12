@@ -240,7 +240,7 @@ CONFIG_MESG=y
 # CONFIG_DC is not set
 # CONFIG_LAST is not set
 # CONFIG_HDPARM is not set
-# CONFIG_MAKEDEVS is not set
+CONFIG_MAKEDEVS=y
 # CONFIG_MT is not set
 # CONFIG_STRINGS is not set
 # CONFIG_TIME is not set
