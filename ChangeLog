@@ -2,6 +2,12 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  12 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> gen_compile.sh,
+  genkernel.conf:
+  Remove BUSYBOX_CONFIG from genkernel.conf Add search order for
+  busy-config: user-specified, defaults/busy-config,
+  arch/%%ARCH%%/busy-config
+
   12 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> -arch/x86/nb-busybox.cf,
   -defaults/nb-busybox.cf:
   Remove old nb-busybox.cf files that aren't used anymore

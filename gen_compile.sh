@@ -323,8 +323,20 @@ compile_kernel() {
 compile_busybox() {
 	[ -f "${BUSYBOX_SRCTAR}" ] ||
 		gen_die "Could not find busybox source tarball: ${BUSYBOX_SRCTAR}!"
-	[ -f "${BUSYBOX_CONFIG}" ] ||
-		gen_die "Cound not find busybox config file: ${BUSYBOX_CONFIG}!"
+
+	if [ -n "${BUSYBOX_CONFIG}" ]
+	then
+		[ -f "${BUSYBOX_CONFIG}" ] ||
+			gen_die "Could not find busybox config file: ${BUSYBOX_CONFIG}"
+	elif [ -f "${GK_SHARE}/defaults/busy-config" ]
+	then
+		BUSYBOX_CONFIG="${GK_SHARE}/defaults/busy-config"
+	elif [ -f "$(arch_replace "${GK_SHARE}/arch/%%ARCH%%/busy-config")" ]
+	then
+		BUSYBOX_CONFIG="$(arch_replace "${GK_SHARE}/arch/%%ARCH%%/busy-config")"
+	else
+		gendie "Could not find a busybox config file"
+	fi
 
 	# Delete cache if stored config's MD5 does not match one to be used
 	if [ -f "${BUSYBOX_BINCACHE}" ]
