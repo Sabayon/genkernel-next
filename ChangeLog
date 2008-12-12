@@ -2,6 +2,10 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  12 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> -arch/x86/nb-busybox.cf,
+  -defaults/nb-busybox.cf:
+  Remove old nb-busybox.cf files that aren't used anymore
+
   12 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> +arch/arm/busy-config,
   +arch/arm/config.sh, +arch/arm/modules_load:
   Add support for arm from armin76
