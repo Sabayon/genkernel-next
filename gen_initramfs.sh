@@ -48,7 +48,7 @@ append_busybox() {
 		gen_die 'Could not extract busybox bincache!'
 	chmod +x "${TEMP}/initramfs-busybox-temp/bin/busybox"
 
-	mkdir -p "${TEMP/initramfs-busybox-temp/usr/share/udhcpc/"
+	mkdir -p "${TEMP}/initramfs-busybox-temp/usr/share/udhcpc/"
 	cp "${GK_SHARE}/defaults/udhcpc.scripts" ${TEMP}/initramfs-busybox-temp/usr/share/udhcpc/default.script
 	chmod +x "${TEMP}/initramfs-busybox-temp/usr/share/udhcpc/default.script"
 
