@@ -92,7 +92,7 @@ longusage() {
   echo "    --no-busybox    Do not include busybox in the initramfs."
   echo "    --unionfs       Include support for unionfs"
   echo "    --netboot		Create a self-contained env in the initramfs"
-  echo "    --real-root=<foo>	Specify a default for real_root=
+  echo "    --real-root=<foo>	Specify a default for real_root="
   echo "  Internals"
   echo "	--arch-override=<arch>	Force to arch instead of autodetect"
   echo "	--cachedir=<dir>	Override the default cache location"
