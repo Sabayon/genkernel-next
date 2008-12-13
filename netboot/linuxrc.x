@@ -10,7 +10,7 @@ export PATH="/usr/sbin:/usr/bin:/sbin:/bin"
 
 BasicSetup() {
 	#// Copyright year, Build date in YYYYMMDD format, and in MMDDYYYY to make busybox 'date' happy
-	MYDATE="`cat /etc/build_date`"
+	MYDATE="`/bin/cat /etc/build_date`"
 	CPYYEAR="$(echo ${MYDATE} | cut -c 1-4)"
 	BBDATE="$(echo ${MYDATE} | cut -c 5-8)$(echo ${MYDATE} | cut -c 1-4)"
 	DISDATE="$(echo ${MYDATE} | cut -c 7-8) $(echo ${MYDATE} | cut -c 5-6) $(echo ${MYDATE} | cut -c 1-4)"
@@ -97,7 +97,6 @@ StartUp() {
 
 		#// Misc tasks
 		chmod +x /bin/net-setup
-		chmod +x /usr/share/udhcpc/default.script
 	fi
 
 }

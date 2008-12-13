@@ -42,15 +42,18 @@ append_busybox() {
 	then
 		rm -rf "${TEMP}/initramfs-busybox-temp" > /dev/null
 	fi
-	mkdir -p "${TEMP}/initramfs-busybox-temp/bin/" 
 
-	cp "${GK_SHARE}/defaults/udhcpc.scripts" ${TEMP}/initramfs-busybox-temp/bin/
-	chmod +x "${TEMP}/initramfs-busybox-temp/bin/udhcpc.scripts"
+	mkdir -p "${TEMP}/initramfs-busybox-temp/bin/" 
 	tar -xjf "${BUSYBOX_BINCACHE}" -C "${TEMP}/initramfs-busybox-temp/bin" busybox ||
 		gen_die 'Could not extract busybox bincache!'
 	chmod +x "${TEMP}/initramfs-busybox-temp/bin/busybox"
 
-	for i in '[' ash sh mount uname echo cut; do
+	mkdir -p "${TEMP/initramfs-busybox-temp/usr/share/udhcpc/"
+	cp "${GK_SHARE}/defaults/udhcpc.scripts" ${TEMP}/initramfs-busybox-temp/usr/share/udhcpc/default.script
+	chmod +x "${TEMP}/initramfs-busybox-temp/usr/share/udhcpc/default.script"
+
+	# Set up a few default symlinks
+	for i in '[' ash sh mount uname echo cut cat; do
 		rm -f ${TEMP}/initramfs-busybox-temp/bin/$i > /dev/null
 		ln ${TEMP}/initramfs-busybox-temp/bin/busybox ${TEMP}/initramfs-busybox-temp/bin/$i ||
 			gen_die "Busybox error: could not link ${i}!"

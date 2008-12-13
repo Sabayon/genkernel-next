@@ -2,6 +2,10 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  13 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts,
+  gen_initramfs.sh, netboot/linuxrc.x:
+  Move udhcpc's script to default location
+
   13 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/busy-config:
   Enable support klogd and syslogd for netboot
 
