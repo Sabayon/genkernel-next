@@ -105,6 +105,7 @@ determine_real_args() {
 	set_config_with_override 1 BUSYBOX              CMD_BUSYBOX              "yes"
 	set_config_with_override 1 UNIONFS				CMD_UNIONFS
 	set_config_with_override 1 NETBOOT				CMD_NETBOOT
+	set_config_with_override 2 REAL_ROOT			CMD_REAL_ROOT
 	set_config_with_override 1 DISKLABEL            CMD_DISKLABEL
 	set_config_with_override 1 LUKS                 CMD_LUKS
 	set_config_with_override 1 MDADM                CMD_MDADM

@@ -92,6 +92,7 @@ longusage() {
   echo "    --no-busybox    Do not include busybox in the initramfs."
   echo "    --unionfs       Include support for unionfs"
   echo "    --netboot		Create a self-contained env in the initramfs"
+  echo "    --real-root=<foo>	Specify a default for real_root=
   echo "  Internals"
   echo "	--arch-override=<arch>	Force to arch instead of autodetect"
   echo "	--cachedir=<dir>	Override the default cache location"
@@ -253,6 +254,10 @@ parse_cmdline() {
 		--netboot)
 			CMD_NETBOOT=1
 			print_info 2 "CMD_NETBOOT: ${CMD_NETBOOT}"
+			;;
+		--real-root=*)
+			CMD_REAL_ROOT=`parse_opt "$*"`
+			print_info 2 "CMD_REAL_ROOT: ${CMD_REAL_ROOT}"
 			;;
 		--slowusb)
 			CMD_SLOWUSB=1

@@ -451,6 +451,11 @@ append_auxilary() {
 	else
 		cp "${GK_SHARE}/defaults/initrd.defaults" "${TEMP}/initramfs-aux-temp/etc/initrd.defaults"
 	fi
+
+	if [ -n "${REAL_ROOT}" ]
+	then
+		sed -i "s/^REAL_ROOT=.*$/REAL_ROOT='${REAL_ROOT}'/" "${TEMP}/initramfs-aux-temp/etc/initrd.defaults"
+	fi
 	
 	echo -n 'HWOPTS="$HWOPTS ' >> "${TEMP}/initramfs-aux-temp/etc/initrd.defaults"	
 	for group_modules in ${!MODULES_*}; do

@@ -2,6 +2,11 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  13 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/linuxrc,
+  gen_cmdline.sh, gen_determineargs.sh, gen_initramfs.sh:
+  Add --real-root=<foo> parameter to specify a default for real_root= in the
+  initramfs for gentoo bug #249783
+
   12 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> -arch/alpha/busy-config,
   -arch/arm/busy-config, -arch/ia64/busy-config, -arch/mips/busy-config,
   -arch/parisc/busy-config, -arch/parisc64/busy-config,
