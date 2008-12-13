@@ -53,25 +53,34 @@ StartUp() {
 		/sbin/mdev -s						# have mdev populate /dev
 
 		#// Create standard (non-mdev) devices
-		makedevs	/dev/md		b 9 0 0 7
-		makedevs	/dev/ptyp	c 2 0 0 9
-		makedevs 	/dev/tty	c 4 0 0 12
-		makedevs	/dev/ttyp	c 3 0 0 9
-		makedevs	/dev/ttyq	c 3 16 0 9
-		makedevs	/dev/ttyS	c 4 64 0 3
-		mknod		/dev/console	c 5 1
-		mknod		/dev/kmsg	c 1 11
-		mknod		/dev/null	c 1 3
-		mknod		/dev/tty	c 5 0
-		mknod		/dev/urandom	c 1 9
-		ln -s		/dev/urandom	/dev/random
-		mknod		/dev/zero	c 1 5
+		if [ ! -f /dev/md0 ]
+		then
+			makedevs	/dev/md		b 9 0 0 7
+		fi
+
+		if [ ! -f /dev/tty0 ]
+		then
+			makedevs 	/dev/tty	c 4 0 0 12
+		fi
+
+		# We probably don't need any of these anymore with mdev
+#		makedevs	/dev/ptyp	c 2 0 0 9
+#		makedevs	/dev/ttyp	c 3 0 0 9
+#		makedevs	/dev/ttyq	c 3 16 0 9
+#		makedevs	/dev/ttyS	c 4 64 0 3
+#		mknod		/dev/console	c 5 1
+#		mknod		/dev/kmsg	c 1 11
+#		mknod		/dev/null	c 1 3
+#		mknod		/dev/tty	c 5 0
+#		mknod		/dev/urandom	c 1 9
+#		ln -s		/dev/urandom	/dev/random
+#		mknod		/dev/zero	c 1 5
 
 		#// Create std* devices
-	        ln -snf /proc/self/fd		/dev/fd
-	        ln -snf /proc/self/fd/0		/dev/stdin
-	        ln -snf /proc/self/fd/1		/dev/stdout
-	        ln -snf /proc/self/fd/2		/dev/stderr
+		ln -snf /proc/self/fd /dev/fd
+		ln -snf /proc/self/fd/0 /dev/stdin
+		ln -snf /proc/self/fd/1 /dev/stdout
+		ln -snf /proc/self/fd/2 /dev/stderr
 
 		#// Make some misc directories
 		mkdir	/var/log
@@ -98,7 +107,6 @@ StartUp() {
 		#// Misc tasks
 		chmod +x /bin/net-setup
 	fi
-
 }
 
 #//--------------------------------------------------------------------------------
@@ -314,6 +322,7 @@ case "${ARCHINFO}" in
 		mount -t openpromfs openprom /proc/openprom
 	;;
 	ppc*)		DetectPpc	;;
+	*)			MACHTYPE=$ARCHINFO	;;
 esac
 
 DetectNetwork
