@@ -292,30 +292,32 @@ append_luks() {
 	then
 		rm -r "${TEMP}/initramfs-luks-temp/"
 	fi
-	mkdir -p "${TEMP}/initramfs-luks-temp/lib/luks"
+
+	mkdir -p "${TEMP}/initramfs-luks-temp/lib/luks/"
+	mkdir -p "${TEMP}/initramfs-luks-temp/sbin"
 	cd "${TEMP}/initramfs-luks-temp"
+
 	if isTrue ${LUKS}
 	then
 		if is_static /bin/cryptsetup
 		then
 			print_info 1 "Including LUKS support"
-			rm -f ${TEMP}/initramfs-luks-temp/sbin/cryptsetup
 			cp /bin/cryptsetup ${TEMP}/initramfs-luks-temp/sbin/cryptsetup
 			chmod +x "${TEMP}/initramfs-luks-temp/sbin/cryptsetup"
 		elif is_static /sbin/cryptsetup
 		then
 			print_info 1 "Including LUKS support"
-			rm -f ${TEMP}/initramfs-luks-temp/sbin/cryptsetup
 			cp /sbin/cryptsetup ${TEMP}/initramfs-luks-temp/sbin/cryptsetup
-		chmod +x "${TEMP}/initramfs-luks-temp/sbin/cryptsetup"
-
+			chmod +x "${TEMP}/initramfs-luks-temp/sbin/cryptsetup"
 		else
 			print_info 1 "LUKS support requires static cryptsetup at /bin/cryptsetup or /sbin/cryptsetup"
 			print_info 1 "Not including LUKS support"
 		fi
 	fi
+
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 		|| gen_die "appending cryptsetup to cpio"
+
 	cd "${TEMP}"
 	rm -r "${TEMP}/initramfs-luks-temp/"
 }
