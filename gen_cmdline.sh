@@ -381,7 +381,7 @@ parse_cmdline() {
 			print_info 2 "CMD_NOINSTALL: ${CMD_NOINSTALL}"
 			;;
 		--no-ramdisk-modules)
-			CMD_NOiRAMDISKMODULES=1
+			CMD_NORAMDISKMODULES=1
 			print_info 2 "CMD_NORAMDISKMODULES: ${CMD_NORAMDISKMODULES}"
 			;;
 		--all-ramdisk-modules)
