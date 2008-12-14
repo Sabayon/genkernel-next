@@ -2,6 +2,18 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  14 Dec 2008; Chris Gianelloni <wolf31o2@wolf31o2.org>
+  arch/alpha/config.sh, arch/arm/config.sh, arch/ia64/config.sh,
+  arch/mips/config.sh, arch/parisc/config.sh, arch/parisc64/config.sh,
+  arch/ppc/config.sh, arch/ppc64/config.sh, arch/sparc/config.sh,
+  arch/sparc64/config.sh, arch/um/config.sh, arch/x86/config.sh,
+  arch/x86_64/config.sh, defaults/config.sh, defaults/initrd.defaults,
+  defaults/initrd.scripts, defaults/linuxrc, defaults/udhcpc.scripts,
+  gen_compile.sh, gen_configkernel.sh, gen_determineargs.sh,
+  gen_initramfs.sh, gen_moddeps.sh, gen_package.sh, genkernel.conf,
+  netboot/linuxrc.x, netboot/misc/bin/net-setup:
+  Setting executable bit properly on shell scripts and configuration files.
+
   13 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
   Create /sbin directory in append_luks for bug #250330
 
