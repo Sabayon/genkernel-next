@@ -2,6 +2,9 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  14 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> gen_compile.sh:
+  Explicitly set UTILS_{CC,LD,AS} if UTILS_CROSS_COMPILE is set
+
   14 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> gen_cmdline.sh:
   Typo fix for gentoo bug #250875
 
