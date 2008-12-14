@@ -53,12 +53,12 @@ StartUp() {
 		/sbin/mdev -s						# have mdev populate /dev
 
 		#// Create standard (non-mdev) devices
-		if [ ! -f /dev/md0 ]
+		if [ ! -e /dev/md0 ]
 		then
 			makedevs	/dev/md		b 9 0 0 7
 		fi
 
-		if [ ! -f /dev/tty0 ]
+		if [ ! -e /dev/tty0 ]
 		then
 			makedevs 	/dev/tty	c 4 0 0 12
 		fi
@@ -93,16 +93,19 @@ StartUp() {
 		#// Hostname
 		hostname netboot
 
-		#// Setup dropbear (sshd)
-		echo -e ""
-		mkdir /etc/dropbear
-		echo -e ">>> Generating RSA hostkey ..."
-		dropbearkey -t rsa -f /etc/dropbear/dropbear_rsa_host_key
-		echo -e ""
-		echo -e ">>> Generating DSS hostkey ..."
-		dropbearkey -t dss -f /etc/dropbear/dropbear_dss_host_key
-		echo -e ""
-		dropbear
+		if [ -n "`which dropbear 2>/dev/null`" ]
+		then
+			# Setup dropbear (sshd)
+			echo -e ""
+			mkdir /etc/dropbear
+			echo -e ">>> Generating RSA hostkey ..."
+			dropbearkey -t rsa -f /etc/dropbear/dropbear_rsa_host_key
+			echo -e ""
+			echo -e ">>> Generating DSS hostkey ..."
+			dropbearkey -t dss -f /etc/dropbear/dropbear_dss_host_key
+			echo -e ""
+			dropbear
+		fi
 
 		#// Misc tasks
 		chmod +x /bin/net-setup
