@@ -103,6 +103,10 @@ set_bootloader_grub_duplicate_default() {
 
 	# Find default entry
 	default=$(sed -rn '/^[[:space:]]*default[[:space:]=]/s/^.*default[[:space:]=]+([[:alnum:]]+).*$/\1/p' "${GRUB_CONF}")
+    if [ -z "${default}" ]; then
+		print_warning 1 "No default entry found...assuming 0"
+		default=0
+	fi
 	if ! echo ${default} | grep -q '^[0-9]\+$'; then
 		print_error 1 "We don't support non-numeric (such as 'saved') default values...skipping update"
 		return 0
