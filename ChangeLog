@@ -2,6 +2,9 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  15 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
+  Use : as a regex separator instead of / since REAL_ROOT will have / in it
+
   15 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> gen_bootloader.sh:
   Add check for existing grub.conf entry for kernel
 

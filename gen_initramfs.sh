@@ -459,7 +459,7 @@ append_auxilary() {
 
 	if [ -n "${REAL_ROOT}" ]
 	then
-		sed -i "s/^REAL_ROOT=.*$/REAL_ROOT='${REAL_ROOT}'/" "${TEMP}/initramfs-aux-temp/etc/initrd.defaults"
+		sed -i "s:^REAL_ROOT=.*$:REAL_ROOT='${REAL_ROOT}':" "${TEMP}/initramfs-aux-temp/etc/initrd.defaults"
 	fi
 	
 	echo -n 'HWOPTS="$HWOPTS ' >> "${TEMP}/initramfs-aux-temp/etc/initrd.defaults"	
