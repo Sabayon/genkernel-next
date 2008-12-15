@@ -2,6 +2,10 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  15 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> gen_bootloader.sh:
+  Adding code that duplicates default grub.conf entry to replace old awk
+  script. Based on code written by Mike Auty <ikelos@gentoo.org>
+
   15 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> +gen_bootloader.sh,
   gen_cmdline.sh, gen_determineargs.sh, genkernel:
   Initial commit for re-adding support for --bootloader=grub

@@ -79,6 +79,54 @@ set_bootloader_grub() {
 
 	else
 		# The grub.conf already exists, so let's try to duplicate the default entry
+		set_bootloader_grub_duplicate_default "${GRUB_CONF}"
 	fi
 
+}
+
+set_bootloader_grub_duplicate_default_replace_kernel_initrd() {
+	sed -r -e "/^[[:space:]]*kernel/s/kernel-[[:alnum:][:punct:]]+/kernel-${KNAME}-${ARCH}-${KV}/" - |
+	sed -r -e "/^[[:space:]]*initrd/s/init(rd|ramfs)-[[:alnum:][:punct:]]+/init\1-${KNAME}-${ARCH}-${KV}/"
+}
+
+set_bootloader_grub_duplicate_default() {
+	local GRUB_CONF=$1
+	local GRUB_CONF_TMP="${GRUB_CONF}.tmp"
+	
+	line_count=$(wc -l < "${GRUB_CONF}")
+	line_nums="$(grep -n "^title" "${GRUB_CONF}" | cut -d: -f1)"
+	if [ -z "${line_nums}" ]; then
+		print_error 1 "No current 'title' entries found in your grub.conf...skipping update"
+		return 0
+	fi
+	line_nums="${line_nums} $((${line_count}+1))"
+
+	# Find default entry
+	default=$(sed -rn '/^[[:space:]]*default[[:space:]=]/s/^.*default[[:space:]=]+([[:alnum:]]+).*$/\1/p' "${GRUB_CONF}")
+	if ! echo ${default} | grep -q '^[0-9]\+$'; then
+		print_error 1 "We don't support non-numeric (such as 'saved') default values...skipping update"
+		return 0
+	fi
+
+	# Grub defaults are 0 based, cut is 1 based
+	# Figure out where the default entry lives
+	startstop=$(echo ${line_nums} | cut -d" " -f$((${default}+1))-$((${default}+2)))
+	startline=$(echo ${startstop} | cut -d" " -f1)
+	stopline=$(echo ${startstop} | cut -d" " -f2)
+
+	# Write out the bits before the default entry
+	sed -n 1,$((${startline}-1))p "${GRUB_CONF}" > "${GRUB_CONF_TMP}"
+
+	# Put in our title
+	echo "title=Gentoo Linux (${KV})" >> "${GRUB_CONF_TMP}"
+
+	# Pass the default entry (minus the title) through to the replacement function and pipe the output to GRUB_CONF_TMP
+	sed -n $((${startline}+1)),$((${stopline}-1))p "${GRUB_CONF}" | set_bootloader_grub_duplicate_default_replace_kernel_initrd >> "${GRUB_CONF_TMP}"
+
+	# Finish off with everything including the previous default entry
+	sed -n ${startline},${line_count}p "${GRUB_CONF}" >> "${GRUB_CONF_TMP}"
+
+	cp "${GRUB_CONF}" "${GRUB_CONF}.bak"
+	cp "${GRUB_CONF_TMP}" "${GRUB_CONF}"
+	rm "${GRUB_CONF_TMP}"
 }
