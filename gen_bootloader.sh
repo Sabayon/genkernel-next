@@ -79,6 +79,11 @@ set_bootloader_grub() {
 
 	else
 		# The grub.conf already exists, so let's try to duplicate the default entry
+		if set_bootloader_grub_check_for_existing_entry "${GRUB_CONF}"; then
+			print_warning 1 "An entry was already found for a kernel/initramfs with this name...skipping update"
+			return 0
+		fi
+
 		set_bootloader_grub_duplicate_default "${GRUB_CONF}"
 	fi
 
@@ -87,6 +92,16 @@ set_bootloader_grub() {
 set_bootloader_grub_duplicate_default_replace_kernel_initrd() {
 	sed -r -e "/^[[:space:]]*kernel/s/kernel-[[:alnum:][:punct:]]+/kernel-${KNAME}-${ARCH}-${KV}/" - |
 	sed -r -e "/^[[:space:]]*initrd/s/init(rd|ramfs)-[[:alnum:][:punct:]]+/init\1-${KNAME}-${ARCH}-${KV}/"
+}
+
+set_bootloader_grub_check_for_existing_entry() {
+	local GRUB_CONF=$1
+	if grep -q "^[[:space:]]*kernel[[:space:]=]*.*/kernel-${KNAME}-${ARCH}-${KV}\>" "${GRUB_CONF}" &&
+		grep -q "^[[:space:]]*initrd[[:space:]=]*.*/initramfs-${KNAME}-${ARCH}-${KV}\>" "${GRUB_CONF}"
+	then
+		return 0
+	fi
+	return 1
 }
 
 set_bootloader_grub_duplicate_default() {
