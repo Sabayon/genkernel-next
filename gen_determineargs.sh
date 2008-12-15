@@ -138,6 +138,16 @@ determine_real_args() {
 	BLKID_BINCACHE=`arch_replace "${BLKID_BINCACHE}"`
 	FUSE_BINCACHE=`arch_replace "${FUSE_BINCACHE}"`
 	UNIONFS_FUSE_BINCACHE=`arch_replace "${UNIONFS_FUSE_BINCACHE}"`
+
+	if [ -n "${CMD_BOOTLOADER}" ]
+	then
+		BOOTLOADER="${CMD_BOOTLOADER}"
+		if [ "${CMD_BOOTLOADER}" != "${CMD_BOOTLOADER/:/}" ]
+		then
+			BOOTFS=`echo "${CMD_BOOTLOADER}" | cut -f2- -d:`
+			BOOTLOADER=`echo "${CMD_BOOTLOADER}" | cut -f1 -d:`
+		fi
+	fi
 	
 	if [ "${NO_KERNEL_SOURCES}" != "1" ]
 	then
