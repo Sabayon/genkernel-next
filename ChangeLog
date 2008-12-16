@@ -2,6 +2,10 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  16 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> netboot/linuxrc.x,
+  +netboot/misc/bin/ashlogin:
+  Use getty to launch ash, so that we can use ^C and friends
+
   16 Dec 2008; Chris Gianelloni <wolf31o2@wolf31o2.org> +BUGS:
   Adding a BUGS file, where we can list bugs that we have found in genkernel
   that need to be resolved.

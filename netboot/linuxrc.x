@@ -304,7 +304,10 @@ LaunchShell() {
 
 	#// All Done!
 	echo -e ""
-	/bin/ash
+#	/bin/ash
+	for i in 1 2 3 4; do
+		getty -n -l /bin/ashlogin tty${i} linux &
+	done
 }
 
 #//--------------------------------------------------------------------------------
