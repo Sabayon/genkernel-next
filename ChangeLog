@@ -2,6 +2,9 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  16 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> netboot/linuxrc.x:
+  Run getty for tty1 in the foreground
+
   16 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> netboot/linuxrc.x,
   +netboot/misc/bin/ashlogin:
   Use getty to launch ash, so that we can use ^C and friends

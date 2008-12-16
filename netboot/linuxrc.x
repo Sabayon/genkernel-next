@@ -305,9 +305,13 @@ LaunchShell() {
 	#// All Done!
 	echo -e ""
 #	/bin/ash
-	for i in 1 2 3 4; do
+
+	for i in 2 3 4; do
 		getty -n -l /bin/ashlogin tty${i} linux &
 	done
+
+	# Run this one in the foreground, so that our pid 1 doesn't exit
+	getty -n -l /bin/ashlogin tty1 linux
 }
 
 #//--------------------------------------------------------------------------------
