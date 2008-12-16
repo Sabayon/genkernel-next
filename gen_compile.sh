@@ -335,6 +335,12 @@ compile_busybox() {
 	then
 		[ -f "${BUSYBOX_CONFIG}" ] ||
 			gen_die "Could not find busybox config file: ${BUSYBOX_CONFIG}"
+	elif isTrue "${NETBOOT}" && [ -f "$(arch_replace "${GK_SHARE}/arch/%%ARCH%%/netboot-busy-config")" ]
+	then
+		BUSYBOX_CONFIG="$(arch_replace "${GK_SHARE}/arch/%%ARCH%%/netboot-busy-config")"
+	elif isTrue "${NETBOOT}" && [ -f "${GK_SHARE}/netboot/busy-config" ]
+	then
+		BUSYBOX_CONFIG="${GK_SHARE}/netboot/busy-config"
 	elif [ -f "$(arch_replace "${GK_SHARE}/arch/%%ARCH%%/busy-config")" ]
 	then
 		BUSYBOX_CONFIG="$(arch_replace "${GK_SHARE}/arch/%%ARCH%%/busy-config")"
@@ -342,7 +348,7 @@ compile_busybox() {
 	then
 		BUSYBOX_CONFIG="${GK_SHARE}/defaults/busy-config"
 	else
-		gendie "Could not find a busybox config file"
+		gen_die "Could not find a busybox config file"
 	fi
 
 	# Delete cache if stored config's MD5 does not match one to be used
