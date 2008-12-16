@@ -1,0 +1,9 @@
+This document is a work-in-progress to describe the workflow through the various
+parts of genkernel so we can split the code into modular chunks.
+
+Phases:
+
+- read configs
+- source global scripts
+- 
+
