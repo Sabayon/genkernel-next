@@ -2,6 +2,10 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  16 Dec 2008; Chris Gianelloni <wolf31o2@wolf31o2.org> +BUGS:
+  Adding a BUGS file, where we can list bugs that we have found in genkernel
+  that need to be resolved.
+
   16 Dec 2008; Chris Gianelloni <wolf31o2@wolf31o2.org> +HACKING:
   Adding a HACKING file, which I will use to document the various phases of
   genkernel so we can split up the default functions and also so we can
