@@ -303,16 +303,12 @@ LaunchShell() {
 	#// Completed Startup
 	touch /tmp/.startup
 
-	#// All Done!
-	echo -e ""
-#	/bin/ash
-
-	for i in 2 3 4; do
-		getty -n -l /bin/ashlogin tty${i} &
+	for i in 2 3 4 5 6; do
+		getty -n -l /bin/ashlogin 38400 tty${i} &
 	done
 
-	# Run this one in the foreground, so that our pid 1 doesn't exit
-	getty -n -l /bin/ashlogin tty1
+	# We run the getty for tty1 in the foreground so our pid 1 doesn't end
+	getty -n -l /bin/ashlogin 38400 tty1
 }
 
 #//--------------------------------------------------------------------------------
