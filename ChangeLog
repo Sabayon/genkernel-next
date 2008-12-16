@@ -2,6 +2,9 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  16 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> gen_compile.sh:
+  We don't need to add - to UTILS_CROSS_COMPILE since it's already there
+
   16 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/busy-config,
   gen_compile.sh, +netboot/busy-config:
   Separate out main and netboot busy-config

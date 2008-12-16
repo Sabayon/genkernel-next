@@ -35,9 +35,9 @@ compile_utils_args()
 
 	if [ -n "${UTILS_CROSS_COMPILE}" ]
 	then
-		UTILS_CC="${UTILS_CROSS_COMPILE}-gcc"
-		UTILS_LD="${UTILS_CROSS_COMPILE}-ld"
-		UTILS_AS="${UTILS_CROSS_COMPILE}-as"
+		UTILS_CC="${UTILS_CROSS_COMPILE}gcc"
+		UTILS_LD="${UTILS_CROSS_COMPILE}ld"
+		UTILS_AS="${UTILS_CROSS_COMPILE}as"
 	fi
 
 	if [ "${UTILS_ARCH}" != '' ]
