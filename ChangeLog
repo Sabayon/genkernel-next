@@ -3,6 +3,9 @@
 # Distributed under the GPL v2
 
   16 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> netboot/linuxrc.x:
+  Explicitly set /bin/ashlogin +x during boot
+
+  16 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> netboot/linuxrc.x:
   Run getty for tty1 in the foreground
 
   16 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> netboot/linuxrc.x,

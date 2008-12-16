@@ -109,6 +109,7 @@ StartUp() {
 
 		#// Misc tasks
 		chmod +x /bin/net-setup
+		chmod +x /bin/ashlogin
 	fi
 }
 
@@ -307,11 +308,11 @@ LaunchShell() {
 #	/bin/ash
 
 	for i in 2 3 4; do
-		getty -n -l /bin/ashlogin tty${i} linux &
+		getty -n -l /bin/ashlogin tty${i} &
 	done
 
 	# Run this one in the foreground, so that our pid 1 doesn't exit
-	getty -n -l /bin/ashlogin tty1 linux
+	getty -n -l /bin/ashlogin tty1
 }
 
 #//--------------------------------------------------------------------------------
