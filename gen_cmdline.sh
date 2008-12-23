@@ -524,7 +524,7 @@ parse_cmdline() {
 			BUILD_MODULES=1
 			BUILD_RAMDISK=1
 			;;
-		ramdisk)
+		ramdisk|initramfs)
 			BUILD_RAMDISK=1
 			;;
 		kernel)
