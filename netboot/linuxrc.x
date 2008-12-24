@@ -307,8 +307,13 @@ LaunchShell() {
 		getty -n -l /bin/ashlogin 38400 tty${i} &
 	done
 
-	# We run the getty for tty1 in the foreground so our pid 1 doesn't end
-	getty -n -l /bin/ashlogin 38400 tty1
+#	# We run the getty for tty1 in the foreground so our pid 1 doesn't end
+#	getty -n -l /bin/ashlogin 38400 tty1
+
+	# We were running the above code, but that doesn't work well on serial. Until
+	# we can autodetect a serial console and start a getty there, we'll just run
+	# ash on /dev/console
+	/bin/ash
 }
 
 #//--------------------------------------------------------------------------------
