@@ -86,6 +86,7 @@ longusage() {
   echo "	--slowusb		Enables extra pauses for slow USB CD boots"
   echo "	--bootloader=grub	Add new kernel to GRUB configuration"
   echo "	--linuxrc=<file>	Specifies a user created linuxrc"
+  echo "	--busybox-config=<file>	Specifies a user created busybox config"
   echo "	--disklabel		Include disk label and uuid support in your"
   echo "				ramdisk"
   echo "	--luks			Include LUKS support"
@@ -482,6 +483,10 @@ parse_cmdline() {
 		--linuxrc=*)
 			CMD_LINUXRC=`parse_opt "$*"`
 			print_info 2 "CMD_LINUXRC: ${CMD_LINUXRC}"
+			;;
+		--busybox-config=*)
+			CMD_BUSYBOX_CONFIG=`parse_opt "$*"`
+			print_info 2 "CMD_BUSYBOX_CONFIG: ${CMD_BUSYBOX_CONFIG}"
 			;;
 		--genzimage)
 			KERNEL_MAKE_DIRECTIVE_2='zImage.initrd'

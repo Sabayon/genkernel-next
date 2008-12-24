@@ -2,6 +2,10 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  24 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> gen_cmdline.sh,
+  gen_determineargs.sh:
+  Add --busybox-config= commandline option
+
   24 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> netboot/linuxrc.x:
   Revert to just running /bin/bash on /dev/console for serial. We still
   start getty on tty2-6
