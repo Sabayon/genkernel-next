@@ -96,8 +96,8 @@ set_bootloader_grub_duplicate_default_replace_kernel_initrd() {
 
 set_bootloader_grub_check_for_existing_entry() {
 	local GRUB_CONF=$1
-	if grep -q "^[[:space:]]*kernel[[:space:]=]*.*/kernel-${KNAME}-${ARCH}-${KV}\>" "${GRUB_CONF}" &&
-		grep -q "^[[:space:]]*initrd[[:space:]=]*.*/initramfs-${KNAME}-${ARCH}-${KV}\>" "${GRUB_CONF}"
+	if grep -q "^[[:space:]]*kernel[[:space:]=]*.*/kernel-${KNAME}-${ARCH}-${KV}\([[:space:]]\|$\)" "${GRUB_CONF}" &&
+		grep -q "^[[:space:]]*initrd[[:space:]=]*.*/initramfs-${KNAME}-${ARCH}-${KV}\([[:space:]]\|$\)" "${GRUB_CONF}"
 	then
 		return 0
 	fi

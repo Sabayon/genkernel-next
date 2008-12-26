@@ -2,6 +2,9 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  26 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> gen_bootloader.sh:
+  Modify grep regex to account for additional suffixes on old kernel names
+
   24 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> gen_cmdline.sh,
   gen_determineargs.sh:
   Add --busybox-config= commandline option
