@@ -13,12 +13,15 @@ get_official_arch() {
 			case "${ARCH}" in
 				i?86)
 					ARCH="x86"
-				;;
+					;;
 				mips|mips64)
 					ARCH="mips"
-				;;
+					;;
+				arm*)
+					ARCH=arm
+					;;
 				*)
-				;;
+					;;
 			esac
 		fi
 	fi

@@ -2,6 +2,9 @@
 # Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  31 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> gen_arch.sh:
+  Add case for arm* in get_official_arch()
+
   31 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> netboot/busy-config:
   Enable CONFIG_MKSWAP for netboot busybox
 
