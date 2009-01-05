@@ -1,6 +1,9 @@
 # ChangeLog for genkernel
-# Copyright 1999-2008 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
+# Copyright 1999-2009 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
+
+  05 Jan 2009; Chris Gianelloni <wolf31o2@wolf31o2.org> TODO, genkernel:
+  Version bump to 3.4.10.903 to resolve bug #250330.
 
   31 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> gen_arch.sh:
   Add case for arm* in get_official_arch()
