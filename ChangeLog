@@ -3,6 +3,9 @@
 # Distributed under the GPL v2
 
   08 Jan 2009; Chris Gianelloni <wolf31o2@wolf31o2.org> M:
+  Adding a note about documenting the code paths.
+
+  08 Jan 2009; Chris Gianelloni <wolf31o2@wolf31o2.org> M:
   Adding new boot support information to the TODO.
 
   05 Jan 2009; Chris Gianelloni <wolf31o2@wolf31o2.org> TODO, genkernel:

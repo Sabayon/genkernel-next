@@ -17,4 +17,4 @@
     - Multipath (dm-multipath)
     - ATA over Ethernet
 	- FCP over Ethernet
-
+- Document the different code paths and hooks for external modules
