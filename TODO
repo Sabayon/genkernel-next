@@ -25,8 +25,16 @@
 	  - Network
 	- Security Tokens for encrypted block devices
 - Document the different code paths and hooks for external modules
-- Add support for auto-detection
+- Add support for Hardware auto-detection
   - Fully automatic
+    - Verify required kernel support for detected hardware used at boot
+	- Automatically enable missing options
+	- All supported modules copied to initramfs via default modules_load
+	- Enable all "hot pluggable" devices (USB, PCMCIA, etc)
   - Partially automatic
+    - Verify required kernel support for detected hardware used at boot
+	- Automatically enable missing options
+    - Copy only required modules to initramfs via modules_load
   - Interactive
+    - Ask user what to do
 
