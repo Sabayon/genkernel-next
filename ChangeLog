@@ -2,6 +2,9 @@
 # Copyright 1999-2009 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
 # Distributed under the GPL v2
 
+  08 Jan 2009; Chris Gianelloni <wolf31o2@wolf31o2.org> M:
+  Adding new boot support information to the TODO.
+
   05 Jan 2009; Chris Gianelloni <wolf31o2@wolf31o2.org> TODO, genkernel:
   Version bump to 3.4.10.903 to resolve bug #250330.
 
