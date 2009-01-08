@@ -12,10 +12,21 @@
   - Hardware
     - Infiniband
 	- FCP
+	- Security Tokens (TPM, Smart Cards, etc)
   - Software
-    - iSCSI
-	- Multipath support for block devices (WIP: tsunam)
-    - Multipath updates/notification via multipathd (WIP: tsunam) 
-    - ATA over Ethernet
-	- FCP over Ethernet
+    - Block protocols over Ethernet/IP
+	  - iSCSI
+	  - ATA over Ethernet
+	  - FCP over Ethernet
+	  - Infiniband over IP
+	- Multipath support
+	  - Block devices (WIP: tsunam)
+	    - Updates/Notification via multipathd (WIP: tsunam)
+	  - Network
+	- Security Tokens for encrypted block devices
 - Document the different code paths and hooks for external modules
+- Add support for auto-detection
+  - Fully automatic
+  - Partially automatic
+  - Interactive
+
