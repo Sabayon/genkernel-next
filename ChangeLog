@@ -1,8 +1,12 @@
 # ChangeLog for genkernel
-# Copyright 1999-2009 Gentoo Foundation; 2008 Chris Gianelloni, Andrew Gaffney
+# Copyright 1999-2009 Gentoo Foundation; 2008-2009 Various authors (see AUTHORS)
 # Distributed under the GPL v2
 
-  08 Jan 2009; Chris Gianelloni <wolf31o2@wolf31o2.org> M:
+  08 Jan 2009; Chris Gianelloni <wolf31o2@wolf31o2.org> M, M:
+  Updated the AUTHORS section and the header for the ChangeLog, to reflect
+  that individual authors now retain their copyright to code they submit.
+
+  08 Jan 2009; Chris Gianelloni <wolf31o2@wolf31o2.org> TODO:
   Added a note about Security Tokens, cleaned up the block device section, and
   added a section about autodetection.
 

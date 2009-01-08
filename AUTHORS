@@ -1,3 +1,11 @@
+This list is split into two alphabetical lists.  The first is a listing of the
+authors of the original Gentoo package.  The copyrights for all of those code
+contributions belong to the Gentoo Foundation.  The second list is the authors
+whom have contributed significant code to the new project.  All code added to
+the new projects is copyrighted by the respective authors.
+
+Gentoo Foundation authors:
+------
 Luca Barbato <lu_zero@gentoo.org>
 Eric Edgar <rocket@gentoo.org>
 Mike Frysinger <vapier@gentoo.org>
@@ -15,3 +23,9 @@ Travis Tilley <lv@gentoo.org>
 Pieter van den Abeele <pvdabeel@gentoo.org>
 Jason Wever <weeve@gentoo.org>
 Tim Yamin <plasmaroo@gentoo.org>
+
+Copyright authors:
+------
+Andrew Gaffney <agaffney@gentoo.org>
+Chris Gianelloni <wolf31o2@wolf31o2.org>
+
