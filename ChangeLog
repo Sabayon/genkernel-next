@@ -1,6 +1,9 @@
 # ChangeLog for genkernel
-# Copyright 1999-2008 Gentoo Foundation; 2008-2009 Various authors (see AUTHORS)
+# Copyright 1999-2009 Gentoo Foundation; 2008-2009 Various authors (see AUTHORS)
 # Distributed under the GPL v2
+
+  16 Jan 2009; Andrew Gaffney <agaffney@gentoo.org> genkernel.conf:
+  Add commented out DISKLABEL=yes option for gentoo bug #229847
 
   08 Jan 2009; Chris Gianelloni <wolf31o2@wolf31o2.org> TODO:
   Added more verbosity to the auto-detection section.
