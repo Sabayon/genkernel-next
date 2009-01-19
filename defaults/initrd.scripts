@@ -459,30 +459,6 @@ load_modules() {
 	fi
 }
 
-detect_sbp2_devices() {
-	# http://www.linux1394.org/sbp2.php
-	
-	# /proc
-	# /proc/scsi/sbp2/0, /proc/scsi/sbp2/1, etc.
-	#
-	# You may manually add/remove SBP-2 devices via the procfs with:
-	# add-single-device <h> <b> <t> <l> or remove-single-device <h> <b> <t> <l>,
-	# where:
-	#
-	# <h> = host (starting at zero for first SCSI adapter)
-	# <b> = bus (normally zero)
-	# <t> = target (starting at zero for first SBP-2 device)
-	# <l> - lun (normally zero) 
-	# e.g. To manually add/detect a new SBP-2 device
-	# echo "scsi add-single-device 0 0 0 0" > /proc/scsi/scsi
-	# e.g. To manually remove a SBP-2 device after it's been unplugged
-	# echo "scsi remove-single-device 0 0 0 0" > /proc/scsi/scsi
-	# e.g. To check to see which SBP-2/SCSI devices are currently registered
-	# cat /proc/scsi/scsi 
-
-	[ -e /proc/scsi/scsi ] && echo 'scsi add-single-device 0 0 0 0' > /proc/scsi/scsi
-}
-
 setup_keymap() {
 	if [ "${DO_keymap}" ]
 	then
