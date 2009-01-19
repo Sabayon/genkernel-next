@@ -222,7 +222,6 @@ fi
 
 splash 'init'
 
-detect_sbp2_devices
 cmdline_hwopts
 
 # Mount sysfs
