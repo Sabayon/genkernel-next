@@ -2,6 +2,10 @@
 # Copyright 1999-2009 Gentoo Foundation; 2008-2009 Various authors (see AUTHORS)
 # Distributed under the GPL v2
 
+  04 Feb 2009; Andrew Gaffney <agaffney@gentoo.org> defaults/linuxrc:
+  Comment out the exec line for console=*, since it seems to blow up when
+  the param isn't a true device node, such as ttyS0,115200n8
+
   19 Jan 2009; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts,
   Remove detect_sbp2_devices() for gentoo bug #239474
 

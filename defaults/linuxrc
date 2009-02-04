@@ -132,7 +132,7 @@ do
 		# Redirect output to a specific tty
 		CONSOLE\=*|console\=*)
 			CONSOLE=`parse_opt "${x}"`
-			exec >${CONSOLE} <${CONSOLE} 2>&1
+#			exec >${CONSOLE} <${CONSOLE} 2>&1
 		;;
 		# /dev/md
 		lvmraid\=*)
