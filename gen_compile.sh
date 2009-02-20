@@ -298,10 +298,18 @@ compile_kernel() {
 		print_info 1 "        >> Starting supplimental compile of ${KV}: ${KERNEL_MAKE_DIRECTIVE_2}..."
 		compile_generic "${KERNEL_MAKE_DIRECTIVE_2}" kernel
 	fi
+
+	local tmp_kernel_binary=$(find_kernel_binary ${KERNEL_BINARY})
+	local tmp_kernel_binary2=$(find_kernel_binary ${KERNEL_BINARY_2})
+	if [ -z "${tmp_kernel_binary}" ]
+	then
+		gen_die "Cannot locate kernel binary"
+	fi
+
 	if ! isTrue "${CMD_NOINSTALL}"
 	then
 		copy_image_with_preserve "kernel" \
-			"${KERNEL_BINARY}" \
+			"${tmp_kernel_binary}" \
 			"kernel-${KNAME}-${ARCH}-${KV}"
 
 		copy_image_with_preserve "System.map" \
@@ -311,17 +319,17 @@ compile_kernel() {
 		if isTrue "${GENZIMAGE}"
 		then
 			copy_image_with_preserve "kernelz" \
-				"${KERNEL_BINARY_2}" \
+				"${tmp_kernel_binary2}" \
 				"kernelz-${KV}"
 		fi
 	else
-		cp "${KERNEL_BINARY}" "${TMPDIR}/kernel-${KNAME}-${ARCH}-${KV}" ||
+		cp "${tmp_kernel_binary}" "${TMPDIR}/kernel-${KNAME}-${ARCH}-${KV}" ||
 			gen_die "Could not copy the kernel binary to ${TMPDIR}!"
 		cp "System.map" "${TMPDIR}/System.map-${KNAME}-${ARCH}-${KV}" ||
 			gen_die "Could not copy System.map to ${TMPDIR}!"
 		if isTrue "${GENZIMAGE}"
 		then
-			cp "${KERNEL_BINARY_2}" "${TMPDIR}/kernelz-${KV}" ||
+			cp "${tmp_kernel_binary2}" "${TMPDIR}/kernelz-${KV}" ||
 				gen_die "Could not copy the kernelz binary to ${TMPDIR}!"
 		fi
 	fi

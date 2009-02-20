@@ -13,12 +13,18 @@ gen_minkernpackage() {
 			/bin/tar -xj -C ${TEMP}/minkernpackage -f ${KERNCACHE} kernelz-${ARCH}-${KV}
 		fi
 	else
+		local tmp_kernel_binary=$(find_kernel_binary ${KERNEL_BINARY})
+		local tmp_kernel_binary2=$(find_kernel_binary ${KERNEL_BINARY_2})
+		if [ -z "${tmp_kernel_binary}" ]
+		then
+			gen_die "Cannot locate kernel binary"
+		fi
 		cd "${KERNEL_DIR}"
-		cp "${KERNEL_BINARY}" "${TEMP}/minkernpackage/kernel-${KV}" || gen_die 'Could not the copy kernel for the min kernel package!'
+		cp "${tmp_kernel_binary}" "${TEMP}/minkernpackage/kernel-${KV}" || gen_die 'Could not the copy kernel for the min kernel package!'
 		cp ".config" "${TEMP}/minkernpackage/config-${ARCH}-${KV}" || gen_die 'Could not the copy kernel config for the min kernel package!'
 		if isTrue "${GENZIMAGE}"
 		then
-			cp "${KERNEL_BINARY_2}" "${TEMP}/minkernpackage/kernelz-${KV}" || gen_die "Could not copy the kernelz for the min kernel package"
+			cp "${tmp_kernel_binary2}" "${TEMP}/minkernpackage/kernelz-${KV}" || gen_die "Could not copy the kernelz for the min kernel package"
 		fi
 	fi
 	
@@ -60,15 +66,23 @@ gen_kerncache()
 	print_info 1 'Creating kernel cache'
 	rm -rf "${TEMP}/kerncache" > /dev/null 2>&1
 	mkdir "${TEMP}/kerncache" || gen_die 'Could not make a directory for the kernel cache!'
+
+	local tmp_kernel_binary=$(find_kernel_binary ${KERNEL_BINARY})
+	local tmp_kernel_binary2=$(find_kernel_binary ${KERNEL_BINARY_2})
+	if [ -z "${tmp_kernel_binary}" ]
+	then
+		gen_die "Cannot locate kernel binary"
+	fi
+
 	cd "${KERNEL_DIR}"
-	cp "${KERNEL_BINARY}" "${TEMP}/kerncache/kernel-${ARCH}-${KV}" || gen_die 'Could not the copy kernel for the kernel package!'
+	cp "${tmp_kernel_binary}" "${TEMP}/kerncache/kernel-${ARCH}-${KV}" || gen_die 'Could not the copy kernel for the kernel package!'
 	cp "${KERNEL_DIR}/.config" "${TEMP}/kerncache/config-${ARCH}-${KV}"
 	cp "${KERNEL_CONFIG}" "${TEMP}/kerncache/config-${ARCH}-${KV}.orig"
 	cp "${KERNEL_DIR}/System.map" "${TEMP}/kerncache/System.map-${ARCH}-${KV}"
 	if isTrue "${GENZIMAGE}"
-        then
-        	cp "${KERNEL_BINARY_2}" "${TEMP}/kerncache/kernelz-${ARCH}-${KV}" || gen_die "Could not copy the kernelz for the kernel package"
-        fi
+	then
+		cp "${tmp_kernel_binary2}" "${TEMP}/kerncache/kernelz-${ARCH}-${KV}" || gen_die "Could not copy the kernelz for the kernel package"
+	fi
 	
 	echo "VERSION = ${VER}" > "${TEMP}/kerncache/kerncache.config"
 	echo "PATCHLEVEL = ${PAT}" >> "${TEMP}/kerncache/kerncache.config"
