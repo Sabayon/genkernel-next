@@ -572,7 +572,8 @@ create_initramfs() {
 	append_data 'evms' "${EVMS}"
 	append_data 'mdadm' "${MDADM}"
 	append_data 'luks' "${LUKS}"
-	
+	append_data 'multipath" "${MULTIPATH}"
+
 	if [ "${NORAMDISKMODULES}" -eq '0' ]
 	then
 		append_data 'modules'
