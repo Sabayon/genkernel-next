@@ -976,7 +976,7 @@ setup_unionfs() {
 #		mkdir -p $CHANGES
 #		mount -t unionfs -o dirs=$CHANGES=rw unionfs ${UNION}
 		good_msg "Creating union mount"
-		unionfs -o allow_other,cow,noinitgroups,suid,dev ${rw_dir}=RW:${ro_dir}=RO ${UNION} 2>/dev/null
+		unionfs -o allow_other,cow,noinitgroups,suid,dev,default_permissions,use_ino ${rw_dir}=RW:${ro_dir}=RO ${UNION} 2>/dev/null
 		ret=$?
 		if [ "${ret}" -ne 0 ]
 		then

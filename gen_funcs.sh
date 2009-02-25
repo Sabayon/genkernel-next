@@ -524,3 +524,24 @@ check_distfiles() {
 		fi
 	done
 }
+
+find_kernel_binary() {
+	local kernel_binary=$*
+	local curdir=$(pwd)
+
+	cd "${KERNEL_DIR}"
+	for i in ${kernel_binary}
+	do
+		if [ -e "${i}" ]
+		then
+			tmp_kernel_binary=$i
+			break
+		fi
+	done
+#	if [ -z "${tmp_kernel_binary}" ]
+#	then
+#		gen_die "Cannot locate kernel binary!"
+#	fi
+	cd "${curdir}"
+	echo "${tmp_kernel_binary}"
+}

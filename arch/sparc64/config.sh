@@ -5,7 +5,7 @@
 #
 KERNEL_MAKE_DIRECTIVE="vmlinux"
 KERNEL_MAKE_DIRECTIVE_2="image"
-KERNEL_BINARY="arch/sparc64/boot/image"
+KERNEL_BINARY="arch/sparc64/boot/image arch/sparc/boot/image"
 
 COMPRESS_INITRD=yes
 USECOLOR="no"
