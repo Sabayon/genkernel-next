@@ -125,6 +125,43 @@ append_unionfs_fuse() {
 #	rm -r "${TEMP}/initramfs-suspend-temp/"
 #}
 
+append_multipath(){
+	if [ -d "${TEMP}/initramfs-multipath-temp" ]
+	then
+		rm -r "${TEMP}/initramfs-multipath-temp"
+	fi
+	print_info 1 '	Multipath support being added'
+	mkdir -p "${TEMP}/initramfs-multipath-temp/bin/"
+	mkdir -p "${TEMP}/initramfs-multipath-temp/etc/" 
+	mkdir -p "${TEMP}/initramfs-multipath-temp/sbin/"
+	mkdir -p "${TEMP}/initramfs-multipath-temp/lib/"
+	cp -a /lib/ld-* "${TEMP}/initramfs-multipath-temp/lib" \ 
+		|| gen_die 'Could not copy files for MULTIPATH!' 
+	cp -a /lib/libc-* /lib/libc.* "${TEMP}/initramfs-multipath-temp/lib" \ 
+	cp -a /lib/libdl-* /lib/libdl.* "${TEMP}/initramfs-multipath-temp/lib" \ 
+	cp -a /lib/libsysfs*so* "${TEMP}/initramfs-multipath-temp/lib" \ 
+	cp -a /lib/libdevmapper*so* "${TEMP}/initramfs-multipath-temp/lib" \ 
+	cp -a /sbin/multipath "${TEMP}/initramfs-multipath-temp/sbin" \ 
+	cp -a /sbin/kpartx "${TEMP}/initramfs-multipath-temp/sbin" \ 
+	cp -a /sbin/mpath_prio_* "${TEMP}/initramfs-multipath-temp/sbin" \ 
+	cp -a /lib64/udev/scsi_id "${TEMP}/initramfs-multipath-temp/sbin" \ 
+	cp -a /sbin/devmap_name "${TEMP}/initramfs-multipath-temp/sbin" \ 
+	cp -a /sbin/dmsetup "${TEMP}/initramfs-multipath-temp/sbin" \ 
+	cp -a /sbin/dmsetup "${TEMP}/initramfs-multipath-temp/sbin" \ 
+	cp -a /bin/mountpoint "${TEMP}/initramfs-multipath-temp/bin" \ 
+	if [ -x /sbin/multipath ] 
+	then
+		cp /etc/multipath.conf "${TEMP}/initramfs-multipath-temp/etc/" || gen_die 'could not copy /etc/multipath.conf please check this'
+	fi
+	if [ -x /sbin/scsi_id ]
+	then
+		cp /etc/scsi_id.config "${TEMP}/initramfs-multipath-temp/etc/" || gen_die 'could not copy scsi_id.config'
+	fi
+	cd "${TEMP/initramfs-multipath-temp/"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	rm -r "${TEMP}/initramfs-multipath-temp/"
+}
+
 append_dmraid(){
 	if [ -d "${TEMP}/initramfs-dmraid-temp" ]
 	then
