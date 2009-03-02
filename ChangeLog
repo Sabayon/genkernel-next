@@ -12,6 +12,7 @@
   the param isn't a true device node, such as ttyS0,115200n8
 
   19 Jan 2009; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts,
+  defaults/linuxrc:
   Remove detect_sbp2_devices() for gentoo bug #239474
 
   16 Jan 2009; Andrew Gaffney <agaffney@gentoo.org> genkernel.conf:
