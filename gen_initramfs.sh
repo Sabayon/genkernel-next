@@ -135,31 +135,31 @@ append_multipath(){
 	mkdir -p "${TEMP}/initramfs-multipath-temp/etc/" 
 	mkdir -p "${TEMP}/initramfs-multipath-temp/sbin/"
 	mkdir -p "${TEMP}/initramfs-multipath-temp/lib/"
-	cp -a /lib/ld-* "${TEMP}/initramfs-multipath-temp/lib" \ 
+	cp -a /lib/ld-* "${TEMP}/initramfs-multipath-temp/lib" \
 		|| gen_die 'Could not copy files for MULTIPATH!' 
-	cp -a /lib/libc-* /lib/libc.* "${TEMP}/initramfs-multipath-temp/lib" \ 
+	cp -a /lib/libc-* /lib/libc.* "${TEMP}/initramfs-multipath-temp/lib" \
 		|| gen_die 'Could not copy files for MULTIPATH!'
-	cp -a /lib/libdl-* /lib/libdl.* "${TEMP}/initramfs-multipath-temp/lib" \ 
+	cp -a /lib/libdl-* /lib/libdl.* "${TEMP}/initramfs-multipath-temp/lib" \
 		|| gen_die 'Could not copy files for MULTIPATH!'
-	cp -a /lib/libsysfs*so* "${TEMP}/initramfs-multipath-temp/lib" \ 
+	cp -a /lib/libsysfs*so* "${TEMP}/initramfs-multipath-temp/lib" \
 		|| gen_die 'Could not copy files for MULTIPATH!'
-	cp -a /lib/libdevmapper*so* "${TEMP}/initramfs-multipath-temp/lib" \ 
+	cp -a /lib/libdevmapper*so* "${TEMP}/initramfs-multipath-temp/lib" \
 		|| gen_die 'Could not copy files for MULTIPATH!'
-	cp -a /sbin/multipath "${TEMP}/initramfs-multipath-temp/sbin" \ 
+	cp -a /sbin/multipath "${TEMP}/initramfs-multipath-temp/sbin" \
 		|| gen_die 'Could not copy files for MULTIPATH!'
-	cp -a /sbin/kpartx "${TEMP}/initramfs-multipath-temp/sbin" \ 
+	cp -a /sbin/kpartx "${TEMP}/initramfs-multipath-temp/sbin" \
 		|| gen_die 'Could not copy files for MULTIPATH!'
-	cp -a /sbin/mpath_prio_* "${TEMP}/initramfs-multipath-temp/sbin" \ 
+	cp -a /sbin/mpath_prio_* "${TEMP}/initramfs-multipath-temp/sbin" \
 		|| gen_die 'Could not copy files for MULTIPATH!'
-	cp -a /lib64/udev/scsi_id "${TEMP}/initramfs-multipath-temp/sbin" \ 
+	cp -a /lib64/udev/scsi_id "${TEMP}/initramfs-multipath-temp/sbin" \
 		|| gen_die 'Could not copy files for MULTIPATH!'
-	cp -a /sbin/devmap_name "${TEMP}/initramfs-multipath-temp/sbin" \ 
+	cp -a /sbin/devmap_name "${TEMP}/initramfs-multipath-temp/sbin" \
 		|| gen_die 'Could not copy files for MULTIPATH!'
-	cp -a /sbin/dmsetup "${TEMP}/initramfs-multipath-temp/sbin" \ 
+	cp -a /sbin/dmsetup "${TEMP}/initramfs-multipath-temp/sbin" \
 		|| gen_die 'Could not copy files for MULTIPATH!'
-	cp -a /sbin/dmsetup "${TEMP}/initramfs-multipath-temp/sbin" \ 
+	cp -a /sbin/dmsetup "${TEMP}/initramfs-multipath-temp/sbin" \
 		|| gen_die 'Could not copy files for MULTIPATH!'
-	cp -a /bin/mountpoint "${TEMP}/initramfs-multipath-temp/bin" \ 
+	cp -a /bin/mountpoint "${TEMP}/initramfs-multipath-temp/bin" \
 		|| gen_die 'Could not copy files for MULTIPATH!'
 	if [ -x /sbin/multipath ] 
 	then
@@ -169,7 +169,7 @@ append_multipath(){
 	then
 		cp /etc/scsi_id.config "${TEMP}/initramfs-multipath-temp/etc/" || gen_die 'could not copy scsi_id.config'
 	fi
-	cd "${TEMP/initramfs-multipath-temp/"
+	cd "${TEMP/initramfs-multipath-temp/}"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
 	rm -r "${TEMP}/initramfs-multipath-temp/"
 }
@@ -585,7 +585,7 @@ create_initramfs() {
 	append_data 'evms' "${EVMS}"
 	append_data 'mdadm' "${MDADM}"
 	append_data 'luks' "${LUKS}"
-	append_data 'multipath" "${MULTIPATH}"
+	append_data 'multipath' "${MULTIPATH}"
 
 	if [ "${NORAMDISKMODULES}" -eq '0' ]
 	then
