@@ -561,7 +561,8 @@ append_data() {
 	local name=$1 var=$2
 	local func="append_${name}"
 
-	if [ $# -eq 1 ] || [ ${var} -eq 1 ]
+	[ $# -eq 0 ] && gen_die "append_data() called with zero arguments"
+	if [ $# -eq 1 ] || isTrue ${var}
 	then
 	    print_info 1 "        >> Appending ${name} cpio data..."
 	    ${func}
