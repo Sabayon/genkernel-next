@@ -3,6 +3,10 @@
 # Distributed under the GPL v2
 
   06 Mar 2009; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
+  Clean up append_multipath() code to copy files in a loop and report file
+  that failed to copy
+
+  06 Mar 2009; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
   Apply patch from robbat2 to fix whitespace breakage in multipath code
 
   06 Mar 2009; Andrew Gaffney <agaffney@gentoo.org> gen_determineargs.sh,

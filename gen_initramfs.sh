@@ -135,32 +135,28 @@ append_multipath(){
 	mkdir -p "${TEMP}/initramfs-multipath-temp/etc/" 
 	mkdir -p "${TEMP}/initramfs-multipath-temp/sbin/"
 	mkdir -p "${TEMP}/initramfs-multipath-temp/lib/"
-	cp -a /lib/ld-* "${TEMP}/initramfs-multipath-temp/lib" \
-		|| gen_die 'Could not copy files for MULTIPATH!' 
-	cp -a /lib/libc-* /lib/libc.* "${TEMP}/initramfs-multipath-temp/lib" \
-		|| gen_die 'Could not copy files for MULTIPATH!'
-	cp -a /lib/libdl-* /lib/libdl.* "${TEMP}/initramfs-multipath-temp/lib" \
-		|| gen_die 'Could not copy files for MULTIPATH!'
-	cp -a /lib/libsysfs*so* "${TEMP}/initramfs-multipath-temp/lib" \
-		|| gen_die 'Could not copy files for MULTIPATH!'
-	cp -a /lib/libdevmapper*so* "${TEMP}/initramfs-multipath-temp/lib" \
-		|| gen_die 'Could not copy files for MULTIPATH!'
-	cp -a /sbin/multipath "${TEMP}/initramfs-multipath-temp/sbin" \
-		|| gen_die 'Could not copy files for MULTIPATH!'
-	cp -a /sbin/kpartx "${TEMP}/initramfs-multipath-temp/sbin" \
-		|| gen_die 'Could not copy files for MULTIPATH!'
-	cp -a /sbin/mpath_prio_* "${TEMP}/initramfs-multipath-temp/sbin" \
-		|| gen_die 'Could not copy files for MULTIPATH!'
-	cp -a /lib64/udev/scsi_id "${TEMP}/initramfs-multipath-temp/sbin" \
-		|| gen_die 'Could not copy files for MULTIPATH!'
-	cp -a /sbin/devmap_name "${TEMP}/initramfs-multipath-temp/sbin" \
-		|| gen_die 'Could not copy files for MULTIPATH!'
-	cp -a /sbin/dmsetup "${TEMP}/initramfs-multipath-temp/sbin" \
-		|| gen_die 'Could not copy files for MULTIPATH!'
-	cp -a /sbin/dmsetup "${TEMP}/initramfs-multipath-temp/sbin" \
-		|| gen_die 'Could not copy files for MULTIPATH!'
-	cp -a /bin/mountpoint "${TEMP}/initramfs-multipath-temp/bin" \
-		|| gen_die 'Could not copy files for MULTIPATH!'
+
+	# Copy files to /lib
+	for i in /lib/{ld-*,libc-*,libc.*,libdl-*,libdl.*,libsysfs*so*,libdevmapper*so*}
+	do
+		cp -a "${i}" "${TEMP}/initramfs-multipath-temp/lib" \
+			|| gen_die "Could not copy file ${i} for MULTIPATH"
+	done
+
+	# Copy files to /sbin
+	for i in /sbin/{multipath,kpartx,mpath_prio_*,devmap_name,dmsetup} /lib64/udev/scsi_id
+	do
+		cp -a "${i}" "${TEMP}/initramfs-multipath-temp/sbin" \
+			|| gen_die "Could not copy file ${i} for MULTIPATH"
+	done
+
+	# Copy files to /bin
+	for i in /bin/mountpoint
+	do
+		cp -a "${i}" "${TEMP}/initramfs-multipath-temp/bin" \
+			|| gen_die "Could not copy file ${i} for MULTIPATH"
+	done
+
 	if [ -x /sbin/multipath ] 
 	then
 		cp /etc/multipath.conf "${TEMP}/initramfs-multipath-temp/etc/" || gen_die 'could not copy /etc/multipath.conf please check this'
