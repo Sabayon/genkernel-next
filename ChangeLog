@@ -2,6 +2,10 @@
 # Copyright 1999-2009 Gentoo Foundation; 2008-2009 Various authors (see AUTHORS)
 # Distributed under the GPL v2
 
+  17 Apr 2009; Andrew Gaffney <agaffney@gentoo.org> netboot/busy-config:
+  Apply patch from gentoo bug #266373 for additional options in the netboot
+  busy-config
+
   06 Mar 2009; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
   Clean up append_multipath() code to copy files in a loop and report file
   that failed to copy
