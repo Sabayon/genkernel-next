@@ -2,6 +2,13 @@
 # Copyright 1999-2009 Gentoo Foundation; 2008-2009 Various authors (see AUTHORS)
 # Distributed under the GPL v2
 
+  12 May 2009; Andrew Gaffney <agaffney@gentoo.org> arch/x86/modules_load,
+  defaults/initrd.scripts:
+  Apply fix to deference links for gentoo bug #269603
+
+  09 May 2009; Andrew Gaffney <agaffney@gentoo.org> arch/x86/modules_load:
+  foo
+
   09 May 2009; Andrew Gaffney <agaffney@gentoo.org> arch/x86/modules_load,
   arch/x86_64/modules_load:
   Add dm-crypt module for gentoo bug #269042
