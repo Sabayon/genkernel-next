@@ -84,7 +84,7 @@ longusage() {
   echo "	--mdadm			Copy /etc/mdadm.conf to initramfs"
   echo "	--dmraid		Include DMRAID support"
   echo "	--multipath		Include Multipath support"
-  echo "	--iscsi			Include ISCSI support"
+  echo "	--iscsi			Include iSCSI support"
   echo "	--slowusb		Enables extra pauses for slow USB CD boots"
   echo "	--bootloader=grub	Add new kernel to GRUB configuration"
   echo "	--linuxrc=<file>	Specifies a user created linuxrc"

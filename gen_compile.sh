@@ -624,13 +624,13 @@ compile_iscsi() {
 	if [ ! -f "${ISCSI_BINCACHE}" ]
 	then
 		[ ! -f "${ISCSI_SRCTAR}" ] &&
-			gen_die "Could not find ISCSI source tarball: ${ISCSI_SRCTAR}. Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
+			gen_die "Could not find iSCSI source tarball: ${ISCSI_SRCTAR}. Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
 		cd "${TEMP}"
 		rm -rf "${ISCSI_DIR}"
 		tar -zxpf "${ISCSI_SRCTAR}"
 		[ ! -d "${ISCSI_DIR}" ] &&
 			gen_die "ISCSI directory ${ISCSI_DIR} invalid"
-				print_info 1 'ISCSI: >> Compiling...'
+				print_info 1 'iSCSI: >> Compiling...'
 		cd "${TEMP}/${ISCSI_DIR}/utils/fwparam_ibft"
 		MAKE=${UTILS_MAKE} compile_generic "" ""
 		cd "${TEMP}/${ISCSI_DIR}/usr"
