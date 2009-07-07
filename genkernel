@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PATH="${PATH}:/sbin:/usr/sbin"
-GK_V='3.4.10.904'
+GK_V='3.4.10.905'
 
 # Set the default for TMPDIR.  May be modified by genkernel.conf or the
 # --tempdir command line option.
