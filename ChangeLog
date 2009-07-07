@@ -3,29 +3,29 @@
 # Distributed under the GPL v2
 
   04 Jul 2009; Andrew Gaffney <agaffney@gentoo.org> gen_funcs.sh, genkernel:
-  Remove code to check for host kernel LOOP support for gentoo bug #275757
+  Remove code to check for host kernel LOOP support for Gentoo bug #275757
 
   28 Jun 2009; Andrew Gaffney <agaffney@gentoo.org> defaults/modprobe,
   genkernel.conf:
-  Restore BOOTLOADER="grub" example line in genkernel.conf for gentoo bug
+  Restore BOOTLOADER="grub" example line in genkernel.conf for Gentoo bug
   #274768
 
   12 May 2009; Andrew Gaffney <agaffney@gentoo.org> arch/x86/modules_load,
   defaults/initrd.scripts:
-  Apply fix to deference links for gentoo bug #269603
+  Apply fix to deference links for Gentoo bug #269603
 
   09 May 2009; Andrew Gaffney <agaffney@gentoo.org> arch/x86/modules_load:
   foo
 
   09 May 2009; Andrew Gaffney <agaffney@gentoo.org> arch/x86/modules_load,
   arch/x86_64/modules_load:
-  Add dm-crypt module for gentoo bug #269042
+  Add dm-crypt module for Gentoo bug #269042
 
   24 Apr 2009; Chris Gianelloni <wolf31o2@wolf31o2.org> genkernel:
   Rolling a new genkernel 3.4.10.904 version for testing.
 
   17 Apr 2009; Andrew Gaffney <agaffney@gentoo.org> netboot/busy-config:
-  Apply patch from gentoo bug #266373 for additional options in the netboot
+  Apply patch from Gentoo bug #266373 for additional options in the netboot
   busy-config
 
   06 Mar 2009; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
@@ -45,7 +45,7 @@
 
   20 Feb 2009; Andrew Gaffney <agaffney@gentoo.org> arch/sparc64/config.sh,
   gen_compile.sh, gen_funcs.sh, gen_package.sh:
-  Add support for multiple possible kernel binary paths for gentoo bug
+  Add support for multiple possible kernel binary paths for Gentoo bug
   #255085
 
   04 Feb 2009; Andrew Gaffney <agaffney@gentoo.org> defaults/linuxrc:
@@ -54,10 +54,10 @@
 
   19 Jan 2009; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts,
   defaults/linuxrc:
-  Remove detect_sbp2_devices() for gentoo bug #239474
+  Remove detect_sbp2_devices() for Gentoo bug #239474
 
   16 Jan 2009; Andrew Gaffney <agaffney@gentoo.org> genkernel.conf:
-  Add commented out DISKLABEL=yes option for gentoo bug #229847
+  Add commented out DISKLABEL=yes option for Gentoo bug #229847
 
   08 Jan 2009; Chris Gianelloni <wolf31o2@wolf31o2.org> TODO:
   Added more verbosity to the auto-detection section.
@@ -106,7 +106,7 @@
   Allow old 'initramfs' option instead of 'ramdisk' for compatability
 
   17 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/linuxrc:
-  Remove the use of 'env -i' when calling switch_root due to gentoo bug
+  Remove the use of 'env -i' when calling switch_root due to Gentoo bug
   #248688
 
   16 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> netboot/linuxrc.x:
@@ -179,7 +179,7 @@
   Explicitly set UTILS_{CC,LD,AS} if UTILS_CROSS_COMPILE is set
 
   14 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> gen_cmdline.sh:
-  Typo fix for gentoo bug #250875
+  Typo fix for Gentoo bug #250875
 
   14 Dec 2008; Chris Gianelloni <wolf31o2@wolf31o2.org>
   arch/alpha/config.sh, arch/arm/config.sh, arch/ia64/config.sh,
@@ -209,7 +209,7 @@
   13 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/linuxrc,
   gen_cmdline.sh, gen_determineargs.sh, gen_initramfs.sh:
   Add --real-root=<foo> parameter to specify a default for real_root= in the
-  initramfs for gentoo bug #249783
+  initramfs for Gentoo bug #249783
 
   12 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> -arch/alpha/busy-config,
   -arch/arm/busy-config, -arch/ia64/busy-config, -arch/mips/busy-config,
@@ -242,7 +242,7 @@
   Enable CONFIG_MAKEDEVS in busy-config for netboot
 
   09 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
-  s/aux/luks/ for gentoo bug #250330
+  s/aux/luks/ for Gentoo bug #250330
 
   07 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> arch/alpha/busy-config,
   arch/ia64/busy-config, arch/mips/busy-config, arch/parisc/busy-config,
@@ -270,13 +270,13 @@
 
   17 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
   Break apart cryptsetup stuff into separate append_luks() and make
-  append_auxillary() dependent on ${BUSYBOX} for gentoo bug #247052
+  append_auxillary() dependent on ${BUSYBOX} for Gentoo bug #247052
 
   15 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/linuxrc:
-  Applied patch for UUID support for real_resume= from gentoo bug #239687
+  Applied patch for UUID support for real_resume= from Gentoo bug #239687
 
   15 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> gen_determineargs.sh:
-  Added modified version of patch from gentoo bug #238707
+  Added modified version of patch from Gentoo bug #238707
 
   14 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
   Only append unionfs_fuse stuff if UNIONFS is set
@@ -301,7 +301,7 @@
   pairs
 
   14 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/linuxrc:
-  Skip good_root check for /dev/nfs for gentoo bug #246759
+  Skip good_root check for /dev/nfs for Gentoo bug #246759
 
   14 Nov 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts:
   Simplify implementation of parse_opt in linuxrc
@@ -394,7 +394,7 @@
   arch/sparc/busy-config, arch/sparc64/busy-config, arch/um/busy-config,
   arch/x86/busy-config, arch/x86_64/busy-config, defaults/busy-config:
   Enabling CONFIG_WGET and CONFIG_FEATURE_TAR_BZIP2 for initial support of
-  gentoo bug 211976
+  Gentoo bug #211976
 
   31 Oct 2008; Chris Gianelloni <wolf31o2@wolf31o2.org> genkernel:
   Tagging a 3.4.10.901 release, for testing. Adding periods to ChangeLog to
