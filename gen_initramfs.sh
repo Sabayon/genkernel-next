@@ -200,7 +200,12 @@ append_lvm(){
 	cd ${TEMP}
 	mkdir -p "${TEMP}/initramfs-lvm-temp/bin/"
 	mkdir -p "${TEMP}/initramfs-lvm-temp/etc/lvm/"
-	if [ -e '/sbin/lvm' ] && LC_ALL="C" ldd /sbin/lvm|grep -q 'not a dynamic executable'
+	if [ -e '/sbin/lvm.static' ]
+	then
+		print_info 1 '          LVM: Adding support (using local static binaries)...'
+		cp /sbin/lvm.static "${TEMP}/initramfs-lvm-temp/bin/lvm" ||
+			gen_die 'Could not copy over lvm!'
+	elif [ -e '/sbin/lvm' ] && LC_ALL="C" ldd /sbin/lvm|grep -q 'not a dynamic executable'
 	then
 		print_info 1 '		LVM: Adding support (using local static binaries)...'
 		cp /sbin/lvm "${TEMP}/initramfs-lvm-temp/bin/lvm" ||
