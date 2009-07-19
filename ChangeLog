@@ -3,6 +3,9 @@
 # Distributed under the GPL v2
 
   19 Jul 2009; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts:
+  Alternative solution for Gentoo bug #269603
+
+  19 Jul 2009; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts:
   Change command used to determine real filename for REAL_RESUME for Gentoo
   bug #269603
 
