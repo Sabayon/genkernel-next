@@ -858,7 +858,7 @@ rundebugshell() {
 
 swsusp_resume() {
 	# determine swap resume partition
-	local device=$(get_real_filename "${REAL_RESUME}")
+	local device=$(ls -lL "${REAL_RESUME}" | sed 's/\  */ /g' | cut -d \  -f 5-6 | sed 's/,\ */:/')
 	[ -f /sys/power/resume ] && echo "${device}" > /sys/power/resume
 	return 0
 }
@@ -985,15 +985,5 @@ setup_unionfs() {
 		fi
 	else
 		USE_UNIONFS_NORMAL=0
-	fi
-}
-
-get_real_filename() {
-	local file=$1
-
-	if [ -L "${file}" ]; then
-		readlink ${file}
-	elif [ -f "${file}" ]; then
-		echo "${file}"
 	fi
 }
