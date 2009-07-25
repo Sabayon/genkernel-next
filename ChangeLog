@@ -3,6 +3,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  25 Jul 2009; Chris Gianelloni <wolf31o2@wolf31o2.org> genkernel.conf,
+  .gitattributes:
+  Adding Id header and Ident for genkernel.conf
+
   25 Jul 2009; Chris Gianelloni <wolf31o2@wolf31o2.org>
   arch/alpha/config.sh, arch/arm/config.sh, arch/ia64/config.sh,
   arch/mips/config.sh, arch/parisc/config.sh, arch/parisc64/config.sh,

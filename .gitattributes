@@ -5,4 +5,5 @@ HACKING ident
 README ident
 TODO ident
 genkernel ident
+*.conf ident
 *.sh ident
