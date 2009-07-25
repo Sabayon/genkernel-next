@@ -1,3 +1,5 @@
+# $Id$
+
 - Need configs for other currently-unsupported arches
 - Make configs stackable
 - Move modules_load to /etc/genkernel

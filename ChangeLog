@@ -3,6 +3,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  25 Jul 2009; Chris Gianelloni <wolf31o2@wolf31o2.org> AUTHORS, BUGS,
+  HACKING, README, TODO:
+  Adding Id header.
+
   25 Jul 2009; Chris Gianelloni <wolf31o2@wolf31o2.org> .gitattributes:
   Adding additional files to .gitattributes to enable Ident.
 

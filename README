@@ -1,3 +1,5 @@
+# $Id$
+
 DEPENDANCIES:
   - GCC and binutils
   - GNU Bash
