@@ -1,4 +1,5 @@
 #!/bin/bash
+# $Id$
 
 isTrue() {
 	case "$1" in

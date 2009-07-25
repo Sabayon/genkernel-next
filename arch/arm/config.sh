@@ -1,3 +1,4 @@
+# $Id$
 #
 # Arch-specific options that normally shouldn't be changed.
 #

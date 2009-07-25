@@ -1,4 +1,5 @@
 #!/bin/bash
+# $Id$
 
 determine_config_file() {
 	if [ "${CMD_KERNEL_CONFIG}" != "" ]

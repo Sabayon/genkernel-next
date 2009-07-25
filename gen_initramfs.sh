@@ -1,4 +1,5 @@
 #!/bin/bash
+# $Id$
 
 CPIO_ARGS="--quiet -o -H newc"
 

@@ -1,4 +1,5 @@
 #!/bin/bash
+# $Id$
 
 modules_kext()
 {
