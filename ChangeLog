@@ -3,6 +3,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  25 Jul 2009; Chris Gianelloni <wolf31o2@wolf31o2.org> .gitattributes:
+  Adding additional files to .gitattributes to enable Ident.
+
   25 Jul 2009; Chris Gianelloni <wolf31o2@wolf31o2.org> +.gitattributes:
   Adding .gitattributes file.
 
