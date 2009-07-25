@@ -4,3 +4,5 @@ ChangeLog ident
 HACKING ident
 README ident
 TODO ident
+genkernel ident
+*.sh ident

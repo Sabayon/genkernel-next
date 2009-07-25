@@ -1,4 +1,5 @@
 #!/bin/bash
+# $Id$
 
 PATH="${PATH}:/sbin:/usr/sbin"
 GK_V='3.4.10.905'
