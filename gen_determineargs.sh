@@ -1,4 +1,5 @@
 #!/bin/bash
+# $Id$
 
 get_KV() {
 	if [ "${NO_KERNEL_SOURCES}" = '1' -a -e "${KERNCACHE}" ]

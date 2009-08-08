@@ -1,4 +1,5 @@
 #!/bin/bash
+# $Id$
 
 get_official_arch() {
 	if [ "${CMD_ARCHOVERRIDE}" != '' ]

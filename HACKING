@@ -1,3 +1,5 @@
+# $Id$
+
 This document is a work-in-progress to describe the workflow through the various
 parts of genkernel so that we can split the code into modular chunks.  If you
 are interested in helping with genkernel development, contact Chris Gianelloni

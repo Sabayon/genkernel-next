@@ -1,3 +1,5 @@
+# $Id$
+
 set_bootloader() {
 	case "${BOOTLOADER}" in
 		grub)

@@ -22,7 +22,7 @@ modules_dep_list() {
 		echo 'modules_dep_list(): Improper usage!'
 		exit 1
 	fi
-	cat /lib/modules/${KV}/modules.dep | grep ${1}${KSUFF}\: | cut -d\:  -f2
+	cat /lib/modules/${KV}/modules.dep | grep /"${1}${KSUFF}:" | cut -d':'  -f2
 }
 
 
@@ -84,6 +84,7 @@ modprobe2() {
 	real_path=`real_mod_path ${1}`
 	if [ "${real_path}" = '' -o "${real_path}" = ' ' ]
 	then
+		[ "${2}" = '-n' ] && echo -n " -> $1"
 		echo ' module not found.'
 		exit 2
 	fi

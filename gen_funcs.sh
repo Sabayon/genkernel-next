@@ -1,4 +1,5 @@
 #!/bin/bash
+# $Id$
 
 isTrue() {
 	case "$1" in
@@ -234,23 +235,6 @@ gen_die() {
 	# Cleanup temp dirs and caches if requested
 	cleanup
   	exit 1
-}
-
-has_loop() {
-	if [ -e /var/log/dmesg ]
-	then
-		cat /var/log/dmesg | egrep -q '^loop:'
-	else
-		dmesg | egrep -q '^loop:'
-	fi
-	if [ -e '/dev/loop0' -o -e '/dev/loop/0' -a ${PIPESTATUS[1]} ]
-	then
-		# We found a standard dev loop device, assume loop is compiled into the
-		# kernel or the module is loaded
-		return 0
-	else
-		return 1
-	fi
 }
 
 isBootRO()
