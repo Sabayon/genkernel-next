@@ -3,6 +3,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  14 Aug 2009; Andrew Gaffney <agaffney@gentoo.org> genkernel.conf:
+  Enable DISKLABEL=yes by default
+
   05 Aug 2009; Andrew Gaffney <agaffney@gentoo.org> genkernel:
   This is genkernel 3.4.10.906
 
