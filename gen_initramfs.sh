@@ -166,7 +166,7 @@ append_multipath(){
 	then
 		cp /etc/scsi_id.config "${TEMP}/initramfs-multipath-temp/etc/" || gen_die 'could not copy scsi_id.config'
 	fi
-	cd "${TEMP/initramfs-multipath-temp/}"
+	cd "${TEMP}/initramfs-multipath-temp"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
 	rm -r "${TEMP}/initramfs-multipath-temp/"
 }
