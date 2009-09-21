@@ -4,6 +4,9 @@
 # $Id$
 
   21 Sep 2009; <tsunam@gentoo.org> gen_initramfs.sh:
+  Fix broken libraries for multipath per Gentoo bug #284592
+
+  21 Sep 2009; <tsunam@gentoo.org> gen_initramfs.sh:
   Update to fix broken initramfs caused by multipath config in Gentoo bug #284589
 
   05 Sep 2009; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts,

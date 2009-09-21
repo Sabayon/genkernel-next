@@ -138,9 +138,15 @@ append_multipath(){
 	mkdir -p "${TEMP}/initramfs-multipath-temp/lib/"
 
 	# Copy files to /lib
-	for i in /lib/{ld-*,libc-*,libc.*,libdl-*,libdl.*,libsysfs*so*,libdevmapper*so*}
+	for i in /lib/{ld-*,libc-*,libc.*,libdl-*,libdl.*,libsysfs*so*,libdevmapper*so*,libpthread*,librt*,libreadline*,libncurses*}
 	do
 		cp -a "${i}" "${TEMP}/initramfs-multipath-temp/lib" \
+			|| gen_die "Could not copy file ${i} for MULTIPATH"
+	done
+
+	for i in /usr/lib/{libaio*}
+	do
+		 cp -a "${i}" "${TEMP}/initramfs-multipath-temp/lib" \
 			|| gen_die "Could not copy file ${i} for MULTIPATH"
 	done
 
