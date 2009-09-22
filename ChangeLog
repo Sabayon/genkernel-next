@@ -3,6 +3,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  22 Sep 2009; <tsunam@gentoo.org> ChangeLog:
+  modified the libaio search so it'll actually work, cause I'm a dork
+
   21 Sep 2009; <tsunam@gentoo.org> gen_initramfs.sh:
   Fix broken libraries for multipath per Gentoo bug #284592
 
