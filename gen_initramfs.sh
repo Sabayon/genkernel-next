@@ -144,7 +144,7 @@ append_multipath(){
 			|| gen_die "Could not copy file ${i} for MULTIPATH"
 	done
 
-	for i in /usr/lib/{libaio*}
+	for i in /usr/lib/libaio*
 	do
 		 cp -a "${i}" "${TEMP}/initramfs-multipath-temp/lib" \
 			|| gen_die "Could not copy file ${i} for MULTIPATH"
