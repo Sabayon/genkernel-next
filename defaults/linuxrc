@@ -178,7 +178,7 @@ do
 		swap_keydev\=*)
 			CRYPT_SWAP_KEYDEV=`parse_opt "${x}"`
 		;;
-		real_resume\=*)
+		real_resume\=*|resume\=*)
 			REAL_RESUME=`parse_opt "${x}"`
 		;;
 		noresume)
@@ -313,9 +313,7 @@ then
 				;;
 		esac
 
-		swsusp_resume
-#		suspend_resume
-		tuxonice_resume
+		do_resume
 	fi
 fi
 

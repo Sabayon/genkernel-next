@@ -3,6 +3,25 @@
 # Distributed under the GPL v2
 # $Id$
 
+  22 Sep 2009; <tsunam@gentoo.org> ChangeLog:
+  modified the libaio search so it'll actually work, cause I'm a dork
+
+  21 Sep 2009; <tsunam@gentoo.org> gen_initramfs.sh:
+  Fix broken libraries for multipath per Gentoo bug #284592
+
+  21 Sep 2009; <tsunam@gentoo.org> gen_initramfs.sh:
+  Update to fix broken initramfs caused by multipath config in Gentoo bug #284589
+
+  05 Sep 2009; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts,
+  defaults/linuxrc:
+  Apply patch from Gentoo bug #220913 for tuxonice resume
+
+  14 Aug 2009; Andrew Gaffney <agaffney@gentoo.org> genkernel.conf:
+  Enable DISKLABEL=yes by default
+
+  05 Aug 2009; Andrew Gaffney <agaffney@gentoo.org> genkernel:
+  This is genkernel 3.4.10.906
+
   25 Jul 2009; Chris Gianelloni <wolf31o2@wolf31o2.org> genkernel.conf,
   .gitattributes:
   Adding Id header and Ident for genkernel.conf
