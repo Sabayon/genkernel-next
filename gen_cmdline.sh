@@ -292,7 +292,7 @@ parse_cmdline() {
 			CMD_BOOTLOADER=`parse_opt "$*"`
 			print_info 2 "CMD_BOOTLOADER: ${CMD_BOOTLOADER}"
 			;;
-		--iscsi=*)
+		--iscsi)
 			CMD_ISCSI=1
 			print_info 2 "CMD_ISCSI: ${CMD_ISCSI}"
 			;;
