@@ -101,13 +101,16 @@ config_kernel() {
 		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_BLK_DEV_DM is.*/CONFIG_BLK_DEV_DM=m/g'
 	fi
 
-	# Make sure the iscsi modules are off if --iscsi
+	# Make sure iSCSI modules are enabled in the kernel, if --iscsi
 	# CONFIG_SCSI_ISCSI_ATTRS
 	# CONFIG_ISCSI_TCP
 	if isTrue ${CMD_ISCSI}
 	then
-		sed -i ${KERNEL_DIR}/.config -e 's/^CONFIG_SCSI_ISCSI_ATTRS=\(.*\)/\# CONFIG_SCSI_ISCSI_ATTRS is not set/g'
-		sed -i ${KERNEL_DIR}/.config -e 's/^CONFIG_ISCSI_TCP=\(.*\)/\# CONFIG_ISCSI_TCP is not set/g'
+		sed -i ${KERNEL_DIR}/.config -e 's/\# CONFIG_ISCSI_TCP is not set/CONFIG_ISCSI_TCP=m/g'
+		sed -i ${KERNEL_DIR}/.config -e 's/\# CONFIG_SCSI_ISCSI_ATTRS is not set/CONFIG_SCSI_ISCSI_ATTRS=m/g'
+
+		sed -i ${KERNEL_DIR}/.config -e 's/CONFIG_ISCSI_TCP=y/CONFIG_ISCSI_TCP=m/g'
+		sed -i ${KERNEL_DIR}/.config -e 's/CONFIG_SCSI_ISCSI_ATTRS=y/CONFIG_SCSI_ISCSI_ATTRS=m/g'
 	fi
 
 	if isTrue ${SPLASH}

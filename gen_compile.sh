@@ -632,19 +632,20 @@ compile_iscsi() {
 		[ ! -d "${ISCSI_DIR}" ] &&
 			gen_die "ISCSI directory ${ISCSI_DIR} invalid"
 				print_info 1 'iSCSI: >> Compiling...'
-		cd "${TEMP}/${ISCSI_DIR}/utils/fwparam_ibft"
-		MAKE=${UTILS_MAKE} compile_generic "" ""
-		cd "${TEMP}/${ISCSI_DIR}/usr"
-		MAKE=${UTILS_MAKE} compile_generic "" ""
-		cd "${TEMP}/${ISCSI_DIR}/kernel"
+		cd "${TEMP}/${ISCSI_DIR}"
 
-		# Find out target kernel Version, make modules for that version
-		RELEASE=$(head -n 4 ${CMD_KERNEL_DIR}/Makefile | sed  -r -e 's/^VERSION = (.*)/\1./g' -e 's/PATCHLEVEL = (.*)/\1./g' -e 's/SUBLEVEL = (.*)/\1/g' -e 's/EXTRAVERSION = (.*)/\1/g' | tr -d '\n')
-		KERNELRELEASE=${RELEASE} MAKE=${UTILS_MAKE} compile_generic "" ""
-
-		# copy kernel modules to initramfs
+		# Only build userspace
+		MAKE=${UTILS_MAKE} compile_generic "user" ""
+	
+		# if kernel modules exist, copy them to initramfs, otherwise it will be compiled into the kernel
 		mkdir -p "${TEMP}/initramfs-iscsi-temp/lib/modules/${RELEASE}/kernel/drivers/scsi/"
-		cp *.ko "${TEMP}/initramfs-iscsi-temp/lib/modules/${RELEASE}/kernel/drivers/scsi/"
+		for modname in iscsi_tcp libiscsi scsi_transport_iscsi
+		do
+			if [ -e "${CMD_KERNEL_DIR}/drivers/scsi/${modname}.ko" ]
+			then
+				cp ${CMD_KERNEL_DIR}/drivers/scsi/${modname}.ko "${TEMP}/initramfs-iscsi-temp/lib/modules/${RELEASE}/kernel/drivers/scsi/"
+			fi
+		done
 
 	        cd "${TEMP}/initramfs-iscsi-temp/"
 		print_info 1 'iscsistart: >> Copying to cache...'
