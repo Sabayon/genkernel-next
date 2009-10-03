@@ -204,7 +204,7 @@ append_iscsi(){
 	then
 		rm -r "${TEMP}/initramfs-iscsi-temp/"
 	fi
-	print_info 1 'ISCSI: Adding support (compiling binaries)...'
+	print_info 1 'iSCSI: Adding support (compiling binaries)...'
 	compile_iscsi
 	cd ${TEMP}
 	mkdir -p "${TEMP}/initramfs-iscsi-temp/bin/"

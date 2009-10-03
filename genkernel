@@ -348,7 +348,7 @@ then
 	[ "${EVMS}" -eq '1' ] && print_info 1 'add "doevms" for evms support'
 	[ "${DMRAID}" -eq '1' ] && print_info 1 'add "dodmraid" for dmraid support'
 	[ "${DMRAID}" -eq '1' ] && print_info 1 '	or "dodmraid=<additional options>"'
-	[ "${ISCSI}" -eq '1' ] && print_info 1 'add "iscsi_i=<initiator name> iscsi_t=<target name> iscsi_a=<target ip>" for iscsi support'
+	[ "${ISCSI}" -eq '1' ] && print_info 1 'add at least "iscsi_initiatorname=<initiator name> iscsi_target=<target name> and iscsi_address=<target ip>" for iscsi support'
 fi
 
 [ "${BOOTRW}" != '' ] && mount -o remount,ro ${BOOTDIR}
