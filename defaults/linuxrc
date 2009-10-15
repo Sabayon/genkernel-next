@@ -292,6 +292,9 @@ start_dev_mgr
 # Start iSCSI
 startiscsi
 
+# let iscsid settle - otherwise mounting the iSCSI-disk will fail (very rarely, though)
+sleep 1
+
 # Setup md device nodes if they dont exist
 setup_md_device
 
