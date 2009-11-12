@@ -201,6 +201,23 @@ append_dmraid(){
 	rm -r "${TEMP}/initramfs-dmraid-temp/"
 }
 
+append_iscsi(){
+	if [ -d "${TEMP}/initramfs-iscsi-temp" ]
+	then
+		rm -r "${TEMP}/initramfs-iscsi-temp/"
+	fi
+	print_info 1 'iSCSI: Adding support (compiling binaries)...'
+	compile_iscsi
+	cd ${TEMP}
+	mkdir -p "${TEMP}/initramfs-iscsi-temp/bin/"
+	/bin/bzip2 -dc "${ISCSI_BINCACHE}" > "${TEMP}/initramfs-iscsi-temp/bin/iscsistart" ||
+		gen_die "Could not extract iscsi binary cache!"
+	chmod a+x "${TEMP}/initramfs-iscsi-temp/bin/iscsistart"
+	cd "${TEMP}/initramfs-iscsi-temp/"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	rm -rf "${TEMP}/initramfs-iscsi-temp" > /dev/null
+}
+
 append_lvm(){
 	if [ -d "${TEMP}/initramfs-lvm-temp" ]
 	then
@@ -592,6 +609,7 @@ create_initramfs() {
 	append_data 'busybox' "${BUSYBOX}"
 	append_data 'lvm' "${LVM}"
 	append_data 'dmraid' "${DMRAID}"
+	append_data 'iscsi' "${ISCSI}"
 	append_data 'evms' "${EVMS}"
 	append_data 'mdadm' "${MDADM}"
 	append_data 'luks' "${LUKS}"

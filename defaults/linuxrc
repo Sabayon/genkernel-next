@@ -149,6 +149,38 @@ do
 		nfsroot\=*)
 			NFSROOT=`parse_opt "${x}"`
 		;;
+		# iSCSI
+		iscsi_initiatorname\=*)
+			ISCSI_INITIATORNAME=`parse_opt "${x}"`
+		;;
+		iscsi_target\=*)
+			ISCSI_TARGET=`parse_opt "${x}"`
+		;;
+		iscsi_tgpt\=*)
+			ISCSI_TGPT=`parse_opt "${x}"`
+		;;
+		iscsi_address\=*)
+			ISCSI_ADDRESS=`parse_opt "${x}"`
+		;;
+		iscsi_port\=*)
+			ISCSI_PORT=`parse_opt "${x}"`
+		;;
+		iscsi_username\=*)
+			ISCSI_USERNAME=`parse_opt "${x}"`
+		;;
+		iscsi_password\=*)
+			ISCSI_PASSWORD=`parse_opt "${x}"`
+		;;
+		iscsi_username_in\=*)
+			ISCSI_USERNAME_IN=`parse_opt "${x}"`
+		;;
+		iscsi_password_in\=*)
+			ISCSI_PASSWORD_IN=`parse_opt "${x}"`
+		;;
+		iscsi_debug\=*)
+			ISCSI_DEBUG=`parse_opt "${x}"`
+		;;
+		# Crypto
 		crypt_root\=*)
 			CRYPT_ROOT=`parse_opt "${x}"`
 		;;
@@ -256,6 +288,12 @@ sdelay
 
 # Start device manager
 start_dev_mgr
+
+# Start iSCSI
+startiscsi
+
+# let iscsid settle - otherwise mounting the iSCSI-disk will fail (very rarely, though)
+sleep 1
 
 # Setup md device nodes if they dont exist
 setup_md_device

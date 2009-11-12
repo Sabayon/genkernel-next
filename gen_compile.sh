@@ -620,3 +620,46 @@ compile_unionfs_fuse() {
 		rm -rf "${UNIONFS_FUSE_DIR}" > /dev/null
 	fi
 }
+
+compile_iscsi() {
+	if [ ! -f "${ISCSI_BINCACHE}" ]
+	then
+		[ ! -f "${ISCSI_SRCTAR}" ] &&
+			gen_die "Could not find iSCSI source tarball: ${ISCSI_SRCTAR}. Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
+		cd "${TEMP}"
+		rm -rf "${ISCSI_DIR}"
+		tar -zxpf "${ISCSI_SRCTAR}"
+		[ ! -d "${ISCSI_DIR}" ] &&
+			gen_die "ISCSI directory ${ISCSI_DIR} invalid"
+				print_info 1 'iSCSI: >> Compiling...'
+		cd "${TEMP}/${ISCSI_DIR}"
+
+		# Only build userspace
+		MAKE=${UTILS_MAKE} compile_generic "user" ""
+	
+		# if kernel modules exist, copy them to initramfs, otherwise it will be compiled into the kernel
+		mkdir -p "${TEMP}/initramfs-iscsi-temp/lib/modules/${RELEASE}/kernel/drivers/scsi/"
+		for modname in iscsi_tcp libiscsi scsi_transport_iscsi
+		do
+			if [ -e "${CMD_KERNEL_DIR}/drivers/scsi/${modname}.ko" ]
+			then
+				cp ${CMD_KERNEL_DIR}/drivers/scsi/${modname}.ko "${TEMP}/initramfs-iscsi-temp/lib/modules/${RELEASE}/kernel/drivers/scsi/"
+			fi
+		done
+
+	        cd "${TEMP}/initramfs-iscsi-temp/"
+		print_info 1 'iscsistart: >> Copying to cache...'
+		[ -f "${TEMP}/${ISCSI_DIR}/usr/iscsistart" ] ||
+			gen_die 'iscsistart executable does not exist!'
+		strip "${TEMP}/${ISCSI_DIR}/usr/iscsistart" ||
+			gen_die 'Could not strip iscsistart binary!'
+		bzip2 "${TEMP}/${ISCSI_DIR}/usr/iscsistart" ||
+			gen_die 'bzip2 compression of iscsistart failed!'
+		mv "${TEMP}/${ISCSI_DIR}/usr/iscsistart.bz2" "${ISCSI_BINCACHE}" ||
+			gen_die 'Could not copy the iscsistart binary to the package directory, does the directory exist?'
+
+		cd "${TEMP}"
+		rm -rf "${ISCSI_DIR}" > /dev/null
+	fi
+}
+

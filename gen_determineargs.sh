@@ -103,6 +103,7 @@ determine_real_args() {
 	set_config_with_override 1 LVM                  CMD_LVM
 	set_config_with_override 1 EVMS                 CMD_EVMS
 	set_config_with_override 1 DMRAID               CMD_DMRAID
+	set_config_with_override 1 ISCSI                CMD_ISCSI
 	set_config_with_override 1 BUSYBOX              CMD_BUSYBOX              "yes"
 	set_config_with_override 1 UNIONFS				CMD_UNIONFS
 	set_config_with_override 1 NETBOOT				CMD_NETBOOT
@@ -128,6 +129,7 @@ determine_real_args() {
 	DEVICE_MAPPER_BINCACHE=`cache_replace "${DEVICE_MAPPER_BINCACHE}"`
 	LVM_BINCACHE=`cache_replace "${LVM_BINCACHE}"`
 	DMRAID_BINCACHE=`cache_replace "${DMRAID_BINCACHE}"`
+	ISCSI_BINCACHE=`cache_replace "${ISCSI_BINCACHE}"`
 	BLKID_BINCACHE=`cache_replace "${BLKID_BINCACHE}"`
 	FUSE_BINCACHE=`cache_replace "${FUSE_BINCACHE}"`
 	UNIONFS_FUSE_BINCACHE=`cache_replace "${UNIONFS_FUSE_BINCACHE}"`
@@ -138,6 +140,7 @@ determine_real_args() {
 	DEVICE_MAPPER_BINCACHE=`arch_replace "${DEVICE_MAPPER_BINCACHE}"`
 	LVM_BINCACHE=`arch_replace "${LVM_BINCACHE}"`
 	DMRAID_BINCACHE=`arch_replace "${DMRAID_BINCACHE}"`
+	ISCSI_BINCACHE=`arch_replace "${ISCSI_BINCACHE}"`
 	BLKID_BINCACHE=`arch_replace "${BLKID_BINCACHE}"`
 	FUSE_BINCACHE=`arch_replace "${FUSE_BINCACHE}"`
 	UNIONFS_FUSE_BINCACHE=`arch_replace "${UNIONFS_FUSE_BINCACHE}"`
