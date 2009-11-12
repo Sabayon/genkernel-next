@@ -168,7 +168,9 @@ append_multipath(){
 	then
 		cp /etc/multipath.conf "${TEMP}/initramfs-multipath-temp/etc/" || gen_die 'could not copy /etc/multipath.conf please check this'
 	fi
-	if [ -x /sbin/scsi_id ]
+	# /etc/scsi_id.config does not exist in newer udevs
+	# copy it optionally.
+	if [ -x /sbin/scsi_id -a -f /etc/scsi_id.config ]
 	then
 		cp /etc/scsi_id.config "${TEMP}/initramfs-multipath-temp/etc/" || gen_die 'could not copy scsi_id.config'
 	fi
