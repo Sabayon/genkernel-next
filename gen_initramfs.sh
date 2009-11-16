@@ -35,6 +35,7 @@ append_base_layout() {
 
 	cd "${TEMP}/initramfs-base-temp/"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	cd "${TEMP}"
 	rm -rf "${TEMP}/initramfs-base-temp" > /dev/null
 }
 
@@ -62,6 +63,7 @@ append_busybox() {
 	
 	cd "${TEMP}/initramfs-busybox-temp/"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	cd "${TEMP}"
 	rm -rf "${TEMP}/initramfs-busybox-temp" > /dev/null
 }
 
@@ -77,6 +79,7 @@ append_blkid(){
 	chmod a+x "${TEMP}/initramfs-blkid-temp/bin/blkid"
 	cd "${TEMP}/initramfs-blkid-temp/"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	cd "${TEMP}"
 	rm -rf "${TEMP}/initramfs-blkid-temp" > /dev/null
 }
 
@@ -105,6 +108,7 @@ append_unionfs_fuse() {
 	chmod a+x "${TEMP}/initramfs-unionfs-fuse-temp/sbin/unionfs"
 	cd "${TEMP}/initramfs-unionfs-fuse-temp/"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	cd "${TEMP}"
 	rm -rf "${TEMP}/initramfs-unionfs-fuse-temp" > /dev/null
 }
 
@@ -176,6 +180,7 @@ append_multipath(){
 	fi
 	cd "${TEMP}/initramfs-multipath-temp"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	cd "${TEMP}"
 	rm -r "${TEMP}/initramfs-multipath-temp/"
 }
 
@@ -198,6 +203,7 @@ append_dmraid(){
 		cd "${TEMP}/initramfs-dmraid-temp/"
 	fi
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	cd "${TEMP}"
 	rm -r "${TEMP}/initramfs-dmraid-temp/"
 }
 
@@ -215,6 +221,7 @@ append_iscsi(){
 	chmod a+x "${TEMP}/initramfs-iscsi-temp/bin/iscsistart"
 	cd "${TEMP}/initramfs-iscsi-temp/"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	cd "${TEMP}"
 	rm -rf "${TEMP}/initramfs-iscsi-temp" > /dev/null
 }
 
@@ -258,6 +265,7 @@ append_lvm(){
 	fi
 	cd "${TEMP}/initramfs-lvm-temp/"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	cd "${TEMP}"
 	rm -r "${TEMP}/initramfs-lvm-temp/"
 }
 
@@ -309,6 +317,7 @@ append_evms(){
 	fi
 	cd "${TEMP}/initramfs-evms-temp/"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	cd "${TEMP}"
 	rm -r "${TEMP}/initramfs-evms-temp/"
 }
 
@@ -326,6 +335,7 @@ append_mdadm(){
 	fi
 	cd "${TEMP}/initramfs-mdadm-temp/"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	cd "${TEMP}"
 	rm -rf "${TEMP}/initramfs-mdadm-temp" > /dev/null
 }
 
@@ -352,6 +362,7 @@ append_splash(){
 		cd "${TEMP}/initramfs-splash-temp/"
 		find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 			|| gen_die "compressing splash cpio"
+		cd "${TEMP}"
 		rm -r "${TEMP}/initramfs-splash-temp/"
 	else
 		print_warning 1 '               >> No splash detected; skipping!'
@@ -423,6 +434,7 @@ append_firmware() {
 	fi
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 		|| gen_die "appending firmware to cpio"
+	cd "${TEMP}"
 	rm -r "${TEMP}/initramfs-firmware-temp/"
 }
 

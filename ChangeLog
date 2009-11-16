@@ -3,6 +3,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  16 Nov 2009; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
+  Make sure to change back to existant directory before removing the current
+  directory for Gentoo bug #291794
+
   15 Oct 2009; <craig@haquarter.de> Changelog:
   added iSCSI support
 
