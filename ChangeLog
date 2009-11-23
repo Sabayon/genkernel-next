@@ -3,6 +3,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  23 Nov 2009; Andrew Gaffney <agaffney@gentoo.org> defaults/linuxrc:
+  Fix typo for Gentoo bug #294138
+
   16 Nov 2009; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
   Make sure to change back to existant directory before removing the current
   directory for Gentoo bug #291794

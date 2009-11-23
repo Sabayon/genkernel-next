@@ -647,8 +647,8 @@ then
 				directory="${directory#${NEW_ROOT}/${FS_LOCATION}/}"
 
 				# Skip this directory if we already linked a parent directory
-				if [ "${curent_parrent}" != '' ]; then
-					var=`echo "${directory}" | grep "^${curent_parrent}"`
+				if [ "${current_parent}" != '' ]; then
+					var=`echo "${directory}" | grep "^${current_parent}"`
 					if [ "${var}" != '' ]; then
 						continue
 					fi
