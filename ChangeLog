@@ -3,6 +3,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  06 Dec 2009; Andrew Gaffney <agaffney@gentoo.org> gen_initramfs.sh:
+  use a symlink instead of a hardlink for busybox utils (for Gentoo bug
+  #246370)
+
   23 Nov 2009; Andrew Gaffney <agaffney@gentoo.org> defaults/linuxrc:
   Fix typo for Gentoo bug #294138
 

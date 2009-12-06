@@ -57,7 +57,7 @@ append_busybox() {
 	# Set up a few default symlinks
 	for i in '[' ash sh mount uname echo cut cat; do
 		rm -f ${TEMP}/initramfs-busybox-temp/bin/$i > /dev/null
-		ln ${TEMP}/initramfs-busybox-temp/bin/busybox ${TEMP}/initramfs-busybox-temp/bin/$i ||
+		ln -s busybox ${TEMP}/initramfs-busybox-temp/bin/$i ||
 			gen_die "Busybox error: could not link ${i}!"
 	done
 	
