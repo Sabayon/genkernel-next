@@ -11,3 +11,10 @@ Phases:
 - source global scripts
 - 
 
+Rolling a release:
+- Bump the version in the main genkernel file.
+- echangelog commit the bump
+- git tag -a -m "Tag release $PV" v${PV}
+- git archive --prefix genkernel-$PV/ --format tar -o /tmp/genkernel-${PV}.tar v${PV}
+- bzip2 -9v /tmp/genkernel-${PV}.tar
+- upload /tmp/genkernel-${PV}.tar.bz2 to the hosting.
