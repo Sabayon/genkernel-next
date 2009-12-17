@@ -742,6 +742,7 @@ openLUKS() {
 	[ ! -e /sbin/cryptsetup ] && bad_msg "The ramdisk does not support LUKS" && exit 1
 	while [ 1 ]
 	do
+		local gpg_cmd=""
 		# if crypt_silent=1 and some error occurs, enter shell quietly
 		if [ \( ${CRYPT_SILENT} -eq 1 \) -a \( \( \( ${DEV_ERROR} -eq 1 \) -o \( ${KEY_ERROR} -eq 1 \) \) -o \( ${KEYDEV_ERROR} -eq 1 \) \) ]
 		then
@@ -826,10 +827,17 @@ openLUKS() {
 					fi
 					# At this point a candidate key exists (either mounted before or not)
 					good_msg "${LUKS_KEY} on device ${LUKS_KEYDEV} found" ${CRYPT_SILENT}
-					cryptsetup_options="-d ${mntkey}${LUKS_KEY}"
+					if [ $(echo ${LUKS_KEY} | grep -o '.gpg$') == ".gpg" ] && [ -e /sbin/gpg ] ; then
+						[ -e /dev/tty ] && mv /dev/tty /dev/tty.org
+						mknod /dev/tty c 5 1
+						cryptsetup_options="-d -"
+						gpg_cmd="/sbin/gpg --logger-file /dev/null --quiet --decrypt ${mntkey}${LUKS_KEY} |"
+					else
+						cryptsetup_options="-d ${mntkey}${LUKS_KEY}"
+					fi
 				fi
 				# At this point, keyfile or not, we're ready!
-				crypt_filter "cryptsetup ${cryptsetup_options} luksOpen ${LUKS_DEVICE} ${LUKS_NAME}"
+				crypt_filter "${gpg_cmd}cryptsetup ${cryptsetup_options} luksOpen ${LUKS_DEVICE} ${LUKS_NAME}"
 				if [ $? -eq 0 ]
 				then
 					good_msg "LUKS device ${LUKS_DEVICE} opened" ${CRYPT_SILENT}
