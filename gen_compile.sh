@@ -665,3 +665,44 @@ compile_iscsi() {
 	fi
 }
 
+compile_gpg() {
+	if [ ! -f "${GPG_BINCACHE}" ]
+	then
+		[ ! -f "${GPG_SRCTAR}" ] &&
+			gen_die "Could not find gnupg source tarball: ${GPG_SRCTAR}. Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
+		cd "${TEMP}"
+		rm -rf "${GPG_DIR}"
+		tar -jxf "${GPG_SRCTAR}"
+		[ ! -d "${GPG_DIR}" ] &&
+			gen_die "gnupg directory ${GPG_DIR} invalid"
+		cd "${GPG_DIR}"
+		print_info 1 'gnupg: >> Configuring...'
+		# --enable-minimal works, but it doesn't reduce the command length much.
+		# Given its history and the precision this needs, explicit is cleaner.
+		LDFLAGS='-static' CFLAGS='-Os' ./configure --prefix=/ \
+			--enable-static-rnd=linux --disable-dev-random --disable-asm \
+			--disable-selinux-support --disable-gnupg-iconv --disable-card-support \
+			--disable-agent-support --disable-bzip2 --disable-exec \
+			--disable-photo-viewers --disable-keyserver-helpers --disable-ldap \
+			--disable-hkp --disable-finger --disable-generic --disable-mailto \
+			--disable-keyserver-path --disable-dns-srv --disable-dns-pka \
+			--disable-dns-cert --disable-nls --disable-threads --disable-regex \
+			--disable-optimization --with-included-zlib --without-capabilities \
+			--without-tar --without-ldap --without-libcurl --without-mailprog \
+			--without-libpth-prefix --without-libiconv-prefix --without-libintl-prefix\
+			--without-zlib --without-bzip2 --without-libusb --without-readline \
+				>> ${LOGFILE} 2>&1 || gen_die 'Configuring gnupg failed!'
+		print_info 1 'gnupg: >> Compiling...'
+		MAKE=${UTILS_MAKE} compile_generic "" ""
+		print_info 1 'gnupg: >> Copying to cache...'
+		[ -f "${TEMP}/${GPG_DIR}/g10/gpg" ] ||
+			gen_die 'gnupg executable does not exist!'
+		strip "${TEMP}/${GPG_DIR}/g10/gpg" ||
+			gen_die 'Could not strip gpg binary!'
+		bzip2 -z -c "${TEMP}/${GPG_DIR}/g10/gpg" > "${GPG_BINCACHE}" ||
+			gen_die 'Could not copy the gpg binary to the package directory, does the directory exist?'
+
+		cd "${TEMP}"
+		rm -rf "${GPG_DIR}" > /dev/null
+	fi
+}
