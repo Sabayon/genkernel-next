@@ -110,6 +110,7 @@ determine_real_args() {
 	set_config_with_override 2 REAL_ROOT			CMD_REAL_ROOT
 	set_config_with_override 1 DISKLABEL            CMD_DISKLABEL
 	set_config_with_override 1 LUKS                 CMD_LUKS
+	set_config_with_override 1 GPG                  CMD_GPG
 	set_config_with_override 1 MDADM                CMD_MDADM
 	set_config_with_override 1 MULTIPATH            CMD_MULTIPATH
 	set_config_with_override 1 FIRMWARE             CMD_FIRMWARE
@@ -133,6 +134,7 @@ determine_real_args() {
 	BLKID_BINCACHE=`cache_replace "${BLKID_BINCACHE}"`
 	FUSE_BINCACHE=`cache_replace "${FUSE_BINCACHE}"`
 	UNIONFS_FUSE_BINCACHE=`cache_replace "${UNIONFS_FUSE_BINCACHE}"`
+	GPG_BINCACHE=`cache_replace "${GPG_BINCACHE}"`
   
 	DEFAULT_KERNEL_CONFIG=`arch_replace "${DEFAULT_KERNEL_CONFIG}"`
 	BUSYBOX_CONFIG=`arch_replace "${BUSYBOX_CONFIG}"`
@@ -144,6 +146,7 @@ determine_real_args() {
 	BLKID_BINCACHE=`arch_replace "${BLKID_BINCACHE}"`
 	FUSE_BINCACHE=`arch_replace "${FUSE_BINCACHE}"`
 	UNIONFS_FUSE_BINCACHE=`arch_replace "${UNIONFS_FUSE_BINCACHE}"`
+	GPG_BINCACHE=`arch_replace "${GPG_BINCACHE}"`
 
 	if [ -n "${CMD_BOOTLOADER}" ]
 	then
