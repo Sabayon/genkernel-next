@@ -97,6 +97,7 @@ longusage() {
   echo "				ramdisk"
   echo "	--luks			Include LUKS support"
   echo "				--> 'emerge cryptsetup-luks' with USE=-dynamic"
+  echo "	--gpg			Include GPG-armored LUKS key support"
   echo "	--no-busybox    Do not include busybox in the initramfs."
   echo "	--unionfs       Include support for unionfs"
   echo "	--netboot       Create a self-contained env in the initramfs"
@@ -523,6 +524,10 @@ parse_cmdline() {
 		--luks)
 			CMD_LUKS=1
 			print_info 2 "CMD_LUKS: ${CMD_LUKS}"
+			;;
+		--gpg)
+			CMD_GPG=1
+			print_info 2 "CMD_GPG: ${CMD_GPG}"
 			;;
 		--firmware)
 			CMD_FIRMWARE=1
