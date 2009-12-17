@@ -451,6 +451,25 @@ append_firmware() {
 	rm -r "${TEMP}/initramfs-firmware-temp/"
 }
 
+append_gpg() {
+	if [ -d "${TEMP}/initramfs-gpg-temp" ]
+	then
+		rm -r "${TEMP}/initramfs-gpg-temp"
+	fi
+	cd ${TEMP}
+	mkdir -p "${TEMP}/initramfs-gpg-temp/sbin/"
+	if [ ! -e ${GPG_BINCACHE} ] ; then
+		print_info 1 '		GPG: Adding support (compiling binaries)...'
+		compile_gpg
+	fi
+	bzip2 -dc "${GPG_BINCACHE}" > "${TEMP}/initramfs-gpg-temp/sbin/gpg" ||
+		gen_die 'Could not extract gpg binary cache!'
+	chmod a+x "${TEMP}/initramfs-gpg-temp/sbin/gpg"
+	cd "${TEMP}/initramfs-gpg-temp/"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	rm -rf "${TEMP}/initramfs-gpg-temp" > /dev/null
+}
+
 print_list()
 {
 	local x
@@ -641,6 +660,7 @@ create_initramfs() {
 	append_data 'mdadm' "${MDADM}"
 	append_data 'luks' "${LUKS}"
 	append_data 'multipath' "${MULTIPATH}"
+	append_data 'gpg' "${GPG}"
 
 	if [ "${NORAMDISKMODULES}" = '0' ]
 	then
