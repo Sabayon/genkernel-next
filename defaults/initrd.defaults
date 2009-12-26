@@ -75,6 +75,8 @@ CONSOLE='/dev/console'
 
 LOOPS='/livecd.loop /zisofs /livecd.squashfs /image.squashfs /livecd.gcloop'
 
+DEFAULT_NFSOPTIONS="ro,nolock,rsize=1024,wsize=1024"
+
 # Only sections that are in by default or those that
 # are not module groups need to be defined here...
 HWOPTS='keymap cache modules pata sata scsi usb firewire waitscan slowusb evms lvm dmraid mdadm fs net'

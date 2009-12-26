@@ -236,10 +236,19 @@ findnfsmount() {
 
 		if [ "${NFSROOT}" != '' ]
 		then
+			NFSOPTIONS=${NFSROOT#*,}
+			NFSROOT=${NFSROOT%%,*}
+			if [ "${NFSOPTIONS}" = "${NFSROOT}" ]
+			then
+				NFSOPTIONS=$DEFAULT_NFSOPTIONS
+			else
+				NFSOPTIONS="${DEFAULT_NFSOPTIONS},${NFSOPTIONS}"
+			fi
+
 			if [ "${CDROOT}" != '0' ]
 			then
-				good_msg "Attempting to mount NFS CD image on ${NFSROOT}"
-				mount -t nfs -o ro,nolock,rsize=1024,wsize=1024 ${NFSROOT} ${NEW_ROOT}/mnt/cdrom
+				good_msg "Attempting to mount NFS CD image on ${NFSROOT} with options ${NFSOPTIONS}"
+				mount -t nfs -o ${NFSOPTIONS} ${NFSROOT} ${NEW_ROOT}/mnt/cdrom
 				if [ "$?" = '0' ]
 				then
 					REAL_ROOT="/dev/nfs"
@@ -247,8 +256,8 @@ findnfsmount() {
 					bad_msg "NFS Mounting failed. Is the path corrent ?"
 				fi
 			else	
-				good_msg "Attempting to mount NFS root on ${NFSROOT}"
-				mount -t nfs -o ro,nolock,rsize=1024,wsize=1024 ${NFSROOT} ${NEW_ROOT}
+				good_msg "Attempting to mount NFS root on ${NFSROOT} with options ${NFSOPTIONS}"
+				mount -t nfs -o ${NFSOPTIONS} ${NFSROOT} ${NEW_ROOT}
 				if [ "$?" = '0' ]
 				then
 					REAL_ROOT="/dev/nfs"

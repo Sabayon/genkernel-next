@@ -6,6 +6,10 @@
 # $Id$
 
   26 Dec 2009; Andrew Gaffney <agaffney@gentoo.org>
+  defaults/initrd.defaults, defaults/initrd.scripts:
+  Properly apply NFS mount options for Gentoo bug #262915
+
+  26 Dec 2009; Andrew Gaffney <agaffney@gentoo.org>
   arch/alpha/kernel-config, arch/ia64/kernel-config, arch/ppc/kernel-config,
   arch/x86_64/kernel-config:
   Enable CONFIG_SCSI_MULTI_LUN option for Gentoo bug #261122
