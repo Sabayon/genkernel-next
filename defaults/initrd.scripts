@@ -175,6 +175,8 @@ cache_cd_contents() {
 			# z=$(($z + $i)) ; done
 			# echo $z
 			good_msg "Copying loop file for caching..."
+			# Verify that the needed directory exists
+			mkdir -p "$(dirname ${NEW_ROOT}/mnt/${LOOP})"
 			cp -a ${NEW_ROOT}/mnt/cdrom/${LOOP} ${NEW_ROOT}/mnt/${LOOP}
 			if [ $? -ne 0 ]
 			then

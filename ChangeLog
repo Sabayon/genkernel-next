@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  26 Dec 2009; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts:
+  Apply patch to make sure loop cache directory exists for Gentoo bug
+  #297814
+
   17 Dec 2009; Robin H. Johnson <robbat2@gentoo.org> HACKING:
   Document how to roll a release for the next time.
 
