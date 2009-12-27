@@ -5,6 +5,17 @@
 # Distributed under the GPL v2
 # $Id$
 
+  27 Dec 2009; Andrew Gaffney <agaffney@gentoo.org>
+  arch/alpha/kernel-config, arch/alpha/modules_load, arch/arm/modules_load,
+  arch/ia64/kernel-config, arch/ia64/modules_load, arch/mips/modules_load,
+  arch/parisc/modules_load, arch/parisc64/modules_load,
+  arch/ppc/kernel-config, arch/ppc/modules_load, arch/ppc64/modules_load,
+  arch/sparc/modules_load, arch/sparc64/kernel-config,
+  arch/sparc64/modules_load, arch/um/modules_load, arch/x86/kernel-config,
+  arch/x86/modules_load, arch/x86_64/kernel-config,
+  arch/x86_64/modules_load, defaults/kernel-config, defaults/modules_load:
+  Enable ext4 by default everywhere (for Gentoo bug #268818)
+
   27 Dec 2009; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts,
   defaults/linuxrc:
   Add support for isoboot= option (for Gentoo bug #294268)
