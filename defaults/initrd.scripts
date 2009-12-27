@@ -72,8 +72,17 @@ findmediamount() {
 
 	if [ "$#" -gt "0" ]
 	then
-
 		[ ! -d "${mntdir}" ] && mkdir -p ${mntdir} 2>/dev/null >/dev/null
+		if [ -n "${ISOBOOT}" ]
+		then
+			mntcddir="${mntdir%${media}}iso"
+			if [ ! -f ${mntcddir} ]
+			then
+				mkdir ${mntcddir}
+			fi
+		else
+			mntcddir=${mntdir}
+		fi
 
 		for x in $*
 		do
@@ -104,9 +113,18 @@ findmediamount() {
 #				else
 #					mount -r -t auto ${x} ${mntdir} &>/dev/null
 #				fi
-				mount -r -t ${CDROOT_TYPE} ${x} ${mntdir} >/dev/null 2>&1
+				mount -r -t ${CDROOT_TYPE} ${x} ${mntcddir} >/dev/null 2>&1
 				if [ "$?" = '0' ]
 				then
+					if [ -n "${ISOBOOT}" ]; then
+						if [ -f ${mntcddir}/${ISOBOOT} ]; then
+							mount -o loop ${mntcddir}/${ISOBOOT} ${mntdir}
+							if [ "$?" = "0" ]; then
+								good_msg "iso mounted on ${mntdir}"
+							fi
+						fi
+					fi
+
 					# Check for the media
 					if [ -f "${mntdir}/${recon}" ]
 					then
@@ -115,7 +133,7 @@ findmediamount() {
 						good_msg "Media found on ${x}" ${CRYPT_SILENT}
 						break
 					else
-						umount ${mntdir}
+						umount ${mntcddir}
 					fi
 				fi
 			fi

@@ -80,6 +80,9 @@ do
 		looptype\=*)
 			LOOPTYPE=`parse_opt "${x}"`
 		;;
+		isoboot\=*)
+			ISOBOOT=`parse_opt "${x}"`
+		;;
 		# Start Volume manager options 
 		dolvm)
 			USE_LVM_NORMAL=1

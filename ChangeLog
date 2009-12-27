@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  27 Dec 2009; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts,
+  defaults/linuxrc:
+  Add support for isoboot= option (for Gentoo bug #294268)
+
   26 Dec 2009; Andrew Gaffney <agaffney@gentoo.org>
   defaults/initrd.defaults, defaults/initrd.scripts:
   Properly apply NFS mount options for Gentoo bug #262915
