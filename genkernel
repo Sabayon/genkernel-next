@@ -313,7 +313,10 @@ fi
 
 if [ "${BUILD_KERNEL}" -eq '1' ]
 then
-	set_bootloader
+	if ! isTrue "${CMD_NOINSTALL}"
+	then
+		set_bootloader
+	fi
 	print_info 1 ''
 	print_info 1 "Kernel compiled successfully!"
 	print_info 1 ''
