@@ -355,7 +355,12 @@ crypt_filter() {
 	then
 		eval $1 >/dev/null 2>/dev/null
 	else
+		splash 'verbose' > /dev/null &
 		eval $1
+		if [ $? -eq 0 ]
+		then
+			splash set_msg 'Disk unlocked.'
+		fi
 	fi
 }
 
@@ -514,6 +519,7 @@ chooseKeymap() {
 	good_msg "Loading keymaps"
 	if [ -z "${keymap}" ]
 	then
+		splash 'verbose' > /dev/null &
 		cat /lib/keymaps/keymapList
 		read -t 10 -p '<< Load keymap (Enter for default): ' keymap
 		case ${keymap} in
@@ -574,10 +580,12 @@ chooseKeymap() {
 		mkdir -p /etc/sysconfig
 #		echo "XKEYBOARD=${xkeymap}" > /etc/sysconfig/keyboard
 		echo "XKEYBOARD=${keymap}" > /etc/sysconfig/keyboard
+		splash set_msg "Set keymap to ${keymap}"
 	elif [ -z "${keymap}" ]
 	then
 		echo
 		good_msg "Keeping default keymap"
+		splash set_msg "Keeping default keymap"
 	else
 		bad_msg "Sorry, but keymap ''${keymap}'' is invalid!"
 		unset keymap
