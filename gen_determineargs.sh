@@ -135,6 +135,7 @@ determine_real_args() {
 	BUSYBOX_BINCACHE=`cache_replace "${BUSYBOX_BINCACHE}"`
 	DEVICE_MAPPER_BINCACHE=`cache_replace "${DEVICE_MAPPER_BINCACHE}"`
 	LVM_BINCACHE=`cache_replace "${LVM_BINCACHE}"`
+	MDADM_BINCACHE=`cache_replace "${MDADM_BINCACHE}"`
 	DMRAID_BINCACHE=`cache_replace "${DMRAID_BINCACHE}"`
 	ISCSI_BINCACHE=`cache_replace "${ISCSI_BINCACHE}"`
 	BLKID_BINCACHE=`cache_replace "${BLKID_BINCACHE}"`
@@ -147,6 +148,7 @@ determine_real_args() {
 	BUSYBOX_BINCACHE=`arch_replace "${BUSYBOX_BINCACHE}"`
 	DEVICE_MAPPER_BINCACHE=`arch_replace "${DEVICE_MAPPER_BINCACHE}"`
 	LVM_BINCACHE=`arch_replace "${LVM_BINCACHE}"`
+	MDADM_BINCACHE=`arch_replace "${MDADM_BINCACHE}"`
 	DMRAID_BINCACHE=`arch_replace "${DMRAID_BINCACHE}"`
 	ISCSI_BINCACHE=`arch_replace "${ISCSI_BINCACHE}"`
 	BLKID_BINCACHE=`arch_replace "${BLKID_BINCACHE}"`
