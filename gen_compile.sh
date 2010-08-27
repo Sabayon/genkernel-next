@@ -476,15 +476,16 @@ compile_mdadm() {
 		sed -i "s/^# LDFLAGS = -static/LDFLAGS = -static/" Makefile
 
 		print_info 1 'mdadm: >> Compiling...'
-			compile_generic 'mdadm' utils
+			compile_generic 'mdadm mdmon' utils
 
 		mkdir -p "${TEMP}/mdadm/sbin"
 		install -m 0755 -s mdadm "${TEMP}/mdadm/sbin/mdadm"
+		install -m 0755 -s mdmon "${TEMP}/mdadm/sbin/mdmon"
 		print_info 1 '      >> Copying to bincache...'
 		cd "${TEMP}/mdadm"
-		strip "sbin/mdadm" ||
-			gen_die 'Could not strip mdadm!'
-		/bin/tar -cjf "${MDADM_BINCACHE}" sbin/mdadm ||
+		strip "sbin/mdadm" "sbin/mdmon" ||
+			gen_die 'Could not strip mdadm binaries!'
+		/bin/tar -cjf "${MDADM_BINCACHE}" sbin/mdadm sbin/mdmon ||
 			gen_die 'Could not create binary cache'
 
 		cd "${TEMP}"
