@@ -178,6 +178,9 @@ do
 		iscsi_debug\=*)
 			ISCSI_DEBUG=`parse_opt "${x}"`
 		;;
+		iscsi_noibft)
+			ISCSI_NOIBFT=1
+		;;
 		# Crypto
 		crypt_root\=*)
 			CRYPT_ROOT=`parse_opt "${x}"`
