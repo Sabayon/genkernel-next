@@ -689,10 +689,16 @@ startVolumes() {
 }
 
 startiscsi() {
+	
+	if [ ! -n "${ISCSI_NOIBFT}" ]
+	then
+		good_msg "Activating iSCSI via iBFT"
+		iscsistart -b
+	fi
 
 	if [ -n "${ISCSI_INITIATORNAME}" ] && [ -n "${ISCSI_TARGET}" ] && [ -n "${ISCSI_ADDRESS}" ]
 	then
-		good_msg "Activating iSCSI"
+		good_msg "Activating iSCSI via cmdline"
 
 		if [ "${ISCSI_TGPT}" ]
 		then
