@@ -50,10 +50,12 @@ actions are supported:
     Build all steps - the kernel, modules, and the ramdisk.
 *bzImage*::
     Build only the kernel.
+*initramfs*::
+    Build only the ramdisk/initramfs.
 *kernel*::
     Build only the kernel and the modules.
-*initramfs*::
-    Build only the ramdisk.
+*ramdisk*::
+    Build only the ramdisk/initramfs.
 
 
 OPTIONS
