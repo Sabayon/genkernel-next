@@ -100,7 +100,7 @@ def extract_genkernel_xml(genkernel_xml_path):
 			para_name = 'no-install'
 
 		m = yes_no.match(para_name)
-		if m:
+		if m and para_name != 'no-ramdisk-modules':
 			p_yes = m.group(2)
 			p_no = m.group(1) + m.group(2)
 			genkernel_xml_long_params.add(p_yes)
