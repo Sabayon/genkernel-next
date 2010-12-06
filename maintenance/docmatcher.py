@@ -234,37 +234,35 @@ def main():
 	print_set(genkernel_conf_variables)
 
 
-	# Future work
+	# Future work (due extensions)
 	print('Options missing from the *man page*:')
 	print_set(gen_cmdline_sh_parsing_long_params.difference(genkernel_8_long_params))
-
-	print('Removed options still mentioned in the *man page*:')
-	print_set(genkernel_8_long_params.difference(gen_cmdline_sh_parsing_long_params))
-
 
 	print('Options missing from *--help*:')
 	print_set(gen_cmdline_sh_parsing_long_params.difference(gen_cmdline_sh_usage_long_params))
 
-	print('Removed options still mentioned in *--help*:')
-	print_set(gen_cmdline_sh_usage_long_params.difference(gen_cmdline_sh_parsing_long_params))
-
-
 	print('Options missing from *web page*:')
 	print_set(gen_cmdline_sh_parsing_long_params.difference(genkernel_xml_long_params))
-
-	print('Removed options still mentioned in *web page*:')
-	print_set(genkernel_xml_long_params.difference(gen_cmdline_sh_parsing_long_params))
-
 
 	print('Variables missing from *web page*:')
 	print_set(known_variales.difference(genkernel_xml_variables))
 
-	print('Removed variables still mentioned in *web page*:')
-	print_set(genkernel_xml_variables.difference(known_variales))
-
-
 	print('Variables missing from *genkernel.conf*:')
 	print_set(known_variales.difference(genkernel_conf_variables))
+
+
+	# Future work (due removal and updates)
+	print('Removed options still mentioned in the *man page*:')
+	print_set(genkernel_8_long_params.difference(gen_cmdline_sh_parsing_long_params))
+
+	print('Removed options still mentioned in *--help*:')
+	print_set(gen_cmdline_sh_usage_long_params.difference(gen_cmdline_sh_parsing_long_params))
+
+	print('Removed options still mentioned in *web page*:')
+	print_set(genkernel_xml_long_params.difference(gen_cmdline_sh_parsing_long_params))
+
+	print('Removed variables still mentioned in *web page*:')
+	print_set(genkernel_xml_variables.difference(known_variales))
 
 	print('Removed variables still mentioned in *genkernel.conf*:')
 	print_set(genkernel_conf_variables.difference(known_variales))
