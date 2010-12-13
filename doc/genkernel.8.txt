@@ -323,6 +323,14 @@ which the ramdisk scripts would recognize.
     Activate SCSI devices on bootup, necessary when SCSI support is
     compiled as modules and you're using SCSI or SATA devices.
 
+*keymap*='MAP'::
+    Set keymap to 'MAP', e.g. *keymap*=de.
+    For valid values of 'MAP' please see
+    '/usr/share/genkernel/defaults/keymaps.tar.gz'.
+
+*dokeymap*::
+    Use keymap.  Usage of *keymap*= implies this option, already.
+
 
 NETBOOTING
 ----------
