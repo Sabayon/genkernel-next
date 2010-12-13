@@ -72,18 +72,18 @@ def exract_gen_cmdline_sh():
 	return gen_cmdline_sh_parsing_long_params, gen_cmdline_sh_usage_long_params, gen_cmdline_sh_variables
 
 
-def extract_genkernel_8():
-	f = open('genkernel.8', 'r')
-	genkernel_8 = f.read()
+def extract_genkernel_8_txt():
+	f = open(os.path.join('doc', 'genkernel.8.txt'), 'r')
+	genkernel_8_txt = f.read()
 	f.close()
 
 	# Preprocess
-	genkernel_8 = genkernel_8.replace('\\fR','').replace('\\fB','').replace('\\-','-')
+	genkernel_8_txt = genkernel_8_txt.replace('*[*no-*]*','[no-]')
 
 	yes_no = re.compile('^\\[(no-)\\]([a-z0-9-]+)$')
 
-	genkernel_8_long_params = set()
-	for match in re.finditer('--((?:[a-z]|\\[no-\\])[a-z0-9-]+)', genkernel_8):
+	genkernel_8_txt_long_params = set()
+	for match in re.finditer('--((?:[a-z]|\\[no-\\])[a-z0-9-]+)', genkernel_8_txt):
 		para_name = match.group(1)
 
 		# Black list
@@ -94,14 +94,14 @@ def extract_genkernel_8():
 		if m:
 			p_yes = m.group(2)
 			p_no = m.group(1) + m.group(2)
-			genkernel_8_long_params.add(p_yes)
-			genkernel_8_long_params.add(p_no)
+			genkernel_8_txt_long_params.add(p_yes)
+			genkernel_8_txt_long_params.add(p_no)
 		else:
-			genkernel_8_long_params.add(para_name)
+			genkernel_8_txt_long_params.add(para_name)
 
-	del genkernel_8
+	del genkernel_8_txt
 
-	return genkernel_8_long_params
+	return genkernel_8_txt_long_params
 
 
 def extract_genkernel_xml(genkernel_xml_path, variables_blacklist):
@@ -197,7 +197,7 @@ def main():
 		sys.exit(1)
 
 	gen_cmdline_sh_parsing_long_params, gen_cmdline_sh_usage_long_params, gen_cmdline_sh_variables = exract_gen_cmdline_sh()
-	genkernel_8_long_params = extract_genkernel_8()
+	genkernel_8_txt_long_params = extract_genkernel_8_txt()
 	gen_determineargs_sh_variables = extract_gen_determineargs_sh()
 
 	variables_blacklist = set(NON_VARIABLES).difference(gen_determineargs_sh_variables)
@@ -215,7 +215,7 @@ def main():
 	print_set(gen_cmdline_sh_usage_long_params)
 
 	print('Options mentioned in *man page*:')
-	print_set(genkernel_8_long_params)
+	print_set(genkernel_8_txt_long_params)
 
 	print('Options mentioned in *web page*:')
 	print_set(genkernel_xml_long_params)
@@ -236,7 +236,7 @@ def main():
 
 	# Future work (due extensions)
 	print('Options missing from the *man page*:')
-	print_set(gen_cmdline_sh_parsing_long_params.difference(genkernel_8_long_params))
+	print_set(gen_cmdline_sh_parsing_long_params.difference(genkernel_8_txt_long_params))
 
 	print('Options missing from *--help*:')
 	print_set(gen_cmdline_sh_parsing_long_params.difference(gen_cmdline_sh_usage_long_params))
@@ -253,7 +253,7 @@ def main():
 
 	# Future work (due removal and updates)
 	print('Removed options still mentioned in the *man page*:')
-	print_set(genkernel_8_long_params.difference(gen_cmdline_sh_parsing_long_params))
+	print_set(genkernel_8_txt_long_params.difference(gen_cmdline_sh_parsing_long_params))
 
 	print('Removed options still mentioned in *--help*:')
 	print_set(gen_cmdline_sh_usage_long_params.difference(gen_cmdline_sh_parsing_long_params))
