@@ -91,6 +91,7 @@ longusage() {
   echo "	--bootloader=grub	Add new kernel to GRUB configuration"
   echo "	--linuxrc=<file>	Specifies a user created linuxrc"
   echo "	--busybox-config=<file>	Specifies a user created busybox config"
+  echo "	--genzimage		Make and install kernelz image (PowerPC)"
   echo "	--disklabel		Include disk label and uuid support in your"
   echo "				ramdisk"
   echo "	--luks			Include LUKS support"

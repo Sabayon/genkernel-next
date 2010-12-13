@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  13 Dec 2010; <sping@gentoo.org> doc/genkernel.8.txt, gen_cmdline.sh:
+  docs: Document --genzimage
+
   13 Dec 2010; <sping@gentoo.org> gen_cmdline.sh:
   Fix a reference to --nomenuconfig into --no-menuconfig
 

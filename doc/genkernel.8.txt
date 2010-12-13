@@ -277,6 +277,9 @@ INITIALIZATION
 *--busybox-config*=<file>::
     Specifies a user created busybox config.
 
+*--genzimage*::
+	Make and install kernelz image from 'arch/powerpc/boot/zImage.initrd'.
+
 *--disklabel*::
     Include disk label and uuid support in your initrd.
 
