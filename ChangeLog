@@ -22,9 +22,13 @@
 
   6 Dec 2010; <sping@gentoo.org> doc/genkernel.8.txt:
   docs: Mention both "initramfs" and "ramdisk" as available actions
+  (bug #251702)
 
   6 Dec 2010; <sping@gentoo.org> genkernel.8:
   man page: Propagate rename of --no-initrdmodules to --no-ramdisk-modules
+
+  29 Nov 2010; <sping@gentoo.org> ChangeLog:
+  Add patch allowing compilation of busybox 1.7.4 with make 3.82 (bug #341943)
 
   20 Feb 2010; Andrew Gaffney <agaffney@gentoo.org> defaults/initrd.scripts:
   Apply patches from Gentoo bug #268468
@@ -265,6 +269,7 @@
 
   23 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> gen_cmdline.sh:
   Allow old 'initramfs' option instead of 'ramdisk' for compatability
+  (bug #251702)
 
   17 Dec 2008; Andrew Gaffney <agaffney@gentoo.org> defaults/linuxrc:
   Remove the use of 'env -i' when calling switch_root due to Gentoo bug
