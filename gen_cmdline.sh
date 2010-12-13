@@ -308,7 +308,7 @@ parse_cmdline() {
 			if [[ TERM_LINES -lt 19 || TERM_COLUMNS -lt 80 ]]
 			then
 				echo "Error: You need a terminal with at least 80 columns"
-				echo "		 and 19 lines for --menuconfig; try --nomenuconfig..."
+				echo "		 and 19 lines for --menuconfig; try --no-menuconfig..."
 				exit 1
 			fi
 			CMD_MENUCONFIG=1
