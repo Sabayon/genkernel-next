@@ -9,6 +9,7 @@ longusage() {
   echo "Available Actions: "
   echo "  all				Build all steps"
   echo "  bzImage			Build only the kernel"
+  echo "  initramfs			Build only the ramdisk/initramfs"
   echo "  kernel			Build only the kernel and modules"
   echo "  ramdisk			Build only the ramdisk/initramfs"
   echo

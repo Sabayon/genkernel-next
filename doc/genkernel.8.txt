@@ -1,0 +1,363 @@
+GENKERNEL(8)
+============
+:man source:   genkernel {genkernelversion}
+:man manual:   genkernel {genkernelversion}
+
+
+NAME
+----
+genkernel - the Gentoo Linux automatic kernel compiler.
+
+
+SYNOPSIS
+--------
+*genkernel* [options...] action
+
+
+INTRODUCTION
+------------
+Genkernel is designed to allow users who are not previously used to
+compiling a kernel to use a similar setup to that one that is used on
+the Gentoo LiveCDs which auto-detects your hardware.
+
+Some users may also be interested in using genkernel for hardware which
+requires initialization and a working kernel before it can be booted
+because genkernel also automatically compiles your kernel modules,
+allowing hardware which needs to be loaded with module parameters to be
+used.
+
+
+USAGE
+-----
+All that is needed to run genkernel is just `genkernel` with an
+action and any flags you might need:
+
+------------------------------------------
+# genkernel --menuconfig --no-clean --no-install all
+------------------------------------------
+
+This would produce a kernel, asking you what how to configure it to
+your desire, leaving alone any existing compiled object files, but not
+installing anything.
+
+
+ACTIONS
+-------
+An action tells genkernel what you want it to do  -  the following
+actions are supported:
+
+*all*::
+    Build all steps - the kernel, modules, and the ramdisk.
+*bzImage*::
+    Build only the kernel.
+*initramfs*::
+    Build only the ramdisk/initramfs.
+*kernel*::
+    Build only the kernel and the modules.
+*ramdisk*::
+    Build only the ramdisk/initramfs.
+
+
+OPTIONS
+-------
+Genkernel supports the following options which alter its behaviour.
+Certain options have *--no-* variants which do the opposite thing.
+You can specify your options in any order.
+
+
+DEBUGGING OPTIONS
+~~~~~~~~~~~~~~~~~
+*--loglevel*=<0-5>::
+    This controls the out verbosity level of genkernel output - if
+    this is set to 0, minimal debugging is done; if this is set to 5
+    as much output as possible is given.
+
+*--logfile*=<outfile>::
+    This outputs debugging data to the file <outfile>. By default
+    this is '/var/log/genkernel.log'.
+
+*--*[*no-*]*color*::
+    Turns on, or off, output in color using escape sequences.
+
+
+KERNEL CONFIGURATION
+~~~~~~~~~~~~~~~~~~~~
+*--*[*no-*]*menuconfig*::
+    Runs, or does not run "make menuconfig" after running "make oldconfig".
+
+*--*[*no-*]*save-config*::
+    Saves, or does not save the kernel configuration to '/etc/kernels'
+    if the kernel is successfully compiled.
+
+*--gconfig*::
+    Run "make gconfig" after "make oldconfig".
+
+*--xconfig*::
+    Run "make xconfig" after "make oldconfig".
+
+
+KERNEL COMPILATION
+~~~~~~~~~~~~~~~~~~
+*--*[*no-*]*clean*::
+    Runs, or does not run, "make clean" before compilation  -  this
+    erases any compiled object files in the kernel source tree but
+    does not have an impact on the kernel configuration.  Specifying
+    *--no-clean* implies *--no-mrproper*.
+
+*--*[*no-*]*mrproper*::
+    Runs, or does not run, "make mrproper" before compilation - this
+    erases both any compiled object files in the kernel source tree
+    as well as the kernel configuration.
+
+*--*[*no-*]*install*::
+    Installs,  or does not install the kernel to '/boot' after building.
+    The default is  *--install*.   If MOUNTBOOT is set in
+    '/etc/genkernel.conf'  then '/boot' will be automatically mounted if
+    it is not already mounted before the ramdisk and kernel images
+    are copied over.
+
+*--*[*no-*]*symlink*::
+    Manages,  or does not manage, symlinks in '/boot' like the manual
+    kernel "make install" process does. A kernel (or,  depending on
+    options,  kernelz)  symlink will link to the most recently built
+    kernel image and a kernel.old (or kernelz.old) symlink will link
+    to the second most recently built image, if one exists.  Similar
+    symlinks (both * and *.old) are managed for initramfs and System.map.
+    The corresponding work products (i.e., the actual kernel
+    and initamfs images, and System.map) are also managed accordingly.
+    NOTE: Specifying   *--symlink*  does nothing unless
+    *--install* is also specified.
+
+*--no-ramdisk-modules*::
+    Don't copy any modules to the ramdisk.
+
+*--oldconfig*::
+    Implies *--no-clean*, and thus *--no-mrproper*, running a "make oldconfig".
+
+*--callback*=<...>::
+    Run the specified arguments in the current environment after the
+    kernel and modules have been compiled.
+
+
+KERNEL LOCATIONS
+~~~~~~~~~~~~~~~~
+*--kerneldir*=<dir>::
+    This specifies the location of the kernel sources;  the default
+    is '/usr/src/linux'.
+
+*--kernel-config*=<file>::
+    This specifies a kernel configuration file to use for compilation;
+    by default genkernel uses the config from the previous
+    build of the same kernel version or a default kernel config if
+    there isn't a previous config.
+
+
+LOW-LEVEL COMPILATION OPTIONS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*--kernel-cc*=<compiler>::
+    Compiler to use for the kernel compilation (e.g. distcc).
+
+*--kernel-as*=<assembler>::
+    Assembler to use for the kernel compilation.
+
+*--kernel-ld*=<linker>::
+    Linker to use for the kernel compilation.
+
+*--kernel-make*=<makeprg>::
+    GNU Make to use for the kernel compilation.
+
+*--utils-cc*=<compiler>::
+    Compiler to use for utilities.
+
+*--utils-as*=<assembler>::
+    Assembler to use for utilities.
+
+*--utils-ld*=<linker>::
+    Linker to use for utilities.
+
+*--utils-make*=<makeprog>::
+    GNU Make to use for utilities.
+
+*--makeopts*=<makeopts>::
+    GNU Make options such as -j2, etc.
+
+
+INITIALIZATION
+~~~~~~~~~~~~~~
+*--*[*no-*]*splash*=<theme>::
+    If the extra argument is specified,  splash is forced using
+    <theme>  rather than the default theme specified in your splash
+    configuration. If *--no-splash* is specified, then splash is disabled.
+
+*--splash-res*=<resolutions>::
+    Optionally select splash resolutions to include.
+
+*--do-keymap-auto*::
+    Force keymap selection at boot.
+
+*--dmraid*::
+    Add DMRAID support.
+
+*--evms*::
+    Add in EVMS support from static binaries if they exist on the
+    system: you should run "emerge evms" first.
+
+*--lvm*::
+    Add in LVM support from static binaries if they exist on the
+    system,  or compile static LVM binaries if static ones do not
+    exist.
+
+*--luks*::
+    Add in Luks support from static binaries if they exist on the
+    system.
+
+*--static*::
+    This builds a monolithic kernel without any modules on any
+    initial ramdisks.
+
+*--linuxrc*=<file>::
+    Use <file> for the linuxrc instead of the genkernel linuxrc.
+
+
+INTERNALS
+~~~~~~~~~
+*--arch-override*=<arch>::
+    Force the architecture settings described by the <arch>  profile
+    instead of autodetecting the running architecture.
+
+*--tempdir*=<dir>::
+    Sets genkernel's temporary working directory to <dir>.
+
+
+OUTPUT SETTINGS
+~~~~~~~~~~~~~~~
+*--kernname*=<...>::
+    Tag the kernel and initrd with a name, if not defined this
+    option defaults to genkernel
+
+*--minkernpackage*=<tbz2>::
+    File to output a .tar.bz2'd kernel and initrd: no modules outside
+    of the initrd will be included...
+
+*--modulespackage*=<tbz2>::
+    File to output a .tar.bz2'd modules after the callbacks have run
+
+*--kerncache*=<tbz2>::
+    File to output a .tar.bz2'd kernel, contents of '/lib/modules/'
+    and the kernel config.  NOTE: This is created before the callbacks
+    are run.
+
+*--no-kernel-sources*=<tbz2>::
+    This option is only valid if kerncache is defined If there is a
+    valid kerncache no checks will be made against a kernel source
+    tree.
+
+*--initramfs-overlay*=<dir>::
+    Directory structure to include in the initramfs, only available
+    on 2.6 kernels
+
+
+RAMDISK OPTIONS
+---------------
+The following options can be passed as kernel parameters from the bootloader,
+which the ramdisk scripts would recognize.
+
+*real_root*=<...>::
+    Specifies the device node of the root filesystem to mount.
+
+*crypt_root*=<...>::
+    This specifies the device encrypted by Luks, which contains the
+    root filesystem to mount.
+
+*crypt_swap*=<...>::
+    This specifies the swap device encrypted by Luks.
+
+*root_key*=<...>::
+    In case your root is encrypted with a key, you can use a device
+    like a  usb pen to store the key.  This value should be the key
+    path relative to the mount point.
+
+*root_keydev*=<...>::
+    If necessary provide the name of the device that carries the
+    root_key.   If unset while using root_key, it will automatically
+    look for the device in every boot.
+
+*swap_key*=<...>::
+    Same as root_key for swap.
+
+*swap_keydev*=<...>::
+    Same as root_keydev for swap.
+
+*crypt_silent*::
+    Set this to silent all the output related to the cryptographic
+    software,  and in case your encrypted device isn't open with the
+    key, it opens a shell in the initrd quietly.
+
+*dodmraid*=<...>::
+    Passes arguments to dmraid on bootup.
+
+*real_init*=<...>::
+    Passes arguments to init on bootup.
+
+*scandelay*=<...>::
+    Pauses for 10 seconds before running devfsd if no argument is
+    specified; otherwise pauses for the number of specified seconds.
+
+*ip*=<...>::
+    Normally used to tell the kernel that it should start a network
+    interface. If present, the initrd will try to mount a  livecd
+    over NFS.
+
+*nfsroot*=<...>::
+    If present,  the initrd will try to mount a livecd from that
+    location. Otherwise the location will be deduced from the DCHP
+    request (option root-path)
+
+*doevms*::
+    Activate EVMS volumes on bootup
+
+*dolvm*::
+    Activate LVM volumes on bootup
+
+*doscsi*::
+    Activate SCSI devices on bootup, necessary when SCSI support is
+    compiled as modules and you're using SCSI or SATA devices.
+
+
+NETBOOTING
+----------
+The initrd scripts have limited support for network booting.   This is
+activated if the *ip*=<...> kernel parameter was given. Please refer to
+the genkernel guide at 'http://www.gentoo.org/doc/en/genkernel.xml' for
+more information.
+
+The initrd scripts will extract any *.tar.gz files found in the '/add'
+directory of the livecd into the root filesystem during boot. This way
+it is easy to extend a netbooted LiveCD i.e. add custom tools, or other
+kernel modules.
+
+
+REPORTING BUGS
+--------------
+If you believe you have found a bug in the genkernel scripts,  then
+please file a bug on the Gentoo Linux Bugzilla: 'http://bugs.gentoo.org',
+assigning your bug to genkernel@gentoo.org. We cannot assist you with
+kernel compilation failures unless they are caused by a genkernel bug.
+
+Kernel issues for Gentoo-supported kernels, including compilation failures
+should go to 'http://bugs.gentoo.org' and should be assigned to kernel@gentoo.org.
+Please check if an existing bug documents the same
+issue before opening a new bug. Issues for kernel sources not supported
+by Gentoo should go to their relevant authors.
+
+
+AUTHORS
+-------
+- Tim Yamin <plasmaroo@gentoo.org>
+- Eric Edgar <rocket@gentoo.org>
+- NFS Support by Thomas Seiler <thseiler@gmail.com>
+
+
+SEE ALSO
+--------
+/etc/genkernel.conf - genkernel configuration file
