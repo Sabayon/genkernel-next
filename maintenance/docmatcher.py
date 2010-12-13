@@ -20,6 +20,8 @@ for app in ('DEVICE_MAPPER', 'UNIONFS_FUSE', 'BUSYBOX', 'DMRAID', 'LVM', 'ISCSI'
 		EXTRA_VARIABLES.append('%s_%s' % (app, prop))
 EXTRA_VARIABLES = tuple(EXTRA_VARIABLES)
 
+IGNORE_OPTIONS = ('help', 'version')
+
 
 def exract_gen_cmdline_sh():
 	f = open('gen_cmdline.sh', 'r')
@@ -51,6 +53,8 @@ def exract_gen_cmdline_sh():
 	gen_cmdline_sh_parsing_long_params = set()
 	for match in re.finditer('--([a-z][a-z0-9-]+)', parsing_code):
 		para_name = match.group(1)
+		if para_name in IGNORE_OPTIONS:
+			continue
 		gen_cmdline_sh_parsing_long_params.add(para_name)
 
 	gen_cmdline_sh_variables = set()
@@ -66,6 +70,8 @@ def exract_gen_cmdline_sh():
 	gen_cmdline_sh_usage_long_params = set()
 	for match in re.finditer('--([a-z][a-z0-9-]+)', '\n'.join(usage_lines)):
 		para_name = match.group(1)
+		if para_name in IGNORE_OPTIONS:
+			continue
 		gen_cmdline_sh_usage_long_params.add(para_name)
 	del usage_lines
 
@@ -117,6 +123,9 @@ def extract_genkernel_xml(genkernel_xml_path, variables_blacklist):
 	genkernel_xml_long_params = set()
 	for match in re.finditer('--([a-z][a-z0-9-]+)', genkernel_xml):
 		para_name = match.group(1)
+
+		if para_name in IGNORE_OPTIONS:
+			continue
 
 		# Fix doc error "--no install"
 		if para_name == 'no':
