@@ -3,6 +3,7 @@
 
 longusage() {
   echo "Gentoo Linux Genkernel ${GK_V}"
+  echo
   echo "Usage: "
   echo "  genkernel [options] action"
   echo
@@ -140,6 +141,7 @@ longusage() {
 
 usage() {
   echo "Gentoo Linux Genkernel ${GK_V}"
+  echo
   echo "Usage: "
   echo "	genkernel [options] all"
   echo
