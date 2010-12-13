@@ -6,6 +6,9 @@
 # $Id$
 
   13 Dec 2010; <sping@gentoo.org> doc/genkernel.8.txt:
+  docs: Update man page from output of --help
+
+  13 Dec 2010; <sping@gentoo.org> doc/genkernel.8.txt:
   docs: Document keymap= and dokeymap (bug #346017)
 
   6 Dec 2010; <sping@gentoo.org> genkernel.conf:

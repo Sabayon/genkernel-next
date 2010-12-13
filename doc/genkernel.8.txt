@@ -65,6 +65,12 @@ Certain options have *--no-* variants which do the opposite thing.
 You can specify your options in any order.
 
 
+CONFIGURATION OPTIONS
+~~~~~~~~~~~~~~~~~~~~~
+*--config*=<file>::
+    Genkernel configuration file to use
+
+
 DEBUGGING OPTIONS
 ~~~~~~~~~~~~~~~~~
 *--loglevel*=<0-5>::
@@ -128,15 +134,28 @@ KERNEL COMPILATION
     NOTE: Specifying   *--symlink*  does nothing unless
     *--install* is also specified.
 
+*--oldconfig*::
+    Implies *--no-clean*, and thus *--no-mrproper*, running a "make oldconfig".
+
+*--gensplash*::
+    Install framebuffer splash support into initramfs.
+
+*--*[*no-*]*splash*::
+    Installs, or not, framebuffer splash support into initramfs.
+
 *--no-ramdisk-modules*::
     Don't copy any modules to the ramdisk.
 
-*--oldconfig*::
-    Implies *--no-clean*, and thus *--no-mrproper*, running a "make oldconfig".
+*--all-ramdisk-modules*::
+    Copy all kernel modules to the initrd.
 
 *--callback*=<...>::
     Run the specified arguments in the current environment after the
     kernel and modules have been compiled.
+
+*--static*::
+    This builds a monolithic kernel without any modules on any
+    initial ramdisks.
 
 
 KERNEL LOCATIONS
@@ -151,6 +170,10 @@ KERNEL LOCATIONS
     build of the same kernel version or a default kernel config if
     there isn't a previous config.
 
+*--module-prefix*=<dir>::
+    Prefix to kernel module destination, modules will be installed in
+    '<prefix>/lib/modules'.
+
 
 LOW-LEVEL COMPILATION OPTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -162,6 +185,9 @@ LOW-LEVEL COMPILATION OPTIONS
 
 *--kernel-ld*=<linker>::
     Linker to use for the kernel compilation.
+
+*--kernel-cross-compile*=<cross var>::
+    CROSS_COMPILE kernel variable.
 
 *--kernel-make*=<makeprg>::
     GNU Make to use for the kernel compilation.
@@ -178,12 +204,30 @@ LOW-LEVEL COMPILATION OPTIONS
 *--utils-make*=<makeprog>::
     GNU Make to use for utilities.
 
+*--utils-cross-compile*=<cross var>::
+    CROSS_COMPILE utils variable.
+
+*--utils-arch*=<arch>::
+    Force to arch for utils only instead of autodetect.
+
+*--*[*no-*]*mountboot*::
+    Mount, or not, BOOTDIR automatically if mountable.
+
+*--bootdir*=<dir>::
+    Set the location of the boot-directory, default is '/boot'.
+
 *--makeopts*=<makeopts>::
     GNU Make options such as -j2, etc.
 
 
 INITIALIZATION
 ~~~~~~~~~~~~~~
+*--gensplash*=<theme>::
+    Enable framebuffer splash using <theme>.
+
+*--gensplash-res*=<resolutions>::
+    Select gensplash resolutions to include.
+
 *--*[*no-*]*splash*=<theme>::
     If the extra argument is specified,  splash is forced using
     <theme>  rather than the default theme specified in your splash
@@ -195,28 +239,62 @@ INITIALIZATION
 *--do-keymap-auto*::
     Force keymap selection at boot.
 
-*--dmraid*::
-    Add DMRAID support.
+*--no-keymap*::
+    Disables keymap selection at boot.
 
 *--evms*::
-    Add in EVMS support from static binaries if they exist on the
-    system: you should run "emerge evms" first.
+*--evms2*::
+    Add in EVMS support from static binaries if they exist on the system:
+    you should run "emerge evms" first (in the host system).
 
 *--lvm*::
+*--lvm2*::
     Add in LVM support from static binaries if they exist on the
     system,  or compile static LVM binaries if static ones do not
     exist.
+
+*--mdadm*::
+    Copy '/etc/mdadm.conf' to initramfs.
+
+*--dmraid*::
+    Add DMRAID support.
+
+*--multipath*::
+    Include Multipath support
+
+*--iscsi*::
+    Include iSCSI support
+
+*--slowusb*::
+    Enables extra pauses for slow USB CD boots.
+
+*--bootloader*=*grub*::
+    Add new kernel to GRUB configuration.
+
+*--linuxrc*=<file>::
+    Use <file> for the linuxrc instead of the genkernel linuxrc.
+
+*--busybox-config*=<file>::
+    Specifies a user created busybox config.
+
+*--disklabel*::
+    Include disk label and uuid support in your initrd.
 
 *--luks*::
     Add in Luks support from static binaries if they exist on the
     system.
 
-*--static*::
-    This builds a monolithic kernel without any modules on any
-    initial ramdisks.
+*--no-busybox*::
+    Do not include busybox in the initrd or initramfs.
 
-*--linuxrc*=<file>::
-    Use <file> for the linuxrc instead of the genkernel linuxrc.
+*--unionfs*::
+    Include support for unionfs
+
+*--netboot*::
+    Create a self-contained env in the initramfs
+
+*--real-root*=<foo>::
+    Specify a default for *real_root*= kernel option.
 
 
 INTERNALS
@@ -225,8 +303,14 @@ INTERNALS
     Force the architecture settings described by the <arch>  profile
     instead of autodetecting the running architecture.
 
+*--cachedir*=<dir>::
+    Override the default cache location.
+
 *--tempdir*=<dir>::
     Sets genkernel's temporary working directory to <dir>.
+
+*--postclear*::
+    Clear all tmp files and caches after genkernel has run.
 
 
 OUTPUT SETTINGS
@@ -255,6 +339,19 @@ OUTPUT SETTINGS
 *--initramfs-overlay*=<dir>::
     Directory structure to include in the initramfs, only available
     on 2.6 kernels
+
+*--firmware*::
+    Enable copying of firmware into initramfs.
+
+*--firmware-dir*=<dir>::
+    Specify directory to copy firmware from (defaults to '/lib/firmware').
+
+*--firmware-files*=<files>::
+    Specifies specific firmware files to copy. This overrides *--firmware-dir*.
+    For multiple files, separate the filenames with a comma.
+
+*--integrated-initramfs*::
+    Build the generated initramfs into the kernel instead of keeping it as a separate file.
 
 
 RAMDISK OPTIONS
