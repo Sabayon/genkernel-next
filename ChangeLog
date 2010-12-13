@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  13 Dec 2010; Sebastian Pipping <sping@gentoo.org> genkernel:
+  Bump version to 3.4.10.908
+
   13 Dec 2010; <sping@gentoo.org> doc/genkernel.8.txt, gen_cmdline.sh:
   docs: Document --genzimage
 
