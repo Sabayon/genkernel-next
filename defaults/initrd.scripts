@@ -955,6 +955,11 @@ cdupdate() {
 	fi
 }
 
+setup_btrfsctl() {
+	# start BTRFS volume detection, if available
+	[ -x /sbin/btrfsctl ] && /sbin/btrfsctl -a
+}
+
 setup_md_device() {
 	local device
 
