@@ -135,6 +135,7 @@ do
 		# Redirect output to a specific tty
 		CONSOLE\=*|console\=*)
 			CONSOLE=`parse_opt "${x}"`
+			CONSOLE=`basename ${CONSOLE}`
 #			exec >${CONSOLE} <${CONSOLE} 2>&1
 		;;
 		# /dev/md
