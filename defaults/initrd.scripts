@@ -411,10 +411,16 @@ setup_hotplug() {
 }
 
 check_slowusb() {
+	local usb_storage_dir="/sys/bus/usb/drivers/usb-storage"
+	if [ ! -d "${usb_storage_dir}" ]
+	then
+		return
+	fi
 	[ "${DO_slowusb}" ] || \
-	for dir in /sys/bus/usb/drivers/usb-storage/*
+	for x in "${usb_storage_dir}"/*
 	do
-		[ -d "${dir}" ] && FORCE_slowusb="1"
+		[ -d "${x}" ]  && [ "${x}" != "${usb_storage_dir}/module" ] \
+			&& FORCE_slowusb="1"
 	done
 }
 
