@@ -112,7 +112,7 @@ modprobe2() {
 	done
 	${INSMOD} ${real_path} > /dev/null 2>&1
 	ret=$?
-	if [ "$ret" -eq '0' ]
+	if [ ${ret} -eq 0 ]
 	then
 		echoAppend=' loaded.'
 		[ "${2}" = '-n' ] && echoFlags='-n' && echoAppend=', '

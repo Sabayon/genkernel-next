@@ -212,7 +212,7 @@ cache_cd_contents() {
 mount_sysfs() {
 	mount -t sysfs /sys /sys >/dev/null 2>&1
 	ret=$?
-	[ "$ret" -eq '0' ] || bad_msg "Failed to mount /sys!"
+	[ ${ret} -eq 0 ] || bad_msg "Failed to mount /sys!"
 }
 
 findnfsmount() {
@@ -351,7 +351,7 @@ warn_msg() {
 }
 
 crypt_filter() {
-	if [ ${CRYPT_SILENT} -eq 1 ]
+	if [ "${CRYPT_SILENT}" = '1' ]
 	then
 		eval $1 >/dev/null 2>/dev/null
 	else
@@ -507,7 +507,7 @@ setup_keymap() {
 
 		[ "${DEVBIND}" = '1' ] && umount /dev
 		
-		if [ -e /etc/sysconfig/keyboard -a "${CDROOT}" -eq '1' ]
+		if [ -e /etc/sysconfig/keyboard -a "${CDROOT}" = '1' ]
 		then
 			mkdir -p ${NEW_ROOT}/etc/sysconfig/
 			cp /etc/sysconfig/keyboard ${NEW_ROOT}/etc/sysconfig/keyboard
@@ -573,7 +573,7 @@ chooseKeymap() {
 		loadkmap < /lib/keymaps/${keymap}.map
 #		xkeymap=${keymap}
 #		echo ${keymap} | egrep -e "[0-9]+" >/dev/null 2>&1
-#		if [ "$?" -eq '0'  ]
+#		if [ $? -eq 0 ]
 #		then
 #			xkeymap=`tail -n 7 /lib/keymaps/keymapList | grep ${keymap} | sed -r "s/.*\s+${keymap}\s+([a-z-]+).*/\1/g" | egrep -v 1`
 #		fi
@@ -604,7 +604,7 @@ startVolumes() {
 		ln -sf /dev/device-mapper /dev/mapper/control
 	fi
 	
-	if [ "${USE_MDADM}" -eq '1' ]
+	if [ "${USE_MDADM}" = '1' ]
 	then
 		if [ ! -e '/etc/mdadm.conf' ]
 		then
@@ -755,7 +755,7 @@ openLUKS() {
 		else
 			setup_md_device ${LUKS_DEVICE}
 			cryptsetup isLuks ${LUKS_DEVICE}
-			if [ ! "$?" -eq '0' ]
+			if [ $? -ne 0 ]
 			then
 				bad_msg "The LUKS device ${LUKS_DEVICE} does not contain a LUKS header" ${CRYPT_SILENT}
 				DEV_ERROR=1
@@ -926,7 +926,7 @@ setup_md_device() {
 		if [ ! -e /dev/md${MD_NUMBER} ]
 		then
 			mknod /dev/md${MD_NUMBER} b 9 ${MD_NUMBER} >/dev/null 2>&1
-			[ "$?" -ne 0 ] && bad_msg "Creation of /dev/md${MD_NUMBER} failed..."
+			[ $? -ne 0 ] && bad_msg "Creation of /dev/md${MD_NUMBER} failed..."
 		fi
 		mdstart ${MDPART} /dev/md${MD_NUMBER}
 	fi
@@ -1059,7 +1059,7 @@ setup_unionfs() {
 #                         # mount tmpfs only in the case when changes= boot parameter was 	 
 #                         # empty or we were not able to mount the storage device 	 
 #                         ret=$? 	 
-#                         if [ "${ret}" -ne 0 ] 	 
+#                         if [ ${ret} -ne 0 ]
 #                         then 	 
 #                                 bad_msg "mount of $CHANGESDEV failed falling back to ramdisk based unionfs" 	 
 #                                 mount -t tmpfs tmpfs $MEMORY 	 
@@ -1084,7 +1084,7 @@ setup_unionfs() {
 		good_msg "Creating union mount"
 		unionfs -o allow_other,cow,noinitgroups,suid,dev,default_permissions,use_ino ${rw_dir}=RW:${ro_dir}=RO ${UNION} 2>/dev/null
 		ret=$?
-		if [ "${ret}" -ne 0 ]
+		if [ ${ret} -ne 0 ]
 		then
 			bad_msg "Can't setup union mount!"
 			USE_UNIONFS_NORMAL=0

@@ -74,7 +74,7 @@ append_blkid(){
 	fi
 	cd ${TEMP}
 	mkdir -p "${TEMP}/initramfs-blkid-temp/bin/"
-	[ "${DISKLABEL}" -eq '1' ] && { /bin/bzip2 -dc "${BLKID_BINCACHE}" > "${TEMP}/initramfs-blkid-temp/bin/blkid" ||
+	[ "${DISKLABEL}" = '1' ] && { /bin/bzip2 -dc "${BLKID_BINCACHE}" > "${TEMP}/initramfs-blkid-temp/bin/blkid" ||
 		gen_die "Could not extract blkid binary cache!"; }
 	chmod a+x "${TEMP}/initramfs-blkid-temp/bin/blkid"
 	cd "${TEMP}/initramfs-blkid-temp/"
@@ -278,7 +278,7 @@ append_evms(){
 	mkdir -p "${TEMP}/initramfs-evms-temp/etc/"
 	mkdir -p "${TEMP}/initramfs-evms-temp/bin/"
 	mkdir -p "${TEMP}/initramfs-evms-temp/sbin/"
-	if [ "${EVMS}" -eq '1' ]
+	if [ "${EVMS}" = '1' ]
 	then
 		print_info 1 '		EVMS: Adding support...'
 		mkdir -p ${TEMP}/initramfs-evms-temp/lib
@@ -328,7 +328,7 @@ append_mdadm(){
 	fi
 	cd ${TEMP}
 	mkdir -p "${TEMP}/initramfs-mdadm-temp/etc/"
-	if [ "${MDADM}" -eq '1' ]
+	if [ "${MDADM}" = '1' ]
 	then
 		cp -a /etc/mdadm.conf "${TEMP}/initramfs-mdadm-temp/etc" \
 			|| gen_die "Could not copy mdadm.conf!"
@@ -627,7 +627,7 @@ create_initramfs() {
 	append_data 'luks' "${LUKS}"
 	append_data 'multipath' "${MULTIPATH}"
 
-	if [ "${NORAMDISKMODULES}" -eq '0' ]
+	if [ "${NORAMDISKMODULES}" = '0' ]
 	then
 		append_data 'modules'
 	else

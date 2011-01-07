@@ -31,7 +31,7 @@ gen_minkernpackage() {
 	
 	if ! isTrue "${INTEGRATED_INITRAMFS}"
 	then
-		[ "${BUILD_RAMDISK}" -ne 0 ] && { cp "${TMPDIR}/initramfs-${KV}" "${TEMP}/minkernpackage/initramfs-${ARCH}-${KV}" || gen_die 'Could not copy the initramfs for the kernel package!'; }
+		[ "${BUILD_RAMDISK}" != '0' ] && { cp "${TMPDIR}/initramfs-${KV}" "${TEMP}/minkernpackage/initramfs-${ARCH}-${KV}" || gen_die 'Could not copy the initramfs for the kernel package!'; }
 	fi
 
 	if [ "${KERNCACHE}" != "" ]

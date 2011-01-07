@@ -264,7 +264,7 @@ compile_generic() {
 		eval ${MAKE} ${MAKEOPTS} ${ARGS} ${target} $* >> ${LOGFILE} 2>&1
 		RET=$?
 	fi
-	[ "${RET}" -ne '0' ] &&
+	[ ${RET} -ne 0 ] &&
 		gen_die "Failed to compile the \"${target}\" target..."
 
 	unset MAKE

@@ -238,7 +238,7 @@ do
 #                                 USE_UNIONFS_NORMAL=1 	 
 #                                 CMD_UNIONFS=`parse_opt "${x}"` 	 
 #                                 echo ${CMD_UNIONFS}|grep , >/dev/null 2>&1 	 
-#                                 if [ "$?" -eq '0' ] 	 
+#                                 if [ $? -eq 0 ]
 #                                 then 	 
 #                                         UID=`echo ${CMD_UNIONFS#*,}` 	 
 #                                         UNIONFS=`echo ${CMD_UNIONFS%,*}` 	 
@@ -250,7 +250,7 @@ do
 	esac
 done
 
-if [ -z "${REAL_ROOT}" -a \( "${CDROOT}" -eq 0 \)  -a \( "${FAKE_ROOT}" != "/dev/ram0" \) ]
+if [ -z "${REAL_ROOT}" -a \( "${CDROOT}" = '0' \)  -a \( "${FAKE_ROOT}" != "/dev/ram0" \) ]
 then
 	REAL_ROOT="${FAKE_ROOT}"	
 fi
@@ -318,22 +318,22 @@ then
 				RESUME_DEV=""
 				retval=1
 				
-				if [ "${retval}" -ne '0' ]; then
+				if [ ${retval} -ne 0 ]; then
 					RESUME_DEV=`findfs "${REAL_RESUME}" 2>/dev/null`
 					retval=$?
 				fi
 				
-				if [ "$retval" -ne '0' ]; then
+				if [ ${retval} -ne 0 ]; then
 					RESUME_DEV=`busybox findfs "${REAL_RESUME}" 2>/dev/null`
 					retval=$?
 				fi
 				
-				if [ "${retval}" -ne '0' ]; then
+				if [ ${retval} -ne 0 ]; then
 					RESUME_DEV=`blkid -t "${REAL_RESUME}" | cut -d ":" -f 1 2>/dev/null`
 					retval=$?
 				fi
 				
-				if [ "${retval}" -eq '0' ] && [ -n "${RESUME_DEV}" ]; then
+				if [ ${retval} -eq 0 ] && [ -n "${RESUME_DEV}" ]; then
 					good_msg "Detected real_resume=${RESUME_DEV}"
 					REAL_RESUME="${RESUME_DEV}"
 				fi
@@ -425,22 +425,22 @@ do
 				ROOT_DEV=""
 				retval=1
 				
-				if [ "${retval}" -ne '0' ]; then
+				if [ ${retval} -ne 0 ]; then
 					ROOT_DEV=`findfs "${REAL_ROOT}" 2>/dev/null`
 					retval=$?
 				fi
 				
-				if [ "$retval" -ne '0' ]; then
+				if [ ${retval} -ne 0 ]; then
 					ROOT_DEV=`busybox findfs "${REAL_ROOT}" 2>/dev/null`
 					retval=$?
 				fi
 				
-				if [ "${retval}" -ne '0' ]; then
+				if [ ${retval} -ne 0 ]; then
 					ROOT_DEV=`blkid -t "${REAL_ROOT}" | cut -d ":" -f 1 2>/dev/null`
 					retval=$?
 				fi
 				
-				if [ "${retval}" -eq '0' ] && [ -n "${ROOT_DEV}" ]; then
+				if [ ${retval} -eq 0 ] && [ -n "${ROOT_DEV}" ]; then
 					good_msg "Detected real_root=${ROOT_DEV}"
 					REAL_ROOT="${ROOT_DEV}"
 				else
