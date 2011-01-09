@@ -420,7 +420,7 @@ check_slowusb() {
 	for x in "${usb_storage_dir}"/*
 	do
 		[ -d "${x}" ]  && [ "${x}" != "${usb_storage_dir}/module" ] \
-			&& FORCE_slowusb="1"
+			&& { FORCE_slowusb="1" ; break ; }
 	done
 }
 
