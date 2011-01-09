@@ -265,13 +265,13 @@ clear_tmpdir()
 {
 if ! isTrue ${CMD_NOINSTALL}
 then
-    TMPDIR_CONTENTS=`ls ${TMPDIR}`
-    print_info 1 "Removing tmp dir contents"
-    for i in ${TMPDIR_CONTENTS}
-    do
-	print_info 1 "	 >> removing ${i}"
-	rm ${TMPDIR}/${i}
-    done
+	TMPDIR_CONTENTS=`ls ${TMPDIR}`
+	print_info 1 "Removing tmp dir contents"
+	for i in ${TMPDIR_CONTENTS}
+	do
+		print_info 1 "	 >> removing ${i}"
+		rm ${TMPDIR}/${i}
+	done
 fi
 }	
 
