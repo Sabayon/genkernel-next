@@ -55,7 +55,7 @@ append_busybox() {
 	chmod +x "${TEMP}/initramfs-busybox-temp/usr/share/udhcpc/default.script"
 
 	# Set up a few default symlinks
-	for i in '[' ash sh mount uname echo cut cat; do
+	for i in ${BUSYBOX_APPLETS:-[ ash sh mount uname echo cut cat}; do
 		rm -f ${TEMP}/initramfs-busybox-temp/bin/$i > /dev/null
 		ln -s busybox ${TEMP}/initramfs-busybox-temp/bin/$i ||
 			gen_die "Busybox error: could not link ${i}!"
