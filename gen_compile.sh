@@ -666,8 +666,10 @@ compile_iscsi() {
 }
 
 compile_gpg() {
-	if [ ! -f "${GPG_BINCACHE}" ]
+	if [ -f "${GPG_BINCACHE}" ]
 	then
+		print_info 1 "gnupg: >> Using cache"
+	else
 		[ ! -f "${GPG_SRCTAR}" ] &&
 			gen_die "Could not find gnupg source tarball: ${GPG_SRCTAR}. Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
 		cd "${TEMP}"
