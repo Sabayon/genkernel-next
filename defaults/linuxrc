@@ -29,12 +29,12 @@ mount -o remount,rw / >/dev/null 2>&1
 if [ "$0" = '/init' ]
 then
 	[ -e /linuxrc ] && rm /linuxrc
-	 
-	if [ -e /bin/lvm ]
-	then
-		ln -s /bin/lvm /bin/vgscan
-		ln -s /bin/lvm /bin/vgchange
-	fi
+fi
+
+if [ -e /bin/lvm ]
+then
+	[ -e /bin/vgscan   ] || ln -s /bin/lvm /bin/vgscan
+	[ -e /bin/vgchange ] || ln -s /bin/lvm /bin/vgchange
 fi
 
 quiet_kmsg
