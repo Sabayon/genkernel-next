@@ -291,11 +291,12 @@ sdelay
 
 # Setup slow USB bits
 setup_slowusb
-# if doslowusb is passed, pause other 10 seconds
-[ "${DO_slowusb}" ] && sleep 10
 
 # Start device manager
 start_dev_mgr
+
+# if doslowusb is passed, pause other 10 seconds here, after mdev load
+[ "${DO_slowusb}" ] && sleep 10
 
 # Start iSCSI
 startiscsi
