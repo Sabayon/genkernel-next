@@ -289,6 +289,11 @@ fi
 # Delay if needed for USB hardware
 sdelay
 
+# Setup slow USB bits
+setup_slowusb
+# if doslowusb is passed, pause other 10 seconds
+[ "${DO_slowusb}" ] && sleep 10
+
 # Start device manager
 start_dev_mgr
 
@@ -675,10 +680,6 @@ then
 		fi
 	done
 
-	if [ "${DO_slowusb}" ] || [ "${FORCE_slowusb}" ]
-	then
-		sleep 10
-	fi
 	mkdir initramfs proc tmp sys 2>/dev/null
 	chmod 1777 tmp
 
@@ -694,11 +695,6 @@ then
 	# Let Init scripts know that we booted from CD
 	export CDBOOT
 	CDBOOT=1
-	check_slowusb
-	if [ "${DO_slowusb}" ] || [ "${FORCE_slowusb}" ]
-	then
-		sleep 10
-	fi
 else
 	if [ "${USE_UNIONFS_NORMAL}" = '1' ]
 	then

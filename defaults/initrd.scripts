@@ -410,17 +410,23 @@ setup_hotplug() {
 	fi
 }
 
-check_slowusb() {
-	local usb_storage_dir="/sys/bus/usb/drivers/usb-storage"
-	if [ ! -d "${usb_storage_dir}" ]
+setup_slowusb() {
+	# slowusb already set?
+	if [ "${DO_slowusb}" = "1" ]
 	then
 		return
 	fi
-	[ "${DO_slowusb}" ] || \
+
+	local usb_storage_dir="/sys/bus/usb/drivers/usb-storage"
+	if [ ! -d "${usb_storage_dir}" ]
+	then
+		# no automated slowusb required. no usb-storage devices attached.
+		return
+	fi
 	for x in "${usb_storage_dir}"/*
 	do
 		[ -d "${x}" ]  && [ "${x}" != "${usb_storage_dir}/module" ] \
-			&& { FORCE_slowusb="1" ; break ; }
+			&& { DO_slowusb="1" ; break ; }
 	done
 }
 
@@ -428,13 +434,8 @@ start_dev_mgr() {
 	if [ "${KV_2_6_OR_GREATER}" ]
 	then
 		cd /sys
-		[ "${DO_slowusb}" ] && sdelay
-		check_slowusb
-		[ "${FORCE_slowusb}" ] && sdelay
 		good_msg 'Activating mdev'
 		runmdev
-		[ "${DO_slowusb}" ] || \
-		[ "${FORCE_slowusb}" ] && sdelay
 		cd /
 	fi
 }
@@ -881,12 +882,12 @@ startLUKS() {
 
 sdelay() {
 	# Sleep a specific number of seconds if SDELAY is set otherwise only sleep
-	# 1 second
-	if [ -n "${SDELAY}" ]
+	# 3 seconds, which is a much better default than 1 second (previous default)
+	if [ "${SDELAY}" ]
 	then
 		sleep ${SDELAY}
 	else
-		sleep 1
+		sleep 3
 	fi
 }
 
