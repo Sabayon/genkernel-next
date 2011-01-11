@@ -287,6 +287,11 @@ INITIALIZATION
     Add in Luks support from static binaries if they exist on the
     system.
 
+*--gpg*::
+    Add in GnuPG support.  A key can be made from
+    `gpg --encrypt --symmetric /path/to/LUKS-key > /path/to/LUKS-key.gpg` .
+    After that, re-point the *root_key* argument to the new .gpg file.
+
 *--no-busybox*::
     Do not include busybox in the initrd or initramfs.
 
