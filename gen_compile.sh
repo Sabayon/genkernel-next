@@ -525,8 +525,10 @@ compile_device_mapper() {
 }
 
 compile_e2fsprogs() {
-	if [ ! -f "${BLKID_BINCACHE}" ]
+	if [ -f "${BLKID_BINCACHE}" ]
 	then
+		print_info 1 "blkid: >> Using cache"
+	else
 		[ ! -f "${E2FSPROGS_SRCTAR}" ] &&
 			gen_die "Could not find e2fsprogs source tarball: ${E2FSPROGS_SRCTAR}. Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
 		cd "${TEMP}"
