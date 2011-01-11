@@ -536,7 +536,7 @@ compile_e2fsprogs() {
 			gen_die "e2fsprogs directory ${E2FSPROGS_DIR} invalid"
 		cd "${E2FSPROGS_DIR}"
 		print_info 1 'e2fsprogs: >> Configuring...'
-		./configure  --with-ldopts=-static >> ${LOGFILE} 2>&1 ||
+		LDFLAGS=-static ./configure >> ${LOGFILE} 2>&1 ||
 			gen_die 'Configuring e2fsprogs failed!'
 		print_info 1 'e2fsprogs: >> Compiling...'
 		MAKE=${UTILS_MAKE} compile_generic "" ""
