@@ -250,13 +250,11 @@ setup_cache_dir()
 if [ "${CLEAR_CACHE_DIR}" == 'yes' ]
 then
 	print_info 1 "Clearing cache dir contents from ${CACHE_DIR}"
-	CACHE_DIR_CONTENTS=`ls ${CACHE_DIR}|grep -v CVS|grep -v cpio|grep -v README`
-	
-	for i in ${CACHE_DIR_CONTENTS}
+	while read i
 	do
 		print_info 1 "	 >> removing ${i}"
-		rm ${CACHE_DIR}/${i}
-	done
+		rm "${i}"
+	done < <(find "${CACHE_DIR}" -maxdepth 1 -type f -name '*.tar.*')
 fi
 
 }
