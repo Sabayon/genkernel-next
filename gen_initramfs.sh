@@ -604,7 +604,7 @@ append_data() {
 	if [ $# -eq 1 ] || isTrue ${var}
 	then
 	    print_info 1 "        >> Appending ${name} cpio data..."
-	    ${func}
+	    ${func} || gen_die "${func}() failed"
 	fi
 }
 
