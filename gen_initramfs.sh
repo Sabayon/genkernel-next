@@ -34,7 +34,8 @@ append_base_layout() {
 	date '+%Y%m%d' > ${TEMP}/initramfs-base-temp/etc/build_date
 
 	cd "${TEMP}/initramfs-base-temp/"
-	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+			|| gen_die "compressing baselayout cpio"
 	cd "${TEMP}"
 	rm -rf "${TEMP}/initramfs-base-temp" > /dev/null
 }
@@ -62,7 +63,8 @@ append_busybox() {
 	done
 	
 	cd "${TEMP}/initramfs-busybox-temp/"
-	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+			|| gen_die "compressing busybox cpio"
 	cd "${TEMP}"
 	rm -rf "${TEMP}/initramfs-busybox-temp" > /dev/null
 }
@@ -78,7 +80,8 @@ append_blkid(){
 		gen_die "Could not extract blkid binary cache!"; }
 	chmod a+x "${TEMP}/initramfs-blkid-temp/bin/blkid"
 	cd "${TEMP}/initramfs-blkid-temp/"
-	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+			|| gen_die "compressing blkid cpio"
 	cd "${TEMP}"
 	rm -rf "${TEMP}/initramfs-blkid-temp" > /dev/null
 }
@@ -92,7 +95,8 @@ append_blkid(){
 #	mkdir -p "${TEMP}/initramfs-fuse-temp/lib/"
 #	tar -C "${TEMP}/initramfs-fuse-temp/lib/" -xjf "${FUSE_BINCACHE}"
 #	cd "${TEMP}/initramfs-fuse-temp/"
-#	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+#	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+#			|| gen_die "compressing fuse cpio"
 #	rm -rf "${TEMP}/initramfs-fuse-temp" > /dev/null
 #}
 
@@ -107,7 +111,8 @@ append_unionfs_fuse() {
 		gen_die 'Could not extract unionfs-fuse binary cache!'
 	chmod a+x "${TEMP}/initramfs-unionfs-fuse-temp/sbin/unionfs"
 	cd "${TEMP}/initramfs-unionfs-fuse-temp/"
-	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+			|| gen_die "compressing unionfs fuse cpio"
 	cd "${TEMP}"
 	rm -rf "${TEMP}/initramfs-unionfs-fuse-temp" > /dev/null
 }
@@ -126,7 +131,8 @@ append_unionfs_fuse() {
 #	cp -f /etc/suspend.conf "${TEMP}/initramfs-suspend-temp/etc" ||
 #		gen_die 'Could not copy /etc/suspend.conf'
 #	cd "${TEMP}/initramfs-suspend-temp/"
-#	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+#	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+#			|| gen_die "compressing suspend cpio"
 #	rm -r "${TEMP}/initramfs-suspend-temp/"
 #}
 
@@ -179,7 +185,8 @@ append_multipath(){
 		cp /etc/scsi_id.config "${TEMP}/initramfs-multipath-temp/etc/" || gen_die 'could not copy scsi_id.config'
 	fi
 	cd "${TEMP}/initramfs-multipath-temp"
-	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+			|| gen_die "compressing multipath cpio"
 	cd "${TEMP}"
 	rm -r "${TEMP}/initramfs-multipath-temp/"
 }
@@ -202,7 +209,8 @@ append_dmraid(){
 		ln -sf raid456.kp raid45.ko
 		cd "${TEMP}/initramfs-dmraid-temp/"
 	fi
-	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+			|| gen_die "compressing dmraid cpio"
 	cd "${TEMP}"
 	rm -r "${TEMP}/initramfs-dmraid-temp/"
 }
@@ -220,7 +228,8 @@ append_iscsi(){
 		gen_die "Could not extract iscsi binary cache!"
 	chmod a+x "${TEMP}/initramfs-iscsi-temp/bin/iscsistart"
 	cd "${TEMP}/initramfs-iscsi-temp/"
-	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+			|| gen_die "compressing iscsi cpio"
 	cd "${TEMP}"
 	rm -rf "${TEMP}/initramfs-iscsi-temp" > /dev/null
 }
@@ -264,7 +273,8 @@ append_lvm(){
 #		fi
 	fi
 	cd "${TEMP}/initramfs-lvm-temp/"
-	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+			|| gen_die "compressing lvm cpio"
 	cd "${TEMP}"
 	rm -r "${TEMP}/initramfs-lvm-temp/"
 }
@@ -316,7 +326,8 @@ append_evms(){
 		done
 	fi
 	cd "${TEMP}/initramfs-evms-temp/"
-	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+			|| gen_die "compressing evms cpio"
 	cd "${TEMP}"
 	rm -r "${TEMP}/initramfs-evms-temp/"
 }
@@ -334,7 +345,8 @@ append_mdadm(){
 			|| gen_die "Could not copy mdadm.conf!"
 	fi
 	cd "${TEMP}/initramfs-mdadm-temp/"
-	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+			|| gen_die "compressing mdadm cpio"
 	cd "${TEMP}"
 	rm -rf "${TEMP}/initramfs-mdadm-temp" > /dev/null
 }
@@ -371,7 +383,8 @@ append_splash(){
 
 append_overlay(){
 	cd ${INITRAMFS_OVERLAY}
-	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+			|| gen_die "compressing overlay cpio"
 }
 
 append_luks() {
@@ -486,7 +499,8 @@ append_modules() {
 		print_list ${!group_modules} > "${TEMP}/initramfs-modules-${KV}-temp/etc/modules/${group}"
 	done
 	cd "${TEMP}/initramfs-modules-${KV}-temp/"
-	find . | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	find . | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+			|| gen_die "compressing modules cpio"
 	cd "${TEMP}"
 	rm -r "${TEMP}/initramfs-modules-${KV}-temp/"	
 }
@@ -591,7 +605,8 @@ append_auxilary() {
 	fi
 
 	cd "${TEMP}/initramfs-aux-temp/"
-	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+			|| gen_die "compressing auxilary cpio"
 	cd "${TEMP}"
 	rm -r "${TEMP}/initramfs-aux-temp/"	
 }
