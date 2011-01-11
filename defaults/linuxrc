@@ -436,7 +436,7 @@ do
 				fi
 				
 				if [ ${retval} -ne 0 ]; then
-					ROOT_DEV=`blkid -t "${REAL_ROOT}" | cut -d ":" -f 1 2>/dev/null`
+					ROOT_DEV=`blkid -l -t "${REAL_ROOT}" | cut -d ":" -f 1 2>/dev/null`
 					retval=$?
 				fi
 				
