@@ -695,7 +695,7 @@ compile_gpg() {
 			--without-zlib --without-bzip2 --without-libusb --without-readline \
 				>> ${LOGFILE} 2>&1 || gen_die 'Configuring gnupg failed!'
 		print_info 1 'gnupg: >> Compiling...'
-		MAKE=${UTILS_MAKE} compile_generic "" ""
+		compile_generic "" "utils"
 		print_info 1 'gnupg: >> Copying to cache...'
 		[ -f "${TEMP}/${GPG_DIR}/g10/gpg" ] ||
 			gen_die 'gnupg executable does not exist!'
