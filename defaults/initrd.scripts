@@ -883,12 +883,7 @@ startLUKS() {
 sdelay() {
 	# Sleep a specific number of seconds if SDELAY is set otherwise only sleep
 	# 3 seconds, which is a much better default than 1 second (previous default)
-	if [ "${SDELAY}" ]
-	then
-		sleep ${SDELAY}
-	else
-		sleep 3
-	fi
+	sleep ${SDELAY:-3}
 }
 
 quiet_kmsg() {
