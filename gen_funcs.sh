@@ -254,7 +254,7 @@ then
 	do
 		print_info 1 "	 >> removing ${i}"
 		rm "${i}"
-	done < <(find "${CACHE_DIR}" -maxdepth 1 -type f -name '*.tar.*')
+	done < <(find "${CACHE_DIR}" -maxdepth 1 -type f -name '*.tar.*' -o -name '*.bz2')
 fi
 
 }
