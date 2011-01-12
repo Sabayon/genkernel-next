@@ -288,7 +288,8 @@ INITIALIZATION
     system.
 
 *--gpg*::
-    Add in GnuPG support.  A key can be made from
+    Add support for GnuPG 1.x, the portable standalone branch of GnuPG.
+    A key can be made from
     `gpg --encrypt --symmetric /path/to/LUKS-key > /path/to/LUKS-key.gpg` .
     After that, re-point the *root_key* argument to the new .gpg file.
 
