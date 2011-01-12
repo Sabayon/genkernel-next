@@ -287,6 +287,12 @@ INITIALIZATION
     Add in Luks support from static binaries if they exist on the
     system.
 
+*--gpg*::
+    Add support for GnuPG 1.x, the portable standalone branch of GnuPG.
+    A key can be made from
+    `gpg --encrypt --symmetric /path/to/LUKS-key > /path/to/LUKS-key.gpg` .
+    After that, re-point the *root_key* argument to the new .gpg file.
+
 *--no-busybox*::
     Do not include busybox in the initrd or initramfs.
 
@@ -464,6 +470,7 @@ AUTHORS
 - Tim Yamin <plasmaroo@gentoo.org>
 - Eric Edgar <rocket@gentoo.org>
 - NFS Support by Thomas Seiler <thseiler@gmail.com>
+- GnuPG 1.x integration by dacook <schism@subverted.org>
 
 
 SEE ALSO
