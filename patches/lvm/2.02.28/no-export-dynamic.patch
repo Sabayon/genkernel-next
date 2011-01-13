@@ -1,0 +1,22 @@
+diff -ur LVM2.2.02.28/configure LVM2.2.02.28.new/configure
+--- LVM2.2.02.28/configure	2007-08-14 20:58:30.000000000 +0200
++++ LVM2.2.02.28.new/configure	2011-01-13 20:45:08.429184861 +0100
+@@ -1949,7 +1949,6 @@
+ 		CLDWHOLEARCHIVE="-Wl,-whole-archive"
+ 		CLDNOWHOLEARCHIVE="-Wl,-no-whole-archive"
+ 		LDDEPS="$LDDEPS .export.sym"
+-		LDFLAGS="$LDFLAGS -Wl,--export-dynamic"
+ 		LIB_SUFFIX="so"
+ 		DEVMAPPER=yes
+ 		ODIRECT=yes
+diff -ur LVM2.2.02.28/configure.in LVM2.2.02.28.new/configure.in
+--- LVM2.2.02.28/configure.in	2007-08-14 20:58:31.000000000 +0200
++++ LVM2.2.02.28.new/configure.in	2011-01-13 20:45:14.365688659 +0100
+@@ -38,7 +38,6 @@
+ 		CLDWHOLEARCHIVE="-Wl,-whole-archive"
+ 		CLDNOWHOLEARCHIVE="-Wl,-no-whole-archive"
+ 		LDDEPS="$LDDEPS .export.sym"
+-		LDFLAGS="$LDFLAGS -Wl,--export-dynamic"
+ 		LIB_SUFFIX="so"
+ 		DEVMAPPER=yes
+ 		ODIRECT=yes

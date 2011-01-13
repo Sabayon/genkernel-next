@@ -1,0 +1,11 @@
+diff -ur LVM2.2.02.28/lib/filters/filter-sysfs.c LVM2.2.02.28.new/lib/filters/filter-sysfs.c
+--- LVM2.2.02.28/lib/filters/filter-sysfs.c	2007-08-22 16:38:16.000000000 +0200
++++ LVM2.2.02.28.new/lib/filters/filter-sysfs.c	2011-01-13 20:45:38.751542669 +0100
+@@ -15,6 +15,7 @@
+ #include "lib.h"
+ #include "filter-sysfs.h"
+ #include "lvm-string.h"
++#include <sys/stat.h>
+ 
+ #ifdef linux
+ 
