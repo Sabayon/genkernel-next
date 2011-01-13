@@ -1,0 +1,113 @@
+Based on:
+
+> Forward-port the old mdstart tool from the Gentoo Busybox-1.1.3.
+> Only fires the RAID_AUTORUN ioctl on existing /dev/md nodes.
+
+> Signed-off-by: Robin H. Johnson <robbat2@gentoo.org>
+
+diff -pruN a/include/usage.src.h mdstart/include/usage.src.h
+--- a/include/usage.src.h	2010-12-21 06:29:45.000000000 +0200
++++ mdstart/include/usage.src.h	2011-01-12 21:29:47.000000000 +0200
+@@ -847,6 +847,11 @@ INSERT
+        "$ dirname /tmp/foo/\n" \
+        "/tmp\n"
+ 
++#define mdstart_trivial_usage \
++	"{[PARTITION] MD-NODE}..."
++#define mdstart_full_usage \
++	Run the RAID_AUTORUN ioctl on the given MD number"
++
+ #define dmesg_trivial_usage \
+        "[-c] [-n LEVEL] [-s SIZE]"
+ #define dmesg_full_usage "\n\n" \
+diff -pruN a/util-linux/Config.src mdstart/util-linux/Config.src
+--- a/util-linux/Config.src	2010-12-20 02:41:27.000000000 +0200
++++ mdstart/util-linux/Config.src	2011-01-12 21:30:09.000000000 +0200
+@@ -456,6 +456,13 @@ config FEATURE_MDEV_LOAD_FIRMWARE
+ 	  /lib/firmware/ and if it exists, send it to the kernel for
+ 	  loading into the hardware.
+ 
++config MDSTART
++	bool "mdstart"
++	default n
++	help
++	  Allows you to autostart /dev/md devices if using an initramfs to
++	  boot.
++
+ config MKSWAP
+ 	bool "mkswap"
+ 	default y
+diff -pruN a/util-linux/Kbuild.src mdstart/util-linux/Kbuild.src
+--- a/util-linux/Kbuild.src	2010-12-20 02:41:27.000000000 +0200
++++ mdstart/util-linux/Kbuild.src	2011-01-12 21:30:09.000000000 +0200
+@@ -24,6 +24,7 @@ lib-$(CONFIG_HWCLOCK)           += hwclo
+ lib-$(CONFIG_IPCRM)             += ipcrm.o
+ lib-$(CONFIG_IPCS)              += ipcs.o
+ lib-$(CONFIG_LOSETUP)           += losetup.o
++lib-$(CONFIG_MDSTART)          += mdStart.o
+ lib-$(CONFIG_LSPCI)             += lspci.o
+ lib-$(CONFIG_LSUSB)             += lsusb.o
+ lib-$(CONFIG_MDEV)              += mdev.o
+diff -pruN a/util-linux/mdStart.c mdstart/util-linux/mdStart.c
+--- a/util-linux/mdStart.c	1970-01-01 03:00:00.000000000 +0300
++++ mdstart/util-linux/mdStart.c	2011-01-12 21:30:09.000000000 +0200
+@@ -0,0 +1,59 @@
++/*
++ * Linux 2.6(+) RAID Autostarter
++ *
++ * Copyright (C) 2005 by Tim Yamin <plasmaroo@gentoo.org> <plasm@roo.me.uk>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
++ * General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
++ *
++ */
++
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++#include <sys/ioctl.h>
++#include <linux/major.h>
++#include <linux/raid/md_u.h>
++
++extern int
++mdstart_main(int argc, char *argv[])
++{
++	int i, fd, part = 0, retval = 0;
++
++	if(argc < 2)
++	{
++		bb_show_usage();
++	}
++
++	for(i = 1; i < argc; i++)
++	{
++		if(sscanf(argv[i], "%d", &part) == 1)
++			continue;
++
++		fd = open(argv[i], 0, 0);
++		if (fd >= 0)
++		{
++			ioctl(fd, RAID_AUTORUN, part);
++			close(fd);
++		} else
++		{
++			printf("Error: Failed to open %s!\n", argv[i]);
++			retval=1;
++		}
++
++		part = 0;
++	}
++
++	return retval;
++}
