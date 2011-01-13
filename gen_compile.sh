@@ -424,6 +424,7 @@ compile_lvm() {
 			gen_die "Could not extract device-mapper binary cache!";
 		
 		cd "${LVM_DIR}"
+		apply_patches lvm ${LVM_VER}
 		print_info 1 'lvm: >> Configuring...'
 			LDFLAGS="-L${TEMP}/device-mapper/lib" \
 			CFLAGS="-I${TEMP}/device-mapper/include" \
