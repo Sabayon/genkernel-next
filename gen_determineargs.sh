@@ -20,6 +20,11 @@ get_KV() {
 		# Configure the kernel
 		# If BUILD_KERNEL=0 then assume --no-clean, menuconfig is cleared
 
+		if [ ! -f "${KERNEL_DIR}"/Makefile ]
+		then
+			gen_die "Kernel Makefile (${KERNEL_DIR}/Makefile) missing.  Maybe re-install the kernel sources."
+		fi
+
 		VER=`grep ^VERSION\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
 		PAT=`grep ^PATCHLEVEL\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
 		SUB=`grep ^SUBLEVEL\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
@@ -29,6 +34,7 @@ get_KV() {
 		then
 			# Handle O= build directories
 			KERNEL_SOURCE_DIR=`grep ^MAKEARGS\ \:\=  ${KERNEL_DIR}/Makefile | awk '{ print $4 };'`
+			[ -z "${KERNEL_SOURCE_DIR}" ] && gen_die "Deriving \${KERNEL_SOURCE_DIR} failed"
 			SUB=`grep ^SUBLEVEL\ \= ${KERNEL_SOURCE_DIR}/Makefile | awk '{ print $3 };'`
 			EXV=`grep ^EXTRAVERSION\ \= ${KERNEL_SOURCE_DIR}/Makefile | sed -e "s/EXTRAVERSION =//" -e "s/ //g" -e 's/\$([a-z]*)//gi'`
 		fi
