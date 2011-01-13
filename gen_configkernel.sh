@@ -35,9 +35,10 @@ config_kernel() {
 		print_info 1 "config: Using config from ${KERNEL_CONFIG}"
 		if [ -f "${KERNEL_DIR}/.config" ]
 		then
-			cp "${KERNEL_DIR}/.config" "${KERNEL_DIR}/.config.bak" \
+			NOW=`date +--%Y-%m-%d--%H-%M-%S`
+			cp "${KERNEL_DIR}/.config" "${KERNEL_DIR}/.config${NOW}.bak" \
 					|| gen_die "Could not backup kernel config (${KERNEL_DIR}/.config)"
-			print_info 1 '        Previous config backed up to .config.bak'
+			print_info 1 "        Previous config backed up to .config${NOW}.bak"
 		fi
 		cp "${KERNEL_CONFIG}" "${KERNEL_DIR}/.config" || gen_die 'Could not copy configuration file!'
 	fi
