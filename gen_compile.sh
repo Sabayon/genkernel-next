@@ -214,8 +214,10 @@ apply_patches() {
 					break
 				fi
 			done
-			if [ ${patch_success} != 1 ]
+			if [ ${patch_success} -eq 1 ]
 			then
+				print_info 1 "          - `basename ${i}`"
+			else
 				gen_die "could not apply patch ${i} for ${util}-${version}"
 			fi
 		done
