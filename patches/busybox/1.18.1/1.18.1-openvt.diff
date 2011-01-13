@@ -6,8 +6,6 @@ Based on:
 > The previous spin of this patch on 1.1.3 had a 'wait(NULL);' right before
 > return EXIT_SUCCESS. I don't think it's needed anymore, so I left it out.
 
-> Signed-off-by: Robin H. Johnson <robbat2@gentoo.org>
-
 --- a/console-tools/openvt.c	2010-11-22 22:24:58.000000000 +0200
 +++ b/console-tools/openvt.c	2010-11-29 15:32:18.000000000 +0200
 @@ -124,7 +124,7 @@ int openvt_main(int argc UNUSED_PARAM, c

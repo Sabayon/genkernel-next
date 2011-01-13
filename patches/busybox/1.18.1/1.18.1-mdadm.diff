@@ -5,8 +5,6 @@ Based on:
 > If /etc/mdadm.conf does not exist in the initrd, it is created first, by
 > scanning devices, and then it is used.
 
-> Signed-off-by: Robin H. Johnson <robbat2@gentoo.org>
-
 --- a/Config.in	2010-12-21 06:31:04.000000000 +0200
 +++ mdadm/Config.in	2011-01-12 21:33:01.000000000 +0200
 @@ -749,6 +749,7 @@ source findutils/Config.in

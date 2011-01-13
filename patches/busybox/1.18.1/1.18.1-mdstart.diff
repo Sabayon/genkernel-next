@@ -3,8 +3,6 @@ Based on:
 > Forward-port the old mdstart tool from the Gentoo Busybox-1.1.3.
 > Only fires the RAID_AUTORUN ioctl on existing /dev/md nodes.
 
-> Signed-off-by: Robin H. Johnson <robbat2@gentoo.org>
-
 diff -pruN a/include/usage.src.h mdstart/include/usage.src.h
 --- a/include/usage.src.h	2010-12-21 06:29:45.000000000 +0200
 +++ mdstart/include/usage.src.h	2011-01-12 21:29:47.000000000 +0200
