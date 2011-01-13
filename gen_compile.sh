@@ -203,6 +203,7 @@ apply_patches() {
 		print_info 1 "${util}: >> Applying patches..."
 		for i in ${GK_SHARE}/patches/${util}/${version}/*{diff,patch}
 		do
+			[ -f "${i}" ] || continue
 			patch_success=0
 			for j in `seq 0 5`
 			do
