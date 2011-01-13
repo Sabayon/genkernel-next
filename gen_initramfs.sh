@@ -244,16 +244,16 @@ append_lvm(){
 	mkdir -p "${TEMP}/initramfs-lvm-temp/etc/lvm/"
 	if [ -e '/sbin/lvm.static' ]
 	then
-		print_info 1 '          LVM: Adding support (using local static binaries)...'
+		print_info 1 '          LVM: Adding support (using local static binary /sbin/lvm.static)...'
 		cp /sbin/lvm.static "${TEMP}/initramfs-lvm-temp/bin/lvm" ||
 			gen_die 'Could not copy over lvm!'
 	elif [ -e '/sbin/lvm' ] && LC_ALL="C" ldd /sbin/lvm|grep -q 'not a dynamic executable'
 	then
-		print_info 1 '		LVM: Adding support (using local static binaries)...'
+		print_info 1 '          LVM: Adding support (using local static binary /sbin/lvm)...'
 		cp /sbin/lvm "${TEMP}/initramfs-lvm-temp/bin/lvm" ||
 			gen_die 'Could not copy over lvm!'
 	else
-		print_info 1 '		LVM: Adding support (compiling binaries)...'
+		print_info 1 '          LVM: Adding support (compiling binaries)...'
 		compile_lvm
 		/bin/tar -jxpf "${LVM_BINCACHE}" -C "${TEMP}/initramfs-lvm-temp" ||
 			gen_die "Could not extract lvm binary cache!";
