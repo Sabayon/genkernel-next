@@ -303,6 +303,15 @@ compile_kernel() {
 		compile_generic "${KERNEL_MAKE_DIRECTIVE_2}" kernel
 	fi
 
+	local firmware_in_kernel_line=`fgrep CONFIG_FIRMWARE_IN_KERNEL "${KERNEL_DIR}"/.config`
+	if [ -n "${firmware_in_kernel_line}" -a "${firmware_in_kernel_line}" != CONFIG_FIRMWARE_IN_KERNEL=y ]
+	then
+		print_info 1 "        >> Installing firmware ('make firmware_install') due to CONFIG_FIRMWARE_IN_KERNEL != y..."
+		compile_generic "firmware_install" kernel
+	else
+		print_info 1 "        >> Not installing firmware as it's included in the kernel already (CONFIG_FIRMWARE_IN_KERNEL=y)..."
+	fi
+
 	local tmp_kernel_binary=$(find_kernel_binary ${KERNEL_BINARY})
 	local tmp_kernel_binary2=$(find_kernel_binary ${KERNEL_BINARY_2})
 	if [ -z "${tmp_kernel_binary}" ]
