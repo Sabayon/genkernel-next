@@ -430,9 +430,9 @@ compile_lvm() {
 			CFLAGS="-fPIC -I${TEMP}/device-mapper/include" \
 			CPPFLAGS="-fPIC -I${TEMP}/device-mapper/include" \
 			./configure --enable-static_link --prefix=${TEMP}/lvm \
-            --with-lvm1=none --with-clvmd=none --with-cluster=none \
-            --disable-readline --disable-selinux --with-mirrors=none \
-            --with-snapshots=none --with-pool=internal || \
+				--with-lvm1=none --with-clvmd=none --with-cluster=none \
+				--disable-readline --disable-selinux --with-mirrors=none \
+				--with-snapshots=none --with-pool=internal || \
 				gen_die 'Configure of lvm failed!'
 		print_info 1 'lvm: >> Compiling...'
 			compile_generic '' utils
@@ -509,8 +509,8 @@ compile_device_mapper() {
 		[ ! -d "${DEVICE_MAPPER_DIR}" ] &&
 			gen_die "device-mapper directory ${DEVICE_MAPPER_DIR} invalid"
 		cd "${DEVICE_MAPPER_DIR}"
-        CFLAGS="-fPIC" \
-        CPPFLAGS="-fPIC" \
+		CFLAGS="-fPIC" \
+		CPPFLAGS="-fPIC" \
 		./configure --prefix=${TEMP}/device-mapper --enable-static_link \
 			--disable-selinux >> ${LOGFILE} 2>&1 ||
 			gen_die 'Configuring device-mapper failed!'
