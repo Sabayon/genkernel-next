@@ -417,7 +417,6 @@ compile_busybox() {
 }
 
 compile_lvm() {
-	compile_device_mapper
 	if [ ! -f "${LVM_BINCACHE}" ]
 	then
 		[ -f "${LVM_SRCTAR}" ] ||
@@ -435,9 +434,7 @@ compile_lvm() {
 		cd "${LVM_DIR}"
 		apply_patches lvm ${LVM_VER}
 		print_info 1 'lvm: >> Configuring...'
-			LDFLAGS="-L${TEMP}/device-mapper/lib" \
 			CFLAGS="-fPIC" \
-			CPPFLAGS="-I${TEMP}/device-mapper/include" \
 			./configure --enable-static_link --prefix=${TEMP}/lvm \
 				--with-lvm1=none --with-clvmd=none --with-cluster=none \
 				--disable-readline --disable-selinux --with-mirrors=none \
