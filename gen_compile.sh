@@ -436,9 +436,9 @@ compile_lvm() {
 		print_info 1 'lvm: >> Configuring...'
 			CFLAGS="-fPIC" \
 			./configure --enable-static_link --prefix=${TEMP}/lvm \
-				--with-lvm1=none --with-clvmd=none --with-cluster=none \
-				--disable-readline --disable-selinux --with-mirrors=none \
-				--with-snapshots=none --with-pool=internal >> ${LOGFILE} 2>&1 || \
+				--with-lvm1=internal --with-clvmd=none --with-cluster=none \
+				--disable-readline --disable-selinux --with-mirrors=internal \
+				--with-snapshots=internal --with-pool=internal >> ${LOGFILE} 2>&1 || \
 				gen_die 'Configure of lvm failed!'
 		print_info 1 'lvm: >> Compiling...'
 			compile_generic '' utils
