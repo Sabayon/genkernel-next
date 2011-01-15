@@ -761,6 +761,33 @@ openLUKS() {
 			whereis "LUKS_KEYDEV" "${LUKS_NAME} key device"
 			KEYDEV_ERROR=0
 		else
+			case "${LUKS_DEVICE}" in
+				UUID\=*)
+					REAL_LUKS=""
+					retval=1
+
+					if [ "${retval}" -ne '0' ]; then
+						REAL_LUKS=`findfs "${LUKS_DEVICE}" 2>/dev/null`
+						retval=$?
+					fi
+
+					if [ "$retval" -ne '0' ]; then
+						REAL_LUKS=`busybox findfs "${LUKS_DEVICE}" 2>/dev/null`
+						retval=$?
+					fi
+
+					if [ "${retval}" -ne '0' ]; then
+						REAL_LUKS=`blkid -t "${LUKS_DEVICE}" | cut -d ":" -f 1 2>/dev/null`
+						retval=$?
+					fi
+
+					if [ "${retval}" -eq '0' ] && [ -n "${REAL_LUKS}" ]; then
+						good_msg "Detected device ${REAL_LUKS}"
+						LUKS_DEVICE="${REAL_LUKS}"
+					fi
+				;;
+			esac
+
 			setup_md_device ${LUKS_DEVICE}
 			cryptsetup isLuks ${LUKS_DEVICE}
 			if [ $? -ne 0 ]
