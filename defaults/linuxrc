@@ -117,7 +117,7 @@ do
 			SDELAY=`parse_opt "${x}"`
 		;;
 		scandelay)
-			SDELAY=10
+			SDELAY=3
 		;;
 		# Module no-loads
 		doload\=*)
@@ -286,7 +286,7 @@ else
 	good_msg 'Skipping module load; no modules in the ramdisk!'
 fi
 
-# Delay if needed for USB hardware
+# Apply scan delay if specified
 sdelay
 
 # Setup slow USB bits

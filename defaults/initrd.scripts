@@ -916,13 +916,13 @@ startLUKS() {
 }
 
 sdelay() {
-	# Sleep a specific number of seconds if SDELAY is set otherwise only sleep
-	# 3 seconds, which is a much better default than 1 second (previous default)
+	# Sleep a specific number of seconds if SDELAY is set
 	if [ "${SDELAY}" ]
 	then
+		good_msg 'Waiting ${SDELAY} seconds...'
 		sleep ${SDELAY}
 	else
-		sleep 3
+		good_msg 'Hint: Use parameter scandelay[=seconds] if you need waiting here'
 	fi
 }
 
