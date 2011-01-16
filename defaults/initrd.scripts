@@ -716,6 +716,9 @@ startiscsi() {
 		fi
 
 		iscsistart -i "${ISCSI_INITIATORNAME}" -t "${ISCSI_TARGET}" -a "${ISCSI_ADDRESS}" ${ADDITIONAL}
+
+		# let iscsid settle - otherwise mounting the iSCSI-disk will fail (very rarely, though)
+		sleep 1
 	fi
 }
 
