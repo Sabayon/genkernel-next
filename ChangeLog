@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  16 Jan 2011; Sebastian Pipping <sping@gentoo.org> defaults/initrd.scripts:
+  Do not sleep after vgscan (bug #351047)
+
   16 Jan 2011; Sebastian Pipping <sping@gentoo.org> ChangeLog:
   Changes:
   - Fix compilation of LVM 2.02.74 (and 2.02.28) (bug #255196, bug #267383)
