@@ -338,7 +338,7 @@ then
 				fi
 				
 				if [ ${retval} -ne 0 ]; then
-					RESUME_DEV=`blkid -t "${REAL_RESUME}" | cut -d ":" -f 1 2>/dev/null`
+					RESUME_DEV=`blkid -l -t "${REAL_RESUME}" | cut -d ":" -f 1 2>/dev/null`
 					retval=$?
 				fi
 				
