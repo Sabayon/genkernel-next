@@ -21,6 +21,8 @@ for app in ('DEVICE_MAPPER', 'UNIONFS_FUSE', 'BUSYBOX', 'DMRAID', 'LVM', 'ISCSI'
 EXTRA_VARIABLES = tuple(EXTRA_VARIABLES)
 
 IGNORE_OPTIONS = ('help', 'version')
+_GPG_PARAMETERS = ('encrypt', 'symmetric')
+IGNORE_PARAMETERS = _GPG_PARAMETERS
 
 
 def exract_gen_cmdline_sh():
@@ -94,6 +96,9 @@ def extract_genkernel_8_txt():
 
 		# Black list
 		if para_name == 'no-':
+			continue
+
+		if para_name in IGNORE_PARAMETERS:
 			continue
 
 		m = yes_no.match(para_name)
