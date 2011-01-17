@@ -468,7 +468,7 @@ compile_mdadm() {
 			gen_die 'Could not extract MDADM source tarball!'
 		[ -d "${MDADM_DIR}" ] ||
 			gen_die 'MDADM directory ${MDADM_DIR} is invalid!'
-		
+
 		cd "${MDADM_DIR}"
 		sed -i "/^CFLAGS = /s:^CFLAGS = \(.*\)$:CFLAGS = -Os:" Makefile
 		sed -i "/^CXFLAGS = /s:^CXFLAGS = \(.*\)$:CXFLAGS = -Os:" Makefile
