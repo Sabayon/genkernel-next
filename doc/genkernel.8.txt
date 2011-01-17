@@ -472,6 +472,7 @@ AUTHORS
 - Eric Edgar <rocket@gentoo.org>
 - NFS Support by Thomas Seiler <thseiler@gmail.com>
 - GnuPG 1.x integration by dacook <schism@subverted.org>
+- MDADM integration by Matthias Dahl <ua_bugz_gentoo@mortal-soul.de>
 
 
 SEE ALSO
