@@ -344,10 +344,11 @@ append_mdadm(){
 	then
 		cp -a /etc/mdadm.conf "${TEMP}/initramfs-mdadm-temp/etc" \
 			|| gen_die "Could not copy mdadm.conf!"
-		if [ -e '/sbin/mdadm' ] && LC_ALL="C" ldd /sbin/mdadm|grep -q 'not a dynamic executable'
+		if [ -e '/sbin/mdadm' ] && LC_ALL="C" ldd /sbin/mdadm | grep -q 'not a dynamic executable' \
+		&& [ -e '/sbin/mdmon' ] && LC_ALL="C" ldd /sbin/mdmon | grep -q 'not a dynamic executable'
 		then
-			print_info 1 '		MDADM: Adding support (using local static binaries)...'
-			cp /sbin/mdadm "${TEMP}/initramfs-mdadm-temp/sbin/mdadm" ||
+			print_info 1 '		MDADM: Adding support (using local static binaries /sbin/mdadm and /sbin/mdmon)...'
+			cp /sbin/mdadm /sbin/mdmon "${TEMP}/initramfs-mdadm-temp/sbin/mdadm" ||
 				gen_die 'Could not copy over mdadm!'
 		else
 			print_info 1 '		MDADM: Adding support (compiling binaries)...'
