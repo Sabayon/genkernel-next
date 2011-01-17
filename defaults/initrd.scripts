@@ -618,7 +618,7 @@ startVolumes() {
 			echo "DEVICE /dev/sd[a-z]* /dev/hd[a-z]*" >/etc/mdadm.conf
 			/sbin/mdadm --examine --scan >>/etc/mdadm.conf
 		fi
-		/sbin/mdadm -A --scan
+		/sbin/mdadm --assemble --scan
 	fi
 
 	if [ "${USE_DMRAID_NORMAL}" = '1' ]
