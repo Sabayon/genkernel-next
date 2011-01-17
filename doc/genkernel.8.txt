@@ -254,7 +254,8 @@ INITIALIZATION
     exist.
 
 *--mdadm*::
-    Copy '/etc/mdadm.conf' to initramfs.
+    Copy '/etc/mdadm.conf' and mdadm/mdmon binaries to initramfs.
+    Without sys-fs/mdadm[static] installed, this will compile mdadm for you.
 
 *--dmraid*::
     Add DMRAID support.
