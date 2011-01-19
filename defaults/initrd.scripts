@@ -307,8 +307,13 @@ run_shell() {
 }
 
 runmdev() {
-	# busybox udev replacement
-	mdev -s
+	# Use devtmpfs if enabled in kernel,
+	# else busybox udev replacement
+	if grep -qs devtmpfs /proc/filesystems ; then
+		mount -t devtmpfs devtmpfs /dev
+	else
+		mdev -s
+	fi
 }
 
 test_success() {

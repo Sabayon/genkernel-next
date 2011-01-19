@@ -724,6 +724,8 @@ fi
 cd "${CHROOT}"
 mkdir "${CHROOT}/proc" "${CHROOT}/sys" 2>/dev/null
 echo -ne "${BOLD}.${NORMAL}"
+# If devtmpfs is mounted assume genkernel mounted it at /dev and try unmounting it
+grep -qs devtmpfs /proc/mounts && ( umount /dev || echo '*: Failed to unmount the devtmpfs /dev!' )
 umount /sys || echo '*: Failed to unmount the ramdisk /sys!'
 umount /proc || echo '*: Failed to unmount the ramdisk /proc!'
 echo -e "${BOLD}.${NORMAL}"
