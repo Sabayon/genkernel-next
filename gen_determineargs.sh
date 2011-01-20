@@ -58,7 +58,8 @@ get_KV() {
 			LOV=`echo ${UTS_RELEASE}|sed -e "s/${VER}.${PAT}.${SUB}${EXV}//"`
 			KV=${VER}.${PAT}.${SUB}${EXV}${LOV}
 		else
-			LCV=`grep ^CONFIG_LOCALVERSION= ${KERNEL_DIR}/.config | sed -r -e "s/.*=\"(.*)\"/\1/"`
+			determine_config_file
+			LCV=`grep ^CONFIG_LOCALVERSION= "${KERNEL_CONFIG}" | sed -r -e "s/.*=\"(.*)\"/\1/"`
 			KV=${VER}.${PAT}.${SUB}${EXV}${LCV}
 		fi
 	fi

@@ -1,6 +1,7 @@
 #!/bin/bash
 # $Id$
 
+# Fills variable KERNEL_CONFIG
 determine_config_file() {
 	if [ "${CMD_KERNEL_CONFIG}" != "" ]
 	then
