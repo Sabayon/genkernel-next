@@ -47,7 +47,7 @@ config_kernel() {
 		print_info 1 'kernel: >> Running mrproper...'
 		compile_generic mrproper kernel
 	else
-		print_info 1 "kernel: --no-mrproper is enabled; not running 'make mrproper'."
+		print_info 1 "kernel: --mrproper is disabled; not running 'make mrproper'."
 	fi
 
 	# If we're not cleaning a la mrproper, then we don't want to try to overwrite the configs
@@ -69,7 +69,7 @@ config_kernel() {
 		print_info 1 'kernel: >> Cleaning...'
 		compile_generic clean kernel
 	else
-		print_info 1 "kernel: --no-clean is enabled; not running 'make clean'."
+		print_info 1 "kernel: --clean is disabled; not running 'make clean'."
 	fi
 	
 	if isTrue ${MENUCONFIG}
