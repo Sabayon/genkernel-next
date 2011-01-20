@@ -47,6 +47,8 @@ config_kernel() {
 	then
 		print_info 1 'kernel: >> Running mrproper...'
 		compile_generic mrproper kernel
+	else
+		print_info 1 "config: --no-mrproper is enabled; not running 'make mrproper'."
 	fi
 
 	# If we're not cleaning, then we don't want to try to overwrite the configs
@@ -56,6 +58,8 @@ config_kernel() {
 	then
 		print_info 1 '        >> Running oldconfig...'
 		yes '' 2>/dev/null | compile_generic oldconfig kernel 2>/dev/null
+	else
+		print_info 1 "config: --oldconfig is disabled; not running 'make oldconfig'."
 	fi
 	if isTrue "${CLEAN}"
 	then
