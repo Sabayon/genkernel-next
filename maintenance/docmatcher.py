@@ -23,6 +23,7 @@ EXTRA_VARIABLES = tuple(EXTRA_VARIABLES)
 IGNORE_OPTIONS = ('help', 'version')
 _GPG_PARAMETERS = ('encrypt', 'symmetric')
 IGNORE_PARAMETERS = _GPG_PARAMETERS
+DEPRECATED_PARAMETERS = ('lvm2', 'evms2', 'gensplash', 'gensplash-res')
 
 
 def exract_gen_cmdline_sh():
@@ -56,6 +57,8 @@ def exract_gen_cmdline_sh():
 	for match in re.finditer('--([a-z][a-z0-9-]+)', parsing_code):
 		para_name = match.group(1)
 		if para_name in IGNORE_OPTIONS:
+			continue
+		if para_name in DEPRECATED_PARAMETERS:
 			continue
 		gen_cmdline_sh_parsing_long_params.add(para_name)
 
