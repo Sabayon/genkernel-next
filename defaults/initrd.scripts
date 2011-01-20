@@ -642,7 +642,7 @@ startVolumes() {
 			good_msg "Scanning for Volume Groups"
 			/bin/vgscan --ignorelockingfailure --mknodes 2>/dev/null
 			good_msg "Activating Volume Groups"
-			/bin/vgchange -ay --ignorelockingfailure 2>/dev/null
+			/bin/vgchange -ay --sysinit 2>/dev/null
 
 			# Disable EVMS since lvm is activated and they dont work together.
 			if [ "${USE_EVMS_NORMAL}" = '1' ]
