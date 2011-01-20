@@ -30,10 +30,10 @@ config_kernel() {
 	determine_config_file
 	cd "${KERNEL_DIR}" || gen_die 'Could not switch to the kernel directory!'
 
-	# Backup and replace kernel .config
-	if isTrue "${CLEAN}" || [ ! -f "${KERNEL_DIR}/.config" ]
+	# Backup current kernel .config
+	if isTrue "${MRPROPER}" || [ ! -f "${KERNEL_DIR}/.config" ]
 	then
-		print_info 1 "config: Using config from ${KERNEL_CONFIG}"
+		print_info 1 "kernel: Using config from ${KERNEL_CONFIG}"
 		if [ -f "${KERNEL_DIR}/.config" ]
 		then
 			NOW=`date +--%Y-%m-%d--%H-%M-%S`
@@ -41,39 +41,46 @@ config_kernel() {
 					|| gen_die "Could not backup kernel config (${KERNEL_DIR}/.config)"
 			print_info 1 "        Previous config backed up to .config${NOW}.bak"
 		fi
-		cp "${KERNEL_CONFIG}" "${KERNEL_DIR}/.config" || gen_die 'Could not copy configuration file!'
 	fi
 
 	if isTrue ${MRPROPER}
 	then
 		print_info 1 'kernel: >> Running mrproper...'
 		compile_generic mrproper kernel
+	else
+		print_info 1 "kernel: --mrproper is disabled; not running 'make mrproper'."
 	fi
 
-	# If we're not cleaning, then we don't want to try to overwrite the configs
+	# If we're not cleaning a la mrproper, then we don't want to try to overwrite the configs
 	# or we might remove configurations someone is trying to test.
+	if isTrue "${MRPROPER}" || [ ! -f "${KERNEL_DIR}/.config" ]
+	then
+		cp "${KERNEL_CONFIG}" "${KERNEL_DIR}/.config" || gen_die 'Could not copy configuration file!'
+	fi
 
 	if isTrue "${OLDCONFIG}"
 	then
 		print_info 1 '        >> Running oldconfig...'
 		yes '' 2>/dev/null | compile_generic oldconfig kernel 2>/dev/null
+	else
+		print_info 1 "kernel: --oldconfig is disabled; not running 'make oldconfig'."
 	fi
 	if isTrue "${CLEAN}"
 	then
 		print_info 1 'kernel: >> Cleaning...'
 		compile_generic clean kernel
 	else
-		print_info 1 "config: --no-clean is enabled; not running 'make clean'."
+		print_info 1 "kernel: --clean is disabled; not running 'make clean'."
 	fi
 	
 	if isTrue ${MENUCONFIG}
 	then
-		print_info 1 'config: >> Invoking menuconfig...'
+		print_info 1 'kernel: >> Invoking menuconfig...'
 		compile_generic menuconfig runtask
 		[ "$?" ] || gen_die 'Error: menuconfig failed!'
 	elif isTrue ${CMD_GCONFIG}
 	then
-		print_info 1 'config: >> Invoking gconfig...'
+		print_info 1 'kernel: >> Invoking gconfig...'
 		compile_generic gconfig kernel
 		[ "$?" ] || gen_die 'Error: gconfig failed!'
 
@@ -82,7 +89,7 @@ config_kernel() {
 
 	if isTrue ${CMD_XCONFIG}
 	then
-		print_info 1 'config: >> Invoking xconfig...'
+		print_info 1 'kernel: >> Invoking xconfig...'
 		compile_generic xconfig kernel
 		[ "$?" ] || gen_die 'Error: xconfig failed!'
 	fi
