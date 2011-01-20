@@ -29,8 +29,8 @@ config_kernel() {
 	determine_config_file
 	cd "${KERNEL_DIR}" || gen_die 'Could not switch to the kernel directory!'
 
-	# Backup and replace kernel .config
-	if isTrue "${CLEAN}" || [ ! -f "${KERNEL_DIR}/.config" ]
+	# Backup current kernel .config
+	if isTrue "${MRPROPER}" || [ ! -f "${KERNEL_DIR}/.config" ]
 	then
 		print_info 1 "config: Using config from ${KERNEL_CONFIG}"
 		if [ -f "${KERNEL_DIR}/.config" ]
@@ -40,7 +40,6 @@ config_kernel() {
 					|| gen_die "Could not backup kernel config (${KERNEL_DIR}/.config)"
 			print_info 1 "        Previous config backed up to .config${NOW}.bak"
 		fi
-		cp "${KERNEL_CONFIG}" "${KERNEL_DIR}/.config" || gen_die 'Could not copy configuration file!'
 	fi
 
 	if isTrue ${MRPROPER}
@@ -51,8 +50,12 @@ config_kernel() {
 		print_info 1 "config: --no-mrproper is enabled; not running 'make mrproper'."
 	fi
 
-	# If we're not cleaning, then we don't want to try to overwrite the configs
+	# If we're not cleaning a la mrproper, then we don't want to try to overwrite the configs
 	# or we might remove configurations someone is trying to test.
+	if isTrue "${MRPROPER}" || [ ! -f "${KERNEL_DIR}/.config" ]
+	then
+		cp "${KERNEL_CONFIG}" "${KERNEL_DIR}/.config" || gen_die 'Could not copy configuration file!'
+	fi
 
 	if isTrue "${OLDCONFIG}"
 	then
