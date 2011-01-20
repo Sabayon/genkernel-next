@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  20 Jan 2011; Sebastian Pipping <sping@gentoo.org> gen_configkernel.sh:
+  Move application of kernel config after "make mrproper" as that deletes
+  .config (whereas "make clean" does not) (bug #351906)
+
   20 Jan 2011; Sebastian Pipping <sping@gentoo.org>
   patches/busybox/1.18.1/1.18.1-mdstart.diff:
   busybox 1.18.1: Return of mdstart as an applet (regression) (bug #351909)
