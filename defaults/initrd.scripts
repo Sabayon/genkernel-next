@@ -398,11 +398,6 @@ whereis(){
 	esac
 }
 
-bind_mount_dev() {
-	# bind-mount /dev/ so that loop devices can be found
-	mount -o bind ${NEW_ROOT}/dev /dev
-}
-
 setup_hotplug() {
 	if [ "${KV_2_6_OR_GREATER}" ]
 	then
