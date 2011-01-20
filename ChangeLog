@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  20 Jan 2011; Sebastian Pipping <sping@gentoo.org>
+  patches/busybox/1.18.1/1.18.1-mdstart.diff:
+  busybox 1.18.1: Return of mdstart as an applet (regression) (bug #351909)
+
   16 Jan 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.11
 

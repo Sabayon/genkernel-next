@@ -3,6 +3,17 @@ Based on:
 > Forward-port the old mdstart tool from the Gentoo Busybox-1.1.3.
 > Only fires the RAID_AUTORUN ioctl on existing /dev/md nodes.
 
+diff -pruN a/include/applets.src.h mdstart/include/applets.src.h
+--- a/include/applets.src.h	2011-01-20 01:08:05.470632138 +0100
++++ mdstart/include/applets.src.h	2011-01-20 01:09:13.198003320 +0100
+@@ -235,6 +235,7 @@ IF_MAN(APPLET(man, _BB_DIR_SBIN, _BB_SUI
+ IF_MATCHPATHCON(APPLET(matchpathcon, _BB_DIR_USR_SBIN, _BB_SUID_DROP))
+ IF_MD5SUM(APPLET_NOEXEC(md5sum, md5_sha1_sum, _BB_DIR_USR_BIN, _BB_SUID_DROP, md5sum))
+ IF_MDEV(APPLET(mdev, _BB_DIR_SBIN, _BB_SUID_DROP))
++IF_MDSTART(APPLET(mdstart, _BB_DIR_SBIN, _BB_SUID_DROP))
+ IF_MICROCOM(APPLET(microcom, _BB_DIR_USR_BIN, _BB_SUID_DROP))
+ IF_MKDIR(APPLET_NOFORK(mkdir, mkdir, _BB_DIR_BIN, _BB_SUID_DROP, mkdir))
+ IF_MKFS_VFAT(APPLET_ODDNAME(mkdosfs, mkfs_vfat, _BB_DIR_SBIN, _BB_SUID_DROP, mkfs_vfat))
 diff -pruN a/include/usage.src.h mdstart/include/usage.src.h
 --- a/include/usage.src.h	2010-12-21 06:29:45.000000000 +0200
 +++ mdstart/include/usage.src.h	2011-01-12 21:29:47.000000000 +0200
