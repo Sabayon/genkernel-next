@@ -252,20 +252,20 @@ def main():
 
 
 	# Future work (due extensions)
+	print('Variables missing from *web page*:')
+	print_set(known_variales.difference(genkernel_xml_variables))
+
+	print('Options missing from *web page*:')
+	print_set(gen_cmdline_sh_parsing_long_params.difference(genkernel_xml_long_params))
+
+	print('Variables missing from *genkernel.conf*:')
+	print_set(known_variales.difference(genkernel_conf_variables))
+
 	print('Options missing from the *man page*:')
 	print_set(gen_cmdline_sh_parsing_long_params.difference(genkernel_8_txt_long_params))
 
 	print('Options missing from *--help*:')
 	print_set(gen_cmdline_sh_parsing_long_params.difference(gen_cmdline_sh_usage_long_params))
-
-	print('Options missing from *web page*:')
-	print_set(gen_cmdline_sh_parsing_long_params.difference(genkernel_xml_long_params))
-
-	print('Variables missing from *web page*:')
-	print_set(known_variales.difference(genkernel_xml_variables))
-
-	print('Variables missing from *genkernel.conf*:')
-	print_set(known_variales.difference(genkernel_conf_variables))
 
 
 	# Future work (due removal and updates)
