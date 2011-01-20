@@ -137,9 +137,6 @@ KERNEL COMPILATION
 *--oldconfig*::
     Implies *--no-clean*, and thus *--no-mrproper*, running a "make oldconfig".
 
-*--gensplash*::
-    Install framebuffer splash support into initramfs.
-
 *--*[*no-*]*splash*::
     Installs, or not, framebuffer splash support into initramfs.
 
@@ -222,19 +219,16 @@ LOW-LEVEL COMPILATION OPTIONS
 
 INITIALIZATION
 ~~~~~~~~~~~~~~
-*--gensplash*=<theme>::
+*--splash*=<theme>::
     Enable framebuffer splash using <theme>.
 
-*--gensplash-res*=<resolutions>::
+*--splash-res*=<resolutions>::
     Select gensplash resolutions to include.
 
 *--*[*no-*]*splash*=<theme>::
     If the extra argument is specified,  splash is forced using
     <theme>  rather than the default theme specified in your splash
     configuration. If *--no-splash* is specified, then splash is disabled.
-
-*--splash-res*=<resolutions>::
-    Optionally select splash resolutions to include.
 
 *--do-keymap-auto*::
     Force keymap selection at boot.
@@ -243,12 +237,10 @@ INITIALIZATION
     Disables keymap selection at boot.
 
 *--evms*::
-*--evms2*::
     Add in EVMS support from static binaries if they exist on the system:
     you should run "emerge evms" first (in the host system).
 
 *--lvm*::
-*--lvm2*::
     Add in LVM support from static binaries if they exist on the
     system,  or compile static LVM binaries if static ones do not
     exist.
