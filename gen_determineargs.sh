@@ -39,29 +39,20 @@ get_KV() {
 			EXV=`grep ^EXTRAVERSION\ \= ${KERNEL_SOURCE_DIR}/Makefile | sed -e "s/EXTRAVERSION =//" -e "s/ //g" -e 's/\$([a-z]*)//gi'`
 		fi
 
-		cd ${KERNEL_DIR}
-		#compile_generic prepare kernel > /dev/null 2>&1
-		cd - > /dev/null 2>&1
-		[ -f "${KERNEL_DIR}/include/linux/version.h" ] && \
-			VERSION_SOURCE="${KERNEL_DIR}/include/linux/version.h"
-		[ -f "${KERNEL_DIR}/include/linux/utsrelease.h" ] && \
-			VERSION_SOURCE="${KERNEL_DIR}/include/linux/utsrelease.h"
-		# Handle new-style releases where version.h doesn't have UTS_RELEASE
-		if [ -f ${KERNEL_DIR}/include/config/kernel.release ]
+		# Extract local version suffix from .config
+		# Not, that we explicitly do not look at generated files like
+		# - include/config/kernel.release
+		# - include/linux/version.h
+		# - include/linux/utsrelease.h
+		# as they require "make prepare" to be up to date (bug #263927)
+		local future_config="${KERNEL_DIR}"/.config
+		if isTrue "${MRPROPER}" || [ ! -f "${future_config}" ]
 		then
-			UTS_RELEASE=`cat ${KERNEL_DIR}/include/config/kernel.release`
-			LOV=`echo ${UTS_RELEASE}|sed -e "s/${VER}.${PAT}.${SUB}${EXV}//"`
-			KV=${VER}.${PAT}.${SUB}${EXV}${LOV}
-		elif [ -n "${VERSION_SOURCE}" ]
-		then
-			UTS_RELEASE=`grep UTS_RELEASE ${VERSION_SOURCE} | sed -e 's/#define UTS_RELEASE "\(.*\)"/\1/'`
-			LOV=`echo ${UTS_RELEASE}|sed -e "s/${VER}.${PAT}.${SUB}${EXV}//"`
-			KV=${VER}.${PAT}.${SUB}${EXV}${LOV}
-		else
 			determine_config_file
-			LCV=`grep ^CONFIG_LOCALVERSION= "${KERNEL_CONFIG}" | sed -r -e "s/.*=\"(.*)\"/\1/"`
-			KV=${VER}.${PAT}.${SUB}${EXV}${LCV}
+			future_config=${KERNEL_CONFIG}
 		fi
+		LOV=`grep ^CONFIG_LOCALVERSION= "${future_config}" | sed -r -e "s/.*=\"(.*)\"/\1/"`
+		KV=${VER}.${PAT}.${SUB}${EXV}${LOV}
 	fi
 }
 
