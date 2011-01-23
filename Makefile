@@ -4,7 +4,7 @@ distdir = genkernel-$(PACKAGE_VERSION)
 # Add off-Git/generated files here that need to be shipped with releases
 EXTRA_DIST = genkernel.8
 
-genkernel.8: doc/genkernel.8.txt doc/asciidoc.conf Makefile
+genkernel.8: doc/genkernel.8.txt doc/asciidoc.conf Makefile genkernel
 	a2x --conf-file=doc/asciidoc.conf --attribute="genkernelversion=$(PACKAGE_VERSION)" \
 		 --format=manpage -D . "$<"
 
