@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  23 Jan 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
+  Bump version to 3.4.12
+
   22 Jan 2011; Sebastian Pipping <sping@gentoo.org> ChangeLog:
   Enable CONFIG_USB_SUSPEND for x86/amd64 (bug #351376)
   Replace "${MAKEOPTS/-j?/j1}" by "${MAKEOPTS} -j1" (bug #277607)
