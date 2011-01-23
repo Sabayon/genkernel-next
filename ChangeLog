@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  23 Jan 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
+  Bump version to 3.4.12.1
+
   23 Jan 2011; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh:
   Fix copying of mdadm/mdmon to the initramfs (bug #352496). Thanks to Malcolm
   Lashley for reporting.
