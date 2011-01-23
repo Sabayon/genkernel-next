@@ -17,8 +17,10 @@
   Add proper mdadm support (bug #282100)
 
   Special thanks:
+  - Craig Andrews (Testing)
   - Laurent Pinchart (mdmon/IMSM support)
   - Matthias Dahl (Initial patch)
+  - Xake (Testing)
 
   20 Jan 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.11.1
