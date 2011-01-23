@@ -458,8 +458,10 @@ compile_lvm() {
 }
 
 compile_mdadm() {
-	if [ ! -f "${MDADM_BINCACHE}" ]
+	if [ -f "${MDADM_BINCACHE}" ]
 	then
+		print_info 1 '		MDADM: Using cache'
+	else
 		[ -f "${MDADM_SRCTAR}" ] ||
 			gen_die "Could not find MDADM source tarball: ${MDADM_SRCTAR}! Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
 		cd "${TEMP}"
