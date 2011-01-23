@@ -15,12 +15,15 @@ NON_VARIABLES = ('UTF', 'USE', 'TCP', 'SMP', 'PXE', 'PPC', 'MAC',
 	'GRP', 'DOCTYPE', 'DHCP', 'DEFAULT', 'ATARAID', 'APPEND')
 
 EXTRA_VARIABLES = ['ARCH_OVERRIDE', 'BOOTLOADER', 'CLEAR_CACHE_DIR', 'DEFAULT_KERNEL_SOURCE', 'DISTDIR', 'GK_SHARE', 'BUSYBOX_APPLETS']
-for app in ('DEVICE_MAPPER', 'UNIONFS_FUSE', 'BUSYBOX', 'DMRAID', 'LVM', 'ISCSI', 'FUSE', 'GPG'):
+for app in ('DEVICE_MAPPER', 'UNIONFS_FUSE', 'BUSYBOX', 'DMRAID', 'LVM', 'ISCSI', 'FUSE', 'GPG', 'MDADM'):
 	for prop in ('DIR', 'SRCTAR', 'VER'):
 		EXTRA_VARIABLES.append('%s_%s' % (app, prop))
 EXTRA_VARIABLES = tuple(EXTRA_VARIABLES)
 
 IGNORE_OPTIONS = ('help', 'version')
+_GPG_PARAMETERS = ('encrypt', 'symmetric')
+IGNORE_PARAMETERS = _GPG_PARAMETERS
+DEPRECATED_PARAMETERS = ('lvm2', 'evms2', 'gensplash', 'gensplash-res')
 
 
 def exract_gen_cmdline_sh():
@@ -54,6 +57,8 @@ def exract_gen_cmdline_sh():
 	for match in re.finditer('--([a-z][a-z0-9-]+)', parsing_code):
 		para_name = match.group(1)
 		if para_name in IGNORE_OPTIONS:
+			continue
+		if para_name in DEPRECATED_PARAMETERS:
 			continue
 		gen_cmdline_sh_parsing_long_params.add(para_name)
 
@@ -94,6 +99,9 @@ def extract_genkernel_8_txt():
 
 		# Black list
 		if para_name == 'no-':
+			continue
+
+		if para_name in IGNORE_PARAMETERS:
 			continue
 
 		m = yes_no.match(para_name)
@@ -244,20 +252,20 @@ def main():
 
 
 	# Future work (due extensions)
+	print('Variables missing from *web page*:')
+	print_set(known_variales.difference(genkernel_xml_variables))
+
+	print('Options missing from *web page*:')
+	print_set(gen_cmdline_sh_parsing_long_params.difference(genkernel_xml_long_params))
+
+	print('Variables missing from *genkernel.conf*:')
+	print_set(known_variales.difference(genkernel_conf_variables))
+
 	print('Options missing from the *man page*:')
 	print_set(gen_cmdline_sh_parsing_long_params.difference(genkernel_8_txt_long_params))
 
 	print('Options missing from *--help*:')
 	print_set(gen_cmdline_sh_parsing_long_params.difference(gen_cmdline_sh_usage_long_params))
-
-	print('Options missing from *web page*:')
-	print_set(gen_cmdline_sh_parsing_long_params.difference(genkernel_xml_long_params))
-
-	print('Variables missing from *web page*:')
-	print_set(known_variales.difference(genkernel_xml_variables))
-
-	print('Variables missing from *genkernel.conf*:')
-	print_set(known_variales.difference(genkernel_conf_variables))
 
 
 	# Future work (due removal and updates)

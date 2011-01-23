@@ -398,11 +398,6 @@ whereis(){
 	esac
 }
 
-bind_mount_dev() {
-	# bind-mount /dev/ so that loop devices can be found
-	mount -o bind ${NEW_ROOT}/dev /dev
-}
-
 setup_hotplug() {
 	if [ "${KV_2_6_OR_GREATER}" ]
 	then
@@ -615,9 +610,10 @@ startVolumes() {
 	then
 		if [ ! -e '/etc/mdadm.conf' ]
 		then
-			/sbin/mdadm --examine > /etc/mdadm.conf
+			echo "DEVICE /dev/sd[a-z]* /dev/hd[a-z]*" >/etc/mdadm.conf
+			/sbin/mdadm --examine --scan >>/etc/mdadm.conf
 		fi
-		/sbin/mdadm --assemble
+		/sbin/mdadm --assemble --scan
 	fi
 
 	if [ "${USE_DMRAID_NORMAL}" = '1' ]

@@ -2,10 +2,6 @@
 This patch adds support for the -t option to the 'read' command in ash. It's
 used for prompting for the keymap. It originated with 1.1.3+gentoo or earlier.
 
-1.7.4-mdadm.diff:
-This adds a minimal mdadm implementation to busybox for scanning for and
-activating mdraid arrays. You can blame robbat2 for this one :)
-
 1.7.4-mdstart.diff:
 This adds a 'mdstart' command to busybox, which is used for the activation of
 individual mdraid arrays. It originated with 1.1.3+gentoo or earlier.
