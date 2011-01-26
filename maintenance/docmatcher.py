@@ -21,7 +21,7 @@ for app in ('DEVICE_MAPPER', 'UNIONFS_FUSE', 'BUSYBOX', 'DMRAID', 'LVM', 'ISCSI'
 EXTRA_VARIABLES = tuple(EXTRA_VARIABLES)
 
 IGNORE_OPTIONS = ('help', 'version')
-_GPG_PARAMETERS = ('encrypt', 'symmetric')
+_GPG_PARAMETERS = ('symmetric', )
 IGNORE_PARAMETERS = _GPG_PARAMETERS
 DEPRECATED_PARAMETERS = ('lvm2', 'evms2', 'gensplash', 'gensplash-res')
 
