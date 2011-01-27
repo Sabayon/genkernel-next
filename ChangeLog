@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  27 Jan 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
+  Bump version to 3.4.12.2
+
   27 Jan 2011; Sebastian Pipping <sping@gentoo.org> gen_determineargs.sh:
   Revert kernel release detection fix (regression) (bug #352787)
 
