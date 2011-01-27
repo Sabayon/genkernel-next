@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  27 Jan 2011; Sebastian Pipping <sping@gentoo.org> gen_determineargs.sh:
+  Revert kernel release detection fix (regression) (bug #352787)
+
   23 Jan 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.12.1
 
@@ -78,7 +81,7 @@
   - devsk (Multi-device patch)
   - Fabio Erculiani (Slowusb fixes)
   - Kai Dietrich (Symlink analysis)
-  - Kolbjørn Barmen (Arithmetic fix)
+  - KolbjÃ¸rn Barmen (Arithmetic fix)
 
   13 Dec 2010; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.10.908
