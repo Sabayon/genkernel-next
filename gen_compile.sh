@@ -427,10 +427,6 @@ compile_lvm() {
 			gen_die 'Could not extract LVM source tarball!'
 		[ -d "${LVM_DIR}" ] ||
 			gen_die 'LVM directory ${LVM_DIR} is invalid!'
-		rm -rf "${TEMP}/device-mapper" > /dev/null
-		/bin/tar -jxpf "${DEVICE_MAPPER_BINCACHE}" -C "${TEMP}" ||
-			gen_die "Could not extract device-mapper binary cache!";
-		
 		cd "${LVM_DIR}"
 		apply_patches lvm ${LVM_VER}
 		print_info 1 'lvm: >> Configuring...'
