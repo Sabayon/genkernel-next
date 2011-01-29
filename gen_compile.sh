@@ -417,8 +417,10 @@ compile_busybox() {
 }
 
 compile_lvm() {
-	if [ ! -f "${LVM_BINCACHE}" ]
+	if [ -f "${LVM_BINCACHE}" ]
 	then
+		print_info 1 "lvm: >> Using cache"
+	else
 		[ -f "${LVM_SRCTAR}" ] ||
 			gen_die "Could not find LVM source tarball: ${LVM_SRCTAR}! Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
 		cd "${TEMP}"
