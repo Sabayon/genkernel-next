@@ -5,6 +5,15 @@
 # Distributed under the GPL v2
 # $Id$
 
+  29 Jan 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
+  Bump version to 3.4.12.3
+
+  29 Jan 2011; Sebastian Pipping <sping@gentoo.org> gen_compile.sh:
+  No longer require device mapper bincache for compiling lvm (bug #353026)
+
+  Special thanks:
+  - Peter Hjalmarsson
+
   27 Jan 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.12.2
 
@@ -36,7 +45,7 @@
   - Craig Andrews (Testing)
   - Laurent Pinchart (mdmon/IMSM support)
   - Matthias Dahl (Initial patch)
-  - Xake (Testing)
+  - Peter Hjalmarsson (Testing)
 
   20 Jan 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.11.1
@@ -46,7 +55,7 @@
   .config (whereas "make clean" does not) (bug #351906)
 
   Special thanks:
-  - Xake
+  - Peter Hjalmarsson
 
   20 Jan 2011; Sebastian Pipping <sping@gentoo.org>
   patches/busybox/1.18.1/1.18.1-mdstart.diff:

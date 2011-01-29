@@ -417,8 +417,10 @@ compile_busybox() {
 }
 
 compile_lvm() {
-	if [ ! -f "${LVM_BINCACHE}" ]
+	if [ -f "${LVM_BINCACHE}" ]
 	then
+		print_info 1 "lvm: >> Using cache"
+	else
 		[ -f "${LVM_SRCTAR}" ] ||
 			gen_die "Could not find LVM source tarball: ${LVM_SRCTAR}! Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
 		cd "${TEMP}"
@@ -427,10 +429,6 @@ compile_lvm() {
 			gen_die 'Could not extract LVM source tarball!'
 		[ -d "${LVM_DIR}" ] ||
 			gen_die 'LVM directory ${LVM_DIR} is invalid!'
-		rm -rf "${TEMP}/device-mapper" > /dev/null
-		/bin/tar -jxpf "${DEVICE_MAPPER_BINCACHE}" -C "${TEMP}" ||
-			gen_die "Could not extract device-mapper binary cache!";
-		
 		cd "${LVM_DIR}"
 		apply_patches lvm ${LVM_VER}
 		print_info 1 'lvm: >> Configuring...'
