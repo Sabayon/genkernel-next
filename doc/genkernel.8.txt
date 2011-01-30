@@ -283,7 +283,7 @@ INITIALIZATION
 *--gpg*::
     Add support for GnuPG 1.x, the portable standalone branch of GnuPG.
     A key can be made from
-    `gpg --encrypt --symmetric /path/to/LUKS-key > /path/to/LUKS-key.gpg` .
+    `gpg --symmetric -o /path/to/LUKS-key.gpg /path/to/LUKS-key` .
     After that, re-point the *root_key* argument to the new .gpg file.
 
 *--no-busybox*::

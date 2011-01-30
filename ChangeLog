@@ -5,6 +5,13 @@
 # Distributed under the GPL v2
 # $Id$
 
+  30 Jan 2011; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh:
+  Give blkid of e2fsprogs precedence over busybox re-write by putting it into
+  /sbin, not /bin (bug #352746)
+
+  30 Jan 2011; Sebastian Pipping <sping@gentoo.org> arch/x86_64/kernel-config:
+  Enable CONFIG_USB_SUSPEND and CONFIG_PM_RUNTIME for x86_64 (bug #351376)
+
   30 Jan 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.12.4
 
