@@ -14,6 +14,10 @@ BasicSetup() {
 	CPYYEAR="$(echo ${MYDATE} | cut -c 1-4)"
 	BBDATE="$(echo ${MYDATE} | cut -c 5-8)$(echo ${MYDATE} | cut -c 1-4)"
 	DISDATE="$(echo ${MYDATE} | cut -c 7-8) $(echo ${MYDATE} | cut -c 5-6) $(echo ${MYDATE} | cut -c 1-4)"
+
+	. /etc/initrd.defaults
+	# Clean input/output
+	exec >${CONSOLE} <${CONSOLE} 2>&1
 }
 #//--------------------------------------------------------------------------------
 

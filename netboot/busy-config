@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Busybox version: 1.7.4
-# Thu Apr 16 15:04:31 2009
+# Tue Apr 13 21:28:34 2010
 #
 CONFIG_HAVE_DOT_CONFIG=y
 
@@ -372,8 +372,8 @@ CONFIG_MESG=y
 # Login/Password Management Utilities
 #
 CONFIG_FEATURE_SHADOWPASSWDS=y
-# CONFIG_USE_BB_SHADOW is not set
-# CONFIG_USE_BB_PWD_GRP is not set
+CONFIG_USE_BB_SHADOW=y
+CONFIG_USE_BB_PWD_GRP=y
 # CONFIG_ADDGROUP is not set
 # CONFIG_FEATURE_ADDUSER_TO_GROUP is not set
 # CONFIG_DELGROUP is not set
