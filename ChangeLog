@@ -5,6 +5,13 @@
 # Distributed under the GPL v2
 # $Id$
 
+  30 Jan 2011; Sebastian Pipping <sping@gentoo.org> ChangeLog:
+  Enhance console handling on netboot linuxrc (bug #353084)
+  Enable shadow on netboot's busybox config (bug #353085)
+
+  Special thanks:
+  - Raúl Porcel
+
   29 Jan 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.12.3
 
