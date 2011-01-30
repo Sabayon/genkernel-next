@@ -31,12 +31,6 @@ then
 	[ -e /linuxrc ] && rm /linuxrc
 fi
 
-if [ -e /bin/lvm ]
-then
-	[ -e /bin/vgscan   ] || ln -s /bin/lvm /bin/vgscan
-	[ -e /bin/vgchange ] || ln -s /bin/lvm /bin/vgchange
-fi
-
 quiet_kmsg
 
 CMDLINE=`cat /proc/cmdline`
