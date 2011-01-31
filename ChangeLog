@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  31 Jan 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
+  Bump version to 3.4.12.6
+
   31 Jan 2011; Sebastian Pipping <sping@gentoo.org> ChangeLog:
   Speed up LVM activation (bug #351047)
 
