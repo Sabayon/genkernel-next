@@ -643,14 +643,14 @@ startVolumes() {
 			lvm_commands="#! /bin/lvm"
 
 			# If there is a cahe, update it. Unbreak at least dmcrypt
-			[ -d /etc/lvm/cache ] && lvm_commands="$lvm_commands \nvgscan"
+			[ -d /etc/lvm/cache ] && lvm_commands="${lvm_commands} \nvgscan"
 
 			# To activate volumegroups on all devices in the cache
-			lvm_commands="$lvm_commands \nvgchange -ay --sysinit"
+			lvm_commands="${lvm_commands} \nvgchange -ay --sysinit"
 
 			# And finally execute it all (/proc/... needed if lvm is compiled without readline)
 			good_msg "Scanning for and activating Volume Groups"
-			printf "%b\n" "$lvm_commands" | /bin/lvm /proc/self/fd/0
+			printf "%b\n" "${lvm_commands}" | /bin/lvm /proc/self/fd/0
 
 			# Disable EVMS since lvm is activated and they dont work together.
 			if [ "${USE_EVMS_NORMAL}" = '1' ]
