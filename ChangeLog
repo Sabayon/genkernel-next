@@ -5,6 +5,12 @@
 # Distributed under the GPL v2
 # $Id$
 
+  31 Jan 2011; Sebastian Pipping <sping@gentoo.org> ChangeLog:
+  Use devtmpfs if available (bug #353024)
+
+  Special thanks:
+  - Peter Hjalmarsson
+
   31 Jan 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.12.6
 
