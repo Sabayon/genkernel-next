@@ -310,7 +310,8 @@ runmdev() {
 	# Use devtmpfs if enabled in kernel,
 	# else busybox udev replacement
 	if grep -qs devtmpfs /proc/filesystems ; then
-		mount -t devtmpfs devtmpfs /dev
+		# Options copied from /etc/init.d/udev-mount, should probably be kept in sync
+		mount -t devtmpfs -o "exec,nosuid,mode=0755,size=10M" udev /dev
 	else
 		mdev -s
 	fi
