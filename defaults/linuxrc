@@ -725,10 +725,14 @@ cd "${CHROOT}"
 mkdir "${CHROOT}/proc" "${CHROOT}/sys" 2>/dev/null
 echo -ne "${BOLD}.${NORMAL}"
 
-# If devtmpfs is mounted assume genkernel mounted it at /dev and try unmounting it
+# If devtmpfs is mounted, try move it to the new root
+# If that fails, try to unmount all possible mounts of devtmpfs as stuff breaks otherwise
 if grep -qs devtmpfs /proc/mounts
 then
-	umount /dev || echo '*: Failed to unmount the devtmpfs /dev!'
+	if ! mount --move /dev "${CHROOT}"/dev
+	then
+		umount -a -t devtmpfs || echo '*: Failed to move and unmount the devtmpfs /dev!'
+	fi
 fi
 
 umount /sys || echo '*: Failed to unmount the ramdisk /sys!'
