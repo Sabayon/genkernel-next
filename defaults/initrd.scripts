@@ -315,12 +315,13 @@ runmdev() {
 	fi
 
 	# Options copied from /etc/init.d/udev-mount, should probably be kept in sync
-	mount -t $devfs -o "exec,nosuid,mode=0755,size=10M" udev /dev
+	mount -t $devfs -o "exec,nosuid,mode=0755,size=10M" udev /dev \
+		|| bad_msg "Failed to mount /dev as ${devfs}"
 
 	# http://git.busybox.net/busybox/plain/docs/mdev.txt
 	mkdir /dev/pts
-	mount -t devpts devpts /dev/pts
-	mdev -s
+	mount -t devpts devpts /dev/pts  || bad_msg "Failed to mount /dev/pts"
+	mdev -s  || bad_msg "Failed recive dynamic updates from mdev"
 }
 
 test_success() {
