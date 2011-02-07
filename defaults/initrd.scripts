@@ -321,7 +321,7 @@ runmdev() {
 	# http://git.busybox.net/busybox/plain/docs/mdev.txt
 	mkdir /dev/pts
 	mount -t devpts devpts /dev/pts  || bad_msg "Failed to mount /dev/pts"
-	mdev -s  || bad_msg "Failed recive dynamic updates from mdev"
+	mdev -s  || bad_msg "Failed to receive dynamic updates from mdev"
 }
 
 test_success() {
