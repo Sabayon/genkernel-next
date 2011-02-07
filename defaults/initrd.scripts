@@ -316,6 +316,10 @@ runmdev() {
 
 	# Options copied from /etc/init.d/udev-mount, should probably be kept in sync
 	mount -t $devfs -o "exec,nosuid,mode=0755,size=10M" udev /dev
+
+	# http://git.busybox.net/busybox/plain/docs/mdev.txt
+	mkdir /dev/pts
+	mount -t devpts devpts /dev/pts
 	mdev -s
 }
 
