@@ -6,7 +6,7 @@
 # $Id$
 
   7 Feb 2011; Sebastian Pipping <sping@gentoo.org> ChangeLog:
-  Use devtmpfs if available (bug #353024)
+  Use devtmpfs/tmpfs for /dev (bug #353024)
   Rescue devtmpfs /dev over to chroot (bug #353024, bug #344407)
 
   Special thanks:
