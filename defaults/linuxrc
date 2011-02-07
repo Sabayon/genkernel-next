@@ -731,7 +731,7 @@ if grep -qs devtmpfs /proc/mounts
 then
 	if ! mount --move /dev "${CHROOT}"/dev
 	then
-		umount -a -t devtmpfs || echo '*: Failed to move and unmount the devtmpfs /dev!'
+		umount -t devtmpfs || echo '*: Failed to move and unmount the devtmpfs /dev!'
 	fi
 fi
 
