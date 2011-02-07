@@ -727,11 +727,11 @@ echo -ne "${BOLD}.${NORMAL}"
 
 # If devtmpfs is mounted, try move it to the new root
 # If that fails, try to unmount all possible mounts of devtmpfs as stuff breaks otherwise
-if grep -qs devtmpfs /proc/mounts
+if grep -qs "/dev " /proc/mounts
 then
 	if ! mount --move /dev "${CHROOT}"/dev
 	then
-		umount -t devtmpfs || echo '*: Failed to move and unmount the devtmpfs /dev!'
+		umount /dev || echo '*: Failed to move and unmount the ramdisk /dev!'
 	fi
 fi
 
