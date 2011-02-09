@@ -5,6 +5,12 @@
 # Distributed under the GPL v2
 # $Id$
 
+  09 Feb 2011; Sebastian Pipping <sping@gentoo.org> genkernel.conf:
+  Add SPLASH and SPLASH_THEME to genkernel.conf (bug #268468)
+
+  Special thanks:
+  - PhobosK
+
   08 Feb 2011; Sebastian Pipping <sping@gentoo.org> ChangeLog:
   Add iBFT support for iSCSI (bug #314575)
 
