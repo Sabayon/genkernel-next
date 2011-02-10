@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  10 Feb 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
+  Bump version to 3.4.13
+
   09 Feb 2011; Sebastian Pipping <sping@gentoo.org> genkernel.conf:
   Add SPLASH and SPLASH_THEME to genkernel.conf (bug #268468)
 
