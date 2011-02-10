@@ -307,8 +307,21 @@ run_shell() {
 }
 
 runmdev() {
-	# busybox udev replacement
-	mdev -s
+	# Use devtmpfs if enabled in kernel,
+	# else tmpfs. Always run mdev just in case
+	devfs=tmpfs
+	if grep -qs devtmpfs /proc/filesystems ; then
+		devfs=devtmpfs
+	fi
+
+	# Options copied from /etc/init.d/udev-mount, should probably be kept in sync
+	mount -t $devfs -o "exec,nosuid,mode=0755,size=10M" udev /dev \
+		|| bad_msg "Failed to mount /dev as ${devfs}"
+
+	# http://git.busybox.net/busybox/plain/docs/mdev.txt
+	mkdir /dev/pts
+	mount -t devpts devpts /dev/pts  || bad_msg "Failed to mount /dev/pts"
+	mdev -s  || bad_msg "Failed to receive dynamic updates from mdev"
 }
 
 test_success() {
@@ -676,10 +689,16 @@ startVolumes() {
 }
 
 startiscsi() {
+	
+	if [ ! -n "${ISCSI_NOIBFT}" ]
+	then
+		good_msg "Activating iSCSI via iBFT"
+		iscsistart -b
+	fi
 
 	if [ -n "${ISCSI_INITIATORNAME}" ] && [ -n "${ISCSI_TARGET}" ] && [ -n "${ISCSI_ADDRESS}" ]
 	then
-		good_msg "Activating iSCSI"
+		good_msg "Activating iSCSI via cmdline"
 
 		if [ "${ISCSI_TGPT}" ]
 		then

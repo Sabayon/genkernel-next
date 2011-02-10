@@ -5,6 +5,25 @@
 # Distributed under the GPL v2
 # $Id$
 
+  09 Feb 2011; Sebastian Pipping <sping@gentoo.org> genkernel.conf:
+  Add SPLASH and SPLASH_THEME to genkernel.conf (bug #268468)
+
+  Special thanks:
+  - PhobosK
+
+  08 Feb 2011; Sebastian Pipping <sping@gentoo.org> ChangeLog:
+  Add iBFT support for iSCSI (bug #314575)
+
+  Special thanks:
+  - Stefan Behte
+
+  7 Feb 2011; Sebastian Pipping <sping@gentoo.org> ChangeLog:
+  Use devtmpfs/tmpfs for /dev (bug #353024)
+  Rescue devtmpfs /dev over to chroot (bug #353024, bug #344407)
+
+  Special thanks:
+  - Peter Hjalmarsson
+
   31 Jan 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.12.6
 

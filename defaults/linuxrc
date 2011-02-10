@@ -178,6 +178,9 @@ do
 		iscsi_debug\=*)
 			ISCSI_DEBUG=`parse_opt "${x}"`
 		;;
+		iscsi_noibft)
+			ISCSI_NOIBFT=1
+		;;
 		# Crypto
 		crypt_root\=*)
 			CRYPT_ROOT=`parse_opt "${x}"`
@@ -294,7 +297,10 @@ start_dev_mgr
 [ "${DO_slowusb}" ] && sleep 10
 
 # Start iSCSI
-startiscsi
+if [ -e /bin/iscsistart ]
+then
+	startiscsi
+fi
 
 # Setup btrfs, see bug 303529
 setup_btrfsctl
@@ -724,6 +730,17 @@ fi
 cd "${CHROOT}"
 mkdir "${CHROOT}/proc" "${CHROOT}/sys" 2>/dev/null
 echo -ne "${BOLD}.${NORMAL}"
+
+# If devtmpfs is mounted, try move it to the new root
+# If that fails, try to unmount all possible mounts of devtmpfs as stuff breaks otherwise
+if grep -qs "/dev " /proc/mounts
+then
+	if ! mount --move /dev "${CHROOT}"/dev
+	then
+		umount /dev || echo '*: Failed to move and unmount the ramdisk /dev!'
+	fi
+fi
+
 umount /sys || echo '*: Failed to unmount the ramdisk /sys!'
 umount /proc || echo '*: Failed to unmount the ramdisk /proc!'
 echo -e "${BOLD}.${NORMAL}"
