@@ -621,11 +621,6 @@ startVolumes() {
 	
 	if [ "${USE_MDADM}" = '1' ]
 	then
-		if [ ! -e '/etc/mdadm.conf' ]
-		then
-			echo "DEVICE /dev/sd[a-z]* /dev/hd[a-z]*" >/etc/mdadm.conf
-			/sbin/mdadm --examine --scan >>/etc/mdadm.conf
-		fi
 		/sbin/mdadm --assemble --scan
 	fi
 
