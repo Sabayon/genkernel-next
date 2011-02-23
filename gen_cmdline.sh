@@ -79,7 +79,8 @@ longusage() {
   echo "				--> 'emerge evms' in the host operating system"
   echo "				first"
   echo "	--lvm			Include LVM support"
-  echo "	--mdadm			Copy /etc/mdadm.conf to initramfs"
+  echo "	--mdadm			Include MDADM/MDMON support"
+  echo "	--mdadm-config=<file>	Use file as mdadm.conf in initramfs"
   echo "	--dmraid		Include DMRAID support"
   echo "	--multipath		Include Multipath support"
   echo "	--iscsi			Include iSCSI support"
@@ -247,6 +248,10 @@ parse_cmdline() {
 		--mdadm)
 			CMD_MDADM=1
 			print_info 2 "CMD_MDADM: $CMD_MDADM"
+			;;
+		--mdadm-config=*)
+			CMD_MDADM_CONFIG=`parse_opt "$*"`
+			print_info 2 "CMD_MDADM_CONFIG: $CMD_MDADM_CONFIG"
 			;;
 		--no-busybox)
 			CMD_BUSYBOX=0
