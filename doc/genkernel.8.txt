@@ -251,6 +251,8 @@ INITIALIZATION
 
 *--mdadm-config*=<file>::
     Use <file> as configfile for MDADM.
+    By default the ramdisk will be built *without* an mdadm.conf and
+    will auto-detect arrays during boot-up.
 
 *--dmraid*::
     Include DMRAID support.
