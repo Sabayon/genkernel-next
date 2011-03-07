@@ -466,7 +466,7 @@ cmdline_hwopts() {
 			fi
 			if [ "$(echo ${y} | cut -b -7)" = "keymap=" ]
 			then
-				MY_HWOPTS="${MY_HWOPTS} dokeymap"
+				MY_HWOPTS="${MY_HWOPTS} keymap"
 			fi
 		done
 	done

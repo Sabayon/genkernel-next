@@ -5,6 +5,11 @@
 # Distributed under the GPL v2
 # $Id$
 
+  07 Mar 2011; Peter Hjalmarsson <xake@gentoo.org> defaults/initrd.scripts:
+  Fix typo where the kernelcmd version "dokeymap" was added to MY_HWOPTS
+  instead of the HWOPTS version "keymap".
+  Broke setups where only "keymap=<...>" was added to kernelcmd.
+
   24 Feb 2011; Sebastian Pipping <sping@gentoo.org> ChangeLog:
   Fix handling of mdadm.conf (bug #354809)
 
