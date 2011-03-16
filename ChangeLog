@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  16 Mar 2011; Fabio Erculiani <lxnay@sabayon.org> **/modules_load:
+  Add btrfs to MODULES_FS
+
   07 Mar 2011; Peter Hjalmarsson <xake@rymdraket.net> defaults/initrd.scripts:
   Fix typo where the kernelcmd version "dokeymap" was added to MY_HWOPTS
   instead of the HWOPTS version "keymap".
