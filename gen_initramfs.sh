@@ -342,8 +342,19 @@ append_mdadm(){
 	mkdir -p "${TEMP}/initramfs-mdadm-temp/sbin/"
 	if [ "${MDADM}" = '1' ]
 	then
-		cp -a /etc/mdadm.conf "${TEMP}/initramfs-mdadm-temp/etc" \
-			|| gen_die "Could not copy mdadm.conf!"
+		if [ -n "${MDADM_CONFIG}" ]
+		then
+			if [ -f "${MDADM_CONFIG}" ]
+			then
+				cp -a "${MDADM_CONFIG}" "${TEMP}/initramfs-mdadm-temp/etc/mdadm.conf" \
+				|| gen_die "Could not copy mdadm.conf!"
+			else
+				gen_die '${MDADM_CONFIG} does not exist!'
+			fi
+		else
+			print_info 1 '		MDADM: Skipping inclusion of mdadm.conf'
+		fi
+
 		if [ -e '/sbin/mdadm' ] && LC_ALL="C" ldd /sbin/mdadm | grep -q 'not a dynamic executable' \
 		&& [ -e '/sbin/mdmon' ] && LC_ALL="C" ldd /sbin/mdmon | grep -q 'not a dynamic executable'
 		then
