@@ -5,6 +5,13 @@
 # Distributed under the GPL v2
 # $Id$
 
+  22 Mar 2011; Peter Hjalmarsson <xake@rymdraket.net> defaults/initrd.defaults,
+  defaults/initrd.scripts:
+  Set DO_slowusb as default, and make setup_slowusb unset it if it cannot find
+  a usb-storage attached. This makes genkernel ramdisk adhere to "noslowusb",
+  makes the ramdisk only wait if there is a usb-storage attached and should fix
+  gentoo bug #359619.
+
   16 Mar 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.14
 
