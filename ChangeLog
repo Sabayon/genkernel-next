@@ -5,6 +5,11 @@
 # Distributed under the GPL v2
 # $Id$
 
+  23 Mar 2011; Peter Hjalmarsson <xake@rymdraket.net> doc/genkernel.8.txt,
+  gen_cmdline.sh, gen_initramfs.sh:
+  Remove "--slowusb" as it is enabled by default now. Also document "noslowusb"
+  ramdisk option that skips it.
+
   22 Mar 2011; Peter Hjalmarsson <xake@rymdraket.net> defaults/initrd.defaults,
   defaults/initrd.scripts:
   Set DO_slowusb as default, and make setup_slowusb unset it if it cannot find

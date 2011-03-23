@@ -349,7 +349,7 @@ append_mdadm(){
 				cp -a "${MDADM_CONFIG}" "${TEMP}/initramfs-mdadm-temp/etc/mdadm.conf" \
 				|| gen_die "Could not copy mdadm.conf!"
 			else
-				gen_die '${MDADM_CONFIG} does not exist!'
+				gen_die 'sl${MDADM_CONFIG} does not exist!'
 			fi
 		else
 			print_info 1 '		MDADM: Skipping inclusion of mdadm.conf'
@@ -628,10 +628,6 @@ append_auxilary() {
 	then
 		mkdir -p "${TEMP}/initramfs-aux-temp/lib/keymaps"
 		/bin/tar -C "${TEMP}/initramfs-aux-temp/lib/keymaps" -zxf "${GK_SHARE}/defaults/keymaps.tar.gz"
-	fi
-	if isTrue $CMD_SLOWUSB
-	then
-		echo 'MY_HWOPTS="${MY_HWOPTS} slowusb"' >> ${TEMP}/initramfs-aux-temp/etc/initrd.defaults
 	fi
 
 	cd ${TEMP}/initramfs-aux-temp/sbin && ln -s ../init init
