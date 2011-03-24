@@ -210,7 +210,7 @@ cache_cd_contents() {
 }
 
 mount_sysfs() {
-	mount -t sysfs /sys /sys >/dev/null 2>&1
+	mount -t sysfs sysfs /sys -o noexec,nosuid,nodev >/dev/null 2>&1
 	ret=$?
 	[ ${ret} -eq 0 ] || bad_msg "Failed to mount /sys!"
 }

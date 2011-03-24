@@ -20,7 +20,7 @@ then
 	exit 1
 fi
 
-mount -t proc proc /proc >/dev/null 2>&1
+mount -t proc -o noexec,nosuid,nodev proc /proc >/dev/null 2>&1
 mount -o remount,rw / >/dev/null 2>&1
 
 # Set up symlinks
