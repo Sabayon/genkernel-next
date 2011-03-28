@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  28 Mar 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
+  Bump to 3.4.15
+
   24 Mar 2011; Peter Hjalmarsson <xake@rymdraket.net> defaults/linuxrc, initrd.scripts:
   Rescue /proc and /sys over into chroot
   Apply mount options noexec,nosuid,nodev to /proc and /sys
