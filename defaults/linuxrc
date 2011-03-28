@@ -20,7 +20,7 @@ then
 	exit 1
 fi
 
-mount -t proc proc /proc >/dev/null 2>&1
+mount -t proc -o noexec,nosuid,nodev proc /proc >/dev/null 2>&1
 mount -o remount,rw / >/dev/null 2>&1
 
 # Set up symlinks
@@ -733,16 +733,17 @@ echo -ne "${BOLD}.${NORMAL}"
 
 # If devtmpfs is mounted, try move it to the new root
 # If that fails, try to unmount all possible mounts of devtmpfs as stuff breaks otherwise
-if grep -qs "/dev " /proc/mounts
-then
-	if ! mount --move /dev "${CHROOT}"/dev
+for fs in /dev /sys /proc
+do
+	if grep -qs "$fs" /proc/mounts
 	then
-		umount /dev || echo '*: Failed to move and unmount the ramdisk /dev!'
+		if ! mount --move $fs "${CHROOT}"$fs
+		then
+			umount $fs || echo '*: Failed to move and unmount the ramdisk $fs!'
+		fi
 	fi
-fi
+done
 
-umount /sys || echo '*: Failed to unmount the ramdisk /sys!'
-umount /proc || echo '*: Failed to unmount the ramdisk /proc!'
 echo -e "${BOLD}.${NORMAL}"
 
 exec /sbin/switch_root -c "/dev/console" "${CHROOT}" "${REAL_INIT:-/sbin/init}" "${INIT_OPTS}"

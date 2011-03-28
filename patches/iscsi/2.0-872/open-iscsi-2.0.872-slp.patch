@@ -1,0 +1,11 @@
+--- a/utils/open-isns/configure.ac
++++ b/utils/open-isns/configure.ac
+@@ -80,7 +80,7 @@ AC_ARG_WITH(slp,
+ 		else
+ 			WITH_SLP=yes
+ 			CPPFLAGS="$CPPFLAGS -I${withval}"
+-			LDFLAGS="$LDFLAGS -L${withval}"
++			LDFLAGS="$LDFLAGS -L${withval} -lslp"
+ 		fi
+ 	]
+ )

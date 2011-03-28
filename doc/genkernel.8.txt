@@ -130,7 +130,7 @@ KERNEL COMPILATION
     to the second most recently built image, if one exists.  Similar
     symlinks (both * and *.old) are managed for initramfs and System.map.
     The corresponding work products (i.e., the actual kernel
-    and initamfs images, and System.map) are also managed accordingly.
+    and initramfs images, and System.map) are also managed accordingly.
     NOTE: Specifying   *--symlink*  does nothing unless
     *--install* is also specified.
 
@@ -262,9 +262,6 @@ INITIALIZATION
 
 *--iscsi*::
     Include iSCSI support
-
-*--slowusb*::
-    Enables extra pauses for slow USB CD boots.
 
 *--bootloader*=*grub*::
     Add new kernel to GRUB configuration.
@@ -426,6 +423,11 @@ which the ramdisk scripts would recognize.
 *doscsi*::
     Activate SCSI devices on bootup, necessary when SCSI support is
     compiled as modules and you're using SCSI or SATA devices.
+
+*noslowusb*::
+    By default genkernel pause for 10 seconds if it finds a attached
+    usb-storage device to give them time to initiate.
+    This option skips that pause.
 
 *keymap*='MAP'::
     Set keymap to 'MAP', e.g. *keymap*=de.

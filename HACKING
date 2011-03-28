@@ -19,4 +19,4 @@ Rolling a release:
 - make dist
 - upload genkernel-${PV}.tar.bz2 to the hosting:
     scp genkernel-${PV}.tar.bz2 ${USER}@dev.gentoo.org:/space/distfiles-local/
-- check open bugs with keyword "InSVN" for closability
+- check open bugs with keyword "InSVN" or "InVCS" for closability
