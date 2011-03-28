@@ -685,10 +685,18 @@ compile_iscsi() {
 			gen_die "ISCSI directory ${ISCSI_DIR} invalid"
 				print_info 1 'iSCSI: >> Compiling...'
 		cd "${TEMP}/${ISCSI_DIR}"
+		apply_patches iscsi ${ISCSI_VER}
 
 		# Only build userspace
+		print_info 1 'iSCSI: >> Configuring userspace...'
+		cd utils/open-isns || gen_die 'Could not enter open-isns dir'
+		# we currently have a patch that changes configure.ac
+		# once given patch is dropped, drop autoconf too
+		autoconf || gen_die 'Could not tweak open-iscsi configuration'
+		./configure --without-slp >> ${LOGFILE} 2>&1 || gen_die 'Could not configure userspace'
+		cd ../.. || gen_die 'wtf?'
 		MAKE=${UTILS_MAKE} compile_generic "user" ""
-	
+
 		# if kernel modules exist, copy them to initramfs, otherwise it will be compiled into the kernel
 		mkdir -p "${TEMP}/initramfs-iscsi-temp/lib/modules/${RELEASE}/kernel/drivers/scsi/"
 		for modname in iscsi_tcp libiscsi scsi_transport_iscsi

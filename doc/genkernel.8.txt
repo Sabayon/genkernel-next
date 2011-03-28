@@ -130,7 +130,7 @@ KERNEL COMPILATION
     to the second most recently built image, if one exists.  Similar
     symlinks (both * and *.old) are managed for initramfs and System.map.
     The corresponding work products (i.e., the actual kernel
-    and initamfs images, and System.map) are also managed accordingly.
+    and initramfs images, and System.map) are also managed accordingly.
     NOTE: Specifying   *--symlink*  does nothing unless
     *--install* is also specified.
 
