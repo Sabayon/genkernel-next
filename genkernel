@@ -350,6 +350,7 @@ then
 	[ "${LVM}" = '1' ] && print_info 1 'add "dolvm" for lvm support'
 	[ "${EVMS}" = '1' ] && print_info 1 'add "doevms" for evms support'
 	[ "${DMRAID}" = '1' ] && print_info 1 'add "dodmraid" for dmraid support'
+	[ "${MDADM}" = '1' ] && print_info 1 'add "domdadm" for RAID support'
 	[ "${DMRAID}" = '1' ] && print_info 1 '	or "dodmraid=<additional options>"'
 	[ "${ISCSI}" = '1' ] && print_info 1 'add at least "iscsi_initiatorname=<initiator name> iscsi_target=<target name> and iscsi_address=<target ip>" for iscsi support'
 fi

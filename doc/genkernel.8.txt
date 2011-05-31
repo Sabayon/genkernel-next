@@ -420,6 +420,9 @@ which the ramdisk scripts would recognize.
 *dolvm*::
     Activate LVM volumes on bootup
 
+*domdadm*::
+    Scan for RAID arrays on bootup
+
 *doscsi*::
     Activate SCSI devices on bootup, necessary when SCSI support is
     compiled as modules and you're using SCSI or SATA devices.
