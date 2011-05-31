@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  31 May 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
+  Output warning in warning color
+
   31 May 2011; Sebastian Pipping <sping@gentoo.org> doc/genkernel.8.txt,
   genkernel:
   Document boot parameter domdadm (bug #369415)
