@@ -22,6 +22,10 @@
   genkernel:
   Document boot parameter domdadm (bug #369415)
 
+  12 May 2011; Amadeusz Żołnowski <aidecoe@aidecoe.name>
+  defaults/modules_load:
+  Added hpsa to defaults/modules_load; fixes bug #363369
+
   28 Mar 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump to 3.4.15
 
