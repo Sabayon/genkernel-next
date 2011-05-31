@@ -455,7 +455,7 @@ do
 					good_msg "Detected real_root=${ROOT_DEV}"
 					REAL_ROOT="${ROOT_DEV}"
 				else
-					whereis "REAL_ROOT" "root block device"
+					prompt_user "REAL_ROOT" "root block device"
 					got_good_root=0
 					continue
 				fi
@@ -465,7 +465,7 @@ do
 		if [ "${REAL_ROOT}" = '' ]
 		then
 			# No REAL_ROOT determined/specified. Prompt user for root block device.
-			whereis "REAL_ROOT" "root block device"
+			prompt_user "REAL_ROOT" "root block device"
 			got_good_root=0
 
 		# Check for a block device or /dev/nfs

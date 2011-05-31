@@ -377,7 +377,7 @@ crypt_filter() {
 	fi
 }
 
-whereis(){
+prompt_user(){
 	# $1 = variable whose value is the path (examples: "REAL_ROOT",
 	#      "LUKS_KEYDEV")
 	# $2 = label
@@ -386,7 +386,7 @@ whereis(){
 	eval local oldvalue='$'${1}
 
 	[ \( $# != 2 \) -a \( $# != 3 \) ] && \
-		bad_msg "Bad invocation of function whereis, please file a bug \
+		bad_msg "Bad invocation of function prompt_user, please file a bug \
 		report with this message" && exit 1
 	[ -n "${3}" ] && local explnt=" or : ${3}" || local explnt="."
 	
@@ -771,15 +771,15 @@ openLUKS() {
 			run_shell
 		elif [ ${DEV_ERROR} -eq 1 ]
 		then
-			whereis "LUKS_DEVICE" "${LUKS_NAME}"
+			prompt_user "LUKS_DEVICE" "${LUKS_NAME}"
 			DEV_ERROR=0
 		elif [ ${KEY_ERROR} -eq 1 ]
 		then
-			whereis "LUKS_KEY" "${LUKS_NAME} key"
+			prompt_user "LUKS_KEY" "${LUKS_NAME} key"
 			KEY_ERROR=0
 		elif [ ${KEYDEV_ERROR} -eq 1 ]
 		then
-			whereis "LUKS_KEYDEV" "${LUKS_NAME} key device"
+			prompt_user "LUKS_KEYDEV" "${LUKS_NAME} key device"
 			KEYDEV_ERROR=0
 		else
 			case "${LUKS_DEVICE}" in
