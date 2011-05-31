@@ -37,6 +37,7 @@ CMDLINE=`cat /proc/cmdline`
 # Scan CMDLINE for any specified real_root= or cdroot arguments
 FAKE_ROOT=''
 REAL_ROOTFLAGS=''
+ROOTFSTYPE='auto'
 CRYPT_SILENT=0
 for x in ${CMDLINE}
 do
@@ -211,6 +212,9 @@ do
 		;;
 		real_rootflags\=*)
 			REAL_ROOTFLAGS=`parse_opt "${x}"`
+		;;
+		rootfstype\=*)
+			ROOTFSTYPE=`parse_opt "${x}"`
 		;;
 		keymap\=*)
 			keymap=`parse_opt "${x}"`
@@ -495,10 +499,11 @@ do
 		else
 			# mount ro so fsck doesn't barf later
 			if [ "${REAL_ROOTFLAGS}" = '' ]; then
-				mount -o ro ${REAL_ROOT} ${NEW_ROOT}
+				good_msg "Using mount -t ${ROOTFSTYPE} -o ro"
+				mount -t ${ROOTFSTYPE} -o ro ${REAL_ROOT} ${NEW_ROOT}
 			else
-				good_msg "Using mount -o ro,${REAL_ROOTFLAGS}"
-				mount -o ro,${REAL_ROOTFLAGS} ${REAL_ROOT} ${NEW_ROOT}
+				good_msg "Using mount -t ${ROOTFSTYPE} -o ro,${REAL_ROOTFLAGS}"
+				mount -t ${ROOTFSTYPE} -o ro,${REAL_ROOTFLAGS} ${REAL_ROOT} ${NEW_ROOT}
 			fi
 		fi
 		

@@ -440,6 +440,11 @@ which the ramdisk scripts would recognize.
 *dokeymap*::
     Use keymap.  Usage of *keymap*= implies this option, already.
 
+*rootfstype*=<...>::
+    Specify the file system type to mount the real root filesystem as.
+    This can be useful when support for ext2/ext3/ext4 are
+    in competition.  Default is "auto".
+
 
 NETBOOTING
 ----------
