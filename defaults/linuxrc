@@ -137,6 +137,7 @@ do
 		lvmraid\=*)
 			RAID_DEVICES="`parse_opt ${x}`"
 			RAID_DEVICES="`echo ${RAID_DEVICES} | sed -e 's/,/ /g'`"
+			USE_LVM_NORMAL=1
 		;;
 		part\=*)
 			MDPART=`parse_opt "${x}"`

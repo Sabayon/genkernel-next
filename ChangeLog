@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  01 Jun 2011; Sebastian Pipping <sping@gentoo.org> defaults/linuxrc,
+  doc/genkernel.8.txt:
+  Document option lvmraid= and make it imply dolvm (bug #153502)
+
   31 May 2011; Sebastian Pipping <sping@gentoo.org> defaults/linuxrc,
   doc/genkernel.8.txt:
   Add rootfstype= boot parameter (bug #221245)
