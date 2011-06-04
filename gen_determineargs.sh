@@ -68,67 +68,67 @@ get_KV() {
 determine_real_args() {
 	print_info 4 "Resolving config file, command line, and arch default settings."
 
-	#                          Config File          Command Line             Arch Default
-	#                          -----------          ------------             ------------
-	set_config_with_override 2 DEBUGFILE            CMD_DEBUGFILE
-	set_config_with_override 2 KERNEL_DIR           CMD_KERNEL_DIR           "${DEFAULT_KERNEL_SOURCE}"
-	set_config_with_override 1 NO_KERNEL_SOURCES    CMD_NO_KERNEL_SOURCES
-	set_config_with_override 2 KNAME                CMD_KERNNAME             "genkernel"
+	#                               Dest / Config File   Command Line             Arch Default
+	#                               ------------------   ------------             ------------
+	set_config_with_override STRING DEBUGFILE            CMD_DEBUGFILE
+	set_config_with_override STRING KERNEL_DIR           CMD_KERNEL_DIR           "${DEFAULT_KERNEL_SOURCE}"
+	set_config_with_override BOOL   NO_KERNEL_SOURCES    CMD_NO_KERNEL_SOURCES
+	set_config_with_override STRING KNAME                CMD_KERNNAME             "genkernel"
 
-	set_config_with_override 2 MAKEOPTS             CMD_MAKEOPTS             "$DEFAULT_MAKEOPTS"
-	set_config_with_override 2 KERNEL_MAKE          CMD_KERNEL_MAKE          "$DEFAULT_KERNEL_MAKE"
-	set_config_with_override 2 UTILS_MAKE           CMD_UTILS_MAKE           "$DEFAULT_UTILS_MAKE"
-	set_config_with_override 2 KERNEL_CC            CMD_KERNEL_CC            "$DEFAULT_KERNEL_CC"
-	set_config_with_override 2 KERNEL_LD            CMD_KERNEL_LD            "$DEFAULT_KERNEL_LD"
-	set_config_with_override 2 KERNEL_AS            CMD_KERNEL_AS            "$DEFAULT_KERNEL_AS"
-	set_config_with_override 2 UTILS_CC             CMD_UTILS_CC             "$DEFAULT_UTILS_CC"
-	set_config_with_override 2 UTILS_LD             CMD_UTILS_LD             "$DEFAULT_UTILS_LD"
-	set_config_with_override 2 UTILS_AS             CMD_UTILS_AS             "$DEFAULT_UTILS_AS"
+	set_config_with_override STRING MAKEOPTS             CMD_MAKEOPTS             "$DEFAULT_MAKEOPTS"
+	set_config_with_override STRING KERNEL_MAKE          CMD_KERNEL_MAKE          "$DEFAULT_KERNEL_MAKE"
+	set_config_with_override STRING UTILS_MAKE           CMD_UTILS_MAKE           "$DEFAULT_UTILS_MAKE"
+	set_config_with_override STRING KERNEL_CC            CMD_KERNEL_CC            "$DEFAULT_KERNEL_CC"
+	set_config_with_override STRING KERNEL_LD            CMD_KERNEL_LD            "$DEFAULT_KERNEL_LD"
+	set_config_with_override STRING KERNEL_AS            CMD_KERNEL_AS            "$DEFAULT_KERNEL_AS"
+	set_config_with_override STRING UTILS_CC             CMD_UTILS_CC             "$DEFAULT_UTILS_CC"
+	set_config_with_override STRING UTILS_LD             CMD_UTILS_LD             "$DEFAULT_UTILS_LD"
+	set_config_with_override STRING UTILS_AS             CMD_UTILS_AS             "$DEFAULT_UTILS_AS"
 
-	set_config_with_override 2 KERNEL_CROSS_COMPILE CMD_KERNEL_CROSS_COMPILE
-	set_config_with_override 2 UTILS_CROSS_COMPILE  CMD_UTILS_CROSS_COMPILE
-	set_config_with_override 2 BOOTDIR              CMD_BOOTDIR              "/boot"
+	set_config_with_override STRING KERNEL_CROSS_COMPILE CMD_KERNEL_CROSS_COMPILE
+	set_config_with_override STRING UTILS_CROSS_COMPILE  CMD_UTILS_CROSS_COMPILE
+	set_config_with_override STRING BOOTDIR              CMD_BOOTDIR              "/boot"
 
-	set_config_with_override 1 SPLASH               CMD_SPLASH
-	set_config_with_override 1 POSTCLEAR            CMD_POSTCLEAR
-	set_config_with_override 1 MRPROPER             CMD_MRPROPER
-	set_config_with_override 1 MENUCONFIG           CMD_MENUCONFIG
-	set_config_with_override 1 CLEAN                CMD_CLEAN
+	set_config_with_override BOOL   SPLASH               CMD_SPLASH
+	set_config_with_override BOOL   POSTCLEAR            CMD_POSTCLEAR
+	set_config_with_override BOOL   MRPROPER             CMD_MRPROPER
+	set_config_with_override BOOL   MENUCONFIG           CMD_MENUCONFIG
+	set_config_with_override BOOL   CLEAN                CMD_CLEAN
 
-	set_config_with_override 2 MINKERNPACKAGE       CMD_MINKERNPACKAGE
-	set_config_with_override 2 MODULESPACKAGE       CMD_MODULESPACKAGE
-	set_config_with_override 2 KERNCACHE            CMD_KERNCACHE
-	set_config_with_override 1 NORAMDISKMODULES     CMD_NORAMDISKMODULES
-	set_config_with_override 1 ALLRAMDISKMODULES    CMD_ALLRAMDISKMODULES
-	set_config_with_override 2 INITRAMFS_OVERLAY    CMD_INITRAMFS_OVERLAY
-	set_config_with_override 1 MOUNTBOOT            CMD_MOUNTBOOT
-	set_config_with_override 1 BUILD_STATIC         CMD_STATIC
-	set_config_with_override 1 SAVE_CONFIG          CMD_SAVE_CONFIG
- 	set_config_with_override 1 SYMLINK              CMD_SYMLINK
-	set_config_with_override 2 INSTALL_MOD_PATH     CMD_INSTALL_MOD_PATH
-	set_config_with_override 1 OLDCONFIG            CMD_OLDCONFIG
-	set_config_with_override 1 LVM                  CMD_LVM
-	set_config_with_override 1 EVMS                 CMD_EVMS
-	set_config_with_override 1 DMRAID               CMD_DMRAID
-	set_config_with_override 1 ISCSI                CMD_ISCSI
-	set_config_with_override 1 BUSYBOX              CMD_BUSYBOX              "yes"
-	set_config_with_override 1 UNIONFS				CMD_UNIONFS
-	set_config_with_override 1 NETBOOT				CMD_NETBOOT
-	set_config_with_override 2 REAL_ROOT			CMD_REAL_ROOT
-	set_config_with_override 1 DISKLABEL            CMD_DISKLABEL
-	set_config_with_override 1 LUKS                 CMD_LUKS
-	set_config_with_override 1 GPG                  CMD_GPG
-	set_config_with_override 1 MDADM                CMD_MDADM
-	set_config_with_override 2 MDADM_CONFIG         CMD_MDADM_CONFIG
-	set_config_with_override 1 MULTIPATH            CMD_MULTIPATH
-	set_config_with_override 1 FIRMWARE             CMD_FIRMWARE
-	set_config_with_override 2 FIRMWARE_DIR         CMD_FIRMWARE_DIR         "/lib/firmware"
-	set_config_with_override 2 FIRMWARE_FILES       CMD_FIRMWARE_FILES
-	set_config_with_override 1 INTEGRATED_INITRAMFS CMD_INTEGRATED_INITRAMFS
-	set_config_with_override 1 GENZIMAGE            CMD_GENZIMAGE
-	set_config_with_override 1 KEYMAP               CMD_KEYMAP               "yes"
-	set_config_with_override 1 DOKEYMAPAUTO         CMD_DOKEYMAPAUTO
-	set_config_with_override 2 BUSYBOX_CONFIG       CMD_BUSYBOX_CONFIG
+	set_config_with_override STRING MINKERNPACKAGE       CMD_MINKERNPACKAGE
+	set_config_with_override STRING MODULESPACKAGE       CMD_MODULESPACKAGE
+	set_config_with_override STRING KERNCACHE            CMD_KERNCACHE
+	set_config_with_override BOOL   NORAMDISKMODULES     CMD_NORAMDISKMODULES
+	set_config_with_override BOOL   ALLRAMDISKMODULES    CMD_ALLRAMDISKMODULES
+	set_config_with_override STRING INITRAMFS_OVERLAY    CMD_INITRAMFS_OVERLAY
+	set_config_with_override BOOL   MOUNTBOOT            CMD_MOUNTBOOT
+	set_config_with_override BOOL   BUILD_STATIC         CMD_STATIC
+	set_config_with_override BOOL   SAVE_CONFIG          CMD_SAVE_CONFIG
+	set_config_with_override BOOL   SYMLINK              CMD_SYMLINK
+	set_config_with_override STRING INSTALL_MOD_PATH     CMD_INSTALL_MOD_PATH
+	set_config_with_override BOOL   OLDCONFIG            CMD_OLDCONFIG
+	set_config_with_override BOOL   LVM                  CMD_LVM
+	set_config_with_override BOOL   EVMS                 CMD_EVMS
+	set_config_with_override BOOL   DMRAID               CMD_DMRAID
+	set_config_with_override BOOL   ISCSI                CMD_ISCSI
+	set_config_with_override BOOL   BUSYBOX              CMD_BUSYBOX              "yes"
+	set_config_with_override BOOL   UNIONFS              CMD_UNIONFS
+	set_config_with_override BOOL   NETBOOT              CMD_NETBOOT
+	set_config_with_override STRING REAL_ROOT            CMD_REAL_ROOT
+	set_config_with_override BOOL   DISKLABEL            CMD_DISKLABEL
+	set_config_with_override BOOL   LUKS                 CMD_LUKS
+	set_config_with_override BOOL   GPG                  CMD_GPG
+	set_config_with_override BOOL   MDADM                CMD_MDADM
+	set_config_with_override STRING MDADM_CONFIG         CMD_MDADM_CONFIG
+	set_config_with_override BOOL   MULTIPATH            CMD_MULTIPATH
+	set_config_with_override BOOL   FIRMWARE             CMD_FIRMWARE
+	set_config_with_override STRING FIRMWARE_DIR         CMD_FIRMWARE_DIR         "/lib/firmware"
+	set_config_with_override STRING FIRMWARE_FILES       CMD_FIRMWARE_FILES
+	set_config_with_override BOOL   INTEGRATED_INITRAMFS CMD_INTEGRATED_INITRAMFS
+	set_config_with_override BOOL   GENZIMAGE            CMD_GENZIMAGE
+	set_config_with_override BOOL   KEYMAP               CMD_KEYMAP               "yes"
+	set_config_with_override BOOL   DOKEYMAPAUTO         CMD_DOKEYMAPAUTO
+	set_config_with_override STRING BUSYBOX_CONFIG       CMD_BUSYBOX_CONFIG
 
 	BOOTDIR=`arch_replace "${BOOTDIR}"`
 	BOOTDIR=${BOOTDIR%/}    # Remove any trailing slash

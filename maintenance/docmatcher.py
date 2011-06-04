@@ -166,7 +166,7 @@ def extract_gen_determineargs_sh():
 	f.close()
 
 	gen_determineargs_sh_variables = set()
-	for match in re.finditer('set_config_with_override\s+[0-9]+\s+([A-Z_]+)', gen_determineargs_sh):
+	for match in re.finditer('set_config_with_override\s+(?:BOOL|STRING)\s+([A-Z_]+)', gen_determineargs_sh):
 		var_name = match.group(1)
 		gen_determineargs_sh_variables.add(var_name)
 
