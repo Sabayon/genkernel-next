@@ -342,7 +342,7 @@ OUTPUT SETTINGS
 
 *--initramfs-overlay*=<dir>::
     Directory structure to include in the initramfs, only available
-    on 2.6 kernels
+    on >=2.6 kernels
 
 *--firmware*::
     Enable copying of firmware into initramfs.
