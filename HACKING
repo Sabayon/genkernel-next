@@ -2,8 +2,8 @@
 
 This document is a work-in-progress to describe the workflow through the various
 parts of genkernel so that we can split the code into modular chunks.  If you
-are interested in helping with genkernel development, contact Chris Gianelloni
-at wolf31o2@wolf31o2.org for access.
+are interested in helping with genkernel development, please get in touch at
+<genkernel@gentoo.org>.
 
 Phases:
 
