@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  07 Jun 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
+  Bump version to 3.4.16
+
   07 Jun 2011; Sebastian Pipping <sping@gentoo.org> doc/genkernel.8.txt:
   Document most undocumented boot parameters (bug #370369)
 
