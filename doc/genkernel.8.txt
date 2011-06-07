@@ -512,7 +512,7 @@ which the ramdisk scripts would recognize.
 
 *real_rootflags*=<...>::
     Additional flags to mount the real root system with.
-    For expamle *real_rootflags*=noatime would make "-o ro,noatime".
+    For example *real_rootflags*=noatime would make "-o ro,noatime".
 
 *real_resume*=<...>::
 *resume*=<...>::
