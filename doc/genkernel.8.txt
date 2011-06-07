@@ -452,6 +452,84 @@ which the ramdisk scripts would recognize.
     This can be useful when support for ext2/ext3/ext4 are
     in competition.  Default is "auto".
 
+*docache*::
+*nocache*::
+    Enables/disables caching of CD contents in RAM.
+
+*root*=<...>::
+    Omit or specify as "/dev/ram0".
+    For other values be sure to know what you're doing.
+
+*subdir*=<...>::
+    switch_root into "<CHROOT>/<SUBDIR>" instead of "<CHROOT>/".
+    <CHROOT> is "/newroot" (or "/union") usually.
+
+*debug*::
+    Drop into a debug shell early in the process.
+
+*noload*=<...>::
+    List of modules to skip loading.
+    Separate using commas or spaces.
+
+*nodetect*::
+    Skipping scanning modules using "modprobe <MODULE> -n".
+    Use *doload=* for specifying a whitelist of exceptions.
+
+*doload*=<...>::
+    List of modules to load despite *nodetect*.
+
+*domodules*::
+*nomodules*::
+    Enables/disables loading of modules in general.
+
+*CONSOLE*=<...>::
+*console*=<...>::
+    Override location of console, default is "/dev/console".
+
+*part*=<...>::
+    Specify part for mdadm to start.  This is the relevant code in mdstart:
+------------------------------------------
+    fd = open("/dev/md<MD_NUMBER>", 0, 0);
+    ioctl(fd, RAID_AUTORUN, <MDPART>);
+------------------------------------------
+
+*iscsi_initiatorname*=<...>::
+*iscsi_target*=<...>::
+*iscsi_tgpt*=<...>::
+*iscsi_address*=<...>::
+*iscsi_port*=<...>::
+*iscsi_username*=<...>::
+*iscsi_password*=<...>::
+*iscsi_username_in*=<...>::
+*iscsi_password_in*=<...>::
+*iscsi_debug*=<...>::
+*iscsi_noibft*::
+    Specify iSCSI parameters.
+
+*unionfs*::
+*nounionfs*::
+    Enables/disables UnionFS.
+
+*real_rootflags*=<...>::
+    Additional flags to mount the real root system with.
+    For expamle *real_rootflags*=noatime would make "-o ro,noatime".
+
+*real_resume*=<...>::
+*resume*=<...>::
+*noresume*::
+    TO BE DOCUMENTED
+
+*cdroot*[=<...>]::
+*cdroot_type*=<...>::
+    TO BE DOCUMENTED
+
+*loop*=<...>::
+*looptype*=<...>::
+    TO BE DOCUMENTED
+
+*isoboot*=<...>::
+    TO BE DOCUMENTED
+
 
 NETBOOTING
 ----------
