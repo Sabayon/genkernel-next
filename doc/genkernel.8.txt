@@ -398,6 +398,9 @@ which the ramdisk scripts would recognize.
     Passes arguments to dmraid on bootup.
 
 *real_init*=<...>::
+    Override location of init script, default is "/sbin/init".
+
+*init_opts*=<...>::
     Passes arguments to init on bootup.
 
 *scandelay*=<...>::
