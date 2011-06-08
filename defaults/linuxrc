@@ -725,13 +725,6 @@ fi
 verbose_kmsg
 
 echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting (initramfs)${NORMAL}"
-if [ ! -e "${CHROOT}/dev/console" ] || [ ! -e "${CHROOT}/dev/null" ]
-then
-	echo -ne "${BAD}>>${NORMAL}${BOLD} ERROR: your real /dev is missing files required to boot (console and null)${NORMAL}"
-elif [ -e /etc/initrd.splash -a ! -e "${CHROOT}/dev/tty1" ]
-then
-	echo -ne "${BAD}>>${NORMAL}${BOLD} ERROR: your real /dev is missing tty1, which is required for splash${NORMAL}"
-fi
 
 cd "${CHROOT}"
 mkdir "${CHROOT}/proc" "${CHROOT}/sys" 2>/dev/null
@@ -749,6 +742,14 @@ do
 		fi
 	fi
 done
+
+if [ ! -e "${CHROOT}/dev/console" ] || [ ! -e "${CHROOT}/dev/null" ]
+then
+	echo -ne "${BAD}>>${NORMAL}${BOLD} ERROR: your real /dev is missing files required to boot (console and null)${NORMAL}"
+elif [ -e /etc/initrd.splash -a ! -e "${CHROOT}/dev/tty1" ]
+then
+	echo -ne "${BAD}>>${NORMAL}${BOLD} ERROR: your real /dev is missing tty1, which is required for splash${NORMAL}"
+fi
 
 echo -e "${BOLD}.${NORMAL}"
 
