@@ -7,6 +7,10 @@
 
   13 Jun 2011; Sebastian Pipping <sping@gentoo.org> arch/x86/kernel-config,
   arch/x86_64/kernel-config, defaults/kernel-config:
+  Apply CONFIG_USB_HID=y to archs amd64/x86/default (bug #270983)
+
+  13 Jun 2011; Sebastian Pipping <sping@gentoo.org> arch/x86/kernel-config,
+  arch/x86_64/kernel-config, defaults/kernel-config:
   Unset CONFIG_IDE on archs amd64/x86/default (bug #357213)
 
   07 Jun 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
