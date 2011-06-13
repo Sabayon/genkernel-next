@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  13 Jun 2011; Sebastian Pipping <sping@gentoo.org> arch/x86/kernel-config,
+  arch/x86_64/kernel-config, defaults/kernel-config:
+  Unset CONFIG_IDE on archs amd64/x86/default (bug #357213)
+
   07 Jun 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.16
 
