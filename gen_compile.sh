@@ -231,15 +231,17 @@ compile_generic() {
 	local target=${1}
 	local argstype=${2}
 
-	if [ "${argstype}" = 'kernel' ] || [ "${argstype}" = 'runtask' ]
-	then
-		export_kernel_args
-		MAKE=${KERNEL_MAKE}
-	elif [ "${2}" = 'utils' ]
-	then
-		export_utils_args
-		MAKE=${UTILS_MAKE}
-	fi
+	case "${argstype}" in
+		kernel|runtask)
+			export_kernel_args
+			MAKE=${KERNEL_MAKE}
+			;;
+		utils)
+			export_utils_args
+			MAKE=${UTILS_MAKE}
+			;;
+	esac
+
 	case "${argstype}" in
 		kernel) ARGS="`compile_kernel_args`" ;;
 		utils) ARGS="`compile_utils_args`" ;;
@@ -272,13 +274,11 @@ compile_generic() {
 
 	unset MAKE
 	unset ARGS
-	if [ "${argstype}" = 'kernel' ]
-	then
-		unset_kernel_args
-	elif [ "${argstype}" = 'utils' ]
-	then
-		unset_utils_args
-	fi
+
+	case "${argstype}" in
+		kernel) unset_kernel_args ;;
+		utils) unset_utils_args ;;
+	esac
 }
 
 compile_modules() {
