@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  22 Jun 2011; Sebastian Pipping <sping@gentoo.org> gen_compile.sh:
+  Make --arch-override= affect "make menuconfig" (bug #247246)
+
   13 Jun 2011; Sebastian Pipping <sping@gentoo.org> arch/x86_64/kernel-config:
   Unset CONFIG_EMBEDDED on arch amd64
 

@@ -243,9 +243,9 @@ compile_generic() {
 	esac
 
 	case "${argstype}" in
-		kernel) ARGS="`compile_kernel_args`" ;;
+		kernel|kernelruntask) ARGS="`compile_kernel_args`" ;;
 		utils) ARGS="`compile_utils_args`" ;;
-		*) ARGS="" ;; # includes kernelruntask
+		*) ARGS="" ;;
 	esac
 	shift 2
 
