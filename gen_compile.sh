@@ -254,6 +254,7 @@ compile_generic() {
 	# ARGS='CC="ccache gcc"'
 	if [ "${argstype}" == 'runtask' ]
 	then
+		# Silent operation, forced -j1
 		print_info 2 "COMMAND: ${MAKE} ${MAKEOPTS} -j1 ${ARGS} ${target} $*" 1 0 1
 		eval ${MAKE} -s ${MAKEOPTS} -j1 "${ARGS}" ${target} $*
 		RET=$?
