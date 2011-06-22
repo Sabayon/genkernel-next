@@ -76,7 +76,7 @@ config_kernel() {
 	if isTrue ${MENUCONFIG}
 	then
 		print_info 1 'kernel: >> Invoking menuconfig...'
-		compile_generic menuconfig runtask
+		compile_generic menuconfig kernelruntask
 		[ "$?" ] || gen_die 'Error: menuconfig failed!'
 	elif isTrue ${CMD_GCONFIG}
 	then

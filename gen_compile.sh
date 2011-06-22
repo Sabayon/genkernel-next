@@ -232,7 +232,7 @@ compile_generic() {
 	local argstype=${2}
 
 	case "${argstype}" in
-		kernel|runtask)
+		kernel|kernelruntask)
 			export_kernel_args
 			MAKE=${KERNEL_MAKE}
 			;;
@@ -245,14 +245,14 @@ compile_generic() {
 	case "${argstype}" in
 		kernel) ARGS="`compile_kernel_args`" ;;
 		utils) ARGS="`compile_utils_args`" ;;
-		*) ARGS="" ;; # includes runtask
+		*) ARGS="" ;; # includes kernelruntask
 	esac
 	shift 2
 
 	# the eval usage is needed in the next set of code
 	# as ARGS can contain spaces and quotes, eg:
 	# ARGS='CC="ccache gcc"'
-	if [ "${argstype}" == 'runtask' ]
+	if [ "${argstype}" == 'kernelruntask' ]
 	then
 		# Silent operation, forced -j1
 		print_info 2 "COMMAND: ${MAKE} ${MAKEOPTS} -j1 ${ARGS} ${target} $*" 1 0 1
