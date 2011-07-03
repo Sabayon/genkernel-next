@@ -5,6 +5,17 @@
 # Distributed under the GPL v2
 # $Id$
 
+  03 Jul 2011; Sebastian Pipping <sping@gentoo.org> arch/alpha/modules_load,
+  arch/arm/modules_load, arch/ia64/modules_load, arch/mips/modules_load,
+  arch/parisc/modules_load, arch/parisc64/modules_load, arch/ppc/modules_load,
+  arch/ppc64/modules_load, arch/sparc/modules_load, arch/sparc64/modules_load,
+  arch/um/modules_load, arch/x86/modules_load, arch/x86_64/modules_load,
+  defaults/initrd.defaults, defaults/initrd.scripts, defaults/linuxrc,
+  defaults/modules_load, doc/genkernel.8.txt, gen_cmdline.sh,
+  gen_determineargs.sh, gen_initramfs.sh, genkernel, genkernel.conf,
+  maintenance/docmatcher.py:
+  Remove support for sys-fs/evms, as it was removed from Gentoo (bug #372423)
+
   22 Jun 2011; Sebastian Pipping <sping@gentoo.org> gen_compile.sh:
   Make --arch-override= affect "make menuconfig" (bug #247246)
 

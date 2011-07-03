@@ -75,9 +75,6 @@ longusage() {
   echo "	--splash-res=<res>	Select splash theme resolutions to install"
   echo "	--do-keymap-auto	Forces keymap selection at boot"
   echo "	--no-keymap		Disables keymap selection support"
-  echo "	--evms			Include EVMS support"
-  echo "				--> 'emerge evms' in the host operating system"
-  echo "				first"
   echo "	--lvm			Include LVM support"
   echo "	--mdadm			Include MDADM/MDMON support"
   echo "	--mdadm-config=<file>	Use file as mdadm.conf in initramfs"
@@ -223,16 +220,6 @@ parse_cmdline() {
 		--no-keymap)
 			CMD_KEYMAP=0
 			print_info 2 "CMD_KEYMAP: ${CMD_KEYMAP}"
-			;;
-		--evms)
-			CMD_EVMS=1
-			print_info 2 "CMD_EVMS: ${CMD_EVMS}"
-			;;
-		--evms2)
-			CMD_EVMS=1
-			print_info 2 "CMD_EVMS: ${CMD_EVMS}"
-			echo
-			print_warning 1 "Please use --evms, as --evms2 is deprecated."
 			;;
 		--lvm)
 			CMD_LVM=1

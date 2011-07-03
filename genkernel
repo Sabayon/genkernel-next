@@ -348,7 +348,6 @@ then
 	print_warning 1 'Additional kernel cmdline arguments that *may* be required to boot properly...'
 	[ "${SPLASH}" = '1' ] && print_warning 1 "add \"vga=791 splash=silent,theme:${SPLASH_THEME} console=tty1 quiet\" if you use a splash framebuffer ]"
 	[ "${LVM}" = '1' ] && print_warning 1 'add "dolvm" for lvm support'
-	[ "${EVMS}" = '1' ] && print_warning 1 'add "doevms" for evms support'
 	[ "${DMRAID}" = '1' ] && print_warning 1 'add "dodmraid" for dmraid support'
 	[ "${MDADM}" = '1' ] && print_warning 1 'add "domdadm" for RAID support'
 	[ "${DMRAID}" = '1' ] && print_warning 1 '	or "dodmraid=<additional options>"'

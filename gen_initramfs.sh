@@ -279,59 +279,6 @@ append_lvm(){
 	rm -r "${TEMP}/initramfs-lvm-temp/"
 }
 
-append_evms(){
-	if [ -d "${TEMP}/initramfs-evms-temp" ]
-	then
-		rm -r "${TEMP}/initramfs-evms-temp/"
-	fi
-	mkdir -p "${TEMP}/initramfs-evms-temp/lib/evms"
-	mkdir -p "${TEMP}/initramfs-evms-temp/etc/"
-	mkdir -p "${TEMP}/initramfs-evms-temp/bin/"
-	mkdir -p "${TEMP}/initramfs-evms-temp/sbin/"
-	if [ "${EVMS}" = '1' ]
-	then
-		print_info 1 '		EVMS: Adding support...'
-		mkdir -p ${TEMP}/initramfs-evms-temp/lib
-		cp -a /lib/ld-* "${TEMP}/initramfs-evms-temp/lib" \
-			|| gen_die 'Could not copy files for EVMS!'
-		if [ -n "`ls /lib/libgcc_s*`" ]
-		then
-			cp -a /lib/libgcc_s* "${TEMP}/initramfs-evms-temp/lib" \
-				|| gen_die 'Could not copy files for EVMS!'
-		fi
-		cp -a /lib/libc-* /lib/libc.* "${TEMP}/initramfs-evms-temp/lib" \
-			|| gen_die 'Could not copy files for EVMS!'
-		cp -a /lib/libdl-* /lib/libdl.* "${TEMP}/initramfs-evms-temp/lib" \
-			|| gen_die 'Could not copy files for EVMS!'
-		cp -a /lib/libpthread* "${TEMP}/initramfs-evms-temp/lib" \
-			|| gen_die 'Could not copy files for EVMS!'
-		cp -a /lib/libuuid*so* "${TEMP}/initramfs-evms-temp/lib" \
-			|| gen_die 'Could not copy files for EVMS!'
-		cp -a /lib/libevms*so* "${TEMP}/initramfs-evms-temp/lib" \
-			|| gen_die 'Could not copy files for EVMS!'
-		cp -a /lib/evms "${TEMP}/initramfs-evms-temp/lib" \
-			|| gen_die 'Could not copy files for EVMS!'
-		cp -a /lib/evms/* "${TEMP}/initramfs-evms-temp/lib/evms" \
-			|| gen_die 'Could not copy files for EVMS!'
-		cp -a /etc/evms.conf "${TEMP}/initramfs-evms-temp/etc" \
-			|| gen_die 'Could not copy files for EVMS!'
-		cp /sbin/evms_activate "${TEMP}/initramfs-evms-temp/sbin" \
-			|| gen_die 'Could not copy over evms_activate!'
-
-		# Fix EVMS complaining that it can't find the swap utilities.
-		# These are not required in the initramfs
-		for swap_libs in "${TEMP}/initramfs-evms-temp/lib/evms/*/swap*.so"
-		do
-			rm ${swap_libs}
-		done
-	fi
-	cd "${TEMP}/initramfs-evms-temp/"
-	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
-			|| gen_die "compressing evms cpio"
-	cd "${TEMP}"
-	rm -r "${TEMP}/initramfs-evms-temp/"
-}
-
 append_mdadm(){
 	if [ -d "${TEMP}/initramfs-mdadm-temp" ]
 	then
@@ -676,7 +623,6 @@ create_initramfs() {
 	append_data 'lvm' "${LVM}"
 	append_data 'dmraid' "${DMRAID}"
 	append_data 'iscsi' "${ISCSI}"
-	append_data 'evms' "${EVMS}"
 	append_data 'mdadm' "${MDADM}"
 	append_data 'luks' "${LUKS}"
 	append_data 'multipath' "${MULTIPATH}"

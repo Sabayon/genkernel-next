@@ -236,10 +236,6 @@ INITIALIZATION
 *--no-keymap*::
     Disables keymap selection at boot.
 
-*--evms*::
-    Add in EVMS support from static binaries if they exist on the system:
-    you should run "emerge evms" first (in the host system).
-
 *--lvm*::
     Add in LVM support from static binaries if they exist on the
     system,  or compile static LVM binaries if static ones do not
@@ -416,9 +412,6 @@ which the ramdisk scripts would recognize.
     If present,  the initrd will try to mount a livecd from that
     location. Otherwise the location will be deduced from the DCHP
     request (option root-path)
-
-*doevms*::
-    Activate EVMS volumes on bootup
 
 *dolvm*::
     Activate LVM volumes on bootup

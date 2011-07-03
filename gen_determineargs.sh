@@ -108,7 +108,6 @@ determine_real_args() {
 	set_config_with_override STRING INSTALL_MOD_PATH     CMD_INSTALL_MOD_PATH
 	set_config_with_override BOOL   OLDCONFIG            CMD_OLDCONFIG
 	set_config_with_override BOOL   LVM                  CMD_LVM
-	set_config_with_override BOOL   EVMS                 CMD_EVMS
 	set_config_with_override BOOL   DMRAID               CMD_DMRAID
 	set_config_with_override BOOL   ISCSI                CMD_ISCSI
 	set_config_with_override BOOL   BUSYBOX              CMD_BUSYBOX              "yes"

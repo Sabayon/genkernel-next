@@ -27,7 +27,7 @@ EXTRA_VARIABLES = tuple(EXTRA_VARIABLES)
 IGNORE_OPTIONS = ('help', 'version')
 _GPG_PARAMETERS = ('symmetric', )
 IGNORE_PARAMETERS = _GPG_PARAMETERS
-DEPRECATED_PARAMETERS = ('lvm2', 'evms2', 'gensplash', 'gensplash-res')
+DEPRECATED_PARAMETERS = ('lvm2', 'gensplash', 'gensplash-res')
 
 
 def exract_gen_cmdline_sh():

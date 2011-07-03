@@ -96,13 +96,6 @@ do
 			DMRAID_OPTS=`parse_opt "${x}"`
 			USE_DMRAID_NORMAL=1
 		;;
-		doevms)
-			USE_EVMS_NORMAL=1
-		;;
-		doevms2)
-			bad_msg 'Using doevms2 is deprecated, use doevms, instead.'
-			USE_EVMS_NORMAL=1
-		;;
 		# Debug Options
 		debug)
 			DEBUG='yes'

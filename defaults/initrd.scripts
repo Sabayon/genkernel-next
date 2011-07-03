@@ -660,26 +660,8 @@ startVolumes() {
 			# And finally execute it all (/proc/... needed if lvm is compiled without readline)
 			good_msg "Scanning for and activating Volume Groups"
 			printf "%b\n" "${lvm_commands}" | /bin/lvm /proc/self/fd/0
-
-			# Disable EVMS since lvm is activated and they dont work together.
-			if [ "${USE_EVMS_NORMAL}" = '1' ]
-			then
-				bad_msg "Disabling EVMS Support because LVM started"
-				bad_msg "Do not add dolvm to the cmdline if this is not what you want"
-				bad_msg "LVM and EVMS do not work well together"
-				USE_EVMS_NORMAL=0
-			fi
 		else
 			bad_msg "vgscan or vgchange not found: skipping LVM volume group activation!"
-		fi
-	fi
-
-	if [ "${USE_EVMS_NORMAL}" = '1' ]
-	then
-		if [ -e '/sbin/evms_activate' ]
-		then
-			good_msg "Activating EVMS"
-			evms_activate
 		fi
 	fi
 }
