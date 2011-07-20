@@ -190,7 +190,9 @@ LOW-LEVEL COMPILATION OPTIONS
     GNU Make to use for the kernel compilation.
 
 *--kernel-target*=<t>::
-    Override default make target (bzImage)
+    Override default make target (bzImage), note that values
+    like --kernel-target= are also valid (useful for Xen
+    based kernel sources)
 
 *--kernel-binary*=<path>::
     Override default kernel binary path (arch/foo/boot/bar)

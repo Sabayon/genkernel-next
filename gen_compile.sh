@@ -297,7 +297,7 @@ compile_kernel() {
 		gen_die "KERNEL_MAKE undefined - I don't know how to compile a kernel for this arch!"
 	cd ${KERNEL_DIR}
 	local kernel_make_directive="${KERNEL_MAKE_DIRECTIVE}"
-	if [ "${KERNEL_MAKE_DIRECTIVE_OVERRIDE}" != "--INVALID--" ]; then
+	if [ "${KERNEL_MAKE_DIRECTIVE_OVERRIDE}" != "${DEFAULT_KERNEL_MAKE_DIRECTIVE_OVERRIDE}" ]; then
 		kernel_make_directive="${KERNEL_MAKE_DIRECTIVE_OVERRIDE}"
 	fi
 	print_info 1 "        >> Compiling ${KV} ${kernel_make_directive/_install/ [ install ]/}..."
