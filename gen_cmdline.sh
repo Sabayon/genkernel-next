@@ -57,6 +57,9 @@ longusage() {
   echo "	--kernel-ld=<linker>	Linker to use for kernel"
   echo "	--kernel-cross-compile=<cross var> CROSS_COMPILE kernel variable"
   echo "	--kernel-make=<makeprg> GNU Make to use for kernel"
+  echo "	--kernel-target=<t>	Override default make target (bzImage)"
+  echo "	--kernel-binary=<path>	Override default kernel binary path (arch/foo/boot/bar)"
+
   echo "	--utils-cc=<compiler>	Compiler to use for utilities"
   echo "	--utils-as=<assembler>	Assembler to use for utils"
   echo "	--utils-ld=<linker>	Linker to use for utils"
@@ -165,6 +168,14 @@ parse_cmdline() {
 		--kernel-make=*)
 			CMD_KERNEL_MAKE=`parse_opt "$*"`
 			print_info 2 "CMD_KERNEL_MAKE: ${CMD_KERNEL_MAKE}"
+			;;
+		--kernel-target=*)
+			KERNEL_MAKE_DIRECTIVE_OVERRIDE=`parse_opt "$*"`
+			print_info 2 "KERNEL_MAKE_DIRECTIVE_OVERRIDE: ${KERNEL_MAKE_DIRECTIVE_OVERRIDE}"
+			;;
+		--kernel-binary=*)
+			KERNEL_BINARY_OVERRIDE=`parse_opt "$*"`
+			print_info 2 "KERNEL_BINARY_OVERRIDE: ${KERNEL_BINARY_OVERRIDE}"
 			;;
 		--kernel-cross-compile=*)
 			CMD_KERNEL_CROSS_COMPILE=`parse_opt "$*"`

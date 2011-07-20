@@ -296,8 +296,12 @@ compile_kernel() {
 	[ "${KERNEL_MAKE}" = '' ] &&
 		gen_die "KERNEL_MAKE undefined - I don't know how to compile a kernel for this arch!"
 	cd ${KERNEL_DIR}
-	print_info 1 "        >> Compiling ${KV} ${KERNEL_MAKE_DIRECTIVE/_install/ [ install ]/}..."
-	compile_generic "${KERNEL_MAKE_DIRECTIVE}" kernel
+	local kernel_make_directive="${KERNEL_MAKE_DIRECTIVE}"
+	if [ "${KERNEL_MAKE_DIRECTIVE_OVERRIDE}" != "--INVALID--" ]; then
+		kernel_make_directive="${KERNEL_MAKE_DIRECTIVE_OVERRIDE}"
+	fi
+	print_info 1 "        >> Compiling ${KV} ${kernel_make_directive/_install/ [ install ]/}..."
+	compile_generic "${kernel_make_directive}" kernel
 	if [ "${KERNEL_MAKE_DIRECTIVE_2}" != '' ]
 	then
 		print_info 1 "        >> Starting supplimental compile of ${KV}: ${KERNEL_MAKE_DIRECTIVE_2}..."
@@ -313,7 +317,7 @@ compile_kernel() {
 		print_info 1 "        >> Not installing firmware as it's included in the kernel already (CONFIG_FIRMWARE_IN_KERNEL=y)..."
 	fi
 
-	local tmp_kernel_binary=$(find_kernel_binary ${KERNEL_BINARY})
+	local tmp_kernel_binary=$(find_kernel_binary ${KERNEL_BINARY_OVERRIDE:-${KERNEL_BINARY}})
 	local tmp_kernel_binary2=$(find_kernel_binary ${KERNEL_BINARY_2})
 	if [ -z "${tmp_kernel_binary}" ]
 	then

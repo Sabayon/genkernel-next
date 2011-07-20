@@ -189,6 +189,12 @@ LOW-LEVEL COMPILATION OPTIONS
 *--kernel-make*=<makeprg>::
     GNU Make to use for the kernel compilation.
 
+*--kernel-target*=<t>::
+    Override default make target (bzImage)
+
+*--kernel-binary*=<path>::
+    Override default kernel binary path (arch/foo/boot/bar)
+
 *--utils-cc*=<compiler>::
     Compiler to use for utilities.
 
