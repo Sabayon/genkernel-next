@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  23 Jul 2011; Sebastian Pipping <sping@gentoo.org> defaults/initrd.scripts,
+  netboot/linuxrc.x:
+  Fix permissions of /dev/pts (bug #375947)
+
   20 Jul 2011; Fabio Erculiani <lxnay@sabayon.org> defaults/config.sh,
   doc/genkernel.8.txt, gen_cmdline.sh, gen_compile.sh:
   Make possible to compile XEN based kernels providing --kernel-target= and

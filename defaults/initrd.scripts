@@ -319,8 +319,8 @@ runmdev() {
 		|| bad_msg "Failed to mount /dev as ${devfs}"
 
 	# http://git.busybox.net/busybox/plain/docs/mdev.txt
-	mkdir /dev/pts
-	mount -t devpts devpts /dev/pts  || bad_msg "Failed to mount /dev/pts"
+	mkdir -m 0755 /dev/pts
+	mount -t devpts -o gid=5,mode=0620 devpts /dev/pts  || bad_msg "Failed to mount /dev/pts"
 	mdev -s  || bad_msg "Failed to receive dynamic updates from mdev"
 }
 

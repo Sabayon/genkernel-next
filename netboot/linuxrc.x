@@ -1,6 +1,6 @@
 #!/bin/ash
 
-# Copyright 2001-2007 Gentoo Foundation
+# Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License, v2 or later
 
 export PATH="/usr/sbin:/usr/bin:/sbin:/bin"
@@ -37,7 +37,7 @@ StartUp() {
 		/bin/busybox --install -s
 
 		#// Create additional mount points
-		mkdir		/dev/pts
+		mkdir -m 0755 /dev/pts
 		mkdir		/dev/shm
 		mkdir -p	/mnt/cdrom
 		mkdir		/mnt/floppy
@@ -46,7 +46,7 @@ StartUp() {
 
 		#// Mount remaining filesystems
 		mount tmp	/tmp		-t tmpfs		# /tmp
-		mount devpts	/dev/pts 	-t devpts		# /dev/pts
+		mount devpts	/dev/pts 	-t devpts -o gid=5,mode=0620	# /dev/pts
 		mount shm	/dev/shm	-t tmpfs -o size=512k	# /dev/shm
 
 		#// Create mtab
