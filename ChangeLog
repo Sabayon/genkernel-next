@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  26 Jul 2011; Robin H. Johnson <robbat2@gentoo.org> gen_arch.sh:
+  Bug #376467: fix kernel version checks for 3.0 kernel.
+
   23 Jul 2011; Sebastian Pipping <sping@gentoo.org> defaults/initrd.scripts,
   netboot/linuxrc.x:
   Fix permissions of /dev/pts (bug #375947)
