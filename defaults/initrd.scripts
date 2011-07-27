@@ -922,7 +922,7 @@ sdelay() {
 	# Sleep a specific number of seconds if SDELAY is set
 	if [ "${SDELAY}" ]
 	then
-		good_msg 'Waiting ${SDELAY} seconds...'
+		good_msg "Waiting ${SDELAY} seconds..."
 		sleep ${SDELAY}
 	else
 		good_msg 'Hint: Use parameter scandelay[=seconds] if you need waiting here'
