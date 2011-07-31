@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  31 Jul 2011; Sebastian Pipping <sping@gentoo.org> doc/genkernel.8.txt:
+  Improve doc on filing bugs
+
   28 Jul 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.18
 

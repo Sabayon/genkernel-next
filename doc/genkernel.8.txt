@@ -548,12 +548,19 @@ kernel modules.
 REPORTING BUGS
 --------------
 If you believe you have found a bug in the genkernel scripts,  then
-please file a bug on the Gentoo Linux Bugzilla: 'http://bugs.gentoo.org',
-assigning your bug to genkernel@gentoo.org. We cannot assist you with
+please file a bug on the Gentoo Linux Bugzilla against product
+"Gentoo Hosted Projects" component "genkernel", i.e. at
+'https://bugs.gentoo.org/enter_bug.cgi?product=Gentoo%20Hosted%20Projects&component=genkernel'.
+
+If you're somewhat unsure if you hit a bug or not, file a bug an we'll find out together.
+For general questions the is the gentoo-genkernel mailing list.  You can join the list
+by sending empty mail to 'gentoo-genkernel+subscribe@lists.gentoo.org'.
+
+We cannot assist you with
 kernel compilation failures unless they are caused by a genkernel bug.
 
 Kernel issues for Gentoo-supported kernels, including compilation failures
-should go to 'http://bugs.gentoo.org' and should be assigned to kernel@gentoo.org.
+should go to 'https://bugs.gentoo.org/' and should be assigned to 'kernel@gentoo.org'.
 Please check if an existing bug documents the same
 issue before opening a new bug. Issues for kernel sources not supported
 by Gentoo should go to their relevant authors.
