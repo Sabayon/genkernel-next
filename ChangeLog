@@ -5,6 +5,16 @@
 # Distributed under the GPL v2
 # $Id$
 
+  31 Jul 2011; Sebastian Pipping <sping@gentoo.org>
+  -patches/busybox/1.7.4/1.7.4-ash-timeout.diff,
+  -patches/busybox/1.7.4/1.7.4-mdstart.diff,
+  -patches/busybox/1.7.4/1.7.4-mount-umount-i-option.diff,
+  -patches/busybox/1.7.4/1.7.4-openvt.diff,
+  -patches/busybox/1.7.4/1.7.4-static-error.diff,
+  -patches/busybox/1.7.4/1.7.4-make-3.82.diff, -patches/busybox/1.7.4/README,
+  -patches/busybox/1.7.4/busybox-1.7.4-signal-hack.patch:
+  End support for 4 years old busybox 1.7.4 (bug #377133)
+
   31 Jul 2011; Sebastian Pipping <sping@gentoo.org> doc/genkernel.8.txt:
   Improve doc on filing bugs
 
