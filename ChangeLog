@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  06 Aug 2011; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh:
+  No longer copy /lib/libsysfs*so* for multipath-tools (bug #300841, bug
+  #377709)
+
   31 Jul 2011; Sebastian Pipping <sping@gentoo.org>
   -patches/busybox/1.7.4/1.7.4-ash-timeout.diff,
   -patches/busybox/1.7.4/1.7.4-mdstart.diff,
