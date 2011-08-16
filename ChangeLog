@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  16 Aug 2011; Fabio Erculiani <lxnay@gentoo.org> gen_compile.sh:
+  gen_compile: always use -j1 with kernel *_install targets, fixes compilation
+  with make 3.82
+
   06 Aug 2011; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh:
   No longer copy /lib/libsysfs*so* for multipath-tools (bug #300841, bug
   #377709)

@@ -288,7 +288,7 @@ compile_modules() {
 	compile_generic modules kernel
 	export UNAME_MACHINE="${ARCH}"
 	[ "${INSTALL_MOD_PATH}" != '' ] && export INSTALL_MOD_PATH
-	compile_generic "modules_install" kernel
+	MAKEOPTS="${MAKEOPTS} -j1" compile_generic "modules_install" kernel
 	unset UNAME_MACHINE
 }
 
@@ -312,7 +312,7 @@ compile_kernel() {
 	if [ -n "${firmware_in_kernel_line}" -a "${firmware_in_kernel_line}" != CONFIG_FIRMWARE_IN_KERNEL=y ]
 	then
 		print_info 1 "        >> Installing firmware ('make firmware_install') due to CONFIG_FIRMWARE_IN_KERNEL != y..."
-		compile_generic "firmware_install" kernel
+		MAKEOPTS="${MAKEOPTS} -j1" compile_generic "firmware_install" kernel
 	else
 		print_info 1 "        >> Not installing firmware as it's included in the kernel already (CONFIG_FIRMWARE_IN_KERNEL=y)..."
 	fi
