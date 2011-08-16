@@ -6,6 +6,9 @@
 # $Id$
 
   16 Aug 2011; Fabio Erculiani <lxnay@gentoo.org> gen_compile.sh:
+  gen_compile: correct MAKEOPTS usage on utils task
+
+  16 Aug 2011; Fabio Erculiani <lxnay@gentoo.org> gen_compile.sh:
   gen_compile: always use -j1 with kernel *_install targets, fixes compilation
   with make 3.82
 

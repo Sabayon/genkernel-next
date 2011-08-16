@@ -530,7 +530,7 @@ compile_dmraid() {
 		mkdir -p "${TEMP}/dmraid"
 		print_info 1 'dmraid: >> Compiling...'
 		# Force dmraid to be built with -j1 for bug #188273
-		MAKEOPTS=-j1 compile_generic '' utils
+		MAKEOPTS="${MAKEOPTS} -j1" compile_generic '' utils
 		#compile_generic 'install' utils
 		mkdir ${TEMP}/dmraid/sbin
 		install -m 0755 -s tools/dmraid "${TEMP}/dmraid/sbin/dmraid"
