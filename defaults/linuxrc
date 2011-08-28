@@ -213,6 +213,9 @@ do
 		keymap\=*)
 			keymap=`parse_opt "${x}"`
 		;;
+		aufs)
+			USE_AUFS_NORMAL=1
+		;;
 		unionfs)
 			if [ ! -x /sbin/unionfs ]
 			then
@@ -569,9 +572,14 @@ then
 			FS_LOCATION='mnt/livecd'
 		elif [ "${LOOPTYPE}" = 'squashfs' ]
 		then
-			good_msg 'Mounting squashfs filesystem'
-			mount -t squashfs -o loop,ro "${NEW_ROOT}/mnt/cdrom/${LOOPEXT}${LOOP}" "${NEW_ROOT}/mnt/livecd"
-			test_success 'Mount filesystem'
+			if [ "${USE_AUFS_NORMAL}" != '1' ]; then
+				good_msg 'Mounting squashfs filesystem'
+				mount -t squashfs -o loop,ro "${NEW_ROOT}/mnt/cdrom/${LOOPEXT}${LOOP}" "${NEW_ROOT}/mnt/livecd"
+			else
+				good_msg 'Mounting squashfs & aufs filesystems'
+				setup_squashfs_aufs
+				test_success 'Mount filesystem'
+			fi
 			FS_LOCATION='mnt/livecd'
 		elif [ "${LOOPTYPE}" = 'gcloop' ]
 		then
@@ -636,7 +644,7 @@ then
 	then
 		setup_unionfs ${NEW_ROOT} ${NEW_ROOT}/${FS_LOCATION}
 		CHROOT=/union
-	else
+	elif [ "${USE_AUFS_NORMAL}" != '1' ]; then
 	
 	good_msg "Copying read-write image contents to tmpfs"
 	# Copy over stuff that should be writable

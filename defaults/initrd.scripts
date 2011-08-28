@@ -924,6 +924,13 @@ sdelay() {
 	then
 		good_msg "Waiting ${SDELAY} seconds..."
 		sleep ${SDELAY}
+	elif [ "${CDROOT}" = '1' ]
+	then
+		# many CD/DVD drives require extra sleep, especially when
+		# connected via USB. Many people reported that 1 second sleep
+		# is not enough on their notebooks, that's why sleep 3, when booting
+		# off a livecd is a better default.
+		sleep 3
 	else
 		good_msg 'Hint: Use parameter scandelay[=seconds] if you need waiting here'
 	fi
@@ -1080,6 +1087,34 @@ find_looptype() {
 
 getdvhoff() {
 	echo $(( $(hexdump -n 4 -s $((316 + 12 * $2)) -e '"%i"' $1) * 512))
+}
+
+setup_squashfs_aufs() {
+	(
+	# Setup aufs directories and vars
+	local overlay=/mnt/overlay
+	local static=/mnt/livecd
+
+	for i in "${overlay}" "${static}"; do
+		[ ! -d "${i}" ] && mkdir -p "${i}"
+	done
+	good_msg "Loading aufs"
+	modprobe aufs > /dev/null 2>&1
+
+	cd "${NEW_ROOT}"
+	mount -t squashfs -o loop,ro "mnt/cdrom${LOOPEXT}${LOOP}" "${static}"
+	mount -t tmpfs none "${overlay}"
+	mount -t aufs -o br:${overlay}:${static} aufs "${NEW_ROOT}"
+
+	[ ! -d "${NEW_ROOT}${overlay}" ] && mkdir -p "${NEW_ROOT}${overlay}"
+	[ ! -d "${NEW_ROOT}${static}" ] && mkdir -p "${NEW_ROOT}${static}"
+	echo "aufs / aufs defaults 0 0" > "${NEW_ROOT}"/etc/fstab
+	for i in "${overlay}" "${static}"; do mount --move "${i}" "${NEW_ROOT}${i}"; done
+
+	# have handy /mnt/cdrom as well
+	[ ! -d "${NEW_ROOT}/mnt/cdrom" ] && mkdir -p "${NEW_ROOT}/mnt/cdrom"
+	mount --bind mnt/cdrom "${NEW_ROOT}/mnt/cdrom"
+	)
 }
 
 setup_unionfs() {

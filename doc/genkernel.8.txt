@@ -511,6 +511,9 @@ which the ramdisk scripts would recognize.
 *nounionfs*::
     Enables/disables UnionFS.
 
+*aufs*::
+    Enables support for AUFS2 (if available in the kernel).
+
 *real_rootflags*=<...>::
     Additional flags to mount the real root system with.
     For example *real_rootflags*=noatime would make "-o ro,noatime".
