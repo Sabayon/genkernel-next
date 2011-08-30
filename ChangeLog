@@ -5,6 +5,12 @@
 # Distributed under the GPL v2
 # $Id$
 
+  30 Aug 2011; Sebastian Pipping <sping@gentoo.org> defaults/initrd.scripts:
+  Fix quoting issue (bug #380729).
+
+  Thanks to:
+  - Axel Bringenberg
+
   30 Aug 2011; Sebastian Pipping <sping@gentoo.org>
   +patches/mdadm/3.1.4/mdadm-3.1.4-z-now.patch, gen_compile.sh:
   Enable patch application for mdadm, add patch to fix compilation (bug
