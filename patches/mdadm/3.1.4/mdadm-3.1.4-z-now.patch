@@ -1,0 +1,26 @@
+From 5296bc73a66e9eee31ba79d26aa02543205a7a26 Mon Sep 17 00:00:00 2001
+From: Sebastian Pipping <sebastian@pipping.org>
+Date: Tue, 30 Aug 2011 14:38:14 +0200
+Subject: [PATCH] Replace "-z now" by "-Wl,-z,now" to fix compilation with GCC
+ 4.4.5 on Alpha (bug #331653)
+
+---
+ Makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index e2c65a5..0cc9a87 100644
+--- a/Makefile
++++ b/Makefile
+@@ -167,7 +167,7 @@ mdmon.O2 : $(MON_SRCS) mdadm.h mdmon.h
+ 
+ # use '-z now' to guarantee no dynamic linker interactions with the monitor thread
+ mdmon : $(MON_OBJS)
+-	$(CC) $(LDFLAGS) $(MON_LDFLAGS) -z now -o mdmon $(MON_OBJS) $(LDLIBS)
++	$(CC) $(LDFLAGS) $(MON_LDFLAGS) -Wl,-z,now -o mdmon $(MON_OBJS) $(LDLIBS)
+ msg.o: msg.c msg.h
+ 
+ test_stripe : restripe.c mdadm.h
+-- 
+1.7.6.1
+

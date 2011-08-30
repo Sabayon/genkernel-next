@@ -5,6 +5,11 @@
 # Distributed under the GPL v2
 # $Id$
 
+  30 Aug 2011; Sebastian Pipping <sping@gentoo.org>
+  +patches/mdadm/3.1.4/mdadm-3.1.4-z-now.patch, gen_compile.sh:
+  Enable patch application for mdadm, add patch to fix compilation (bug
+  #381089)
+
   28 Aug 2011; Fabio Erculiani <lxnay@gentoo.org> defaults/initrd.scripts,
   defaults/linuxrc, doc/genkernel.8.txt:
   Add basic support to AUFS2, requires kernel with aufs module or built-in

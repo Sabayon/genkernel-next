@@ -475,6 +475,7 @@ compile_mdadm() {
 			gen_die 'MDADM directory ${MDADM_DIR} is invalid!'
 
 		cd "${MDADM_DIR}"
+		apply_patches mdadm ${MDADM_VER}
 		sed -i "/^CFLAGS = /s:^CFLAGS = \(.*\)$:CFLAGS = -Os:" Makefile
 		sed -i "/^CXFLAGS = /s:^CXFLAGS = \(.*\)$:CXFLAGS = -Os:" Makefile
 		sed -i "/^CWFLAGS = /s:^CWFLAGS = \(.*\)$:CWFLAGS = -Wall:" Makefile
