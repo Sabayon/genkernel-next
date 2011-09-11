@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  11 Sep 2011; Fabio Erculiani <lxnay@gentoo.org> defaults/initrd.scripts,
+  defaults/linuxrc:
+  drop parse_opt usage and crufty, deprecated subshelling through 
+
   30 Aug 2011; Sebastian Pipping <sping@gentoo.org> defaults/initrd.scripts:
   Fix quoting issue (bug #380729).
 

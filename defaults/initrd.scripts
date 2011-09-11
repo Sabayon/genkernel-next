@@ -6,14 +6,6 @@ backup() {
 	echo -ne "\033[0G\033[0K"
 }
 
-parse_opt() {
-	case "$1" in
-		*\=*)
-			echo "$1" | cut -d= -f2-
-		;;
-	esac
-}
-
 modules_load() {
 	for module in $*
 	do
