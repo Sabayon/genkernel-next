@@ -247,11 +247,21 @@ append_lvm(){
 		print_info 1 '          LVM: Adding support (using local static binary /sbin/lvm.static)...'
 		cp /sbin/lvm.static "${TEMP}/initramfs-lvm-temp/bin/lvm" ||
 			gen_die 'Could not copy over lvm!'
+		# See bug 382555
+		if [ -e '/sbin/dmsetup.static' ]
+		then
+			cp /sbin/dmsetup.static "${TEMP}/initramfs-lvm-temp/bin/dmsetup"
+		fi
 	elif [ -e '/sbin/lvm' ] && LC_ALL="C" ldd /sbin/lvm|grep -q 'not a dynamic executable'
 	then
 		print_info 1 '          LVM: Adding support (using local static binary /sbin/lvm)...'
 		cp /sbin/lvm "${TEMP}/initramfs-lvm-temp/bin/lvm" ||
 			gen_die 'Could not copy over lvm!'
+		# See bug 382555
+		if [ -e '/sbin/dmsetup' ] && LC_ALL="C" ldd /sbin/dmsetup | grep -q 'not a dynamic executable'
+		then
+			cp /sbin/dmsetup "${TEMP}/initramfs-lvm-temp/bin/dmsetup"
+		fi
 	else
 		print_info 1 '          LVM: Adding support (compiling binaries)...'
 		compile_lvm
@@ -259,6 +269,9 @@ append_lvm(){
 			gen_die "Could not extract lvm binary cache!";
 		mv ${TEMP}/initramfs-lvm-temp/sbin/lvm.static ${TEMP}/initramfs-lvm-temp/bin/lvm ||
 			gen_die 'LVM error: Could not move lvm.static to lvm!'
+		# See bug 382555
+		mv ${TEMP}/initramfs-lvm-temp/sbin/dmsetup.static ${TEMP}/initramfs-lvm-temp/bin/dmsetup ||
+			gen_die 'LVM error: Could not move dmsetup.static to dmsetup!'
 	fi
 	if [ -x /sbin/lvm ]
 	then

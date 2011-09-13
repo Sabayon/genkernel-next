@@ -451,7 +451,10 @@ compile_lvm() {
 		print_info 1 '      >> Copying to bincache...'
 		strip "sbin/lvm.static" ||
 			gen_die 'Could not strip lvm.static!'
-		/bin/tar -cjf "${LVM_BINCACHE}" sbin/lvm.static ||
+		# See bug 382555
+		strip "sbin/dmsetup.static" ||
+			gen_die 'Could not strip dmsetup.static'
+		/bin/tar -cjf "${LVM_BINCACHE}" sbin/lvm.static sbin/dmsetup.static ||
 			gen_die 'Could not create binary cache'
 
 		cd "${TEMP}"

@@ -5,6 +5,11 @@
 # Distributed under the GPL v2
 # $Id$
 
+  13 Sep 2011; Fabio Erculiani <lxnay@gentoo.org> gen_compile.sh,
+  gen_initramfs.sh:
+  dmraid requires dmsetup to assign UUID to discovered RAID volumes, close bug
+  #382555
+
   11 Sep 2011; Fabio Erculiani <lxnay@gentoo.org> defaults/initrd.scripts,
   defaults/linuxrc:
   drop parse_opt usage and crufty, deprecated subshelling through 
