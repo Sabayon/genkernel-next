@@ -60,7 +60,7 @@ set_bootloader_grub() {
 			echo "root (${GRUB_BOOT_DISK},${GRUB_BOOT_PARTITION})" >> ${GRUB_CONF}
 			echo >> ${GRUB_CONF}
 
-			# Add grub configuration to grub.conf	
+			# Add grub configuration to grub.conf
 			echo "# Genkernel generated entry, see GRUB documentation for details" >> ${GRUB_CONF}
 			echo "title=Gentoo Linux ($KV)" >> ${GRUB_CONF}
 			if [ "${BUILD_INITRD}" = '0' ]
@@ -109,7 +109,7 @@ set_bootloader_grub_check_for_existing_entry() {
 set_bootloader_grub_duplicate_default() {
 	local GRUB_CONF=$1
 	local GRUB_CONF_TMP="${GRUB_CONF}.tmp"
-	
+
 	line_count=$(wc -l < "${GRUB_CONF}")
 	line_nums="$(grep -n "^title" "${GRUB_CONF}" | cut -d: -f1)"
 	if [ -z "${line_nums}" ]; then

@@ -30,7 +30,7 @@ get_KV() {
 		SUB=`grep ^SUBLEVEL\ \= ${KERNEL_DIR}/Makefile | awk '{ print $3 };'`
 		EXV=`grep ^EXTRAVERSION\ \= ${KERNEL_DIR}/Makefile | sed -e "s/EXTRAVERSION =//" -e "s/ //g" -e 's/\$([a-z]*)//gi'`
 
-		if [ -z "${SUB}" ]; 
+		if [ -z "${SUB}" ]
 		then
 			# Handle O= build directories
 			KERNEL_SOURCE_DIR=`grep ^MAKEARGS\ \:\=  ${KERNEL_DIR}/Makefile | awk '{ print $4 };'`
@@ -143,7 +143,7 @@ determine_real_args() {
 	FUSE_BINCACHE=`cache_replace "${FUSE_BINCACHE}"`
 	UNIONFS_FUSE_BINCACHE=`cache_replace "${UNIONFS_FUSE_BINCACHE}"`
 	GPG_BINCACHE=`cache_replace "${GPG_BINCACHE}"`
-  
+
 	DEFAULT_KERNEL_CONFIG=`arch_replace "${DEFAULT_KERNEL_CONFIG}"`
 	BUSYBOX_CONFIG=`arch_replace "${BUSYBOX_CONFIG}"`
 	BUSYBOX_BINCACHE=`arch_replace "${BUSYBOX_BINCACHE}"`
@@ -166,7 +166,7 @@ determine_real_args() {
 			BOOTLOADER=`echo "${CMD_BOOTLOADER}" | cut -f1 -d:`
 		fi
 	fi
-	
+
 	if [ "${NO_KERNEL_SOURCES}" != "1" ]
 	then
 		if [ ! -d ${KERNEL_DIR} ]
@@ -192,7 +192,7 @@ determine_real_args() {
 		fi
 	fi
 
-	# Special case:  If --no-clean is specified on the command line, 
+	# Special case:  If --no-clean is specified on the command line,
 	# imply --no-mrproper.
 	if [ "${CMD_CLEAN}" != '' ]
 	then
@@ -201,12 +201,12 @@ determine_real_args() {
 			MRPROPER=0
 		fi
 	fi
-	
+
 	if [ -n "${MINKERNPACKAGE}" ]
 	then
 		mkdir -p `dirname ${MINKERNPACKAGE}`
 	fi
-	
+
 	if [ -n "${MODULESPACKAGE}" ]
 	then
 		mkdir -p `dirname ${MODULESPACKAGE}`
@@ -221,6 +221,6 @@ determine_real_args() {
 	then
 		INTEGRATED_INITRAMFS=0
 	fi
-	
+
 	get_KV
 }

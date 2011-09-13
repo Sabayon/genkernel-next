@@ -78,7 +78,7 @@ do
 		isoboot=*)
 			ISOBOOT=${x#*=}
 		;;
-		# Start Volume manager options 
+		# Start Volume manager options
 		dolvm)
 			USE_LVM_NORMAL=1
 		;;
@@ -100,7 +100,7 @@ do
 		debug)
 			DEBUG='yes'
 		;;
-		# Scan delay options 
+		# Scan delay options
 		scandelay=*)
 			SDELAY=${x#*=}
 		;;
@@ -228,30 +228,12 @@ do
 		nounionfs)
 			USE_UNIONFS_NORMAL=0
 			;;
-#                 unionfs=*) 	 
-#                         if [ ! -x /sbin/unionfs ] 	 
-#                         then 	 
-#                                 USE_UNIONFS_NORMAL=0 	 
-#                                 bad_msg 'unionfs binary not found: aborting use of unionfs!'
-#                         else 	 
-#                                 USE_UNIONFS_NORMAL=1 	 
-#                                 CMD_UNIONFS=${x#*=} 	 
-#                                 echo ${CMD_UNIONFS}|grep , >/dev/null 2>&1 	 
-#                                 if [ $? -eq 0 ]
-#                                 then 	 
-#                                         UID=$(echo ${CMD_UNIONFS#*,}) 	 
-#                                         UNIONFS=$(echo ${CMD_UNIONFS%,*}) 
-#                                 else 	 
-#                                         UNIONFS=${CMD_UNIONFS} 	 
-#                                 fi 	 
-#                         fi 	 
-#                 ;;
 	esac
 done
 
 if [ -z "${REAL_ROOT}" -a \( "${CDROOT}" = '0' \)  -a \( "${FAKE_ROOT}" != "/dev/ram0" \) ]
 then
-	REAL_ROOT="${FAKE_ROOT}"	
+	REAL_ROOT="${FAKE_ROOT}"
 fi
 
 splash 'init'
@@ -325,22 +307,22 @@ then
 
 				RESUME_DEV=""
 				retval=1
-				
+
 				if [ ${retval} -ne 0 ]; then
 					RESUME_DEV=$(findfs "${REAL_RESUME}" 2>/dev/null)
 					retval=$?
 				fi
-				
+
 				if [ ${retval} -ne 0 ]; then
 					RESUME_DEV=$(busybox findfs "${REAL_RESUME}" 2>/dev/null)
 					retval=$?
 				fi
-				
+
 				if [ ${retval} -ne 0 ]; then
 					RESUME_DEV=$(blkid -l -t "${REAL_RESUME}" | cut -d ":" -f 1 2>/dev/null)
 					retval=$?
 				fi
-				
+
 				if [ ${retval} -eq 0 ] && [ -n "${RESUME_DEV}" ]; then
 					good_msg "Detected real_resume=${RESUME_DEV}"
 					REAL_RESUME="${RESUME_DEV}"
@@ -362,7 +344,7 @@ if [ "${CDROOT}" = '1' ]
 then
 	good_msg "Making tmpfs for ${NEW_ROOT}"
 	mount -n -t tmpfs tmpfs "${NEW_ROOT}"
-	
+
 	for i in dev mnt mnt/cdrom mnt/livecd mnt/key tmp tmp/.initrd mnt/gentoo sys
 	do
 		mkdir -p "${NEW_ROOT}/${i}"
@@ -393,7 +375,7 @@ then
 	if [ "${REAL_ROOT}" = '' ]
 	then
 		echo -n -e "${WARN}>>${NORMAL}${BOLD} No bootable medium found. Waiting for new devices"
-		
+
 		COUNTER=0
 		while [ ${COUNTER} -lt 3 ]; do
 			sleep 3
@@ -428,26 +410,26 @@ do
 	while [ "${got_good_root}" != '1' ]
 	do
 		case "${REAL_ROOT}" in
-			LABEL\=*|UUID\=*)
-			
+			LABEL=*|UUID=*)
+
 				ROOT_DEV=""
 				retval=1
-				
+
 				if [ ${retval} -ne 0 ]; then
 					ROOT_DEV=$(findfs "${REAL_ROOT}" 2>/dev/null)
 					retval=$?
 				fi
-				
+
 				if [ ${retval} -ne 0 ]; then
 					ROOT_DEV=$(busybox findfs "${REAL_ROOT}" 2>/dev/null)
 					retval=$?
 				fi
-				
+
 				if [ ${retval} -ne 0 ]; then
 					ROOT_DEV=$(blkid -l -t "${REAL_ROOT}" | cut -d ":" -f 1 2>/dev/null)
 					retval=$?
 				fi
-				
+
 				if [ ${retval} -eq 0 ] && [ -n "${ROOT_DEV}" ]; then
 					good_msg "Detected real_root=${ROOT_DEV}"
 					REAL_ROOT="${ROOT_DEV}"
@@ -458,7 +440,7 @@ do
 				fi
 				;;
 		esac
-				
+
 		if [ "${REAL_ROOT}" = '' ]
 		then
 			# No REAL_ROOT determined/specified. Prompt user for root block device.
@@ -503,8 +485,8 @@ do
 				mount -t ${ROOTFSTYPE} -o ro,${REAL_ROOTFLAGS} ${REAL_ROOT} ${NEW_ROOT}
 			fi
 		fi
-		
-		# If mount is successful break out of the loop 
+
+		# If mount is successful break out of the loop
 		# else not a good root and start over.
 		if [ "$?" = '0' ]
 		then
@@ -613,7 +595,7 @@ then
 					"${NEW_ROOT}${CDROOT_DEV}" \
 					"${NEW_ROOT}${REAL_ROOT}"
 			test_success 'losetup /dev/sr0 /dev/loop0'
-	
+
 			good_msg 'Mounting the Root Partition'
 			mount -t squashfs -o ro "${NEW_ROOT}${CDROOT_DEV}" "${NEW_ROOT}/mnt/livecd"
 			test_success 'mount /dev/loop0 /'
@@ -631,7 +613,7 @@ then
 		if [ -e "${NEW_ROOT}/mnt/cdrom/add" ]
 		then
 				for targz in $(ls ${NEW_ROOT}/mnt/cdrom/add/*.tar.gz)
-				do	
+				do
 					tarname=$(basename ${targz})
 					good_msg "Adding additional package ${tarname}"
 					(cd ${NEW_ROOT} ; /bin/tar -xzf ${targz})
@@ -645,7 +627,7 @@ then
 		setup_unionfs ${NEW_ROOT} ${NEW_ROOT}/${FS_LOCATION}
 		CHROOT=/union
 	elif [ "${USE_AUFS_NORMAL}" != '1' ]; then
-	
+
 	good_msg "Copying read-write image contents to tmpfs"
 	# Copy over stuff that should be writable
 	(cd "${NEW_ROOT}/${FS_LOCATION}"; cp -a ${ROOT_TREES} "${NEW_ROOT}")

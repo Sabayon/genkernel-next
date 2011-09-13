@@ -28,7 +28,7 @@ gen_minkernpackage() {
 			cp "${tmp_kernel_binary2}" "${TEMP}/minkernpackage/kernelz-${KV}" || gen_die "Could not copy the kernelz for the min kernel package"
 		fi
 	fi
-	
+
 	if ! isTrue "${INTEGRATED_INITRAMFS}"
 	then
 		[ "${BUILD_RAMDISK}" != '0' ] && { cp "${TMPDIR}/initramfs-${KV}" "${TEMP}/minkernpackage/initramfs-${ARCH}-${KV}" || gen_die 'Could not copy the initramfs for the kernel package!'; }
@@ -40,8 +40,8 @@ gen_minkernpackage() {
 	else
 		cp "${KERNEL_DIR}/System.map" "${TEMP}/minkernpackage/System.map-${ARCH}-${KV}" || gen_die 'Could not copy System.map for the kernel package!';
 	fi
-	
-	cd "${TEMP}/minkernpackage" 
+
+	cd "${TEMP}/minkernpackage"
 	/bin/tar -jcpf ${MINKERNPACKAGE} * || gen_die 'Could not compress the kernel package!'
 	cd "${TEMP}" && rm -rf "${TEMP}/minkernpackage" > /dev/null 2>&1
 }
@@ -84,27 +84,27 @@ gen_kerncache()
 	then
 		cp "${tmp_kernel_binary2}" "${TEMP}/kerncache/kernelz-${ARCH}-${KV}" || gen_die "Could not copy the kernelz for the kernel package"
 	fi
-	
+
 	echo "VERSION = ${VER}" > "${TEMP}/kerncache/kerncache.config"
 	echo "PATCHLEVEL = ${PAT}" >> "${TEMP}/kerncache/kerncache.config"
 	echo "SUBLEVEL = ${SUB}" >> "${TEMP}/kerncache/kerncache.config"
 	echo "EXTRAVERSION = ${EXV}" >> "${TEMP}/kerncache/kerncache.config"
-	
+
 	mkdir -p "${TEMP}/kerncache/lib/modules/"
-	
+
 	if [ -d ${INSTALL_MOD_PATH}/lib/modules/${KV} ]
 	then
 	    cp -r "${INSTALL_MOD_PATH}/lib/modules/${KV}" "${TEMP}/kerncache/lib/modules"
 	fi
-	
-	cd "${TEMP}/kerncache" 
+
+	cd "${TEMP}/kerncache"
 	/bin/tar -jcpf ${KERNCACHE} * || gen_die 'Could not compress the kernel package!'
 	cd "${TEMP}" && rm -rf "${TEMP}/kerncache" > /dev/null 2>&1
 }
 
 gen_kerncache_extract_kernel()
 {
-	/bin/tar -f ${KERNCACHE} -C ${TEMP} -xj 
+	/bin/tar -f ${KERNCACHE} -C ${TEMP} -xj
 	copy_image_with_preserve "kernel" \
 		"${TEMP}/kernel-${ARCH}-${KV}" \
 		"kernel-${KNAME}-${ARCH}-${KV}"
@@ -115,7 +115,7 @@ gen_kerncache_extract_kernel()
 			"${TEMP}/kernelz-${ARCH}-${KV}" \
 			"kernelz-${KNAME}-${ARCH}-${KV}"
 	fi
-    
+
 	copy_image_with_preserve "System.map" \
 		"${TEMP}/System.map-${ARCH}-${KV}" \
 		"System.map-${KNAME}-${ARCH}-${KV}"
@@ -123,7 +123,7 @@ gen_kerncache_extract_kernel()
 
 gen_kerncache_extract_modules()
 {
-        if [ -e "${KERNCACHE}" ] 
+        if [ -e "${KERNCACHE}" ]
 	then
 		print_info 1 'Extracting kerncache kernel modules'
         	if [ "${INSTALL_MOD_PATH}" != '' ]
@@ -137,7 +137,7 @@ gen_kerncache_extract_modules()
 
 gen_kerncache_extract_config()
 {
-	if [ -e "${KERNCACHE}" ] 
+	if [ -e "${KERNCACHE}" ]
 	then
 		print_info 1 'Extracting kerncache config to /etc/kernels'
 		mkdir -p /etc/kernels
@@ -156,13 +156,13 @@ gen_kerncache_is_valid()
 		# Can make this more secure ....
 
 		/bin/tar -xj -f ${KERNCACHE} -C ${TEMP}
-		if [ -e ${TEMP}/config-${ARCH}-${KV} -a -e ${TEMP}/kernel-${ARCH}-${KV} ] 
-		then 
+		if [ -e ${TEMP}/config-${ARCH}-${KV} -a -e ${TEMP}/kernel-${ARCH}-${KV} ]
+		then
 			print_info 1 'Valid kernel cache found; no sources will be used'
 			KERNCACHE_IS_VALID=1
 		fi
 	else
-		if [ -e "${KERNCACHE}" ] 
+		if [ -e "${KERNCACHE}" ]
 		then
 			KERNEL_CONFIG="/${KERNEL_DIR}/.config"
 			if [ "${CMD_KERNEL_CONFIG}" != '' ]
@@ -183,7 +183,6 @@ gen_kerncache_is_valid()
 				test2=$(grep -v "^#" ${KERNEL_CONFIG} | md5sum | cut -d " " -f 1)
 				if [ "${test1}" == "${test2}" ]
 				then
-	
 					echo
 					print_info 1 "No kernel configuration change, skipping kernel build..."
 					echo
@@ -192,6 +191,6 @@ gen_kerncache_is_valid()
 			fi
 		fi
 	fi
-	export KERNCACHE_IS_VALID	
+	export KERNCACHE_IS_VALID
 	return 1
 }

@@ -42,7 +42,7 @@ get_official_arch() {
 	then
 		UTILS_ARCH='sparc'
 	fi
-	
+
 	ARCH_CONFIG="${GK_SHARE}/arch/${ARCH}/config.sh"
 	[ -f "${ARCH_CONFIG}" ] || gen_die "${ARCH} not yet supported by genkernel. Please add the arch-specific config file, ${ARCH_CONFIG}"
 }

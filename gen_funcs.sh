@@ -22,7 +22,7 @@ isTrue() {
 	return 1
 }
 
-setColorVars() { 
+setColorVars() {
 if isTrue ${USECOLOR}
 then
 	GOOD=$'\e[32;01m'
@@ -144,7 +144,7 @@ print_info() {
 				DEBUGCACHE="${DEBUGCACHE}${STR}"
 			else
 				echo -ne "${STR}" >> ${LOGFILE}
-			fi	
+			fi
 		else
 			if [ "${TODEBUGCACHE}" = '1' ]; then
 				DEBUGCACHE="${DEBUGCACHE}${STR}"$'\n'
@@ -178,7 +178,7 @@ var_replace()
   # in the later sed expression
   local SAFE_VAR
   SAFE_VAR=`echo "${2}" | sed -e 's/\([\/\.]\)/\\\\\\1/g'`
-  
+
   echo "${3}" | sed -e "s/%%${1}%%/${SAFE_VAR}/g" -
 }
 
@@ -194,7 +194,7 @@ clear_log() {
     if [ -f "${LOGFILE}" ]
     then
 	(echo > "${LOGFILE}") 2>/dev/null || small_die "Genkernel: Could not write to ${LOGFILE}."
-    fi   
+    fi
 }
 
 gen_die() {
@@ -267,7 +267,7 @@ then
 		rm ${TMPDIR}/${i}
 	done
 fi
-}	
+}
 
 #
 # Function to copy various kernel boot image products to the boot directory,

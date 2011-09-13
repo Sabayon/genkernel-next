@@ -59,9 +59,9 @@ gen_dep_list()
 	if [ "${ALLRAMDISKMODULES}" = "1" ]; then
 		strip_mod_paths $(find "${INSTALL_MOD_PATH}/lib/modules/${KV}" -name "*$(modules_kext)") | sort
 	else
-		local group_modules	
+		local group_modules
 		rm -f ${TEMP}/moddeps > /dev/null
-	
+
 		for group_modules in ${!MODULES_*}; do
 			gen_deps ${!group_modules}
 		done

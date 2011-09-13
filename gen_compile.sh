@@ -517,10 +517,10 @@ compile_dmraid() {
 		rm -rf "${TEMP}/device-mapper" > /dev/null
 		/bin/tar -jxpf "${DEVICE_MAPPER_BINCACHE}" -C "${TEMP}" ||
 			gen_die "Could not extract device-mapper binary cache!";
-		
+
 		cd "${DMRAID_DIR}"
 		print_info 1 'dmraid: >> Configuring...'
-		
+
 		LDFLAGS="-L${TEMP}/device-mapper/lib" \
 		CFLAGS="-I${TEMP}/device-mapper/include" \
 		CPPFLAGS="-I${TEMP}/device-mapper/include" \

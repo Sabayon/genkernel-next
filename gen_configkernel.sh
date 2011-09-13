@@ -73,7 +73,7 @@ config_kernel() {
 	else
 		print_info 1 "kernel: --clean is disabled; not running 'make clean'."
 	fi
-	
+
 	if isTrue ${MENUCONFIG}
 	then
 		print_info 1 'kernel: >> Invoking menuconfig...'

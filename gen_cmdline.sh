@@ -422,11 +422,11 @@ parse_cmdline() {
 			TEMP=${TMPDIR}/$RANDOM.$RANDOM.$RANDOM.$$
 			print_info 2 "TMPDIR: ${TMPDIR}"
 			print_info 2 "TEMP: ${TEMP}"
-			;; 
+			;;
 		--postclear)
 			CMD_POSTCLEAR=1
 			print_info 2 "CMD_POSTCLEAR: ${CMD_POSTCLEAR}"
-			;; 
+			;;
 		--arch-override=*)
 			CMD_ARCHOVERRIDE=`parse_opt "$*"`
 			print_info 2 "CMD_ARCHOVERRIDE: ${CMD_ARCHOVERRIDE}"
