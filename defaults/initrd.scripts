@@ -648,6 +648,11 @@ startVolumes() {
 
 			# To activate volumegroups on all devices in the cache
 			lvm_commands="${lvm_commands} \nvgchange -ay --sysinit"
+			
+			# To create symlinks so users can use real_root=/dev/vg/root
+			# This needs to run after vgchange, using vgchange --mknodes is too
+			# early.
+			lvm_commands="${lvm_commands} \nvgmknodes --ignorelockingfailure"
 
 			# And finally execute it all (/proc/... needed if lvm is compiled without readline)
 			good_msg "Scanning for and activating Volume Groups"
