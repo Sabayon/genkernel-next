@@ -110,7 +110,7 @@ do
 		# Module no-loads
 		doload=*)
 			MDOLIST=${x#*=}
-			MDOLIST=$(echo ${MDOLIST} | sed -e 's/,/ /g'`)
+			MDOLIST=$(echo ${MDOLIST} | sed -e 's/,/ /g')
 		;;
 		nodetect)
 			NODETECT=1
