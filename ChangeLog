@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  22 Sept 2011; Robin H. Johnson <robbat2@gentoo.org> defaults/initrd.scripts,
+  defaults/linuxrc:
+  Fix trailing backtick and root-on-LVM.
+
   13 Sep 2011; Fabio Erculiani <lxnay@gentoo.org> gen_compile.sh,
   gen_initramfs.sh:
   dmraid requires dmsetup to assign UUID to discovered RAID volumes, close bug
