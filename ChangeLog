@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  07 Oct 2011; Robin H. Johnson <robbat2@gentoo.org>
+  patches/busybox/1.18.1/1.18.1-mdstart.diff:
+  Fix patch typo that broke compile.
+
   22 Sept 2011; Robin H. Johnson <robbat2@gentoo.org> defaults/initrd.scripts,
   defaults/linuxrc:
   Fix trailing backtick and root-on-LVM.

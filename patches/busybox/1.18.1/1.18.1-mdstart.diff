@@ -24,7 +24,7 @@ diff -pruN a/include/usage.src.h mdstart/include/usage.src.h
 +#define mdstart_trivial_usage \
 +	"{[PARTITION] MD-NODE}..."
 +#define mdstart_full_usage \
-+	Run the RAID_AUTORUN ioctl on the given MD number"
++	"Run the RAID_AUTORUN ioctl on the given MD number"
 +
  #define dmesg_trivial_usage \
         "[-c] [-n LEVEL] [-s SIZE]"
