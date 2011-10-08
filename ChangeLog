@@ -5,6 +5,15 @@
 # Distributed under the GPL v2
 # $Id$
 
+  08 Oct 2011; Fabio Erculiani <lxnay@gentoo.org> defaults/initrd.defaults,
+  defaults/initrd.scripts, defaults/linuxrc:
+  Do not hardcode /mnt/cdrom path across the whole code, use CDROOT_PATH
+  instead. At the same time, mount cdrom into /mnt/cdrom instead of
+  /newroot/mnt/cdrom (which is now just a bind mount), this avoids
+  losetup to expose unavailable paths inside the live system, breaking
+  mkfs.btrfs (next upstream version, which does silly things with
+  /proc/mounts).
+
   07 Oct 2011; Robin H. Johnson <robbat2@gentoo.org>
   patches/busybox/1.18.1/1.18.1-mdstart.diff:
   Fix patch typo that broke compile.

@@ -53,11 +53,10 @@ findmediamount() {
 	# $1 = mount dir name / media name
 	# $2 = recognition file
 	# $3 = variable to have the device path
-	# $4 = directory before /mnt, like NEW_ROOT
+	# $4 = actual mount dir path (full path)
 	# args remaining are possible devices 
 
-	local media=$1 recon=$2 vrbl=$3
-	local mntdir="${4}/mnt/${media}"
+	local media=$1 recon=$2 vrbl=$3 mntdir=$4
 	shift 4
 
 	good_msg "Looking for the ${media}" ${CRYPT_SILENT}
@@ -100,11 +99,6 @@ findmediamount() {
 				fi
 				good_msg "Attempting to mount media:- ${x}" ${CRYPT_SILENT}
 
-#				if [ "${media}" = "cdrom" ]; then
-#					mount -r -t iso9660 ${x} ${mntdir} &>/dev/null
-#				else
-#					mount -r -t auto ${x} ${mntdir} &>/dev/null
-#				fi
 				mount -r -t ${CDROOT_TYPE} ${x} ${mntcddir} >/dev/null 2>&1
 				if [ "$?" = '0' ]
 				then
@@ -158,7 +152,7 @@ bootstrapCD() {
 	# a bunch of extra devices
 	[ -n "${CDROOT_DEV}" ] && DEVICES="${CDROOT_DEV}"
 
-	findmediamount "cdrom" "${SUBDIR}/livecd" "REAL_ROOT" "${NEW_ROOT}" ${DEVICES}
+	findmediamount "cdrom" "${SUBDIR}/livecd" "REAL_ROOT" "${CDROOT_PATH}" ${DEVICES}
 }
 
 bootstrapKey() {
@@ -166,7 +160,7 @@ bootstrapKey() {
 	local KEYDEVS=`devicelist`
 	eval local keyloc='"${CRYPT_'${1}'_KEY}"'
 
-	findmediamount "key" "${keyloc}" "CRYPT_${1}_KEYDEV" "" ${KEYDEVS}
+	findmediamount "key" "${keyloc}" "CRYPT_${1}_KEYDEV" "/mnt/key" ${KEYDEVS}
 }
 
 cache_cd_contents() {
@@ -187,7 +181,7 @@ cache_cd_contents() {
 			good_msg "Copying loop file for caching..."
 			# Verify that the needed directory exists
 			mkdir -p "$(dirname ${NEW_ROOT}/mnt/${LOOP})"
-			cp -a ${NEW_ROOT}/mnt/cdrom/${LOOP} ${NEW_ROOT}/mnt/${LOOP}
+			cp -a ${CDROOT_PATH}/${LOOP} ${NEW_ROOT}/mnt/${LOOP}
 			if [ $? -ne 0 ]
 			then
 				bad_msg "Failed to cache the loop file! Lack of space?"
@@ -258,7 +252,7 @@ findnfsmount() {
 			if [ "${CDROOT}" != '0' ]
 			then
 				good_msg "Attempting to mount NFS CD image on ${NFSROOT} with options ${NFSOPTIONS}"
-				mount -t nfs -o ${NFSOPTIONS} ${NFSROOT} ${NEW_ROOT}/mnt/cdrom
+				mount -t nfs -o ${NFSOPTIONS} ${NFSROOT} ${CDROOT_PATH}
 				if [ "$?" = '0' ]
 				then
 					REAL_ROOT="/dev/nfs"
@@ -283,7 +277,7 @@ findnfsmount() {
 }
 
 check_loop() {
-	if [ "${LOOP}" = '' -o ! -e "mnt/cdrom/${LOOP}" ]
+	if [ "${LOOP}" = '' -o ! -e "${CDROOT_PATH}/${LOOP}" ]
 	then
 	
 		bad_msg "Invalid loop location: ${LOOP}"
@@ -947,10 +941,10 @@ verbose_kmsg() {
 cdupdate() {
 	if [ "${CDROOT}" = '1' ]
 	then
-		if [ -x /${NEW_ROOT}/mnt/cdrom/cdupdate.sh ]
+		if [ -x /${CDROOT_PATH}/cdupdate.sh ]
 		then
 			good_msg "Running cdupdate.sh"
-			${NEW_ROOT}/mnt/cdrom/cdupdate.sh
+			${CDROOT_PATH}/cdupdate.sh
 			if [ "$?" != '0' ]
 			then
 				bad_msg "Executing cdupdate.sh failed!"
@@ -1065,10 +1059,9 @@ tuxonice_resume() {
 }
 
 find_loop() {
-	CDROM="${NEW_ROOT}/mnt/cdrom"
 	for loop in ${LOOPS}
 	do
-		if [ -e "${CDROM}""${loop}" ]
+		if [ -e "${CDROOT_PATH}""${loop}" ]
 		then
 			LOOP="${loop}"
 		fi
@@ -1098,8 +1091,7 @@ setup_squashfs_aufs() {
 	good_msg "Loading aufs"
 	modprobe aufs > /dev/null 2>&1
 
-	cd "${NEW_ROOT}"
-	mount -t squashfs -o loop,ro "mnt/cdrom${LOOPEXT}${LOOP}" "${static}"
+	mount -t squashfs -o loop,ro "${CDROOT_PATH}/${LOOPEXT}${LOOP}" "${static}"
 	mount -t tmpfs none "${overlay}"
 	mount -t aufs -o br:${overlay}:${static} aufs "${NEW_ROOT}"
 
@@ -1108,9 +1100,10 @@ setup_squashfs_aufs() {
 	echo "aufs / aufs defaults 0 0" > "${NEW_ROOT}"/etc/fstab
 	for i in "${overlay}" "${static}"; do mount --move "${i}" "${NEW_ROOT}${i}"; done
 
-	# have handy /mnt/cdrom as well
-	[ ! -d "${NEW_ROOT}/mnt/cdrom" ] && mkdir -p "${NEW_ROOT}/mnt/cdrom"
-	mount --bind mnt/cdrom "${NEW_ROOT}/mnt/cdrom"
+	# have handy /mnt/cdrom (CDROOT_PATH) as well
+	local new_cdroot="${NEW_ROOT}${CDROOT_PATH}"
+	[ ! -d "${new_cdroot}" ] && mkdir -p "${new_cdroot}"
+	mount --bind "${CDROOT_PATH}" "${new_cdroot}"
 	)
 }
 
@@ -1171,6 +1164,8 @@ setup_unionfs() {
 			bad_msg "Can't setup union mount!"
 			USE_UNIONFS_NORMAL=0
 		fi
+		[ ! -d "${NEW_ROOT}${CDROOT_PATH}" ] && mkdir -p "${NEW_ROOT}${CDROOT_PATH}"
+		mount --bind "${CDROOT_PATH}" "${NEW_ROOT}${CDROOT_PATH}"
 	else
 		USE_UNIONFS_NORMAL=0
 	fi
