@@ -600,7 +600,7 @@ compile_e2fsprogs() {
 		LDFLAGS=-static ./configure >> ${LOGFILE} 2>&1 ||
 			gen_die 'Configuring e2fsprogs failed!'
 		print_info 1 'e2fsprogs: >> Compiling...'
-		MAKE=${UTILS_MAKE} compile_generic "" ""
+		MAKE=${UTILS_MAKE} MAKEOPTS="${MAKEOPTS} -j1" compile_generic "" ""
 		print_info 1 'blkid: >> Copying to cache...'
 		[ -f "${TEMP}/${E2FSPROGS_DIR}/misc/blkid" ] ||
 			gen_die 'Blkid executable does not exist!'
