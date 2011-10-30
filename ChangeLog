@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  30 Oct 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
+  Bump version to 3.4.19
+
   25 Oct 2011; Fabio Erculiani <lxnay@gentoo.org> gen_compile.sh:
   fix random build failures during e2fsprogs, force -j1
 
