@@ -356,10 +356,12 @@ crypt_filter() {
 	else
 		splash 'verbose' > /dev/null &
 		eval $1
-		if [ $? -eq 0 ]
+		res=$?
+		if [ ${res} -eq 0 ]
 		then
 			splash set_msg 'Disk unlocked.'
 		fi
+		return ${res}
 	fi
 }
 
