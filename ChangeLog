@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  08 Nov 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
+  Bump version to 3.4.20
+
   31 Oct 2011; Sebastian Pipping <sping@gentoo.org> defaults/initrd.scripts:
   Fix return value of crypt_filter() which caused bogus LUKS opening errors
   (bug #383545)
