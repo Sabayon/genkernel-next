@@ -13,8 +13,13 @@ append_base_layout() {
 	mkdir -p ${TEMP}/initramfs-base-temp/bin
 	mkdir -p ${TEMP}/initramfs-base-temp/etc
 	mkdir -p ${TEMP}/initramfs-base-temp/usr
+	mkdir -p ${TEMP}/initramfs-base-temp/lib
+	mkdir -p ${TEMP}/initramfs-base-temp/mnt
+	mkdir -p ${TEMP}/initramfs-base-temp/run
+	mkdir -p ${TEMP}/initramfs-base-temp/sbin
 	mkdir -p ${TEMP}/initramfs-base-temp/proc
 	mkdir -p ${TEMP}/initramfs-base-temp/temp
+	mkdir -p ${TEMP}/initramfs-base-temp/tmp
 	mkdir -p ${TEMP}/initramfs-base-temp/sys
 	mkdir -p ${TEMP}/initramfs-temp/.initrd
 	mkdir -p ${TEMP}/initramfs-base-temp/var/lock/dmraid
@@ -29,9 +34,12 @@ append_base_layout() {
 	cd ${TEMP}/initramfs-base-temp/dev
 	mknod -m 660 console c 5 1
 	mknod -m 660 null c 1 3
+	mknod -m 660 zero c 1 5
+	mknod -m 600 tty0 c 4 0
 	mknod -m 600 tty1 c 4 1
+	mknod -m 600 ttyS0 c 4 64
 
-	date '+%Y%m%d' > ${TEMP}/initramfs-base-temp/etc/build_date
+	date -u '+%Y%m%d-%H%M%S' > ${TEMP}/initramfs-base-temp/etc/build_date
 
 	cd "${TEMP}/initramfs-base-temp/"
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
