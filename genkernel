@@ -131,7 +131,7 @@ dump_debugcache
 NORMAL=${BOLD} print_info 1 "Linux Kernel ${BOLD}${KV}${NORMAL} for ${BOLD}${ARCH}${NORMAL}..."
 
 # Check BOOTDIR is mounted
-if isTrue ${CMD_NOINSTALL}
+if ! isTrue ${CMD_INSTALL}
 then
 	isTrue ${MOUNTBOOT} && print_info 2 'Skipping automatic mount of boot'
 else
@@ -230,7 +230,7 @@ then
 	fi
 fi
 
-if ! isTrue "${CMD_NOINSTALL}"
+if isTrue "${CMD_INSTALL}"
 then
 	if [ "${KERNCACHE}" != "" -a "${KERNCACHE_IS_VALID}" != "0" ] 
 	then
@@ -313,7 +313,7 @@ fi
 
 if [ "${BUILD_KERNEL}" = '1' ]
 then
-	if ! isTrue "${CMD_NOINSTALL}"
+	if isTrue "${CMD_INSTALL}"
 	then
 		set_bootloader
 	fi

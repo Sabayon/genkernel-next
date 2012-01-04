@@ -324,7 +324,7 @@ compile_kernel() {
 		gen_die "Cannot locate kernel binary"
 	fi
 
-	if ! isTrue "${CMD_NOINSTALL}"
+	if isTrue "${CMD_INSTALL}"
 	then
 		copy_image_with_preserve "kernel" \
 			"${tmp_kernel_binary}" \

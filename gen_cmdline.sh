@@ -25,27 +25,31 @@ longusage() {
   echo "  Kernel Configuration settings"
   echo "	--menuconfig		Run menuconfig after oldconfig"
   echo "	--no-menuconfig		Do not run menuconfig after oldconfig"
-  echo "	--gconfig		Run gconfig after oldconfig"
-  echo "	--xconfig		Run xconfig after oldconfig"
+  echo "	--gconfig			Run gconfig after oldconfig"
+  echo "	--no-gconfig		Don't run gconfig after oldconfig"
+  echo "	--xconfig			Run xconfig after oldconfig"
+  echo "	--no-xconfig		Don't run xconfig after oldconfig"
   echo "	--save-config		Save the configuration to /etc/kernels"
   echo "	--no-save-config	Don't save the configuration to /etc/kernels"
   echo "  Kernel Compile settings"
-  echo "	--clean			Run make clean before compilation"
-  echo "	--mrproper		Run make mrproper before compilation"
-  echo "	--no-clean		Do not run make clean before compilation"
-  echo "	--no-mrproper		Do not run make mrproper before compilation"
   echo "	--oldconfig		Implies --no-clean and runs a 'make oldconfig'"
+  echo "	--clean			Run make clean before compilation"
+  echo "	--no-clean		Do not run make clean before compilation"
+  echo "	--mrproper		Run make mrproper before compilation"
+  echo "	--no-mrproper	Do not run make mrproper before compilation"
   echo "	--splash		Install framebuffer splash support into initramfs"
   echo "	--no-splash		Do not install framebuffer splash"
   echo "	--install		Install the kernel after building"
   echo "	--no-install		Do not install the kernel after building"
   echo "	--symlink		Manage symlinks in /boot for installed images"
   echo "	--no-symlink		Do not manage symlinks"
+  echo "	--ramdisk-modules	Copy required modules to the ramdisk"
   echo "	--no-ramdisk-modules	Don't copy any modules to the ramdisk"
   echo "	--all-ramdisk-modules	Copy all kernel modules to the ramdisk"
   echo "	--callback=<...>	Run the specified arguments after the"
   echo "				kernel and modules have been compiled"
   echo "	--static		Build a static (monolithic kernel)."
+  echo "	--no-static		Do not build a static (monolithic kernel)."
   echo "  Kernel settings"
   echo "	--kerneldir=<dir>	Location of the kernel sources"
   echo "	--kernel-config=<file>	Kernel configuration file to use for compilation"
@@ -77,31 +81,43 @@ longusage() {
   echo "	--splash=<theme>	Enable framebuffer splash using <theme>"
   echo "	--splash-res=<res>	Select splash theme resolutions to install"
   echo "	--do-keymap-auto	Forces keymap selection at boot"
+  echo "	--keymap		Enables keymap selection support"
   echo "	--no-keymap		Disables keymap selection support"
   echo "	--lvm			Include LVM support"
+  echo "	--no-lvm		Exclude LVM support"
   echo "	--mdadm			Include MDADM/MDMON support"
+  echo "	--no-mdadm		Exclude MDADM/MDMON support"
   echo "	--mdadm-config=<file>	Use file as mdadm.conf in initramfs"
   echo "	--dmraid		Include DMRAID support"
+  echo "	--no-dmraid		Exclude DMRAID support"
   echo "	--multipath		Include Multipath support"
+  echo "	--no-multipath	Exclude Multipath support"
   echo "	--iscsi			Include iSCSI support"
+  echo "	--no-iscsi		Exclude iSCSI support"
   echo "	--bootloader=grub	Add new kernel to GRUB configuration"
   echo "	--linuxrc=<file>	Specifies a user created linuxrc"
   echo "	--busybox-config=<file>	Specifies a user created busybox config"
   echo "	--genzimage		Make and install kernelz image (PowerPC)"
-  echo "	--disklabel		Include disk label and uuid support in your"
-  echo "				ramdisk"
+  echo "	--disklabel		Include disk label and uuid support in your ramdisk"
+  echo "	--no-disklabel	Exclude disk label and uuid support in your ramdisk"
   echo "	--luks			Include LUKS support"
   echo "				--> 'emerge cryptsetup-luks' with USE=-dynamic"
+  echo "	--no-luks		Exclude LUKS support"
   echo "	--gpg			Include GPG-armored LUKS key support"
-  echo "	--no-busybox		Do not include busybox in the initramfs."
+  echo "	--no-gpg		Exclude GPG-armored LUKS key support"
+  echo "	--busybox		Include busybox"
+  echo "	--no-busybox	Exclude busybox"
   echo "	--unionfs		Include support for unionfs"
+  echo "	--no-unionfs	Exclude support for unionfs"
   echo "	--netboot		Create a self-contained env in the initramfs"
+  echo "	--no-netboot	Exclude --netboot env"
   echo "	--real-root=<foo>	Specify a default for real_root="
   echo "  Internals"
   echo "	--arch-override=<arch>	Force to arch instead of autodetect"
   echo "	--cachedir=<dir>	Override the default cache location"
   echo "	--tempdir=<dir>		Location of Genkernel's temporary directory"
-  echo "	--postclear		Clear all tmp files and caches after genkernel has run"
+  echo "	--postclear			Clear all tmp files and caches after genkernel has run"
+  echo "	--no-postclear		Do not clean up after genkernel has run"
   echo "  Output Settings"
   echo "	--kernname=<...> 	Tag the kernel and ramdisk with a name:"
   echo "				If not defined the option defaults to"
@@ -130,9 +146,9 @@ longusage() {
   echo "				Specifies specific firmware files to copy. This"
   echo "				overrides --firmware-dir. For multiple files,"
   echo "				separate the filenames with a comma"
-  echo "	--integrated-initramfs"
-  echo "				Build the generated initramfs into the kernel instead of"
-  echo "				keeping it as a separate file"
+  echo "	--integrated-initramfs, --no-integrated-initramfs"
+  echo "				Include/exclude the generated initramfs in the kernel"
+  echo "				instead of keeping it as a separate file"
 }
 
 usage() {
@@ -149,6 +165,12 @@ usage() {
   echo
   echo 'For a detailed list of supported options and flags; issue:'
   echo '	genkernel --help'
+}
+
+parse_optbool() {
+	local opt=${1/--no-*/0} # false
+	opt=${opt/--*/1} # true
+	echo $opt
 }
 
 parse_cmdline() {
@@ -211,12 +233,8 @@ parse_cmdline() {
 			CMD_MAKEOPTS=`parse_opt "$*"`
 			print_info 2 "CMD_MAKEOPTS: ${CMD_MAKEOPTS}"
 			;;
-		--mountboot)
-			CMD_MOUNTBOOT=1
-			print_info 2 "CMD_MOUNTBOOT: ${CMD_MOUNTBOOT}"
-			;;
-		--no-mountboot)
-			CMD_MOUNTBOOT=0
+		--mountboot|--no-mountboot)
+			CMD_MOUNTBOOT=`parse_optbool "$*"`
 			print_info 2 "CMD_MOUNTBOOT: ${CMD_MOUNTBOOT}"
 			;;
 		--bootdir=*)
@@ -228,70 +246,70 @@ parse_cmdline() {
 			CMD_KEYMAP=1
 			print_info 2 "CMD_DOKEYMAPAUTO: ${CMD_DOKEYMAPAUTO}"
 			;;
-		--no-keymap)
-			CMD_KEYMAP=0
+		--keymap|--no-keymap)
+			CMD_KEYMAP=`parse_optbool "$*"`
 			print_info 2 "CMD_KEYMAP: ${CMD_KEYMAP}"
 			;;
-		--lvm)
-			CMD_LVM=1
+		--lvm|--no-lvm)
+			CMD_LVM=`parse_optbool "$*"`
 			print_info 2 "CMD_LVM: ${CMD_LVM}"
 			;;
-		--lvm2)
-			CMD_LVM=1
+		--lvm2|--no-lvm2)
+			CMD_LVM=`parse_optbool "$*"`
 			print_info 2 "CMD_LVM: ${CMD_LVM}"
 			echo
 			print_warning 1 "Please use --lvm, as --lvm2 is deprecated."
 			;;
-		--mdadm)
-			CMD_MDADM=1
+		--mdadm|--no-mdadm)
+			CMD_MDADM=`parse_optbool "$*"`
 			print_info 2 "CMD_MDADM: $CMD_MDADM"
 			;;
 		--mdadm-config=*)
 			CMD_MDADM_CONFIG=`parse_opt "$*"`
 			print_info 2 "CMD_MDADM_CONFIG: $CMD_MDADM_CONFIG"
 			;;
-		--no-busybox)
-			CMD_BUSYBOX=0
+		--busybox|--no-busybox)
+			CMD_BUSYBOX=`parse_optbool "$*"`
 			print_info 2 "CMD_BUSYBOX: ${CMD_BUSYBOX}"
 			;;
-		--unionfs)
-			CMD_UNIONFS=1
+		--unionfs|--no-unionfs)
+			CMD_UNIONFS=`parse_optbool "$*"`
 			print_info 2 "CMD_UNIONFS: ${CMD_UNIONFS}"
 			;;
-		--netboot)
-			CMD_NETBOOT=1
+		--netboot|--no-netboot)
+			CMD_NETBOOT=`parse_optbool "$*"`
 			print_info 2 "CMD_NETBOOT: ${CMD_NETBOOT}"
 			;;
 		--real-root=*)
 			CMD_REAL_ROOT=`parse_opt "$*"`
 			print_info 2 "CMD_REAL_ROOT: ${CMD_REAL_ROOT}"
 			;;
-		--dmraid)
-			if [ ! -e /usr/include/libdevmapper.h ]
+		--dmraid|--no-dmraid)
+			CMD_DMRAID=`parse_optbool "$*"`
+			if [ "$CMD_DMRAID" = "1" -a ! -e /usr/include/libdevmapper.h ]
 			then
 				echo 'Error: --dmraid requires device-mapper to be installed'
 				echo '		 on the host system; try "emerge device-mapper".'
 				exit 1
 			fi
-			CMD_DMRAID=1
 			print_info 2 "CMD_DMRAID: ${CMD_DMRAID}"
 			;;
-		--multipath)
-			if [ ! -e /usr/include/libdevmapper.h ]
+		--multipath|--no-multipath)
+			CMD_MULTIPATH=`parse_optbool "$*"`
+			if [ "$CMD_MULTIPATH" = "1" -a ! -e /usr/include/libdevmapper.h ]
 			then
 				echo 'Error: --multipath requires device-mapper to be installed'
 				echo '		 on the host;system; try "emerge device-mapper".'
 				exit 1
 			fi
-			CMD_MULTIPATH=1
 			print_info 2 "CMD_MULTIPATH: ${CMD_MULTIPATH}"
 			;;
 		--bootloader=*)
 			CMD_BOOTLOADER=`parse_opt "$*"`
 			print_info 2 "CMD_BOOTLOADER: ${CMD_BOOTLOADER}"
 			;;
-		--iscsi)
-			CMD_ISCSI=1
+		--iscsi|--no-iscsi)
+			CMD_ISCSI=`parse_optbool "$*"`
 			print_info 2 "CMD_ISCSI: ${CMD_ISCSI}"
 			;;
 		--loglevel=*)
@@ -315,41 +333,29 @@ parse_cmdline() {
 			CMD_MENUCONFIG=0
 			print_info 2 "CMD_MENUCONFIG: ${CMD_MENUCONFIG}"
 			;;
-		--gconfig)
-			CMD_GCONFIG=1
+		--gconfig|--no-gconfig)
+			CMD_GCONFIG=`parse_optbool "$*"`
 			print_info 2 "CMD_GCONFIG: ${CMD_GCONFIG}"
 			;;
-		--xconfig)
-			CMD_XCONFIG=1
+		--xconfig|--no-xconfig)
+			CMD_XCONFIG=`parse_optbool "$*"`
 			print_info 2 "CMD_XCONFIG: ${CMD_XCONFIG}"
 			;;
-		--save-config)
-			CMD_SAVE_CONFIG=1
+		--save-config|--no-save-config)
+			CMD_SAVE_CONFIG=`parse_optbool "$*"`
 			print_info 2 "CMD_SAVE_CONFIG: ${CMD_SAVE_CONFIG}"
 			;;
-		--no-save-config)
-			CMD_SAVE_CONFIG=0
-			print_info 2 "CMD_SAVE_CONFIG: ${CMD_SAVE_CONFIG}"
-			;;
-		--mrproper)
-			CMD_MRPROPER=1
+		--mrproper|--no-mrproper)
+			CMD_MRPROPER=`parse_optbool "$*"`
 			print_info 2 "CMD_MRPROPER: ${CMD_MRPROPER}"
 			;;
-		--no-mrproper)
-			CMD_MRPROPER=0
-			print_info 2 "CMD_MRPROPER: ${CMD_MRPROPER}"
-			;;
-		--clean)
-			CMD_CLEAN=1
+		--clean|--no-clean)
+			CMD_CLEAN=`parse_optbool "$*"`
 			print_info 2 "CMD_CLEAN: ${CMD_CLEAN}"
 			;;
-		--no-clean)
-			CMD_CLEAN=0
-			print_info 2 "CMD_CLEAN: ${CMD_CLEAN}"
-			;;
-		--oldconfig)
-			CMD_CLEAN=0
-			CMD_OLDCONFIG=1
+		--oldconfig|--no-oldconfig)
+			CMD_OLDCONFIG=`parse_optbool "$*"`
+			[ "$CMD_OLDCONFIG" = "1" ] && CMD_CLEAN=0
 			print_info 2 "CMD_CLEAN: ${CMD_CLEAN}"
 			print_info 2 "CMD_OLDCONFIG: ${CMD_OLDCONFIG}"
 			;;
@@ -361,8 +367,8 @@ parse_cmdline() {
 			echo
 			print_warning 1 "Please use --splash, as --gensplash is deprecated."
 			;;
-		--gensplash)
-			CMD_SPLASH=1
+		--gensplash|--no-gensplash)
+			CMD_SPLASH=`parse_optbool "$*"`
 			SPLASH_THEME='default'
 			print_info 2 "CMD_SPLASH: ${CMD_SPLASH}"
 			echo
@@ -374,13 +380,9 @@ parse_cmdline() {
 			print_info 2 "CMD_SPLASH: ${CMD_SPLASH}"
 			print_info 2 "SPLASH_THEME: ${SPLASH_THEME}"
 			;;
-		--splash)
-			CMD_SPLASH=1
+		--splash|--no-splash)
+			CMD_SPLASH=`parse_optbool "$*"`
 			SPLASH_THEME='default'
-			print_info 2 "CMD_SPLASH: ${CMD_SPLASH}"
-			;;
-		--no-splash)
-			CMD_SPLASH=0
 			print_info 2 "CMD_SPLASH: ${CMD_SPLASH}"
 			;;
 		--gensplash-res=*)
@@ -393,28 +395,24 @@ parse_cmdline() {
 			SPLASH_RES=`parse_opt "$*"`
 			print_info 2 "SPLASH_RES: ${SPLASH_RES}"
 			;;
-		--install)
-			CMD_NOINSTALL=0
-			print_info 2 "CMD_NOINSTALL: ${CMD_NOINSTALL}"
+		--install|--no-install)
+			CMD_INSTALL=`parse_optbool "$*"`
+			print_info 2 "CMD_INSTALL: ${CMD_INSTALL}"
 			;;
-		--no-install)
-			CMD_NOINSTALL=1
-			print_info 2 "CMD_NOINSTALL: ${CMD_NOINSTALL}"
+		--ramdisk-modules|--no-ramdisk-modules)
+			CMD_RAMDISKMODULES=`parse_optbool "$*"`
+			print_info 2 "CMD_RAMDISKMODULES: ${CMD_RAMDISKMODULES}"
 			;;
-		--no-ramdisk-modules)
-			CMD_NORAMDISKMODULES=1
-			print_info 2 "CMD_NORAMDISKMODULES: ${CMD_NORAMDISKMODULES}"
-			;;
-		--all-ramdisk-modules)
-			CMD_ALLRAMDISKMODULES=1
+		--all-ramdisk-modules|--no-all-ramdisk-modules)
+			CMD_ALLRAMDISKMODULES=`parse_optbool "$*"`
 			print_info 2 "CMD_ALLRAMDISKMODULES: ${CMD_ALLRAMDISKMODULES}"
 			;;
 		--callback=*)
 			CMD_CALLBACK=`parse_opt "$*"`
 			print_info 2 "CMD_CALLBACK: ${CMD_CALLBACK}/$*"
 			;;
-		--static)
-			CMD_STATIC=1
+		--static|--no-static)
+			CMD_STATIC=`parse_optbool "$*"`
 			print_info 2 "CMD_STATIC: ${CMD_STATIC}"
 			;;
 		--tempdir=*)
@@ -423,21 +421,16 @@ parse_cmdline() {
 			print_info 2 "TMPDIR: ${TMPDIR}"
 			print_info 2 "TEMP: ${TEMP}"
 			;;
-		--postclear)
-			CMD_POSTCLEAR=1
+		--postclear|--no-postclear)
+			CMD_POSTCLEAR=`parse_optbool "$*"`
 			print_info 2 "CMD_POSTCLEAR: ${CMD_POSTCLEAR}"
 			;;
 		--arch-override=*)
 			CMD_ARCHOVERRIDE=`parse_opt "$*"`
 			print_info 2 "CMD_ARCHOVERRIDE: ${CMD_ARCHOVERRIDE}"
 			;;
-		--color)
-			USECOLOR=1
-			print_info 2 "USECOLOR: ${USECOLOR}"
-			setColorVars
-			;;
-		--no-color)
-			USECOLOR=0
+		--color|--no-color)
+			USECOLOR=`parse_optbool "$*"`
 			print_info 2 "USECOLOR: ${USECOLOR}"
 			setColorVars
 			;;
@@ -479,17 +472,13 @@ parse_cmdline() {
 			CMD_KERNNAME=`parse_opt "$*"`
 			print_info 2 "KERNNAME: ${CMD_KERNNAME}"
 			;;
-		--symlink)
-			CMD_SYMLINK=1
+		--symlink|--no-symlink)
+			CMD_SYMLINK=`parse_optbool "$*"`
 			print_info 2 "CMD_SYMLINK: ${CMD_SYMLINK}"
 			;;
-		--no-symlink)
-			CMD_SYMLINK=0
-			print_info 2 "CMD_SYMLINK: ${CMD_SYMLINK}"
-			;;
-		--no-kernel-sources)
-			CMD_NO_KERNEL_SOURCES=1
-			print_info 2 "CMD_NO_KERNEL_SOURCES: ${CMD_NO_KERNEL_SOURCES}"
+		--kernel-sources|--no-kernel-sources)
+			CMD_KERNEL_SOURCES=`parse_optbool "$*"`
+			print_info 2 "CMD_KERNEL_SOURCES: ${CMD_KERNEL_SOURCES}"
 			;;
 		--initramfs-overlay=*)
 			CMD_INITRAMFS_OVERLAY=`parse_opt "$*"`
@@ -510,20 +499,20 @@ parse_cmdline() {
 #			ENABLE_PEGASOS_HACKS="yes"
 #			print_info 2 "ENABLE_PEGASOS_HACKS: ${ENABLE_PEGASOS_HACKS}"
 			;;
-		--disklabel)
-			CMD_DISKLABEL=1
+		--disklabel|--no-disklabel)
+			CMD_DISKLABEL=`parse_optbool "$*"`
 			print_info 2 "CMD_DISKLABEL: ${CMD_DISKLABEL}"
 			;;
-		--luks)
-			CMD_LUKS=1
+		--luks|--no-luks)
+			CMD_LUKS=`parse_optbool "$*"`
 			print_info 2 "CMD_LUKS: ${CMD_LUKS}"
 			;;
-		--gpg)
-			CMD_GPG=1
+		--gpg|--no-gpg)
+			CMD_GPG=`parse_optbool "$*"`
 			print_info 2 "CMD_GPG: ${CMD_GPG}"
 			;;
-		--firmware)
-			CMD_FIRMWARE=1
+		--firmware|--no-firmware)
+			CMD_FIRMWARE=`parse_optbool "$*"`
 			print_info 2 "CMD_FIRMWARE: ${CMD_FIRMWARE}"
 			;;
 		--firmware-dir=*)
@@ -536,8 +525,8 @@ parse_cmdline() {
 			CMD_FIRMWARE=1
 			print_info 2 "CMD_FIRMWARE_FILES: ${CMD_FIRMWARE_FILES}"
 			;;
-		--integrated-initramfs)
-			CMD_INTEGRATED_INITRAMFS=1
+		--integrated-initramfs|--no-integrated-initramfs)
+			CMD_INTEGRATED_INITRAMFS=`parse_optbool "$*"`
 			print_info 2 "CMD_INTEGRATED_INITRAMFS=${CMD_INTEGRATED_INITRAMFS}"
 			;;
 		--config=*)
@@ -560,8 +549,8 @@ parse_cmdline() {
 			BUILD_KERNEL=1
 			BUILD_MODULES=0
 			BUILD_RAMDISK=1
-			CMD_NORAMDISKMODULES=1
-			print_info 2 "CMD_NORAMDISKMODULES: ${CMD_NORAMDISKMODULES}"
+			CMD_RAMDISKMODULES=0
+			print_info 2 "CMD_RAMDISKMODULES: ${CMD_RAMDISKMODULES}"
 			;;
 		--help)
 			longusage

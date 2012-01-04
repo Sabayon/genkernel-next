@@ -95,11 +95,11 @@ KERNEL CONFIGURATION
     Saves, or does not save the kernel configuration to '/etc/kernels'
     if the kernel is successfully compiled.
 
-*--gconfig*::
-    Run "make gconfig" after "make oldconfig".
+*--*[*no-*]*gconfig*::
+    Runs, or does not run "make gconfig" after "make oldconfig".
 
-*--xconfig*::
-    Run "make xconfig" after "make oldconfig".
+*--*[*no-*]*xconfig*::
+    Runs, or does not run "make xconfig" after "make oldconfig".
 
 
 KERNEL COMPILATION
@@ -140,19 +140,19 @@ KERNEL COMPILATION
 *--*[*no-*]*splash*::
     Installs, or not, framebuffer splash support into initramfs.
 
-*--no-ramdisk-modules*::
-    Don't copy any modules to the ramdisk.
+*--*[*no-*]*ramdisk-modules*::
+    Copies or does not copy configured modules to the ramdisk.
 
-*--all-ramdisk-modules*::
-    Copy all kernel modules to the initrd.
+*--*[*no-*]*all-ramdisk-modules*::
+    Copies or does not copy all kernel modules to the initrd.
 
 *--callback*=<...>::
     Run the specified arguments in the current environment after the
     kernel and modules have been compiled.
 
-*--static*::
-    This builds a monolithic kernel without any modules on any
-    initial ramdisks.
+*--*[*no-*]*static*::
+	Builds, or does not build a monolithic kernel without any modules on any
+	initial ramdisks.
 
 
 KERNEL LOCATIONS
@@ -241,16 +241,15 @@ INITIALIZATION
 *--do-keymap-auto*::
     Force keymap selection at boot.
 
-*--no-keymap*::
-    Disables keymap selection at boot.
+*--*[*no-*]*keymap*::
+    Enables or disables keymap selection at boot.
 
-*--lvm*::
-    Add in LVM support from static binaries if they exist on the
-    system,  or compile static LVM binaries if static ones do not
-    exist.
+*--*[*no-*]*lvm*::
+	Adds or skips in LVM support from static binaries if they exist on the
+	system,  or compile static LVM binaries if static ones do not exist.
 
-*--mdadm*::
-    Include mdadm/mdmon support.
+*--*[*no-*]*mdadm*::
+    Includes or excludes mdadm/mdmon support.
     Without sys-fs/mdadm[static] installed, this will compile mdadm for you.
 
 *--mdadm-config*=<file>::
@@ -258,14 +257,14 @@ INITIALIZATION
     By default the ramdisk will be built *without* an mdadm.conf and
     will auto-detect arrays during boot-up.
 
-*--dmraid*::
-    Include DMRAID support.
+*--*[*no-*]*dmraid*::
+    Includes or excludes DMRAID support.
 
-*--multipath*::
-    Include Multipath support
+*--*[*no-*]*multipath*::
+    Includes or excludes Multipath support
 
-*--iscsi*::
-    Include iSCSI support
+*--*[*no-*]*iscsi*::
+    Includes or excludes iSCSI support
 
 *--bootloader*=*grub*::
     Add new kernel to GRUB configuration.
@@ -279,27 +278,27 @@ INITIALIZATION
 *--genzimage*::
 	Make and install kernelz image from 'arch/powerpc/boot/zImage.initrd'.
 
-*--disklabel*::
-    Include disk label and uuid support in your initrd.
+*--*[*no-*]*disklabel*::
+    Includes or excludes disk label and uuid support in your initrd.
 
-*--luks*::
-    Add in Luks support from static binaries if they exist on the
-    system.
+*--*[*no-*]*luks*::
+	Includes or excludes Luks support from static binaries if they exist on
+	the system.
 
-*--gpg*::
-    Add support for GnuPG 1.x, the portable standalone branch of GnuPG.
-    A key can be made from
+*--*[*no-*]*gpg*::
+	Includes or excludes support for GnuPG 1.x, the portable standalone branch
+	of GnuPG. A key can be made from
     `gpg --symmetric -o /path/to/LUKS-key.gpg /path/to/LUKS-key` .
     After that, re-point the *root_key* argument to the new .gpg file.
 
-*--no-busybox*::
-    Do not include busybox in the initrd or initramfs.
+*--*[*no-*]*busybox*::
+    Includes or excludes busybox in the initrd or initramfs.
 
-*--unionfs*::
-    Include support for unionfs
+*--*[*no-*]*unionfs*::
+    Includes or excludes support for unionfs
 
-*--netboot*::
-    Create a self-contained env in the initramfs
+*--*[*no-*]*netboot*::
+    Creates or does not create a self-contained env in the initramfs
 
 *--real-root*=<foo>::
     Specify a default for *real_root*= kernel option.
@@ -317,8 +316,8 @@ INTERNALS
 *--tempdir*=<dir>::
     Sets genkernel's temporary working directory to <dir>.
 
-*--postclear*::
-    Clear all tmp files and caches after genkernel has run.
+*--*[*no-*]*postclear*::
+	Clears or skips clearing all tmp files and caches after genkernel has run.
 
 
 OUTPUT SETTINGS
@@ -339,7 +338,7 @@ OUTPUT SETTINGS
     and the kernel config.  NOTE: This is created before the callbacks
     are run.
 
-*--no-kernel-sources*=<tbz2>::
+*--*[*no-*]*kernel-sources*::
     This option is only valid if kerncache is defined If there is a
     valid kerncache no checks will be made against a kernel source
     tree.
@@ -348,8 +347,8 @@ OUTPUT SETTINGS
     Directory structure to include in the initramfs, only available
     on >=2.6 kernels
 
-*--firmware*::
-    Enable copying of firmware into initramfs.
+*--*[*no-*]*firmware*::
+    Enable or disables copying of firmware into initramfs.
 
 *--firmware-dir*=<dir>::
     Specify directory to copy firmware from (defaults to '/lib/firmware').
@@ -358,8 +357,9 @@ OUTPUT SETTINGS
     Specifies specific firmware files to copy. This overrides *--firmware-dir*.
     For multiple files, separate the filenames with a comma.
 
-*--integrated-initramfs*::
-    Build the generated initramfs into the kernel instead of keeping it as a separate file.
+*--*[*no-*]*integrated-initramfs*::
+	Builds or does not build the generated initramfs into the kernel instead
+	of keeping it as a separate file.
 
 
 RAMDISK OPTIONS
@@ -573,6 +573,8 @@ AUTHORS
 -------
 - Tim Yamin <plasmaroo@gentoo.org>
 - Eric Edgar <rocket@gentoo.org>
+- Chris Gianelloni <wolf31o2@gentoo.org>
+- Sebastian Pipping <sebastian@pipping.org>
 - NFS Support by Thomas Seiler <thseiler@gmail.com>
 - GnuPG 1.x integration by dacook <schism@subverted.org>
 - MDADM integration by Matthias Dahl <ua_bugz_gentoo@mortal-soul.de>

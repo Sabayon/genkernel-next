@@ -2,7 +2,7 @@
 # $Id$
 
 get_KV() {
-	if [ "${NO_KERNEL_SOURCES}" = '1' -a -e "${KERNCACHE}" ]
+	if [ "${KERNEL_SOURCES}" = '0' -a -e "${KERNCACHE}" ]
 	then
 		/bin/tar -xj -C ${TEMP} -f ${KERNCACHE} kerncache.config 
 		if [ -e ${TEMP}/kerncache.config ]
@@ -72,7 +72,7 @@ determine_real_args() {
 	#                               ------------------   ------------             ------------
 	set_config_with_override STRING LOGFILE              CMD_LOGFILE
 	set_config_with_override STRING KERNEL_DIR           CMD_KERNEL_DIR           "${DEFAULT_KERNEL_SOURCE}"
-	set_config_with_override BOOL   NO_KERNEL_SOURCES    CMD_NO_KERNEL_SOURCES
+	set_config_with_override BOOL   KERNEL_SOURCES		 CMD_KERNEL_SOURCES
 	set_config_with_override STRING KNAME                CMD_KERNNAME             "genkernel"
 
 	set_config_with_override STRING MAKEOPTS             CMD_MAKEOPTS             "$DEFAULT_MAKEOPTS"
@@ -98,7 +98,7 @@ determine_real_args() {
 	set_config_with_override STRING MINKERNPACKAGE       CMD_MINKERNPACKAGE
 	set_config_with_override STRING MODULESPACKAGE       CMD_MODULESPACKAGE
 	set_config_with_override STRING KERNCACHE            CMD_KERNCACHE
-	set_config_with_override BOOL   NORAMDISKMODULES     CMD_NORAMDISKMODULES
+	set_config_with_override BOOL   RAMDISKMODULES       CMD_RAMDISKMODULES
 	set_config_with_override BOOL   ALLRAMDISKMODULES    CMD_ALLRAMDISKMODULES
 	set_config_with_override STRING INITRAMFS_OVERLAY    CMD_INITRAMFS_OVERLAY
 	set_config_with_override BOOL   MOUNTBOOT            CMD_MOUNTBOOT
@@ -128,6 +128,7 @@ determine_real_args() {
 	set_config_with_override BOOL   KEYMAP               CMD_KEYMAP               "yes"
 	set_config_with_override BOOL   DOKEYMAPAUTO         CMD_DOKEYMAPAUTO
 	set_config_with_override STRING BUSYBOX_CONFIG       CMD_BUSYBOX_CONFIG
+	set_config_with_override BOOL   INSTALL              CMD_INSTALL
 
 	BOOTDIR=`arch_replace "${BOOTDIR}"`
 	BOOTDIR=${BOOTDIR%/}    # Remove any trailing slash
@@ -167,7 +168,7 @@ determine_real_args() {
 		fi
 	fi
 
-	if [ "${NO_KERNEL_SOURCES}" != "1" ]
+	if [ "${KERNEL_SOURCES}" != "0" ]
 	then
 		if [ ! -d ${KERNEL_DIR} ]
 		then
@@ -177,11 +178,11 @@ determine_real_args() {
 
 	if [ -z "${KERNCACHE}" ]
 	then
-		if [ "${KERNEL_DIR}" = '' -a "${NO_KERNEL_SOURCES}" != "1" ]
+		if [ "${KERNEL_DIR}" = '' -a "${KERNEL_SOURCES}" != "0" ]
 		then
 			gen_die 'No kernel source directory!'
 		fi
-		if [ ! -e "${KERNEL_DIR}" -a "${NO_KERNEL_SOURCES}" != "1" ]
+		if [ ! -e "${KERNEL_DIR}" -a "${KERNEL_SOURCES}" != "0" ]
 		then
 			gen_die 'No kernel source directory!'
 		fi

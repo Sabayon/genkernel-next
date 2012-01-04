@@ -257,7 +257,7 @@ fi
 
 clear_tmpdir()
 {
-if ! isTrue ${CMD_NOINSTALL}
+if isTrue ${CMD_INSTALL}
 then
 	TMPDIR_CONTENTS=`ls ${TMPDIR}`
 	print_info 1 "Removing tmp dir contents"

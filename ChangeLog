@@ -5,6 +5,14 @@
 # Distributed under the GPL v2
 # $Id$
 
+  04 Jan 2012; Robin H. Johnson <robbat2@gentoo.org> arch/mips/config.sh,
+  doc/genkernel.8.txt, gen_cmdline.sh, gen_compile.sh, gen_determineargs.sh,
+  gen_funcs.sh, gen_initramfs.sh, genkernel, genkernel.conf:
+  Provide real boolean commandline options for options that were previously
+  only available as booleans in the config, so that they can be enable in
+  configuration and overridden to disable on the commandline. Remove negation
+  on options: NOINSTALL, NORAMDISKMODULES, NO_KERNEL_SOURCES.
+
   08 Nov 2011; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.20
 
