@@ -5,6 +5,13 @@
 # Distributed under the GPL v2
 # $Id$
 
+  04 Jan 2012; Sebastian Pipping <sping@gentoo.org> arch/um/busy-config,
+  defaults/busy-config, netboot/busy-config:
+  Set CONFIG_NFSMOUNT=n in busybox config to fix compilation with glibc 2.14.
+
+  Special thanks:
+  - Borg Onion
+
   04 Jan 2012; Robin H. Johnson <robbat2@gentoo.org> arch/mips/config.sh,
   doc/genkernel.8.txt, gen_cmdline.sh, gen_compile.sh, gen_determineargs.sh,
   gen_funcs.sh, gen_initramfs.sh, genkernel, genkernel.conf:
