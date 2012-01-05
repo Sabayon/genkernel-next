@@ -387,9 +387,9 @@ which the ramdisk scripts would recognize.
     root_key.   If unset while using root_key, it will automatically
     look for the device in every boot.
 
-*root_trim*=yes|no::
-    Allows you to enable TRIM support on root device. Only useful
-    for SSD setups. Have a look at http://en.wikipedia.org/wiki/TRIM
+*root_trim*=(yes|no)::
+    Enables TRIM support for a Luks-based root device.  Only useful
+    with SSD setups.  Have a look at 'http://en.wikipedia.org/wiki/TRIM'
     for more information.
 
 *swap_key*=<...>::
