@@ -6,7 +6,7 @@
 # $Id$
 
   05 Jan 2012; Sebastian Pipping <sping@gentoo.org> genkernel:
-  Bump version to 3.4.21
+  Bump version to 3.4.21.1
 
   05 Jan 2012; Sebastian Pipping <sping@gentoo.org> defaults/initrd.scripts,
   defaults/linuxrc, doc/genkernel.8.txt:
