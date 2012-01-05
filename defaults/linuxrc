@@ -189,6 +189,10 @@ do
 		root_keydev=*)
 			CRYPT_ROOT_KEYDEV=${x#*=}
 		;;
+		root_trim=*)
+			CRYPT_ROOT_TRIM=${x#*=}
+		;;
+
 		swap_key=*)
 			CRYPT_SWAP_KEY=${x#*=}
 		;;

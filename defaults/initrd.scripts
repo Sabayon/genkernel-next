@@ -732,7 +732,7 @@ openLUKS() {
 			;;
 	esac
 
-	eval local LUKS_DEVICE='"${CRYPT_'${TYPE}'}"' LUKS_NAME="$1" LUKS_KEY='"${CRYPT_'${TYPE}'_KEY}"' LUKS_KEYDEV='"${CRYPT_'${TYPE}'_KEYDEV}"'
+	eval local LUKS_DEVICE='"${CRYPT_'${TYPE}'}"' LUKS_NAME="$1" LUKS_KEY='"${CRYPT_'${TYPE}'_KEY}"' LUKS_KEYDEV='"${CRYPT_'${TYPE}'_KEYDEV}"' LUKS_TRIM='"${CRYPT_'${TYPE}'_TRIM}"'
 	local DEV_ERROR=0 KEY_ERROR=0 KEYDEV_ERROR=0
 	local mntkey="/mnt/key/" cryptsetup_options=''
 
@@ -793,6 +793,12 @@ openLUKS() {
 				continue
 			else
 				# Handle keys
+				if [ "x${LUKS_TRIM}" = "xyes" ]
+				then
+					good_msg "Enabling TRIM support for ${LUKS_NAME}." ${CRYPT_SILENT}
+					cryptsetup_options="${cryptsetup_options} --allow-discards"
+				fi
+
 				if [ -n "${LUKS_KEY}" ] 
 				then
 					if [ ! -e "${mntkey}${LUKS_KEY}" ] 
