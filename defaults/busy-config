@@ -287,8 +287,8 @@ CONFIG_WHICH=y
 #
 # Editors
 #
-# CONFIG_AWK is not set
-# CONFIG_FEATURE_AWK_MATH is not set
+CONFIG_AWK=y
+CONFIG_FEATURE_AWK_MATH=n
 # CONFIG_CMP is not set
 # CONFIG_DIFF is not set
 # CONFIG_FEATURE_DIFF_BINARY is not set
