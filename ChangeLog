@@ -5,6 +5,16 @@
 # Distributed under the GPL v2
 # $Id$
 
+  06 Jan 2012; Robin H. Johnson <robbat2@gentoo.org> defaults/busy-config:
+  Awk support in busybox is needed for initramfs setup code (to parse fstab).
+
+  06 Jan 2012; Robin H. Johnson <robbat2@gentoo.org> TODO:
+  Multipath has been done for a while now.
+
+  06 Jan 2012; Robin H. Johnson <robbat2@gentoo.org> genkernel.conf:
+  Add a configuration option for --install, so users can get it as a default.
+  Defaults to "no", due to catalyst.
+
   06 Jan 2012; Robin H. Johnson <robbat2@gentoo.org> ChangeLog:
   Fix up changelog
 
