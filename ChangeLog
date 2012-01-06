@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  06 Jan 2012; Robin H. Johnson <robbat2@gentoo.org> gen_determineargs.sh,
+  genkernel.conf:
+  Fix some defaults otherwise you get an initramfs without any modules!
+
   06 Jan 2012; Robin H. Johnson <robbat2@gentoo.org> defaults/busy-config:
   Awk support in busybox is needed for initramfs setup code (to parse fstab).
 

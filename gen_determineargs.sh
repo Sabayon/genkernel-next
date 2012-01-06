@@ -72,7 +72,7 @@ determine_real_args() {
 	#                               ------------------   ------------             ------------
 	set_config_with_override STRING LOGFILE              CMD_LOGFILE
 	set_config_with_override STRING KERNEL_DIR           CMD_KERNEL_DIR           "${DEFAULT_KERNEL_SOURCE}"
-	set_config_with_override BOOL   KERNEL_SOURCES		 CMD_KERNEL_SOURCES
+	set_config_with_override BOOL   KERNEL_SOURCES       CMD_KERNEL_SOURCES       "yes"
 	set_config_with_override STRING KNAME                CMD_KERNNAME             "genkernel"
 
 	set_config_with_override STRING MAKEOPTS             CMD_MAKEOPTS             "$DEFAULT_MAKEOPTS"
@@ -98,8 +98,8 @@ determine_real_args() {
 	set_config_with_override STRING MINKERNPACKAGE       CMD_MINKERNPACKAGE
 	set_config_with_override STRING MODULESPACKAGE       CMD_MODULESPACKAGE
 	set_config_with_override STRING KERNCACHE            CMD_KERNCACHE
-	set_config_with_override BOOL   RAMDISKMODULES       CMD_RAMDISKMODULES
-	set_config_with_override BOOL   ALLRAMDISKMODULES    CMD_ALLRAMDISKMODULES
+	set_config_with_override BOOL   RAMDISKMODULES       CMD_RAMDISKMODULES        "yes"
+	set_config_with_override BOOL   ALLRAMDISKMODULES    CMD_ALLRAMDISKMODULES     "no"
 	set_config_with_override STRING INITRAMFS_OVERLAY    CMD_INITRAMFS_OVERLAY
 	set_config_with_override BOOL   MOUNTBOOT            CMD_MOUNTBOOT
 	set_config_with_override BOOL   BUILD_STATIC         CMD_STATIC
@@ -128,7 +128,7 @@ determine_real_args() {
 	set_config_with_override BOOL   KEYMAP               CMD_KEYMAP               "yes"
 	set_config_with_override BOOL   DOKEYMAPAUTO         CMD_DOKEYMAPAUTO
 	set_config_with_override STRING BUSYBOX_CONFIG       CMD_BUSYBOX_CONFIG
-	set_config_with_override BOOL   INSTALL              CMD_INSTALL
+	set_config_with_override BOOL   INSTALL              CMD_INSTALL              "no"
 
 	BOOTDIR=`arch_replace "${BOOTDIR}"`
 	BOOTDIR=${BOOTDIR%/}    # Remove any trailing slash
