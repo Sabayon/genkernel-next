@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  06 Jan 2012; Robin H. Johnson <robbat2@gentoo.org> genkernel:
+  Bump to 3.4.22 to reflect /usr mount support.
+
   06 Jan 2012; Robin H. Johnson <robbat2@gentoo.org> defaults/initrd.scripts,
   defaults/linuxrc:
   Code to mount /usr and other filesystems as needed for new udev and systemd.
