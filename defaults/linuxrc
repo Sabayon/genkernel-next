@@ -701,6 +701,24 @@ else
 	fi
 fi
 
+# Mount the additional things as required by udev & systemd
+if [ ! -f ${NEW_ROOT}/etc/initramfs.mounts ]; then
+	fslist="/usr"
+else
+	fslist=$(get_mounts_list)
+fi
+
+for fs in $fslist; do
+	dev=$(get_mount_device $fs)
+	# In this case, it's probably part of the filesystem
+	# and not a mountpoint
+	[ -z "$dev" ] && continue
+	opts="ro,$(get_mount_options \"$fs\")"
+	if ! mount -o ${opts} $dev ${NEW_ROOT}${fs}; then
+		rescue_shell "Unable to mount $dev on $fs"
+	fi
+done
+
 # Execute script on the cdrom just before boot to update things if necessary
 cdupdate
 
@@ -746,10 +764,11 @@ exec /sbin/switch_root -c "/dev/console" "${CHROOT}" "${REAL_INIT:-/sbin/init}" 
 # If we get here, something bad has happened
 splash 'verbose'
 
-echo 'A fatal error has probably occured since /sbin/init did not'
-echo 'boot correctly. Trying to open a shell...'
+echo "A fatal error has probably occured since ${REAL_INIT:-/sbin/init} did not"
+echo "boot correctly. Trying to open a shell..."
 echo
 exec /bin/bash
 exec /bin/sh
 exec /bin/ash
+exec /bin/dash
 exec sh

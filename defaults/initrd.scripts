@@ -1178,3 +1178,28 @@ setup_unionfs() {
 		USE_UNIONFS_NORMAL=0
 	fi
 }
+
+get_mounts_list()
+{
+	awk '
+		/^[[:blank:]]*#/ { next }
+		{ print $1 }
+		' ${NEW_ROOT}/etc/initramfs.mounts
+}
+
+get_mount_options()
+{
+	awk -v fs="$1" '
+		/^[[:blank:]]*#/ { next }
+		$2 == fs { print $3 }
+		' ${NEW_ROOT}/etc/fstab
+}
+
+get_mount_device()
+{
+	awk -v fs="$1" '
+		/^[[:blank:]]*#/ { next }
+		$2 == fs { print $1 }
+		' ${NEW_ROOT}/etc/fstab
+}
+
