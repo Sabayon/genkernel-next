@@ -519,6 +519,7 @@ compile_dmraid() {
 			gen_die "Could not extract device-mapper binary cache!";
 
 		cd "${DMRAID_DIR}"
+		apply_patches dmraid ${DMRAID_VER}
 		print_info 1 'dmraid: >> Configuring...'
 
 		LDFLAGS="-L${TEMP}/device-mapper/lib" \
@@ -560,6 +561,7 @@ compile_device_mapper() {
 		[ ! -d "${DEVICE_MAPPER_DIR}" ] &&
 			gen_die "device-mapper directory ${DEVICE_MAPPER_DIR} invalid"
 		cd "${DEVICE_MAPPER_DIR}"
+		apply_patches device-mapper ${DEVICE_MAPPER_VER}
 		CFLAGS="-fPIC" \
 		./configure --prefix=${TEMP}/device-mapper --enable-static_link \
 			--disable-selinux >> ${LOGFILE} 2>&1 ||
@@ -596,6 +598,7 @@ compile_e2fsprogs() {
 		[ ! -d "${E2FSPROGS_DIR}" ] &&
 			gen_die "e2fsprogs directory ${E2FSPROGS_DIR} invalid"
 		cd "${E2FSPROGS_DIR}"
+		apply_patches e2fsprogs ${E2FSPROGS_VER}
 		print_info 1 'e2fsprogs: >> Configuring...'
 		LDFLAGS=-static ./configure >> ${LOGFILE} 2>&1 ||
 			gen_die 'Configuring e2fsprogs failed!'
@@ -627,6 +630,7 @@ compile_fuse() {
 		[ ! -d "${FUSE_DIR}" ] &&
 			gen_die "fuse directory ${FUSE_DIR} invalid"
 		cd "${FUSE_DIR}"
+		apply_patches fuse ${FUSE_VER}
 		print_info 1 'fuse: >> Configuring...'
 		./configure  --disable-kernel-module --disable-example >> ${LOGFILE} 2>&1 ||
 			gen_die 'Configuring fuse failed!'
@@ -663,6 +667,7 @@ compile_unionfs_fuse() {
 		[ ! -d "${UNIONFS_FUSE_DIR}" ] &&
 			gen_die "unionfs-fuse directory ${UNIONFS_FUSE_DIR} invalid"
 		cd "${UNIONFS_FUSE_DIR}"
+		apply_patches unionfs-fuse ${UNIONFS_FUSE_VER}
 		print_info 1 'unionfs-fuse: >> Compiling...'
 		sed -i "/^\(CFLAGS\|CPPFLAGS\)/s:^\\(.*\\)$:\\1 -static -I${TEMP}/${FUSE_DIR}/include -L${TEMP}/${FUSE_DIR}/lib/.libs:" Makefile src/Makefile
 		sed -i "/^LIB = /s:^LIB = \(.*\)$:LIB = -static -L${TEMP}/${FUSE_DIR}/lib/.libs \1 -ldl -lrt:" Makefile src/Makefile
@@ -745,6 +750,7 @@ compile_gpg() {
 		[ ! -d "${GPG_DIR}" ] &&
 			gen_die "gnupg directory ${GPG_DIR} invalid"
 		cd "${GPG_DIR}"
+		apply_patches gnupg ${GPG_VER}
 		print_info 1 'gnupg: >> Configuring...'
 		# --enable-minimal works, but it doesn't reduce the command length much.
 		# Given its history and the precision this needs, explicit is cleaner.
