@@ -128,7 +128,7 @@ determine_real_args() {
 	set_config_with_override BOOL   KEYMAP               CMD_KEYMAP               "yes"
 	set_config_with_override BOOL   DOKEYMAPAUTO         CMD_DOKEYMAPAUTO
 	set_config_with_override STRING BUSYBOX_CONFIG       CMD_BUSYBOX_CONFIG
-	set_config_with_override BOOL   INSTALL              CMD_INSTALL              "no"
+	set_config_with_override BOOL   INSTALL              CMD_INSTALL              "yes"
 
 	BOOTDIR=`arch_replace "${BOOTDIR}"`
 	BOOTDIR=${BOOTDIR%/}    # Remove any trailing slash

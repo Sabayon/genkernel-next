@@ -5,6 +5,13 @@
 # Distributed under the GPL v2
 # $Id$
 
+  13 Jan 2012; Robin H. Johnson <robbat2@gentoo.org> gen_determineargs.sh:
+  Prior to commit a141d715, CMD_NOINSTALL had no default set, but most of the
+  usages were of the form "! isTrue ${CMD_NOINSTALL}", which on an unset value,
+  came out as false. These were replaced by "isTrue ${CMD_INSTALL}", but my
+  analysis of the needed default value was wrong, and was set to false instead
+  of true.
+
   13 Jan 2012; Sebastian Pipping <sping@gentoo.org> genkernel.conf:
   Replace "# FOO=bar" by "#FOO=bar" in genkernel.conf to (1) distinguish
   commented-out options from their explanatory comments and (2) to return
