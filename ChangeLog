@@ -5,6 +5,11 @@
 # Distributed under the GPL v2
 # $Id$
 
+  13 Jan 2012; Sebastian Pipping <sping@gentoo.org> genkernel.conf:
+  Replace "# FOO=bar" by "#FOO=bar" in genkernel.conf to (1) distinguish
+  commented-out options from their explanatory comments and (2) to return
+  consistenty (bug #398471)
+
   12 Jan 2012; Sebastian Pipping <sping@gentoo.org> gen_compile.sh:
   Support application of patches before compilation for tools which previously
   lacked that support. Special thanks to Tomasz Wasiak (bug #398469)
