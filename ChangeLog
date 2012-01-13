@@ -6,6 +6,10 @@
 # $Id$
 
   13 Jan 2012; Sebastian Pipping <sping@gentoo.org>
+  +patches/e2fsprogs/1.42/e2fsprogs-1.41.12-getpagesize.patch:
+  Add a patch for e2fsprogs/1.42 from main tree
+
+  13 Jan 2012; Sebastian Pipping <sping@gentoo.org>
   +patches/lvm/2.02.88/lvm2-2.02.72-no-export-dynamic.patch:
   Copy patch from lvm/2.02.74 to lvm/2.02.88
 
