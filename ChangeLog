@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  13 Jan 2012; Sebastian Pipping <sping@gentoo.org>
+  +patches/lvm/2.02.88/lvm2-2.02.72-no-export-dynamic.patch:
+  Copy patch from lvm/2.02.74 to lvm/2.02.88
+
   13 Jan 2012; Robin H. Johnson <robbat2@gentoo.org> gen_determineargs.sh:
   Prior to commit a141d715, CMD_NOINSTALL had no default set, but most of the
   usages were of the form "! isTrue ${CMD_NOINSTALL}", which on an unset value,
