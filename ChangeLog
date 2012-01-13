@@ -6,6 +6,11 @@
 # $Id$
 
   13 Jan 2012; Sebastian Pipping <sping@gentoo.org>
+  +patches/busybox/1.19.3/1.18.1-openvt.diff,
+  +patches/busybox/1.19.3/busybox-1.7.4-signal-hack.patch:
+  Copy patches from busybox/1.18.1 to busybox/1.19.3
+
+  13 Jan 2012; Sebastian Pipping <sping@gentoo.org>
   +patches/e2fsprogs/1.42/e2fsprogs-1.41.12-getpagesize.patch:
   Add a patch for e2fsprogs/1.42 from main tree
 
