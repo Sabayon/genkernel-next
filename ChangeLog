@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  13 Jan 2012; Sebastian Pipping <sping@gentoo.org> defaults/busy-config:
+  Update busybox config using "yes '' | make oldconfig"
+
   13 Jan 2012; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.23
 
