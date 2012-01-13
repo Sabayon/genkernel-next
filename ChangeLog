@@ -6,6 +6,9 @@
 # $Id$
 
   13 Jan 2012; Sebastian Pipping <sping@gentoo.org> defaults/busy-config:
+  Busybox config: Enable verbose usage
+
+  13 Jan 2012; Sebastian Pipping <sping@gentoo.org> defaults/busy-config:
   Update busybox config using "yes '' | make oldconfig"
 
   13 Jan 2012; Sebastian Pipping <sping@gentoo.org> genkernel:
