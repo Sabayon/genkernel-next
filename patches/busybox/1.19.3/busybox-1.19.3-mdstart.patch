@@ -1,0 +1,130 @@
+From b971b7317af525b1887d4af473307f8084015f02 Mon Sep 17 00:00:00 2001
+From: Sebastian Pipping <sebastian@pipping.org>
+Date: Sat, 14 Jan 2012 23:38:17 +0100
+Subject: [PATCH] Port mdstart patch to busybox 1.19.3
+
+---
+ include/applets.src.h |    1 +
+ util-linux/Config.src |    7 +++++
+ util-linux/Kbuild.src |    1 +
+ util-linux/mdStart.c  |   66 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 75 insertions(+), 0 deletions(-)
+ create mode 100644 util-linux/mdStart.c
+
+diff --git a/include/applets.src.h b/include/applets.src.h
+index 87d9cbb..331145c 100644
+--- a/include/applets.src.h
++++ b/include/applets.src.h
+@@ -241,6 +241,7 @@ IF_MAN(APPLET(man, BB_DIR_SBIN, BB_SUID_DROP))
+ IF_MATCHPATHCON(APPLET(matchpathcon, BB_DIR_USR_SBIN, BB_SUID_DROP))
+ IF_MD5SUM(APPLET_NOEXEC(md5sum, md5_sha1_sum, BB_DIR_USR_BIN, BB_SUID_DROP, md5sum))
+ IF_MDEV(APPLET(mdev, BB_DIR_SBIN, BB_SUID_DROP))
++IF_MDSTART(APPLET(mdstart, BB_DIR_SBIN, BB_SUID_DROP))
+ IF_MICROCOM(APPLET(microcom, BB_DIR_USR_BIN, BB_SUID_DROP))
+ IF_MKDIR(APPLET_NOFORK(mkdir, mkdir, BB_DIR_BIN, BB_SUID_DROP, mkdir))
+ IF_MKFS_VFAT(APPLET_ODDNAME(mkdosfs, mkfs_vfat, BB_DIR_SBIN, BB_SUID_DROP, mkfs_vfat))
+diff --git a/util-linux/Config.src b/util-linux/Config.src
+index bb45705..2f60d04 100644
+--- a/util-linux/Config.src
++++ b/util-linux/Config.src
+@@ -462,6 +462,13 @@ config FEATURE_MDEV_LOAD_FIRMWARE
+ 	  /lib/firmware/ and if it exists, send it to the kernel for
+ 	  loading into the hardware.
+ 
++config MDSTART
++	bool "mdstart"
++	default n
++	help
++	  Allows you to autostart /dev/md devices if using an initramfs to
++	  boot.
++
+ config MKSWAP
+ 	bool "mkswap"
+ 	default y
+diff --git a/util-linux/Kbuild.src b/util-linux/Kbuild.src
+index c06d911..98cbb09 100644
+--- a/util-linux/Kbuild.src
++++ b/util-linux/Kbuild.src
+@@ -24,6 +24,7 @@ lib-$(CONFIG_HWCLOCK)           += hwclock.o
+ lib-$(CONFIG_IPCRM)             += ipcrm.o
+ lib-$(CONFIG_IPCS)              += ipcs.o
+ lib-$(CONFIG_LOSETUP)           += losetup.o
++lib-$(CONFIG_MDSTART)           += mdStart.o
+ lib-$(CONFIG_LSPCI)             += lspci.o
+ lib-$(CONFIG_LSUSB)             += lsusb.o
+ lib-$(CONFIG_MDEV)              += mdev.o
+diff --git a/util-linux/mdStart.c b/util-linux/mdStart.c
+new file mode 100644
+index 0000000..0c55bab
+--- /dev/null
++++ b/util-linux/mdStart.c
+@@ -0,0 +1,66 @@
++/*
++ * Linux 2.6(+) RAID Autostarter
++ *
++ * Copyright (C) 2005 by Tim Yamin <plasmaroo@gentoo.org> <plasm@roo.me.uk>
++ * Copyright (C) 2012 by Sebastian Pipping <sebastian@pipping.org>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
++ * General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
++ *
++ */
++
++//usage:#define mdstart_trivial_usage
++//usage:	"[PARTITION] MD-NODE [[PARTITION] MD-NODE ...]"
++//usage:
++//usage:#define mdstart_full_usage "\n\n"
++//usage:	"Run the RAID_AUTORUN ioctl on the given MD number"
++
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++#include <sys/ioctl.h>
++#include <linux/major.h>
++#include <linux/raid/md_u.h>
++
++extern int
++mdstart_main(int argc, char *argv[])
++{
++	int i, fd, part = 0, retval = 0;
++
++	if(argc < 2)
++	{
++		bb_show_usage();
++	}
++
++	for(i = 1; i < argc; i++)
++	{
++		if(sscanf(argv[i], "%d", &part) == 1)
++			continue;
++
++		fd = open(argv[i], 0, 0);
++		if (fd >= 0)
++		{
++			ioctl(fd, RAID_AUTORUN, part);
++			close(fd);
++		} else
++		{
++			printf("Error: Failed to open %s!\n", argv[i]);
++			retval=1;
++		}
++
++		part = 0;
++	}
++
++	return retval;
++}
+-- 
+1.7.8.3
+

@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  14 Jan 2012; Sebastian Pipping <sping@gentoo.org>
+  +patches/busybox/1.19.3/busybox-1.19.3-mdstart.patch:
+  Port mdstart patch to busybox 1.19.3
+
   13 Jan 2012; Sebastian Pipping <sping@gentoo.org> defaults/busy-config:
   Busybox config: Enable verbose usage
 
