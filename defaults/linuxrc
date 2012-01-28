@@ -96,6 +96,19 @@ do
 			DMRAID_OPTS=${x#*=}
 			USE_DMRAID_NORMAL=1
 		;;
+		dozfs*)
+			if [ ! -x /sbin/zfs ]; then
+				USE_ZFS=0
+				bad_msg 'zfs binary not found: aborting use of zfs!'
+			else
+				USE_ZFS=1
+				MY_HWOPTS="${MY_HWOPTS} zfs"
+				if [ "${x#*=}" = 'force' ]
+				then
+					ZPOOL_FORCE=-f
+				fi
+			fi
+		;;
 		# Debug Options
 		debug)
 			DEBUG='yes'
@@ -444,6 +457,49 @@ do
 					continue
 				fi
 				;;
+			ZFS*)
+				ROOT_DEV="${REAL_ROOT#*=}"
+				if [ "${ROOT_DEV}" != 'ZFS' ] 
+				then
+					zfs get type ${ROOT_DEV} > /dev/null
+
+					if [ "$?" = '0' ]
+					then
+						got_good_root=1;
+						REAL_ROOT=${ROOT_DEV}
+						ROOTFSTYPE=zfs
+					fi
+				else
+					BOOTFS=$(/sbin/zpool list -H -o bootfs)
+					if [ "${BOOTFS}" != '-' ]
+					then
+
+						for i in ${BOOTFS}
+						do
+
+							zfs get type ${i} > /dev/null
+							retval=$?
+
+							if [ ${retval} -eq 0 ];	then
+								got_good_root=1
+								REAL_ROOT=${i}
+								ROOTFSTYPE=zfs
+								break
+							fi	
+						
+						done;
+
+					fi
+
+				fi
+
+				if [ ${got_good_root} -ne 1 ]; then
+					prompt_user "REAL_ROOT" "root block device"
+					got_good_root=0
+				fi
+					
+				continue
+				;;
 		esac
 
 		if [ "${REAL_ROOT}" = '' ]
@@ -477,17 +533,24 @@ do
 	else
 		good_msg "Mounting root..."
 
+		if [ "${ROOTFSTYPE}" = 'zfs' ]
+		then
+			MOUNT_STATE=rw
+		else
+			MOUNT_STATE=ro
+		fi
+
 		# Try to mount the device as ${NEW_ROOT}
 		if [ "${REAL_ROOT}" = '/dev/nfs' ]; then
 			findnfsmount
 		else
 			# mount ro so fsck doesn't barf later
 			if [ "${REAL_ROOTFLAGS}" = '' ]; then
-				good_msg "Using mount -t ${ROOTFSTYPE} -o ro"
-				mount -t ${ROOTFSTYPE} -o ro ${REAL_ROOT} ${NEW_ROOT}
+				good_msg "Using mount -t ${ROOTFSTYPE} -o ${MOUNT_STATE}"
+				mount -t ${ROOTFSTYPE} -o ${MOUNT_STATE} ${REAL_ROOT} ${NEW_ROOT}
 			else
-				good_msg "Using mount -t ${ROOTFSTYPE} -o ro,${REAL_ROOTFLAGS}"
-				mount -t ${ROOTFSTYPE} -o ro,${REAL_ROOTFLAGS} ${REAL_ROOT} ${NEW_ROOT}
+				good_msg "Using mount -t ${ROOTFSTYPE} -o ${MOUNT_STATE},${REAL_ROOTFLAGS}"
+				mount -t ${ROOTFSTYPE} -o ${MOUNT_STATE},${REAL_ROOTFLAGS} ${REAL_ROOT} ${NEW_ROOT}
 			fi
 		fi
 

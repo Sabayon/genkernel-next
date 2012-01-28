@@ -5,6 +5,16 @@
 # Distributed under the GPL v2
 # $Id$
 
+  06 Feb 2012: Richard Yao <ryao@cs.stonybrook.edu> arch/alpha/modules_load,
+  arch/arm/modules_load, arch/ia64/modules_load, arch/mips/modules_load,
+  arch/parisc/modules_load, arch/parisc64/modules_load, arch/ppc/modules_load,
+  arch/ppc64/modules_load, arch/sparc/modules_load, arch/sparc64/modules_load,
+  arch/um/modules_load, arch/x86/modules_load, arch/x86_64/modules_load,
+  defaults/busy-config, defaults/initrd.scripts, defaults/linuxrc,
+  defaults/modules_load, doc/genkernel.8.txt, gen_cmdline.sh,
+  gen_determineargs.sh, gen_initramfs.sh, genkernel:
+  This provides ZFS support, to go with the sys-fs/zfs package.
+
   06 Feb 2012; Robin H. Johnson <robbat2@gentoo.org> gen_initramfs.sh:
   Refactor copy_binaries and multipath slightly for ease of usage and readability.
 

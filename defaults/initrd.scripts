@@ -664,6 +664,11 @@ startVolumes() {
 			bad_msg "vgscan or vgchange not found: skipping LVM volume group activation!"
 		fi
 	fi
+	
+	if [ "${USE_ZFS}" = '1' ]
+	then
+		/sbin/zpool import -N -a ${ZPOOL_FORCE}
+	fi
 }
 
 startiscsi() {

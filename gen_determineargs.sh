@@ -120,6 +120,7 @@ determine_real_args() {
 	set_config_with_override BOOL   GPG                  CMD_GPG
 	set_config_with_override BOOL   MDADM                CMD_MDADM
 	set_config_with_override STRING MDADM_CONFIG         CMD_MDADM_CONFIG
+	set_config_with_override BOOL   ZFS                  CMD_ZFS
 	set_config_with_override BOOL   MULTIPATH            CMD_MULTIPATH
 	set_config_with_override BOOL   FIRMWARE             CMD_FIRMWARE
 	set_config_with_override STRING FIRMWARE_DIR         CMD_FIRMWARE_DIR         "/lib/firmware"

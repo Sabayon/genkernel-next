@@ -328,6 +328,31 @@ append_mdadm(){
 	rm -rf "${TEMP}/initramfs-mdadm-temp" > /dev/null
 }
 
+append_zfs(){
+	if [ -d "${TEMP}/initramfs-zfs-temp" ]
+	then
+		rm -r "${TEMP}/initramfs-zfs-temp"
+	fi
+
+	mkdir -p "${TEMP}/initramfs-zfs-temp/etc/zfs/"
+
+	# Copy files to /etc/zfs
+	for i in /etc/zfs/{zdev.conf,zpool.cache}
+	do
+		cp -a "${i}" "${TEMP}/initramfs-zfs-temp/etc/zfs" \
+			|| gen_die "Could not copy file ${i} for ZFS"
+	done
+
+	# Copy binaries
+	copy_binaries "${TEMP}/initramfs-zfs-temp" /sbin/{mount.zfs,zfs,zpool}
+
+	cd "${TEMP}/initramfs-zfs-temp/"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+			|| gen_die "compressing zfs cpio"
+	cd "${TEMP}"
+	rm -rf "${TEMP}/initramfs-zfs-temp" > /dev/null
+}
+
 append_splash(){
 	splash_geninitramfs=`which splash_geninitramfs 2>/dev/null`
 	if [ -x "${splash_geninitramfs}" ]
@@ -641,6 +666,8 @@ create_initramfs() {
 	else
 		print_info 1 "initramfs: Not copying modules..."
 	fi
+
+	append_data 'zfs' "${ZFS}"
 
 	append_data 'blkid' "${DISKLABEL}"
 

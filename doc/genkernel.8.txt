@@ -260,6 +260,9 @@ INITIALIZATION
 *--*[*no-*]*dmraid*::
     Includes or excludes DMRAID support.
 
+*--*[*no-*]*zfs*::
+    Includes or excludes ZFS support.
+
 *--*[*no-*]*multipath*::
     Includes or excludes Multipath support
 
@@ -439,6 +442,10 @@ which the ramdisk scripts would recognize.
 *domdadm*::
     Scan for RAID arrays on bootup
 
+*dozfs*[=force]::
+    Scan for bootable ZFS pools on bootup. Optionally force import if
+    necessary.
+
 *doscsi*::
     Activate SCSI devices on bootup, necessary when SCSI support is
     compiled as modules and you're using SCSI or SATA devices.
@@ -586,6 +593,7 @@ AUTHORS
 - NFS Support by Thomas Seiler <thseiler@gmail.com>
 - GnuPG 1.x integration by dacook <schism@subverted.org>
 - MDADM integration by Matthias Dahl <ua_bugz_gentoo@mortal-soul.de>
+- ZFS integration by Richard Yao <ryao@cs.stonybrook.edu>
 
 
 SEE ALSO
