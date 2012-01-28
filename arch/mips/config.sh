@@ -7,7 +7,6 @@ KERNEL_MAKE_DIRECTIVE_2=""
 KERNEL_BINARY="./vmlinux"
 
 # Initrd/Initramfs Options
-COMPRESS_INITRD="yes"
 USECOLOR="yes"
 NOINITRDMODULES="yes"
 BUSYBOX=1
@@ -22,6 +21,7 @@ CMD_INSTALL=0
 # Arch-specific defaults that can be overridden in the config file or on the
 # command line.
 #
+DEFAULT_COMPRESS_INITRD="yes"
 DEFAULT_KERNEL_MAKE=make
 DEFAULT_UTILS_MAKE=make
 DEFAULT_UTILS_CC=gcc

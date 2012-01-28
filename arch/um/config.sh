@@ -6,13 +6,14 @@ KERNEL_MAKE_DIRECTIVE="linux"
 KERNEL_MAKE_DIRECTIVE_2=""
 KERNEL_BINARY="linux"
 
-COMPRESS_INITRD=yes
 ARCH_HAVENOPREPARE=yes
 
 #
 # Arch-specific defaults that can be overridden in the config file or on the
 # command line.
 #
+DEFAULT_COMPRESS_INITRD=yes
+
 DEFAULT_MAKEOPTS="-j2"
 
 DEFAULT_KERNEL_MAKE="make ARCH=um"

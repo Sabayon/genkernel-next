@@ -361,6 +361,9 @@ OUTPUT SETTINGS
 	Builds or does not build the generated initramfs into the kernel instead
 	of keeping it as a separate file.
 
+*--*[*no-*]*compress-initramfs*::
+	Compresses or does not compress the generated initramfs.
+
 
 RAMDISK OPTIONS
 ---------------
