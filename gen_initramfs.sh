@@ -3,6 +3,15 @@
 
 CPIO_ARGS="--quiet -o -H newc"
 
+copy_binaries() {
+
+	local destdir=$1 files=$2
+
+	# Copy files
+	lddtree $files | tr ')(' '\n' |awk  '/=>/{ if($3 ~ /^\//){print $3}}' | sort | uniq | cpio -p --make-directories --dereference --quiet $destdir
+
+}
+
 append_base_layout() {
 	if [ -d "${TEMP}/initramfs-base-temp" ]
 	then

@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  06 Feb 2012: Richard Yao <ryao@cs.stonybrook.edu> gen_initramfs.sh:
+  copy_binaries utility function for putting binaries and librares into
+  initramfs (see git commit for full details).
+
   06 Feb 2012; Robin H. Johnson <robbat2@gentoo.org> defaults/initrd.scripts:
   Support virtio devices, and provide fallback of all remaining devices.
 
