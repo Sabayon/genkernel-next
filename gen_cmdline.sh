@@ -151,8 +151,11 @@ longusage() {
   echo "	--integrated-initramfs, --no-integrated-initramfs"
   echo "				Include/exclude the generated initramfs in the kernel"
   echo "				instead of keeping it as a separate file"
-  echo "	--compress-initramfs, --no-compress-initramfs"
+  echo "	--compress-initramfs, --no-compress-initramfs,"
+  echo "	--compress-initrd, --no-compress-initrd"
   echo "				Compress or do not compress the generated initramfs"
+  echo "	--compress-initramfs-type=<arg>"
+  echo "				Compression type for initramfs (best, xz, lzma, bzip2, gzip, lzop)"
 }
 
 usage() {

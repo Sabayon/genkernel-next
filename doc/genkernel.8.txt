@@ -364,8 +364,13 @@ OUTPUT SETTINGS
 	Builds or does not build the generated initramfs into the kernel instead
 	of keeping it as a separate file.
 
-*--*[*no-*]*compress-initramfs*::
+*--*[*no-*]*compress-initramfs*, *--*[*no-*]*compress-initrd*::
 	Compresses or does not compress the generated initramfs.
+
+*--compress-initramfs-type*=<arg>::
+	Compression type for initramfs (best, xz, lzma, bzip2, gzip, lzop).
+	"Best" causes selection of the best available algorithm that is selected
+	in your kernel configuration.
 
 
 RAMDISK OPTIONS
