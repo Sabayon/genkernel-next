@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  06 Feb 2012; Robin H. Johnson <robbat2@gentoo.org> gen_initramfs.sh:
+  Bugfixes in new code branches that I didn't test fully.
+
   06 Feb 2012; Robin H. Johnson <robbat2@gentoo.org> doc/genkernel.8.txt,
   gen_cmdline.sh:
   Update documentation for new initramfs compression.

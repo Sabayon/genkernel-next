@@ -709,22 +709,22 @@ create_initramfs() {
 			case ${COMPRESS_INITRD_TYPE} in
 				xz|lzma|bzip2|gzip2|lzo) compression=${COMPRESS_INITRD_TYPE} ;;
 				best)
-					if grep -sq '^CONFIG_RD_XZ=y' ${KERNEL_DIR}/.config && test -n "${cmd_xz}" ;
+					if grep -sq '^CONFIG_RD_XZ=y' ${KERNEL_DIR}/.config && test -n "${cmd_xz}" ; then
 						compression=xz
-					elif grep -sq '^CONFIG_RD_LZMA=y' ${KERNEL_DIR}/.config && test -n "${cmd_lzma}" ;
+					elif grep -sq '^CONFIG_RD_LZMA=y' ${KERNEL_DIR}/.config && test -n "${cmd_lzma}" ; then
 						compression=lzma
-					elif grep -sq '^CONFIG_RD_BZIP2=y' ${KERNEL_DIR}/.config  && test -n "${cmd_bzip2}" ;
+					elif grep -sq '^CONFIG_RD_BZIP2=y' ${KERNEL_DIR}/.config  && test -n "${cmd_bzip2}" ; then
 						compression=bzip2
-					elif grep -sq '^CONFIG_RD_GZIP=y' ${KERNEL_DIR}/.config && test -n "${cmd_gzip}" ;
+					elif grep -sq '^CONFIG_RD_GZIP=y' ${KERNEL_DIR}/.config && test -n "${cmd_gzip}" ; then
 						compression=gzip
-					elif grep -sq '^CONFIG_RD_LZO=y' ${KERNEL_DIR}/.config && test -n "${cmd_lzop}" ;
+					elif grep -sq '^CONFIG_RD_LZO=y' ${KERNEL_DIR}/.config && test -n "${cmd_lzop}" ; then
 						compression=lzo
 					fi ;;
 			esac
 			case $compression in
 				xz) compress_ext='.xz' compress_cmd="${cmd_xz} -e --check=none -z -f -9" ;;
 				lzma) compress_ext='.lzma' compress_cmd="${cmd_lzma} -z -f -9" ;;
-				bzip2) compress_ext='.bz2' compress_cmd="${cmd_bzip2} -z -f -9"
+				bzip2) compress_ext='.bz2' compress_cmd="${cmd_bzip2} -z -f -9" ;;
 				gzip) compress_ext='.gz' compress_cmd="${cmd_gzip} -f -9" ;;
 				lzo) compress_ext='.lzo' compress_cmd="${cmd_lzop} -f -9" ;;
 			esac
