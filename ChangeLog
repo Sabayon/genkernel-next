@@ -6,6 +6,9 @@
 # $Id$
 
   06 Feb 2012: Richard Yao <ryao@cs.stonybrook.edu> gen_initramfs.sh:
+  Refactor multipath initramfs generation using copy_binaries.
+
+  06 Feb 2012: Richard Yao <ryao@cs.stonybrook.edu> gen_initramfs.sh:
   copy_binaries utility function for putting binaries and librares into
   initramfs (see git commit for full details).
 

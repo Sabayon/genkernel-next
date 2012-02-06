@@ -164,32 +164,8 @@ append_multipath(){
 	mkdir -p "${TEMP}/initramfs-multipath-temp/sbin/"
 	mkdir -p "${TEMP}/initramfs-multipath-temp/lib/"
 
-	# Copy files to /lib
-	for i in /lib/{ld-*,libc-*,libc.*,libdl-*,libdl.*,libdevmapper*so*,libpthread*,librt*,libreadline*,libncurses*}
-	do
-		cp -a "${i}" "${TEMP}/initramfs-multipath-temp/lib" \
-			|| gen_die "Could not copy file ${i} for MULTIPATH"
-	done
-
-	for i in /usr/lib/libaio*
-	do
-		 cp -a "${i}" "${TEMP}/initramfs-multipath-temp/lib" \
-			|| gen_die "Could not copy file ${i} for MULTIPATH"
-	done
-
-	# Copy files to /sbin
-	for i in /sbin/{multipath,kpartx,mpath_prio_*,devmap_name,dmsetup} /lib64/udev/scsi_id
-	do
-		cp -a "${i}" "${TEMP}/initramfs-multipath-temp/sbin" \
-			|| gen_die "Could not copy file ${i} for MULTIPATH"
-	done
-
-	# Copy files to /bin
-	for i in /bin/mountpoint
-	do
-		cp -a "${i}" "${TEMP}/initramfs-multipath-temp/bin" \
-			|| gen_die "Could not copy file ${i} for MULTIPATH"
-	done
+	# Copy files
+	copy_binaries "${TEMP}/initramfs-multipath-temp" "$(echo /sbin/{multipath,kpartx,mpath_prio_*,devmap_name,dmsetup} /lib64/udev/scsi_id /bin/mountpoint)"
 
 	if [ -x /sbin/multipath ]
 	then
