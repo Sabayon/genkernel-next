@@ -12,7 +12,8 @@ KERNEL_MAKE_DIRECTIVE_2=""
 KERNEL_BINARY="arch/i386/boot/bzImage"
 KERNEL_BINARY_OVERRIDE=""
 
-COMPRESS_INITRD=yes
+DEFAULT_COMPRESS_INITRD=yes
+DEFAULT_COMPRESS_INITRD_TYPE=best
 
 #
 # Arch-specific defaults that can be overridden in the config file or on the

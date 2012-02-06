@@ -537,9 +537,13 @@ parse_cmdline() {
 			CMD_INTEGRATED_INITRAMFS=`parse_optbool "$*"`
 			print_info 2 "CMD_INTEGRATED_INITRAMFS=${CMD_INTEGRATED_INITRAMFS}"
 			;;
-		--compress-initramfs|--no-compress-initramfs)
+		--compress-initramfs|--no-compress-initramfs|--compress-initrd|--no-compress-initrd)
 			CMD_COMPRESS_INITRD=`parse_optbool "$*"`
 			print_info 2 "CMD_COMPRESS_INITRD=${CMD_COMPRESS_INITRD}"
+			;;
+		--compress-initramfs-type=*|--compress-initrd-type=*)
+			COMPRESS_INITRD_TYPE=`parse_opt "$*"`
+			print_info 2 "CMD_COMPRESS_INITRD_TYPE: ${CMD_LINUXRC}"
 			;;
 		--config=*)
 			print_info 2 "CMD_GK_CONFIG: `parse_opt "$*"`"

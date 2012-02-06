@@ -76,6 +76,7 @@ determine_real_args() {
 	set_config_with_override STRING KNAME                CMD_KERNNAME             "genkernel"
 
 	set_config_with_override STRING COMPRESS_INITRD      CMD_COMPRESS_INITRD      "$DEFAULT_COMPRESS_INITRD"
+	set_config_with_override STRING COMPRESS_INITRD_TYPE CMD_COMPRESS_INITRD_TYPE "$DEFAULT_COMPRESS_INITRD_TYPE"
 	set_config_with_override STRING MAKEOPTS             CMD_MAKEOPTS             "$DEFAULT_MAKEOPTS"
 	set_config_with_override STRING KERNEL_MAKE          CMD_KERNEL_MAKE          "$DEFAULT_KERNEL_MAKE"
 	set_config_with_override STRING UTILS_MAKE           CMD_UTILS_MAKE           "$DEFAULT_UTILS_MAKE"

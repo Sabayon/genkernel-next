@@ -686,23 +686,57 @@ create_initramfs() {
 		append_data 'overlay'
 	fi
 
-	# Implement support for disabling compression
-	if isTrue "${COMPRESS_INITRD}"
-	then
-		compress_ext=".gz"
-		print_info 1 "        >> Compressing cpio data..."
-		gzip -9 "${CPIO}" || gen_die "Compression failed"
-		mv -f "${CPIO}.gz" "${CPIO}" || gen_die "Rename failed"
-	fi
-
-
 	if isTrue "${INTEGRATED_INITRAMFS}"
 	then
-#		cp ${TMPDIR}/initramfs-${KV} ${KERNEL_DIR}/usr/initramfs_data.cpio.gz
-		mv ${TMPDIR}/initramfs-${KV} ${TMPDIR}/initramfs-${KV}.cpio${compress_ext}
-#		sed -i "s|^.*CONFIG_INITRAMFS_SOURCE=.*$|CONFIG_INITRAMFS_SOURCE=\"${TMPDIR}/initramfs-${KV}.cpio.gz\"|" ${KERNEL_DIR}/.config
+		# Explicitly do not compress if we are integrating into the kernel.
+		# The kernel will do a better job of it than us.
+		mv ${TMPDIR}/initramfs-${KV} ${TMPDIR}/initramfs-${KV}.cpio
 		sed -i '/^.*CONFIG_INITRAMFS_SOURCE=.*$/d' ${KERNEL_DIR}/.config
-		echo -e "CONFIG_INITRAMFS_SOURCE=\"${TMPDIR}/initramfs-${KV}.cpio${compress_ext}\"\nCONFIG_INITRAMFS_ROOT_UID=0\nCONFIG_INITRAMFS_ROOT_GID=0" >> ${KERNEL_DIR}/.config
+		cat >>${KERNEL_DIR}/.config	<<-EOF
+		CONFIG_INITRAMFS_SOURCE="${TMPDIR}/initramfs-${KV}.cpio${compress_ext}"
+		CONFIG_INITRAMFS_ROOT_UID=0
+		CONFIG_INITRAMFS_ROOT_GID=0
+		EOF
+	else
+		if isTrue "${COMPRESS_INITRD}"
+		then
+			cmd_xz=$(type -p xz)
+			cmd_lzma=$(type -p lzma)
+			cmd_bzip2=$(type -p bzip2)
+			cmd_gzip=$(type -p gzip)
+			cmd_lzop=$(type -p lzop)
+			local compression
+			case ${COMPRESS_INITRD_TYPE} in
+				xz|lzma|bzip2|gzip2|lzo) compression=${COMPRESS_INITRD_TYPE} ;;
+				best)
+					if grep -sq '^CONFIG_RD_XZ=y' ${KERNEL_DIR}/.config && test -n "${cmd_xz}" ;
+						compression=xz
+					elif grep -sq '^CONFIG_RD_LZMA=y' ${KERNEL_DIR}/.config && test -n "${cmd_lzma}" ;
+						compression=lzma
+					elif grep -sq '^CONFIG_RD_BZIP2=y' ${KERNEL_DIR}/.config  && test -n "${cmd_bzip2}" ;
+						compression=bzip2
+					elif grep -sq '^CONFIG_RD_GZIP=y' ${KERNEL_DIR}/.config && test -n "${cmd_gzip}" ;
+						compression=gzip
+					elif grep -sq '^CONFIG_RD_LZO=y' ${KERNEL_DIR}/.config && test -n "${cmd_lzop}" ;
+						compression=lzo
+					fi ;;
+			esac
+			case $compression in
+				xz) compress_ext='.xz' compress_cmd="${cmd_xz} -e --check=none -z -f -9" ;;
+				lzma) compress_ext='.lzma' compress_cmd="${cmd_lzma} -z -f -9" ;;
+				bzip2) compress_ext='.bz2' compress_cmd="${cmd_bzip2} -z -f -9"
+				gzip) compress_ext='.gz' compress_cmd="${cmd_gzip} -f -9" ;;
+				lzo) compress_ext='.lzo' compress_cmd="${cmd_lzop} -f -9" ;;
+			esac
+	
+			if [ -n "${compression}" ]; then
+				print_info 1 "        >> Compressing cpio data (${compress_ext})..."
+				${compress_cmd} "${CPIO}" || gen_die "Compression (${compress_cmd}) failed"
+				mv -f "${CPIO}${compress_ext}" "${CPIO}" || gen_die "Rename failed"
+			else
+				print_info 1 "        >> Not compressing cpio data ..."
+			fi
+		fi
 	fi
 
 	if isTrue "${CMD_INSTALL}"
