@@ -11,6 +11,7 @@ KERNEL_BINARY="arch/alpha/boot/vmlinux.gz"
 # command line.
 #
 DEFAULT_COMPRESS_INITRD=yes
+DEFAULT_COMPRESS_INITRD_TYPE=best
 
 DEFAULT_MAKEOPTS="-j2"
 
