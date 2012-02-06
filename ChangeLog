@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  06 Feb 2012; Robin H. Johnson <robbat2@gentoo.org> gen_initramfs.sh:
+  Refactor copy_binaries and multipath slightly for ease of usage and readability.
+
   06 Feb 2012: Richard Yao <ryao@cs.stonybrook.edu> gen_initramfs.sh:
   Refactor multipath initramfs generation using copy_binaries.
 

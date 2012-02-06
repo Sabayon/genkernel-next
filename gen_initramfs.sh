@@ -4,11 +4,14 @@
 CPIO_ARGS="--quiet -o -H newc"
 
 copy_binaries() {
-
-	local destdir=$1 files=$2
-
-	# Copy files
-	lddtree $files | tr ')(' '\n' |awk  '/=>/{ if($3 ~ /^\//){print $3}}' | sort | uniq | cpio -p --make-directories --dereference --quiet $destdir
+	local destdir=$1
+	shift
+	lddtree "$@" \
+		| tr ')(' '\n' \
+		| awk  '/=>/{ if($3 ~ /^\//){print $3}}' \
+		| sort \
+		| uniq \
+		| cpio -p --make-directories --dereference --quiet $destdir
 
 }
 
@@ -159,13 +162,10 @@ append_multipath(){
 		rm -r "${TEMP}/initramfs-multipath-temp"
 	fi
 	print_info 1 '	Multipath support being added'
-	mkdir -p "${TEMP}/initramfs-multipath-temp/bin/"
-	mkdir -p "${TEMP}/initramfs-multipath-temp/etc/" 
-	mkdir -p "${TEMP}/initramfs-multipath-temp/sbin/"
-	mkdir -p "${TEMP}/initramfs-multipath-temp/lib/"
+	mkdir -p "${TEMP}"/initramfs-multipath-temp/{bin,etc,sbin,lib}/
 
 	# Copy files
-	copy_binaries "${TEMP}/initramfs-multipath-temp" "$(echo /sbin/{multipath,kpartx,mpath_prio_*,devmap_name,dmsetup} /lib64/udev/scsi_id /bin/mountpoint)"
+	copy_binaries "${TEMP}/initramfs-multipath-temp" /sbin/{multipath,kpartx,mpath_prio_*,devmap_name,dmsetup} /lib64/udev/scsi_id /bin/mountpoint
 
 	if [ -x /sbin/multipath ]
 	then
