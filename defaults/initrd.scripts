@@ -1199,11 +1199,19 @@ get_mounts_list()
 		' ${NEW_ROOT}/etc/initramfs.mounts
 }
 
-get_mount_options()
+get_mount_fstype()
 {
 	awk -v fs="$1" '
 		/^[[:blank:]]*#/ { next }
 		$2 == fs { print $3 }
+		' ${NEW_ROOT}/etc/fstab
+}
+
+get_mount_options()
+{
+	awk -v fs="$1" '
+		/^[[:blank:]]*#/ { next }
+		$2 == fs { print $4 }
 		' ${NEW_ROOT}/etc/fstab
 }
 
@@ -1215,3 +1223,12 @@ get_mount_device()
 		' ${NEW_ROOT}/etc/fstab
 }
 
+# If the kernel is handed a mount option is does not recognize, it WILL fail to
+# mount. util-linux handles auto/noauto, but busybox passes it straight to the kernel
+# which then rejects the mount.
+# To make like a little easier, busybox mount does not care about leading,
+# trailing or duplicate commas.
+strip_mount_options()
+{
+	sed -r 's/(,|^)(no)?auto(,|$)/,/g'
+}

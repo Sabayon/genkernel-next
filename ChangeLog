@@ -5,6 +5,12 @@
 # Distributed under the GPL v2
 # $Id$
 
+  09 Feb 2012; Robin H. Johnson <robbat2@gentoo.org> defaults/initrd.scripts,
+  defaults/linuxrc:
+  Dogfooding of the /usr mount code with the matching OpenRC change to make the
+  mounts RW revealed some bugs and gotchas in our prior code, now fixed and
+  verified to work.
+
   06 Feb 2012; Robin H. Johnson <robbat2@gentoo.org> arch/alpha/config.sh,
   arch/arm/config.sh, arch/ia64/config.sh, arch/mips/config.sh,
   arch/parisc/config.sh, arch/parisc64/config.sh, arch/ppc/config.sh,

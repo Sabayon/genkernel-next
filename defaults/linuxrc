@@ -531,7 +531,7 @@ do
 		# there is no isofs filesystem to worry about
 		break
 	else
-		good_msg "Mounting root..."
+		good_msg "Mounting $REAL_ROOT as root..."
 
 		if [ "${ROOTFSTYPE}" = 'zfs' ]
 		then
@@ -780,9 +780,14 @@ for fs in $fslist; do
 	# In this case, it's probably part of the filesystem
 	# and not a mountpoint
 	[ -z "$dev" ] && continue
-	opts="ro,$(get_mount_options \"$fs\")"
-	if ! mount -o ${opts} $dev ${NEW_ROOT}${fs}; then
-		rescue_shell "Unable to mount $dev on $fs"
+	fstype=$(get_mount_fstype $fs)
+	# ro must be trailing, and the options will always contain at least 'defaults'
+	opts="$(get_mount_options $fs | strip_mount_options),ro"
+	mnt=${NEW_ROOT}${fs}
+	cmd="mount -t $fstype -o $opts $dev $mnt"
+	good_msg "Mounting $dev as ${fs}: $cmd"
+	if ! $cmd; then
+		bad_msg "Unable to mount $dev for $fs"
 	fi
 done
 
