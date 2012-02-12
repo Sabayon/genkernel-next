@@ -5,6 +5,11 @@
 # Distributed under the GPL v2
 # $Id$
 
+  12 Feb 2012; Robin H. Johnson <robbat2@gentoo.org> gen_cmdline.sh,
+  gen_compile.sh, gen_determineargs.sh, gen_funcs.sh, genkernel.conf:
+  device-mapper "update". It was merged into LVM2-2.02.67 upstream in 2010.
+  Bug #398467 is wrong for the device-mapper update.
+
   09 Feb 2012; Robin H. Johnson <robbat2@gentoo.org> defaults/initrd.scripts,
   defaults/linuxrc:
   Dogfooding of the /usr mount code with the matching OpenRC change to make the

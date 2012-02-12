@@ -295,8 +295,8 @@ parse_cmdline() {
 			CMD_DMRAID=`parse_optbool "$*"`
 			if [ "$CMD_DMRAID" = "1" -a ! -e /usr/include/libdevmapper.h ]
 			then
-				echo 'Error: --dmraid requires device-mapper to be installed'
-				echo '		 on the host system; try "emerge device-mapper".'
+				echo 'Error: --dmraid requires LVM2 to be installed'
+				echo '		 on the host system; try "emerge lvm2".'
 				exit 1
 			fi
 			print_info 2 "CMD_DMRAID: ${CMD_DMRAID}"
@@ -309,8 +309,8 @@ parse_cmdline() {
 			CMD_MULTIPATH=`parse_optbool "$*"`
 			if [ "$CMD_MULTIPATH" = "1" -a ! -e /usr/include/libdevmapper.h ]
 			then
-				echo 'Error: --multipath requires device-mapper to be installed'
-				echo '		 on the host;system; try "emerge device-mapper".'
+				echo 'Error: --multipath requires LVM2 to be installed'
+				echo '		 on the host;system; try "emerge lvm2".'
 				exit 1
 			fi
 			print_info 2 "CMD_MULTIPATH: ${CMD_MULTIPATH}"

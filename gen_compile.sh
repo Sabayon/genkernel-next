@@ -551,38 +551,7 @@ compile_dmraid() {
 }
 
 compile_device_mapper() {
-	if [ ! -f "${DEVICE_MAPPER_BINCACHE}" ]
-	then
-		[ ! -f "${DEVICE_MAPPER_SRCTAR}" ] &&
-			gen_die "Could not find device-mapper source tarball: ${DEVICE_MAPPER_SRCTAR}. Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
-		cd "${TEMP}"
-		rm -rf "${DEVICE_MAPPER_DIR}"
-		/bin/tar -zxpf "${DEVICE_MAPPER_SRCTAR}"
-		[ ! -d "${DEVICE_MAPPER_DIR}" ] &&
-			gen_die "device-mapper directory ${DEVICE_MAPPER_DIR} invalid"
-		cd "${DEVICE_MAPPER_DIR}"
-		apply_patches device-mapper ${DEVICE_MAPPER_VER}
-		CFLAGS="-fPIC" \
-		./configure --prefix=${TEMP}/device-mapper --enable-static_link \
-			--disable-selinux >> ${LOGFILE} 2>&1 ||
-			gen_die 'Configuring device-mapper failed!'
-		print_info 1 'device-mapper: >> Compiling...'
-		compile_generic '' utils
-		compile_generic 'install' utils
-		print_info 1 '        >> Copying to cache...'
-		cd "${TEMP}"
-		rm -rf "${TEMP}/device-mapper/man" ||
-			gen_die 'Could not remove manual pages!'
-		strip "${TEMP}/device-mapper/sbin/dmsetup" ||
-			gen_die 'Could not strip dmsetup binary!'
-		/bin/tar -jcpf "${DEVICE_MAPPER_BINCACHE}" device-mapper ||
-			gen_die 'Could not tar up the device-mapper binary!'
-		[ -f "${DEVICE_MAPPER_BINCACHE}" ] ||
-			gen_die 'device-mapper cache not created!'
-		cd "${TEMP}"
-		rm -rf "${DEVICE_MAPPER_DIR}" > /dev/null
-		rm -rf "${TEMP}/device-mapper" > /dev/null
-	fi
+	compile_lvm
 }
 
 compile_e2fsprogs() {
