@@ -1,0 +1,18 @@
+diff -ruN dmraid-vanilla/1.0.0.rc16-3/dmraid/tools/Makefile.in dmraid/1.0.0.rc16-3/dmraid/tools/Makefile.in
+--- dmraid-vanilla/1.0.0.rc16-3/dmraid/tools/Makefile.in	2010-05-31 13:18:31.000000000 +0200
++++ dmraid/1.0.0.rc16-3/dmraid/tools/Makefile.in	2012-01-03 10:14:01.665000034 +0100
+@@ -46,10 +46,10 @@
+ 			DMEVENTTOOLLIBS = -ldevmapper-event_dietc
+ 		endif
+ 	else
+-#		DMRAIDLIBS += -ldevmapper
+-#		ifeq ("@STATIC_LINK@", "no")
+-#			DMEVENTTOOLLIBS = -ldevmapper-event
+-#		endif
++		DMRAIDLIBS += -ldevmapper
++		ifeq ("@STATIC_LINK@", "no")
++			DMEVENTTOOLLIBS = -ldevmapper-event
++		endif
+ 	endif
+ 
+ #	DMRAIDLIBS += -lselinux
