@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  12 Feb 2012; Robin H. Johnson <robbat2@gentoo.org> gen_compile.sh:
+  Bug #265005: ensure CROSS_COMPILE is set for cross-compile strip calls to
+  work.
+
   12 Feb 2012; Robin H. Johnson <robbat2@gentoo.org>
   +patches/dmraid/dmraid-1.0.0_rc16-as-needed2.patch,
   +patches/dmraid/dmraid-1.0.0_rc16-return-all-sets.patch,

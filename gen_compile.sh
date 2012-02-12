@@ -80,6 +80,10 @@ export_utils_args()
 	then
 		export AS="${UTILS_AS}"
 	fi
+	if [ "${UTILS_CROSS_COMPILE}" != '' ]
+	then
+		export CROSS_COMPILE="${UTILS_CROSS_COMPILE}"
+	fi
 }
 
 unset_utils_args()
@@ -99,6 +103,10 @@ unset_utils_args()
 	if [ "${UTILS_AS}" != '' ]
 	then
 		unset AS
+	fi
+	if [ "${UTILS_CROSS_COMPILE}" != '' ]
+	then
+		unset CROSS_COMPILE
 	fi
 	reset_args
 }
@@ -411,7 +419,7 @@ compile_busybox() {
 		print_info 1 'busybox: >> Copying to cache...'
 		[ -f "${TEMP}/${BUSYBOX_DIR}/busybox" ] ||
 			gen_die 'Busybox executable does not exist!'
-		strip "${TEMP}/${BUSYBOX_DIR}/busybox" ||
+		${UTILS_CROSS_COMPILE}strip "${TEMP}/${BUSYBOX_DIR}/busybox" ||
 			gen_die 'Could not strip busybox binary!'
 		tar -cj -C "${TEMP}/${BUSYBOX_DIR}" -f "${BUSYBOX_BINCACHE}" busybox .config .config.gk_orig ||
 			gen_die 'Could not create the busybox bincache!'
@@ -449,7 +457,7 @@ compile_lvm() {
 
 		cd "${TEMP}/lvm"
 		print_info 1 '      >> Copying to bincache...'
-		strip "sbin/lvm.static" ||
+		${UTILS_CROSS_COMPILE}strip "sbin/lvm.static" ||
 			gen_die 'Could not strip lvm.static!'
 		# See bug 382555
 		strip "sbin/dmsetup.static" ||
@@ -576,7 +584,7 @@ compile_e2fsprogs() {
 		print_info 1 'blkid: >> Copying to cache...'
 		[ -f "${TEMP}/${E2FSPROGS_DIR}/misc/blkid" ] ||
 			gen_die 'Blkid executable does not exist!'
-		strip "${TEMP}/${E2FSPROGS_DIR}/misc/blkid" ||
+		${UTILS_CROSS_COMPILE}strip "${TEMP}/${E2FSPROGS_DIR}/misc/blkid" ||
 			gen_die 'Could not strip blkid binary!'
 		bzip2 "${TEMP}/${E2FSPROGS_DIR}/misc/blkid" ||
 			gen_die 'bzip2 compression of blkid failed!'
@@ -610,7 +618,7 @@ compile_fuse() {
 #		print_info 1 'libfuse: >> Copying to cache...'
 #		[ -f "${TEMP}/${FUSE_DIR}/lib/.libs/libfuse.so" ] ||
 #			gen_die 'libfuse.so does not exist!'
-#		strip "${TEMP}/${FUSE_DIR}/lib/.libs/libfuse.so" ||
+#		${UTILS_CROSS_COMPILE}strip "${TEMP}/${FUSE_DIR}/lib/.libs/libfuse.so" ||
 #			gen_die 'Could not strip libfuse.so!'
 #		cd "${TEMP}/${FUSE_DIR}/lib/.libs"
 #		tar -cjf "${FUSE_BINCACHE}" libfuse*so* ||
@@ -644,7 +652,7 @@ compile_unionfs_fuse() {
 		print_info 1 'unionfs-fuse: >> Copying to cache...'
 		[ -f "${TEMP}/${UNIONFS_FUSE_DIR}/src/unionfs" ] ||
 			gen_die 'unionfs binary does not exist!'
-		strip "${TEMP}/${UNIONFS_FUSE_DIR}/src/unionfs" ||
+		${UTILS_CROSS_COMPILE}strip "${TEMP}/${UNIONFS_FUSE_DIR}/src/unionfs" ||
 			gen_die 'Could not strip unionfs binary!'
 		bzip2 "${TEMP}/${UNIONFS_FUSE_DIR}/src/unionfs" ||
 			gen_die 'bzip2 compression of unionfs binary failed!'
