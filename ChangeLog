@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  12 Feb 2012; Robin H. Johnson <robbat2@gentoo.org> gen_compile.sh:
+  More UTILS_CROSS_COMPILE prefix on strip calls.
+
   12 Feb 2012; Robin H. Johnson <robbat2@gentoo.org> arch/alpha/modules_load,
   arch/arm/modules_load, arch/ia64/modules_load, arch/mips/modules_load,
   arch/parisc/modules_load, arch/parisc64/modules_load, arch/ppc/modules_load,

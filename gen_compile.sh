@@ -460,7 +460,7 @@ compile_lvm() {
 		${UTILS_CROSS_COMPILE}strip "sbin/lvm.static" ||
 			gen_die 'Could not strip lvm.static!'
 		# See bug 382555
-		strip "sbin/dmsetup.static" ||
+		${UTILS_CROSS_COMPILE}strip "sbin/dmsetup.static" ||
 			gen_die 'Could not strip dmsetup.static'
 		/bin/tar -cjf "${LVM_BINCACHE}" sbin/lvm.static sbin/dmsetup.static ||
 			gen_die 'Could not create binary cache'
@@ -500,7 +500,7 @@ compile_mdadm() {
 		install -m 0755 -s mdmon "${TEMP}/mdadm/sbin/mdmon"
 		print_info 1 '      >> Copying to bincache...'
 		cd "${TEMP}/mdadm"
-		strip "sbin/mdadm" "sbin/mdmon" ||
+		${UTILS_CROSS_COMPILE}strip "sbin/mdadm" "sbin/mdmon" ||
 			gen_die 'Could not strip mdadm binaries!'
 		/bin/tar -cjf "${MDADM_BINCACHE}" sbin/mdadm sbin/mdmon ||
 			gen_die 'Could not create binary cache'
@@ -702,7 +702,7 @@ compile_iscsi() {
 		print_info 1 'iscsistart: >> Copying to cache...'
 		[ -f "${TEMP}/${ISCSI_DIR}/usr/iscsistart" ] ||
 			gen_die 'iscsistart executable does not exist!'
-		strip "${TEMP}/${ISCSI_DIR}/usr/iscsistart" ||
+		${UTILS_CROSS_COMPILE}strip "${TEMP}/${ISCSI_DIR}/usr/iscsistart" ||
 			gen_die 'Could not strip iscsistart binary!'
 		bzip2 "${TEMP}/${ISCSI_DIR}/usr/iscsistart" ||
 			gen_die 'bzip2 compression of iscsistart failed!'
@@ -749,7 +749,7 @@ compile_gpg() {
 		print_info 1 'gnupg: >> Copying to cache...'
 		[ -f "${TEMP}/${GPG_DIR}/g10/gpg" ] ||
 			gen_die 'gnupg executable does not exist!'
-		strip "${TEMP}/${GPG_DIR}/g10/gpg" ||
+		${UTILS_CROSS_COMPILE}strip "${TEMP}/${GPG_DIR}/g10/gpg" ||
 			gen_die 'Could not strip gpg binary!'
 		bzip2 -z -c "${TEMP}/${GPG_DIR}/g10/gpg" > "${GPG_BINCACHE}" ||
 			gen_die 'Could not copy the gpg binary to the package directory, does the directory exist?'
