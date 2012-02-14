@@ -235,7 +235,7 @@ append_lvm(){
 	cd ${TEMP}
 	mkdir -p "${TEMP}/initramfs-lvm-temp/bin/"
 	mkdir -p "${TEMP}/initramfs-lvm-temp/etc/lvm/"
-	if [ -e '/sbin/lvm.static' ]
+	if false && [ -e '/sbin/lvm.static' ]
 	then
 		print_info 1 '          LVM: Adding support (using local static binary /sbin/lvm.static)...'
 		cp /sbin/lvm.static "${TEMP}/initramfs-lvm-temp/bin/lvm" ||
@@ -245,7 +245,7 @@ append_lvm(){
 		then
 			cp /sbin/dmsetup.static "${TEMP}/initramfs-lvm-temp/bin/dmsetup"
 		fi
-	elif [ -e '/sbin/lvm' ] && LC_ALL="C" ldd /sbin/lvm|grep -q 'not a dynamic executable'
+	elif false && [ -e '/sbin/lvm' ] && LC_ALL="C" ldd /sbin/lvm|grep -q 'not a dynamic executable'
 	then
 		print_info 1 '          LVM: Adding support (using local static binary /sbin/lvm)...'
 		cp /sbin/lvm "${TEMP}/initramfs-lvm-temp/bin/lvm" ||
@@ -265,6 +265,7 @@ append_lvm(){
 		# See bug 382555
 		mv ${TEMP}/initramfs-lvm-temp/sbin/dmsetup.static ${TEMP}/initramfs-lvm-temp/bin/dmsetup ||
 			gen_die 'LVM error: Could not move dmsetup.static to dmsetup!'
+		rm -rf  ${TEMP}/initramfs-lvm-temp/{lib,share,man,include,sbin/{lvm,dmsetup}}
 	fi
 	if [ -x /sbin/lvm ]
 	then

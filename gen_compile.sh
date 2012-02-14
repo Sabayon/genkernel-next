@@ -406,7 +406,7 @@ compile_busybox() {
 		/bin/tar -jxpf ${BUSYBOX_SRCTAR} ||
 			gen_die 'Could not extract busybox source tarball!'
 		[ -d "${BUSYBOX_DIR}" ] ||
-			gen_die 'Busybox directory ${BUSYBOX_DIR} is invalid!'
+			gen_die "Busybox directory ${BUSYBOX_DIR} is invalid!"
 		cp "${BUSYBOX_CONFIG}" "${BUSYBOX_DIR}/.config"
 		cp "${BUSYBOX_CONFIG}" "${BUSYBOX_DIR}/.config.gk_orig"
 		cd "${BUSYBOX_DIR}"
@@ -441,19 +441,20 @@ compile_lvm() {
 		/bin/tar -zxpf ${LVM_SRCTAR} ||
 			gen_die 'Could not extract LVM source tarball!'
 		[ -d "${LVM_DIR}" ] ||
-			gen_die 'LVM directory ${LVM_DIR} is invalid!'
+			gen_die "LVM directory ${LVM_DIR} is invalid!"
 		cd "${LVM_DIR}"
 		apply_patches lvm ${LVM_VER}
 		print_info 1 'lvm: >> Configuring...'
 			CFLAGS="-fPIC" \
-			./configure --enable-static_link --prefix=${TEMP}/lvm \
+			./configure --enable-static_link --prefix=/ \
 				--with-lvm1=internal --with-clvmd=none --with-cluster=none \
 				--disable-readline --disable-selinux --with-mirrors=internal \
-				--with-snapshots=internal --with-pool=internal >> ${LOGFILE} 2>&1 || \
+				--with-snapshots=internal --with-pool=internal \
+				>> ${LOGFILE} 2>&1 || \
 				gen_die 'Configure of lvm failed!'
 		print_info 1 'lvm: >> Compiling...'
-			compile_generic '' utils
-			compile_generic 'install' utils
+		compile_generic '' utils
+		compile_generic "install DESTDIR=${TEMP}/lvm/" utils
 
 		cd "${TEMP}/lvm"
 		print_info 1 '      >> Copying to bincache...'
@@ -462,11 +463,11 @@ compile_lvm() {
 		# See bug 382555
 		${UTILS_CROSS_COMPILE}strip "sbin/dmsetup.static" ||
 			gen_die 'Could not strip dmsetup.static'
-		/bin/tar -cjf "${LVM_BINCACHE}" sbin/lvm.static sbin/dmsetup.static ||
+		/bin/tar -cjf "${LVM_BINCACHE}" . ||
 			gen_die 'Could not create binary cache'
 
 		cd "${TEMP}"
-		rm -rf "${TEMP}/device-mapper" > /dev/null
+		rm -rf "${TEMP}/lvm" > /dev/null
 		rm -rf "${LVM_DIR}" lvm
 	fi
 }
@@ -483,7 +484,7 @@ compile_mdadm() {
 		/bin/tar -jxpf "${MDADM_SRCTAR}" ||
 			gen_die 'Could not extract MDADM source tarball!'
 		[ -d "${MDADM_DIR}" ] ||
-			gen_die 'MDADM directory ${MDADM_DIR} is invalid!'
+			gen_die "MDADM directory ${MDADM_DIR} is invalid!"
 
 		cd "${MDADM_DIR}"
 		apply_patches mdadm ${MDADM_VER}
@@ -521,24 +522,26 @@ compile_dmraid() {
 		/bin/tar -jxpf ${DMRAID_SRCTAR} ||
 			gen_die 'Could not extract DMRAID source tarball!'
 		[ -d "${DMRAID_DIR}" ] ||
-			gen_die 'DMRAID directory ${DMRAID_DIR} is invalid!'
-		rm -rf "${TEMP}/device-mapper" > /dev/null
-		/bin/tar -jxpf "${DEVICE_MAPPER_BINCACHE}" -C "${TEMP}" ||
-			gen_die "Could not extract device-mapper binary cache!";
+			gen_die "DMRAID directory ${DMRAID_DIR} is invalid!"
+		rm -rf "${TEMP}/lvm" > /dev/null
+		mkdir -p "${TEMP}/lvm"
+		/bin/tar -jxpf "${LVM_BINCACHE}" -C "${TEMP}/lvm" ||
+			gen_die "Could not extract LVM2 binary cache!";
 
 		cd "${DMRAID_DIR}"
 		apply_patches dmraid ${DMRAID_VER}
 		print_info 1 'dmraid: >> Configuring...'
 
-		LDFLAGS="-L${TEMP}/device-mapper/lib" \
-		CFLAGS="-I${TEMP}/device-mapper/include" \
-		CPPFLAGS="-I${TEMP}/device-mapper/include" \
+		LDFLAGS="-L${TEMP}/lvm/lib" \
+		CFLAGS="-I${TEMP}/lvm/include" \
+		CPPFLAGS="-I${TEMP}/lvm/include" \
+		LIBS="-ldevmapper" \
 		./configure --enable-static_link --prefix=${TEMP}/dmraid >> ${LOGFILE} 2>&1 ||
 			gen_die 'Configure of dmraid failed!'
 
 		# We dont necessarily have selinux installed yet... look into
 		# selinux global support in the future.
-		sed -i tools/Makefile -e "s|DMRAIDLIBS += -lselinux||g"
+		sed -i tools/Makefile -e "/DMRAID_LIBS +=/s|-lselinux||g"
 		###echo "DMRAIDLIBS += -lselinux -lsepol" >> tools/Makefile
 		mkdir -p "${TEMP}/dmraid"
 		print_info 1 'dmraid: >> Compiling...'
@@ -553,7 +556,7 @@ compile_dmraid() {
 			gen_die 'Could not create binary cache'
 
 		cd "${TEMP}"
-		rm -rf "${TEMP}/device-mapper" > /dev/null
+		rm -rf "${TEMP}/lvm" > /dev/null
 		rm -rf "${DMRAID_DIR}" dmraid
 	fi
 }
