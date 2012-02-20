@@ -5,6 +5,11 @@
 # Distributed under the GPL v2
 # $Id$
 
+  20 Feb 2012; Robin H. Johnson <robbat2@gentoo.org> defaults/linuxrc:
+  With the new /usr mounting, if the device path that ends up in /proc/mounts
+  ends up being different than in /etc/fstab due to symlinks, mount -a will
+  always exit 32. Avoid by resolving symlinks like util-linux does.
+
   14 Feb 2012; Robin H. Johnson <robbat2@gentoo.org> gen_compile.sh,
   gen_initramfs.sh:
   dmraid is entirely broken if you try to use the system static

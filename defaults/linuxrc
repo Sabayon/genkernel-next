@@ -544,6 +544,9 @@ do
 		if [ "${REAL_ROOT}" = '/dev/nfs' ]; then
 			findnfsmount
 		else
+			# If $REAL_ROOT is a symlink
+			# Resolve it like util-linux mount does
+			[ -L ${REAL_ROOT} ] && REAL_ROOT=`readlink ${REAL_ROOT}`
 			# mount ro so fsck doesn't barf later
 			if [ "${REAL_ROOTFLAGS}" = '' ]; then
 				good_msg "Using mount -t ${ROOTFSTYPE} -o ${MOUNT_STATE}"
@@ -777,6 +780,8 @@ fi
 
 for fs in $fslist; do
 	dev=$(get_mount_device $fs)
+	# Resolve it like util-linux mount does
+	[ -L ${dev} ] && dev=`readlink ${dev}`
 	# In this case, it's probably part of the filesystem
 	# and not a mountpoint
 	[ -z "$dev" ] && continue
