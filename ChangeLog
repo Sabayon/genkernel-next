@@ -4,6 +4,11 @@
 # - 2008-2011 Various authors (see AUTHORS)
 # Distributed under the GPL v2
 # $Id$
+  
+  25 Feb 2012; Sebastian Pipping <sping@gentoo.org> arch/x86/modules_load,
+  arch/x86_64/modules_load, defaults/modules_load:
+  Make sure the sha256 module makes it into the initramfs (bug #405495).
+  Reported by Ogelpre.
 
   20 Feb 2012; Robin H. Johnson <robbat2@gentoo.org> defaults/linuxrc:
   With the new /usr mounting, if the device path that ends up in /proc/mounts
