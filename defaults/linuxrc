@@ -771,11 +771,7 @@ fi
 if [ -f ${NEW_ROOT}/etc/initramfs.mounts ]; then
 	fslist=$(get_mounts_list)
 else
-	# Disabled until the new OpenRC is ready to go.
-	# Otherwise users will get /usr mounted RO, and it will NOT transition to
-	# RW correctly.
-	#fslist="/usr" 
-	fslist=""
+	fslist="/usr" 
 fi
 
 for fs in $fslist; do
