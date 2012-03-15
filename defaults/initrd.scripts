@@ -298,7 +298,7 @@ run_shell() {
 	/bin/ash
 }
 
-runmdev() {
+mount_devfs () {
 	# Use devtmpfs if enabled in kernel,
 	# else tmpfs. Always run mdev just in case
 	devfs=tmpfs
@@ -313,7 +313,6 @@ runmdev() {
 	# http://git.busybox.net/busybox/plain/docs/mdev.txt
 	mkdir -m 0755 /dev/pts
 	mount -t devpts -o gid=5,mode=0620 devpts /dev/pts  || bad_msg "Failed to mount /dev/pts"
-	mdev -s  || bad_msg "Failed to receive dynamic updates from mdev"
 }
 
 test_success() {
@@ -431,16 +430,6 @@ setup_slowusb() {
 		[ -d "${x}" ]  && [ "${x}" != "${usb_storage_dir}/module" ] \
 			&& { DO_slowusb="1" ; break ; }
 	done
-}
-
-start_dev_mgr() {
-	if [ "${KV_2_6_OR_GREATER}" ]
-	then
-		cd /sys
-		good_msg 'Activating mdev'
-		runmdev
-		cd /
-	fi
 }
 
 cmdline_hwopts() {

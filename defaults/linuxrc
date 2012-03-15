@@ -271,11 +271,23 @@ splash 'init'
 
 cmdline_hwopts
 
+# Mount devfs
+mount_devfs
+
 # Mount sysfs
 mount_sysfs
 
 # Setup hotplugging for firmware loading
 setup_hotplug
+
+# Start mdev
+if [ "${KV_2_6_OR_GREATER}" ]
+then
+	cd /sys
+	good_msg 'Activating mdev'
+	mdev -s  || bad_msg "Failed to receive dynamic updates from mdev"
+	cd /
+fi
 
 # Load modules listed in MY_HWOPTS if /lib/modules exists for the running kernel
 if [ -z "${DO_modules}" ]
@@ -303,9 +315,6 @@ sdelay
 
 # Setup slow USB bits
 setup_slowusb
-
-# Start device manager
-start_dev_mgr
 
 # if doslowusb is passed, pause other 10 seconds here, after mdev load
 [ "${DO_slowusb}" ] && sleep 10
