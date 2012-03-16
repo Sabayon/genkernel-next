@@ -7,6 +7,10 @@
 
   16 Mar 2012; Sebastian Pipping <sping@gentoo.org> defaults/initrd.scripts,
   defaults/linuxrc:
+  Drop into debug shell when files could not be copied into tmpfs
+
+  16 Mar 2012; Sebastian Pipping <sping@gentoo.org> defaults/initrd.scripts,
+  defaults/linuxrc:
   Improve handling of missing /etc/fstab
 
   16 Mar 2012; Sebastian Pipping <sping@gentoo.org> defaults/initrd.scripts:

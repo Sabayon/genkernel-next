@@ -701,7 +701,10 @@ then
 
 	good_msg "Copying read-write image contents to tmpfs"
 	# Copy over stuff that should be writable
-	(cd "${NEW_ROOT}/${FS_LOCATION}"; cp -a ${ROOT_TREES} "${NEW_ROOT}")
+	(cd "${NEW_ROOT}/${FS_LOCATION}"; cp -a ${ROOT_TREES} "${NEW_ROOT}") || {
+		bad_msg "Copying failed, dropping into a shell."
+		do_rundebugshell
+	}
 
 	# Now we do the links.
 	for x in ${ROOT_LINKS}
