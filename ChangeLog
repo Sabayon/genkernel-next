@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  16 Mar 2012; Sebastian Pipping <sping@gentoo.org> defaults/initrd.scripts:
+  No longer use parameter "-r" (for regex intervals) that busybox awk does not
+  support
+
   10 Mar 2012; Robin H. Johnson <robbat2@gentoo.org> genkernel:
   Bump version for release.
 
