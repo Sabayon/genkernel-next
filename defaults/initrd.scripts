@@ -1000,12 +1000,16 @@ setup_md_device() {
 	fi
 }
 
+do_rundebugshell() {
+	good_msg 'Type "exit" to continue with normal bootup.'
+	[ -x /bin/sh ] && /bin/sh || /bin/ash
+}
+
 rundebugshell() {
 	if [ -n "$DEBUG" ]
 	then
 		good_msg 'Starting debug shell as requested by "debug" option.'
-		good_msg 'Type "exit" to continue with normal bootup.'
-		[ -x /bin/sh ] && /bin/sh || /bin/ash
+		do_rundebugshell
 	fi
 }
 
