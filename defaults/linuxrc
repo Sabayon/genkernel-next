@@ -776,6 +776,7 @@ fi
 
 for fs in $fslist; do
 	dev=$(get_mount_device $fs)
+	[ -z "${dev}" ] && continue
 	# Resolve it like util-linux mount does
 	[ -L ${dev} ] && dev=`readlink ${dev}`
 	# In this case, it's probably part of the filesystem
