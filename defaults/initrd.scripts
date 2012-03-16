@@ -97,7 +97,7 @@ findmediamount() {
 				then
 					continue
 				fi
-				good_msg "Attempting to mount media:- ${x}" ${CRYPT_SILENT}
+				good_msg "Attempting to mount media: ${x}" ${CRYPT_SILENT}
 
 				mount -r -t ${CDROOT_TYPE} ${x} ${mntcddir} >/dev/null 2>&1
 				if [ "$?" = '0' ]
