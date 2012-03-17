@@ -191,12 +191,11 @@ cache_cd_contents() {
 			cp -a ${CDROOT_PATH}/${LOOP} ${NEW_ROOT}/mnt/${LOOP}
 			if [ $? -ne 0 ]
 			then
-				bad_msg "Failed to cache the loop file! Lack of space?"
+				warn_msg "Failed to cache the loop file! Lack of RAM?"
+				rm -rf ${NEW_ROOT}/mnt/${LOOP} 2>/dev/null
 				rm -rf ${NEW_ROOT}/mnt/livecd.* 2>/dev/null
 				rm -rf ${NEW_ROOT}/mnt/image.* 2>/dev/null
 				rm -rf ${NEW_ROOT}/mnt/zisofs 2>/dev/null
-			else
-				LOOPEXT='../'
 			fi
 		fi
 	fi

@@ -627,7 +627,12 @@ then
 		then
 			if [ "${USE_AUFS_NORMAL}" != '1' ]; then
 				good_msg 'Mounting squashfs filesystem'
-				mount -t squashfs -o loop,ro "${CDROOT_PATH}/${LOOPEXT}${LOOP}" "${NEW_ROOT}/mnt/livecd" || {
+				_CACHED_SQUASHFS_PATH="${NEW_ROOT}/mnt/${LOOP}"
+				_squashfs_path="${CDROOT_PATH}/${LOOPEXT}${LOOP}"  # Default to uncached
+				# Upgrade to cached version if possible
+				[ "${DO_cache}" -a -f "${_CACHED_SQUASHFS_PATH}" ] \
+						&& _squashfs_path=${_CACHED_SQUASHFS_PATH}
+				mount -t squashfs -o loop,ro "${_squashfs_path}" "${NEW_ROOT}/mnt/livecd" || {
 					bad_msg "Squashfs filesystem could not be mounted, dropping into shell."
 					if [ -e /proc/filesystems ]; then
 						fgrep -q squashfs /proc/filesystems || \
