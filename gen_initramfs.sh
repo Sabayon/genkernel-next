@@ -391,6 +391,10 @@ append_overlay(){
 }
 
 append_luks() {
+	local _luks_error_format="LUKS support cannot be included: %s.  Please emerge sys-fs/cryptsetup[static]."
+	local _luks_source=/sbin/cryptsetup
+	local _luks_dest=/sbin/cryptsetup
+
 	if [ -d "${TEMP}/initramfs-luks-temp" ]
 	then
 		rm -r "${TEMP}/initramfs-luks-temp/"
@@ -402,20 +406,15 @@ append_luks() {
 
 	if isTrue ${LUKS}
 	then
-		if is_static /bin/cryptsetup
-		then
-			print_info 1 "Including LUKS support"
-			cp /bin/cryptsetup ${TEMP}/initramfs-luks-temp/sbin/cryptsetup
-			chmod +x "${TEMP}/initramfs-luks-temp/sbin/cryptsetup"
-		elif is_static /sbin/cryptsetup
-		then
-			print_info 1 "Including LUKS support"
-			cp /sbin/cryptsetup ${TEMP}/initramfs-luks-temp/sbin/cryptsetup
-			chmod +x "${TEMP}/initramfs-luks-temp/sbin/cryptsetup"
-		else
-			print_info 1 "LUKS support requires static cryptsetup at /bin/cryptsetup or /sbin/cryptsetup"
-			print_info 1 "Not including LUKS support"
-		fi
+		[ -x "${_luks_source}" ] \
+				|| gen_die "$(printf "${_luks_error_format}" "no file ${_luks_source}")"
+
+		is_static "${_luks_source}" \
+				|| gen_die "$(printf "${_luks_error_format}" "${_luks_source} not a static binary")"
+
+		print_info 1 "Including LUKS support"
+		cp "${_luks_source}" ${TEMP}/initramfs-luks-temp${_luks_dest}
+		chmod +x "${TEMP}/initramfs-luks-temp${_luks_dest}"
 	fi
 
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
