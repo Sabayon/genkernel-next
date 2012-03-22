@@ -204,29 +204,30 @@ gen_die() {
 	then
 		print_error 1 "ERROR: ${1}"
 	fi
-	echo
-	print_info 1 "-- Grepping log... --"
-	echo
+	print_error 1 ''
+	print_error 1 "-- Grepping log... --"
+	print_error 1 ''
 
 	if isTrue ${USECOLOR}
 	then
-		GREP_COLOR='1' grep -B5 -E --colour=always "([Ww][Aa][Rr][Nn][Ii][Nn][Gg]|[Ee][Rr][Rr][Oo][Rr][ :,!]|[Ff][Aa][Ii][Ll][Ee]?[Dd]?)" ${LOGFILE}
+		GREP_COLOR='1' grep -B5 -E --colour=always "([Ww][Aa][Rr][Nn][Ii][Nn][Gg]|[Ee][Rr][Rr][Oo][Rr][ :,!]|[Ff][Aa][Ii][Ll][Ee]?[Dd]?)" ${LOGFILE} \
+				| sed -s "s|^\(*\)\?|${BAD}*${NORMAL}|"
 	else
 		grep -B5 -E "([Ww][Aa][Rr][Nn][Ii][Nn][Gg]|[Ee][Rr][Rr][Oo][Rr][ :,!]|[Ff][Aa][Ii][Ll][Ee]?[Dd]?)" ${LOGFILE}
 	fi
-	echo
-	print_info 1 "-- End log... --"
-	echo
-	print_info 1 "Please consult ${LOGFILE} for more information and any"
-	print_info 1 "errors that were reported above."
-	echo
-	print_info 1 "Report any genkernel bugs to bugs.gentoo.org and"
-	print_info 1 "assign your bug to genkernel@gentoo.org. Please include"
-	print_info 1 "as much information as you can in your bug report; attaching"
-	print_info 1 "${LOGFILE} so that your issue can be dealt with effectively."
-	print_info 1 ''
-	print_info 1 'Please do *not* report compilation failures as genkernel bugs!'
-	print_info 1 ''
+	print_error 1 ''
+	print_error 1 "-- End log... --"
+	print_error 1 ''
+	print_error 1 "Please consult ${LOGFILE} for more information and any"
+	print_error 1 "errors that were reported above."
+	print_error 1 ''
+	print_error 1 "Report any genkernel bugs to bugs.gentoo.org and"
+	print_error 1 "assign your bug to genkernel@gentoo.org. Please include"
+	print_error 1 "as much information as you can in your bug report; attaching"
+	print_error 1 "${LOGFILE} so that your issue can be dealt with effectively."
+	print_error 1 ''
+	print_error 1 'Please do *not* report compilation failures as genkernel bugs!'
+	print_error 1 ''
 
 	# Cleanup temp dirs and caches if requested
 	cleanup

@@ -5,6 +5,14 @@
 # Distributed under the GPL v2
 # $Id$
 
+  22 Mar 2012; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh:
+  Fail hard on LUKS inclusion error (bug #409277), advise about
+  sys-fs/cryptsetup[static], drop support for cryptsetup binary from /bin/
+
+  22 Mar 2012; Sebastian Pipping <sping@gentoo.org> gen_funcs.sh,
+  gen_initramfs.sh:
+  Make errors stand out more
+
   22 Mar 2012; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.26
 
