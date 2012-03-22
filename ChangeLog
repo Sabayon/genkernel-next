@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  22 Mar 2012; Sebastian Pipping <sping@gentoo.org> gen_funcs.sh,
+  gen_initramfs.sh:
+  Make errors stand out more
+
   22 Mar 2012; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.26
 
