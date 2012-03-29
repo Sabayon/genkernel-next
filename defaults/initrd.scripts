@@ -880,7 +880,13 @@ openLUKS() {
 				fi
 				# At this point, keyfile or not, we're ready!
 				crypt_filter "${gpg_cmd}cryptsetup ${cryptsetup_options} luksOpen ${LUKS_DEVICE} ${LUKS_NAME}"
-				if [ $? -eq 0 ]
+				crypt_filter_ret=$?
+
+				[ -e /dev/tty.org ] \
+					&& rm -f /dev/tty \
+					&& mv /dev/tty.org /dev/tty
+
+				if [ ${crypt_filter_ret} -eq 0 ]
 				then
 					good_msg "LUKS device ${LUKS_DEVICE} opened" ${CRYPT_SILENT}
 					break
