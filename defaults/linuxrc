@@ -98,7 +98,7 @@ do
 		;;
 		dozfs*)
 			USE_ZFS=1
-			MY_HWOPTS="${MY_HWOPTS} zfs"
+
 			if [ "${x#*=}" = 'force' ]
 			then
 				ZPOOL_FORCE=-f
@@ -248,12 +248,23 @@ then
 	REAL_ROOT="${FAKE_ROOT}"
 fi
 
-# Disable ZFS when support is missing
-if [ "USE_ZFS" = "1" -a ! -x /sbin/zfs ]
+# Set variables based on the value of REAL_ROOT
+case "${REAL_ROOT}" in
+	ZFS*)
+		USE_ZFS=1
+	;;
+esac
+
+# Verify that it is safe to use ZFS
+if [ "USE_ZFS" = "1" ]
 then
-	USE_ZFS=0
-	MY_HWOPTS=$(echo ${MY_HWOPTS} | sed -e 's/ zfs//g')
-	bad_msg 'zfs binary not found: aborting use of zfs!'
+	if [ -x /sbin/zfs ]
+	then
+		MY_HWOPTS="${MY_HWOPTS} zfs"
+	else
+		bad_msg 'zfs binary not found: aborting use of zfs!'
+		USE_ZFS=0
+	fi
 fi
 
 splash 'init'
