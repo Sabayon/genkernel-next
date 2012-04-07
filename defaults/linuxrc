@@ -97,16 +97,11 @@ do
 			USE_DMRAID_NORMAL=1
 		;;
 		dozfs*)
-			if [ ! -x /sbin/zfs ]; then
-				USE_ZFS=0
-				bad_msg 'zfs binary not found: aborting use of zfs!'
-			else
-				USE_ZFS=1
-				MY_HWOPTS="${MY_HWOPTS} zfs"
-				if [ "${x#*=}" = 'force' ]
-				then
-					ZPOOL_FORCE=-f
-				fi
+			USE_ZFS=1
+			MY_HWOPTS="${MY_HWOPTS} zfs"
+			if [ "${x#*=}" = 'force' ]
+			then
+				ZPOOL_FORCE=-f
 			fi
 		;;
 		# Debug Options
@@ -251,6 +246,14 @@ done
 if [ -z "${REAL_ROOT}" -a \( "${CDROOT}" = '0' \)  -a \( "${FAKE_ROOT}" != "/dev/ram0" \) ]
 then
 	REAL_ROOT="${FAKE_ROOT}"
+fi
+
+# Disable ZFS when support is missing
+if [ "USE_ZFS" = "1" -a ! -x /sbin/zfs ]
+then
+	USE_ZFS=0
+	MY_HWOPTS=$(echo ${MY_HWOPTS} | sed -e 's/ zfs//g')
+	bad_msg 'zfs binary not found: aborting use of zfs!'
 fi
 
 splash 'init'
