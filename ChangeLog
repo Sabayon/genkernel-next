@@ -14,6 +14,9 @@
   in genkernel.conf before
 
   08 Apr 2012; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh:
+  Be more helpful when requested compression is not available
+
+  08 Apr 2012; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh:
   Error out on unknown initrd compression, reported by Peter Gantner (bug
   #411197)
 
