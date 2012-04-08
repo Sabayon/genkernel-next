@@ -714,7 +714,7 @@ create_initramfs() {
 			case ${COMPRESS_INITRD_TYPE} in
 				xz|lzma|bzip2|gzip|lzop) compression=${COMPRESS_INITRD_TYPE} ;;
 				lzo) compression=lzop ;;
-				best)
+				best|fastest)
 					for tuple in \
 							'CONFIG_RD_XZ    cmd_xz    xz' \
 							'CONFIG_RD_LZMA  cmd_lzma  lzma' \
@@ -726,7 +726,7 @@ create_initramfs() {
 						cmd_variable_name=$2
 						if grep -sq "^${kernel_option}=y" ${KERNEL_DIR}/.config && test -n "${!cmd_variable_name}" ; then
 							compression=$3
-							break
+							[[ ${COMPRESS_INITRD_TYPE} == best ]] && break
 						fi
 					done
 					;;

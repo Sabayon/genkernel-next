@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  08 Apr 2012; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh,
+  genkernel.conf:
+  Add "fastest" to supported initrd compressions
+
   08 Apr 2012; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh:
   Support comression "lzop" (not just "lzo") as wrongly advertised by comments
   in genkernel.conf before
