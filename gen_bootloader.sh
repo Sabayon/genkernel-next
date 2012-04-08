@@ -49,8 +49,8 @@ set_bootloader_grub2() {
     fi
 
     print_info 1 "You can customize Grub2 parameters in /etc/defaults/grub."
-    print_info 1 "Running grub-mkconfig to create ${GRUB_CONF}..."
-    grub-mkconfig -o "${GRUB_CONF}"
+    print_info 1 "Running grub2-mkconfig to create ${GRUB_CONF}..."
+    grub2-mkconfig -o "${GRUB_CONF}"
 }
 
 set_bootloader_grub() {
