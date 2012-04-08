@@ -1,8 +1,9 @@
 # $Id$
 
-DEPENDANCIES:
+DEPENDENCIES:
   - GCC and binutils
   - GNU Bash
+  - PaX Utilities
 
 USAGE:
   See http://www.gentoo.org/doc/en/genkernel.xml or
