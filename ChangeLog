@@ -6,6 +6,10 @@
 # $Id$
 
   08 Apr 2012; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh:
+  Support comression "lzop" (not just "lzo") as wrongly advertised by comments
+  in genkernel.conf before
+
+  08 Apr 2012; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh:
   Error out on unknown initrd compression, reported by Peter Gantner (bug
   #411197)
 

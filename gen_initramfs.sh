@@ -712,7 +712,7 @@ create_initramfs() {
 			pkg_lzop='app-arch/lzop'
 			local compression
 			case ${COMPRESS_INITRD_TYPE} in
-				xz|lzma|bzip2|gzip) compression=${COMPRESS_INITRD_TYPE} ;;
+				xz|lzma|bzip2|gzip|lzop) compression=${COMPRESS_INITRD_TYPE} ;;
 				lzo) compression=lzop ;;
 				best)
 					if grep -sq '^CONFIG_RD_XZ=y' ${KERNEL_DIR}/.config && test -n "${cmd_xz}" ; then
