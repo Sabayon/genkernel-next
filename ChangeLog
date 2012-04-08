@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  08 Apr 2012; Mike Auty <ikelos@gentoo.org> gen_bootloader.sh:
+  Support for Grub 2
+
   08 Apr 2012; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh,
   genkernel.conf:
   Add "fastest" to supported initrd compressions
