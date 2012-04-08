@@ -715,17 +715,21 @@ create_initramfs() {
 				xz|lzma|bzip2|gzip|lzop) compression=${COMPRESS_INITRD_TYPE} ;;
 				lzo) compression=lzop ;;
 				best)
-					if grep -sq '^CONFIG_RD_XZ=y' ${KERNEL_DIR}/.config && test -n "${cmd_xz}" ; then
-						compression=xz
-					elif grep -sq '^CONFIG_RD_LZMA=y' ${KERNEL_DIR}/.config && test -n "${cmd_lzma}" ; then
-						compression=lzma
-					elif grep -sq '^CONFIG_RD_BZIP2=y' ${KERNEL_DIR}/.config  && test -n "${cmd_bzip2}" ; then
-						compression=bzip2
-					elif grep -sq '^CONFIG_RD_GZIP=y' ${KERNEL_DIR}/.config && test -n "${cmd_gzip}" ; then
-						compression=gzip
-					elif grep -sq '^CONFIG_RD_LZO=y' ${KERNEL_DIR}/.config && test -n "${cmd_lzop}" ; then
-						compression=lzop
-					fi ;;
+					for tuple in \
+							'CONFIG_RD_XZ    cmd_xz    xz' \
+							'CONFIG_RD_LZMA  cmd_lzma  lzma' \
+							'CONFIG_RD_BZIP2 cmd_bzip2 bzip' \
+							'CONFIG_RD_GZIP  cmd_gzip  gzip' \
+							'CONFIG_RD_LZO   cmd_lzop  lzop'; do
+						set -- ${tuple}
+						kernel_option=$1
+						cmd_variable_name=$2
+						if grep -sq "^${kernel_option}=y" ${KERNEL_DIR}/.config && test -n "${!cmd_variable_name}" ; then
+							compression=$3
+							break
+						fi
+					done
+					;;
 				*)
 					gen_die "Compression '${COMPRESS_INITRD_TYPE}' unknown"
 					;;
