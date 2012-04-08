@@ -5,6 +5,24 @@
 # Distributed under the GPL v2
 # $Id$
 
+  08 Apr 2012; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh,
+  genkernel.conf:
+  Add "fastest" to supported initrd compressions
+
+  08 Apr 2012; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh:
+  Support comression "lzop" (not just "lzo") as wrongly advertised by comments
+  in genkernel.conf before
+
+  08 Apr 2012; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh:
+  Be more helpful when requested compression is not available
+
+  08 Apr 2012; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh:
+  Error out on unknown initrd compression, reported by Peter Gantner (bug
+  #411197)
+
+  08 Apr 2012; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh:
+  Fix initrd compression "gzip", reported by Peter Gantner (bug #411197)
+
   30 Mar 2012; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.28
 

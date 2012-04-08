@@ -705,28 +705,47 @@ create_initramfs() {
 			cmd_bzip2=$(type -p bzip2)
 			cmd_gzip=$(type -p gzip)
 			cmd_lzop=$(type -p lzop)
+			pkg_xz='app-arch/xz-utils'
+			pkg_lzma='app-arch/xz-utils'
+			pkg_bzip2='app-arch/bzip2'
+			pkg_gzip='app-arch/gzip'
+			pkg_lzop='app-arch/lzop'
 			local compression
 			case ${COMPRESS_INITRD_TYPE} in
-				xz|lzma|bzip2|gzip2|lzo) compression=${COMPRESS_INITRD_TYPE} ;;
-				best)
-					if grep -sq '^CONFIG_RD_XZ=y' ${KERNEL_DIR}/.config && test -n "${cmd_xz}" ; then
-						compression=xz
-					elif grep -sq '^CONFIG_RD_LZMA=y' ${KERNEL_DIR}/.config && test -n "${cmd_lzma}" ; then
-						compression=lzma
-					elif grep -sq '^CONFIG_RD_BZIP2=y' ${KERNEL_DIR}/.config  && test -n "${cmd_bzip2}" ; then
-						compression=bzip2
-					elif grep -sq '^CONFIG_RD_GZIP=y' ${KERNEL_DIR}/.config && test -n "${cmd_gzip}" ; then
-						compression=gzip
-					elif grep -sq '^CONFIG_RD_LZO=y' ${KERNEL_DIR}/.config && test -n "${cmd_lzop}" ; then
-						compression=lzo
-					fi ;;
+				xz|lzma|bzip2|gzip|lzop) compression=${COMPRESS_INITRD_TYPE} ;;
+				lzo) compression=lzop ;;
+				best|fastest)
+					for tuple in \
+							'CONFIG_RD_XZ    cmd_xz    xz' \
+							'CONFIG_RD_LZMA  cmd_lzma  lzma' \
+							'CONFIG_RD_BZIP2 cmd_bzip2 bzip' \
+							'CONFIG_RD_GZIP  cmd_gzip  gzip' \
+							'CONFIG_RD_LZO   cmd_lzop  lzop'; do
+						set -- ${tuple}
+						kernel_option=$1
+						cmd_variable_name=$2
+						if grep -sq "^${kernel_option}=y" ${KERNEL_DIR}/.config && test -n "${!cmd_variable_name}" ; then
+							compression=$3
+							[[ ${COMPRESS_INITRD_TYPE} == best ]] && break
+						fi
+					done
+					;;
+				*)
+					gen_die "Compression '${COMPRESS_INITRD_TYPE}' unknown"
+					;;
 			esac
+
+			# Check for actual availability
+			cmd_variable_name=cmd_${compression}
+			pkg_variable_name=pkg_${compression}
+			[[ -z "${!cmd_variable_name}" ]] && gen_die "Compression '${compression}' is not available. Please install package '${!pkg_variable_name}'."
+
 			case $compression in
 				xz) compress_ext='.xz' compress_cmd="${cmd_xz} -e --check=none -z -f -9" ;;
 				lzma) compress_ext='.lzma' compress_cmd="${cmd_lzma} -z -f -9" ;;
 				bzip2) compress_ext='.bz2' compress_cmd="${cmd_bzip2} -z -f -9" ;;
 				gzip) compress_ext='.gz' compress_cmd="${cmd_gzip} -f -9" ;;
-				lzo) compress_ext='.lzo' compress_cmd="${cmd_lzop} -f -9" ;;
+				lzop) compress_ext='.lzo' compress_cmd="${cmd_lzop} -f -9" ;;
 			esac
 	
 			if [ -n "${compression}" ]; then
