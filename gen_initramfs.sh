@@ -707,7 +707,7 @@ create_initramfs() {
 			cmd_lzop=$(type -p lzop)
 			local compression
 			case ${COMPRESS_INITRD_TYPE} in
-				xz|lzma|bzip2|gzip2|lzo) compression=${COMPRESS_INITRD_TYPE} ;;
+				xz|lzma|bzip2|gzip|lzo) compression=${COMPRESS_INITRD_TYPE} ;;
 				best)
 					if grep -sq '^CONFIG_RD_XZ=y' ${KERNEL_DIR}/.config && test -n "${cmd_xz}" ; then
 						compression=xz
