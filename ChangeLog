@@ -6,6 +6,10 @@
 # $Id$
 
   08 Apr 2012; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh:
+  Error out on unknown initrd compression, reported by Peter Gantner (bug
+  #411197)
+
+  08 Apr 2012; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh:
   Fix initrd compression "gzip", reported by Peter Gantner (bug #411197)
 
   30 Mar 2012; Sebastian Pipping <sping@gentoo.org> genkernel:

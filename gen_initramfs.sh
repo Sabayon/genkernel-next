@@ -720,6 +720,9 @@ create_initramfs() {
 					elif grep -sq '^CONFIG_RD_LZO=y' ${KERNEL_DIR}/.config && test -n "${cmd_lzop}" ; then
 						compression=lzo
 					fi ;;
+				*)
+					gen_die "Compression '${COMPRESS_INITRD_TYPE}' unknown"
+					;;
 			esac
 			case $compression in
 				xz) compress_ext='.xz' compress_cmd="${cmd_xz} -e --check=none -z -f -9" ;;
