@@ -6,7 +6,7 @@
 # $Id$
 
   08 Apr 2012; Mike Auty <ikelos@gentoo.org> gen_bootloader.sh:
-  Support for Grub 2
+  Support for Grub 2, adjustements by Tomasz Wasiak
 
   08 Apr 2012; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh,
   genkernel.conf:
