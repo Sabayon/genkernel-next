@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  08 Apr 2012; Sebastian Pipping <sping@gentoo.org> genkernel:
+  Bump version to 3.4.29
+
   08 Apr 2012; Mike Auty <ikelos@gentoo.org> gen_bootloader.sh:
   Support for Grub 2, adjustements by Tomasz Wasiak
 
