@@ -604,8 +604,10 @@ append_auxilary() {
 	fi
 	if isTrue $CMD_KEYMAP
 	then
-		mkdir -p "${TEMP}/initramfs-aux-temp/lib/keymaps"
-		/bin/tar -C "${TEMP}/initramfs-aux-temp/lib/keymaps" -zxf "${GK_SHARE}/defaults/keymaps.tar.gz"
+		print_info 1 "        >> Copying keymaps"
+		mkdir -p "${TEMP}/initramfs-aux-temp/lib/"
+		cp -R "${GK_SHARE}/defaults/keymaps" "${TEMP}/initramfs-aux-temp/lib/" \
+				|| gen_die "Error while copying keymaps"
 	fi
 
 	cd ${TEMP}/initramfs-aux-temp/sbin && ln -s ../init init

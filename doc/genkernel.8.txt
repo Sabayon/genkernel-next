@@ -463,7 +463,7 @@ which the ramdisk scripts would recognize.
 *keymap*='MAP'::
     Set keymap to 'MAP', e.g. *keymap*=de.
     For valid values of 'MAP' please see
-    '/usr/share/genkernel/defaults/keymaps.tar.gz'.
+    '/usr/share/genkernel/defaults/keymaps/'.
 
 *dokeymap*::
     Use keymap.  Usage of *keymap*= implies this option, already.
