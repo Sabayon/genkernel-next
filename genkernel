@@ -331,23 +331,20 @@ then
 	print_info 1 "Kernel compiled successfully!"
 	print_info 1 ''
 	print_info 1 'Required Kernel Parameters:'
+	print_info 1 '    root=/dev/$ROOT'
 	if [ "${BUILD_RAMDISK}" = '0' ]
 	then
-		print_info 1 '    root=/dev/$ROOT'
 		print_info 1 '    [ And "vga=0x317 splash=verbose" if you use a framebuffer ]'
 		print_info 1 ''
 		print_info 1 '    Where $ROOT is the device node for your root partition as the'
 		print_info 1 '    one specified in /etc/fstab'
 	else
-		print_info 1 '    real_root=/dev/$ROOT'
 		print_info 1 ''
 		print_info 1 '    Where $ROOT is the device node for your root partition as the'
 		print_info 1 '    one specified in /etc/fstab'
 		print_info 1 ''
 		print_info 1 "If you require Genkernel's hardware detection features; you MUST"
-		print_info 1 'tell your bootloader to use the provided INITRAMFS file. Otherwise;'
-		print_info 1 'substitute the root argument for the real_root argument if you are'
-		print_info 1 'not planning to use the initramfs...'
+		print_info 1 'tell your bootloader to use the provided INITRAMFS file.'
 	fi
 fi
 
@@ -362,7 +359,7 @@ then
 	[ "${MDADM}" = '1' ] && print_warning 1 'add "domdadm" for RAID support'
 	[ "${DMRAID}" = '1' ] && print_warning 1 '	or "dodmraid=<additional options>"'
 	[ "${ZFS}" = '1' ] && print_warning 1 'add "dozfs" for ZFS volume management support'
-	[ "${ZFS}" = '1' ] && print_warning 1 'add either "real_root=ZFS" (bootfs autodetection) or "real_root=ZFS=<dataset>" to boot from a ZFS dataset'
+	[ "${ZFS}" = '1' ] && print_warning 1 '	and either "root=ZFS" to use bootfs autodetection or "root=ZFS=<dataset>" to force booting from a specific dataset'
 	[ "${ISCSI}" = '1' ] && print_warning 1 'add at least "iscsi_initiatorname=<initiator name> iscsi_target=<target name> and iscsi_address=<target ip>" for iscsi support'
 
 	if [[ "$(file --brief --mime-type "${KERNEL_CONFIG}")" == application/x-gzip ]]; then

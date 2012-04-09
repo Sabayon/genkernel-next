@@ -89,11 +89,8 @@ set_bootloader_grub() {
 			# Add grub configuration to grub.conf
 			echo "# Genkernel generated entry, see GRUB documentation for details" >> ${GRUB_CONF}
 			echo "title=Gentoo Linux ($KV)" >> ${GRUB_CONF}
-			if [ "${BUILD_INITRD}" = '0' ]
-			then
-				echo -e "\tkernel /kernel-${KNAME}-${ARCH}-${KV} root=${GRUB_ROOTFS}" >> ${GRUB_CONF}
-			else
-				echo -e "\tkernel /kernel-${KNAME}-${ARCH}-${KV} root=/dev/ram0 init=/linuxrc real_root=${GRUB_ROOTFS}" >> ${GRUB_CONF}
+			echo -e "\tkernel /kernel-${KNAME}-${ARCH}-${KV} root=${GRUB_ROOTFS}" >> ${GRUB_CONF}
+			if [ "${BUILD_INITRD}" = '1' ]
 				if [ "${PAT}" -gt '4' ]
 				then
 				    echo -e "\tinitrd /initramfs-${KNAME}-${ARCH}-${KV}" >> ${GRUB_CONF}

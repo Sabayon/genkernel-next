@@ -384,8 +384,12 @@ RAMDISK OPTIONS
 The following options can be passed as kernel parameters from the bootloader,
 which the ramdisk scripts would recognize.
 
-*real_root*=<...>::
+*root*=<...>::
     Specifies the device node of the root filesystem to mount.
+
+*real_root*=<...>::
+    Legacy kernel parameter from kernel-2.4 initrd.
+    Does the same as *root*=, which should be used in its place.
 
 *crypt_root*=<...>::
     This specifies the device encrypted by Luks, which contains the
@@ -423,8 +427,12 @@ which the ramdisk scripts would recognize.
 *dodmraid*[=<...>]::
     Activate Device-Mapper RAID and (optionally) pass arguments to it.
 
-*real_init*=<...>::
+*init*=<...>::
     Override location of init script, default is "/sbin/init".
+
+*real_init*=<...>::
+    Legacy kernel parameter from kernel-2.4 initrd.
+    Does the same as *init*=, which should be used in its place.
 
 *init_opts*=<...>::
     Passes arguments to init on bootup.
@@ -485,10 +493,6 @@ which the ramdisk scripts would recognize.
 *docache*::
 *nocache*::
     Enables/disables caching of CD contents in RAM.
-
-*root*=<...>::
-    Omit or specify as "/dev/ram0".
-    For other values be sure to know what you're doing.
 
 *subdir*=<...>::
     switch_root into "<CHROOT>/<SUBDIR>" instead of "<CHROOT>/".
