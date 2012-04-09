@@ -36,6 +36,7 @@ quiet_kmsg
 CMDLINE=$(cat /proc/cmdline)
 # Scan CMDLINE for any specified real_root= or cdroot arguments
 FAKE_ROOT=''
+FAKE_INIT=''
 REAL_ROOTFLAGS=''
 ROOTFSTYPE='auto'
 CRYPT_SILENT=0
@@ -55,6 +56,9 @@ do
 		;;
 		real_init=*)
 			REAL_INIT=${x#*=}
+		;;
+		init=*)
+			FAKE_INIT=${x#*=}
 		;;
 		init_opts=*)
 			INIT_OPTS=${x#*=}
@@ -262,6 +266,10 @@ done
 if [ -z "${REAL_ROOT}" -a \( "${CDROOT}" = '0' \)  -a \( "${FAKE_ROOT}" != "/dev/ram0" \) ]
 then
 	REAL_ROOT="${FAKE_ROOT}"
+fi
+if [ -z "${REAL_INIT}" -a \( "${CDROOT}" = '0' \)  -a \( "${FAKE_INIT}" != "/linuxrc" \) ]
+then
+	REAL_INIT="${FAKE_INIT}"
 fi
 
 # Set variables based on the value of REAL_ROOT
