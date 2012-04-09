@@ -1,0 +1,10 @@
+Please select a keymap from the following list by typing in the appropriate
+name or number. Hit Enter for the default "us/41" US English keymap.
+
+ 1 azerty  8 croat   15 fi  22 jp  29 pt    36 slovene  43 sf
+ 2 be      9 cz      16 fr  23 la  30 ro    37 trf
+ 3 bg     10 de      17 gr  24 lt  31 ru
+ 4 br-a   11 dk      18 hu  25 mk  32 se    39 ua
+ 5 br-l   12 dvorak  19 il  26 nl  33 sg    40 uk
+ 6 by     13 es      20 is  27 no  34 sk-y  41 us
+ 7 cf     14 et      21 it  28 pl  35 sk-z  42 wangbe

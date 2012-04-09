@@ -575,6 +575,7 @@ chooseKeymap() {
 			40|uk) keymap=uk ;;
 			41|us) keymap=us ;;
 			42|wangbe) keymap=wangbe ;;
+			43|sf|ch*) keymap=sf ;;
 		esac
 	fi
 	if [ -e /lib/keymaps/${keymap}.map ]
@@ -585,7 +586,7 @@ chooseKeymap() {
 #		echo ${keymap} | egrep -e "[0-9]+" >/dev/null 2>&1
 #		if [ $? -eq 0 ]
 #		then
-#			xkeymap=`tail -n 7 /lib/keymaps/keymapList | grep ${keymap} | sed -r "s/.*\s+${keymap}\s+([a-z-]+).*/\1/g" | egrep -v 1`
+#			xkeymap=`tail -n 8 /lib/keymaps/keymapList | grep ${keymap} | sed -r "s/.*\s+${keymap}\s+([a-z-]+).*/\1/g" | egrep -v 1`
 #		fi
 		mkdir -p /etc/sysconfig
 #		echo "XKEYBOARD=${xkeymap}" > /etc/sysconfig/keyboard
