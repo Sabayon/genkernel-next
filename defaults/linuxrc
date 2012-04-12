@@ -283,10 +283,8 @@ setup_hotplug
 # Start mdev
 if [ "${KV_2_6_OR_GREATER}" ]
 then
-	cd /sys
 	good_msg 'Activating mdev'
-	mdev -s  || bad_msg "Failed to receive dynamic updates from mdev"
-	cd /
+	( cd /sys && mdev -s ) || bad_msg "Failed to receive dynamic updates from mdev"
 fi
 
 # Load modules listed in MY_HWOPTS if /lib/modules exists for the running kernel
@@ -315,6 +313,8 @@ sdelay
 
 # Setup slow USB bits
 setup_slowusb
+
+cd /
 
 # if doslowusb is passed, pause other 10 seconds here, after mdev load
 [ "${DO_slowusb}" ] && sleep 10
