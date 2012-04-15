@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  14 Apr 2012; Robin H. Johnson <robbat2@gentoo.org> gen_initramfs.sh:
+  Handle other binary paths for LVM.
+
   09 Apr 2012; Sebastian Pipping <sping@gentoo.org> defaults/initrd.scripts,
   defaults/keymaps/keymapList, defaults/keymaps/sf.map:
   Add keymap "sf" from Pentoo

@@ -265,9 +265,9 @@ append_lvm(){
 		# See bug 382555
 		mv ${TEMP}/initramfs-lvm-temp/sbin/dmsetup.static ${TEMP}/initramfs-lvm-temp/bin/dmsetup ||
 			gen_die 'LVM error: Could not move dmsetup.static to dmsetup!'
-		rm -rf  ${TEMP}/initramfs-lvm-temp/{lib,share,man,include,sbin/{lvm,dmsetup}}
+		rm -rf  ${TEMP}/initramfs-lvm-temp/{lib,share,man,include,{s,}bin/{lvm,dmsetup}}
 	fi
-	if [ -x /sbin/lvm ]
+	if [ -x /sbin/lvm -o -x /bin/lvm ]
 	then
 #		lvm dumpconfig 2>&1 > /dev/null || gen_die 'Could not copy over lvm.conf!'
 #		ret=$?
