@@ -3,6 +3,13 @@
 
 CPIO_ARGS="--quiet -o -H newc"
 
+# The copy_binaries function is explicitly released into the public domain to
+# encourage wide adoption and re-use.
+# Written by: 
+# - Robin H. Johnson <robbat2@gentoo.org> (complete rewrite)
+# - Richard Yao <ryao@cs.stonybrook.edu> (original concept)
+# Usage:
+# copy_binaries DESTDIR BINARIES...
 copy_binaries() {
 	local destdir=$1
 	shift
