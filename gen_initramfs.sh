@@ -419,12 +419,8 @@ append_luks() {
 		[ -x "${_luks_source}" ] \
 				|| gen_die "$(printf "${_luks_error_format}" "no file ${_luks_source}")"
 
-		is_static "${_luks_source}" \
-				|| gen_die "$(printf "${_luks_error_format}" "${_luks_source} not a static binary")"
-
 		print_info 1 "Including LUKS support"
-		cp "${_luks_source}" ${TEMP}/initramfs-luks-temp${_luks_dest}
-		chmod +x "${TEMP}/initramfs-luks-temp${_luks_dest}"
+		copy_binaries "${TEMP}/initramfs-luks-temp/" /sbin/cryptsetup
 	fi
 
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
