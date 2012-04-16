@@ -9,17 +9,17 @@
   Use CC0 instead of public domain for copy_binaries to cover French
   jurisdiction concerns.
 
-  16 Apr 2012; Robin H. Johnson <robbat2@gentoo.org> gen_initramfs.sh:
-  Release copy_binaries function as public domain.
-
-  16 Apr 2012; Robin H. Johnson <robbat2@gentoo.org> gen_initramfs.sh:
-  Handle other binary paths for LVM.
-
   16 Apr 2012; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.30
 
   16 Apr 2012; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh:
   Support a non-static cryptsetup binary (bug #409277)
+ 
+  15 Apr 2012; Robin H. Johnson <robbat2@gentoo.org> gen_initramfs.sh:
+  Release copy_binaries function as public domain.
+
+  15 Apr 2012; Robin H. Johnson <robbat2@gentoo.org> gen_initramfs.sh:
+  Handle other binary paths for LVM.
 
   09 Apr 2012; Sebastian Pipping <sping@gentoo.org> defaults/initrd.scripts,
   defaults/keymaps/keymapList, defaults/keymaps/sf.map:
