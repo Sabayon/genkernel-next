@@ -6,13 +6,23 @@ CPIO_ARGS="--quiet -o -H newc"
 copy_binaries() {
 	local destdir=$1
 	shift
-	lddtree "$@" \
-		| tr ')(' '\n' \
-		| awk  '/=>/{ if($3 ~ /^\//){print $3}}' \
-		| sort \
-		| uniq \
-		| cpio -p --make-directories --dereference --quiet $destdir
 
+	for binary in "$@"; do
+		[[ -e "${binary}" ]] \
+				|| gen_die "Binary ${binary} could not be found"
+
+		if LC_ALL=C lddtree "${binary}" 2>&1 | fgrep -q 'not found'; then
+			gen_die "Binary ${binary} is linked to missing libraries and may need to be re-built"
+		fi
+
+		lddtree "${binary}" \
+				| tr ')(' '\n' \
+				| awk  '/=>/{ if($3 ~ /^\//){print $3}}' \
+				| sort \
+				| uniq \
+				| cpio -p --make-directories --dereference --quiet "${destdir}" \
+				|| gen_die "Binary ${f} or some of its library dependencies could not be copied"
+	done
 }
 
 append_base_layout() {
