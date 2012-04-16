@@ -9,6 +9,7 @@ CPIO_ARGS="--quiet -o -H newc"
 # - Past and future changes to copy_binaries() still need to be licensable under
 #   <GPL v2 or later> to maintain license compatibility with genkernel itself
 # Written by: 
+# - Sebastian Pipping <sebastian@pipping.org> (partly rewrite)
 # - Robin H. Johnson <robbat2@gentoo.org> (complete rewrite)
 # - Richard Yao <ryao@cs.stonybrook.edu> (original concept)
 # Usage:
@@ -16,13 +17,23 @@ CPIO_ARGS="--quiet -o -H newc"
 copy_binaries() {
 	local destdir=$1
 	shift
-	lddtree "$@" \
-		| tr ')(' '\n' \
-		| awk  '/=>/{ if($3 ~ /^\//){print $3}}' \
-		| sort \
-		| uniq \
-		| cpio -p --make-directories --dereference --quiet $destdir
 
+	for binary in "$@"; do
+		[[ -e "${binary}" ]] \
+				|| gen_die "Binary ${binary} could not be found"
+
+		if LC_ALL=C lddtree "${binary}" 2>&1 | fgrep -q 'not found'; then
+			gen_die "Binary ${binary} is linked to missing libraries and may need to be re-built"
+		fi
+
+		lddtree "${binary}" \
+				| tr ')(' '\n' \
+				| awk  '/=>/{ if($3 ~ /^\//){print $3}}' \
+				| sort \
+				| uniq \
+				| cpio -p --make-directories --dereference --quiet "${destdir}" \
+				|| gen_die "Binary ${f} or some of its library dependencies could not be copied"
+	done
 }
 
 append_base_layout() {
@@ -419,12 +430,8 @@ append_luks() {
 		[ -x "${_luks_source}" ] \
 				|| gen_die "$(printf "${_luks_error_format}" "no file ${_luks_source}")"
 
-		is_static "${_luks_source}" \
-				|| gen_die "$(printf "${_luks_error_format}" "${_luks_source} not a static binary")"
-
 		print_info 1 "Including LUKS support"
-		cp "${_luks_source}" ${TEMP}/initramfs-luks-temp${_luks_dest}
-		chmod +x "${TEMP}/initramfs-luks-temp${_luks_dest}"
+		copy_binaries "${TEMP}/initramfs-luks-temp/" /sbin/cryptsetup
 	fi
 
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
