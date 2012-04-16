@@ -6,6 +6,10 @@
 # $Id$
 
   16 Apr 2012; Robin H. Johnson <robbat2@gentoo.org> gen_initramfs.sh:
+  Use CC0 instead of public domain for copy_binaries to cover French
+  jurisdiction concerns.
+
+  16 Apr 2012; Robin H. Johnson <robbat2@gentoo.org> gen_initramfs.sh:
   Release copy_binaries function as public domain.
 
   16 Apr 2012; Robin H. Johnson <robbat2@gentoo.org> gen_initramfs.sh:
