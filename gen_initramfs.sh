@@ -6,8 +6,12 @@ CPIO_ARGS="--quiet -o -H newc"
 # The copy_binaries function is explicitly released into the public domain to
 # encourage wide adoption and re-use.  That means:
 # - You may use the code of copy_binaries() as Public domain outside of genkernel
-# - Past and future changes to copy_binaries() still need to be licensable under
-#   <GPL v2 or later> to maintain license compatibility with genkernel itself
+# - Contributions to this function are put into the Public Domain as well.
+#
+# On a side note: "Both public domain works and the simple license provided by
+#                  CC0 are compatible with the GNU GPL."
+#                 (from https://www.gnu.org/licenses/license-list.html#CC0)
+#
 # Written by: 
 # - Sebastian Pipping <sebastian@pipping.org> (partly rewrite)
 # - Robin H. Johnson <robbat2@gentoo.org> (complete rewrite)
