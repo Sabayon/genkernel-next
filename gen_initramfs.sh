@@ -31,15 +31,15 @@ copy_binaries() {
 		if LC_ALL=C lddtree "${binary}" 2>&1 | fgrep -q 'not found'; then
 			gen_die "Binary ${binary} is linked to missing libraries and may need to be re-built"
 		fi
-
-		lddtree "${binary}" \
-				| tr ')(' '\n' \
-				| awk  '/=>/{ if($3 ~ /^\//){print $3}}' \
-				| sort \
-				| uniq \
-				| cpio -p --make-directories --dereference --quiet "${destdir}" \
-				|| gen_die "Binary ${f} or some of its library dependencies could not be copied"
 	done
+	# This must be OUTSIDE the for loop, we only want to run lddtree etc ONCE.
+	lddtree "$@" \
+			| tr ')(' '\n' \
+			| awk  '/=>/{ if($3 ~ /^\//){print $3}}' \
+			| sort \
+			| uniq \
+			| cpio -p --make-directories --dereference --quiet "${destdir}" \
+			|| gen_die "Binary ${f} or some of its library dependencies could not be copied"
 }
 
 append_base_layout() {

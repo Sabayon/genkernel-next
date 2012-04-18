@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  18 Apr 2012; Robin H. Johnson <robbat2@gentoo.org> gen_initramfs.sh:
+  lddtree call must be outside the for loop.
+
   16 Apr 2012; Robin H. Johnson <robbat2@gentoo.org> gen_initramfs.sh:
   Use CC0 instead of public domain for copy_binaries to cover French
   jurisdiction concerns.
