@@ -277,13 +277,18 @@ mount_devfs
 # Mount sysfs
 mount_sysfs
 
-# Setup hotplugging for firmware loading
-setup_hotplug
-
 # Start mdev
 if [ "${KV_2_6_OR_GREATER}" ]
 then
 	good_msg 'Activating mdev'
+
+	# Serialize hotplug events
+	touch /dev/mdev.seq
+
+	# Setup hotplugging for firmware loading
+	echo /sbin/mdev > /proc/sys/kernel/hotplug
+
+	# Setup mdev netlink socket daemon
 	( cd /sys && mdev -s ) || bad_msg "Failed to receive dynamic updates from mdev"
 fi
 

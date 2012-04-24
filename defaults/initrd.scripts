@@ -404,13 +404,6 @@ prompt_user(){
 	esac
 }
 
-setup_hotplug() {
-	if [ "${KV_2_6_OR_GREATER}" ]
-	then
-		echo /sbin/mdev > /proc/sys/kernel/hotplug
-	fi
-}
-
 setup_slowusb() {
 	# This function removes unset DO_slowusb if there is no usb-storage attached.
 	# If noslowusb is set, skip this function
