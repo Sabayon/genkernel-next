@@ -351,8 +351,8 @@ then
 	[ "${DMRAID}" = '1' ] && print_warning 1 'add "dodmraid" for dmraid support'
 	[ "${MDADM}" = '1' ] && print_warning 1 'add "domdadm" for RAID support'
 	[ "${DMRAID}" = '1' ] && print_warning 1 '	or "dodmraid=<additional options>"'
-	[ "${ZFS}" = '1' ] && print_warning 1 'add "dozfs" for ZFS support'
-	[ "${ZFS}" = '1' ] && print_warning 1 '	and either "real_root=ZFS" to use bootfs autodetection or "real_root=ZFS=<dataset>" to force booting from a specific dataset'
+	[ "${ZFS}" = '1' ] && print_warning 1 'add "dozfs" for ZFS volume management support'
+	[ "${ZFS}" = '1' ] && print_warning 1 'add either "real_root=ZFS" (bootfs autodetection) or "real_root=ZFS=<dataset>" to boot from a ZFS dataset'
 	[ "${ISCSI}" = '1' ] && print_warning 1 'add at least "iscsi_initiatorname=<initiator name> iscsi_target=<target name> and iscsi_address=<target ip>" for iscsi support'
 	if [ `grep 'CONFIG_EXT[0-9]_FS=' "${KERNEL_DIR}"/.config | wc -l` -ge 2 ]; then
 		print_warning 1 'With support for several ext* filesystems around it may be needed to'
