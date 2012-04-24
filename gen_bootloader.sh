@@ -32,7 +32,7 @@ set_bootloader_grub_read_device_map() {
 }
 
 set_bootloader_grub2() {
-    local GRUB_CONF
+	local GRUB_CONF
 	for candidate in \
 			"${BOOTDIR}/grub2/grub.cfg" \
 			"${BOOTDIR}/grub/grub.cfg" \
@@ -46,11 +46,11 @@ set_bootloader_grub2() {
 	if [[ -z "${GRUB_CONF}" ]]; then
 		print_error 1 "Error! Grub2 configuration file does not exist, please ensure grub2 is correctly setup first."
 		return 0
-    fi
+	fi
 
-    print_info 1 "You can customize Grub2 parameters in /etc/default/grub."
-    print_info 1 "Running grub2-mkconfig to create ${GRUB_CONF}..."
-    grub2-mkconfig -o "${GRUB_CONF}"
+	print_info 1 "You can customize Grub2 parameters in /etc/default/grub."
+	print_info 1 "Running grub2-mkconfig to create ${GRUB_CONF}..."
+	grub2-mkconfig -o "${GRUB_CONF}"
 }
 
 set_bootloader_grub() {
