@@ -599,7 +599,12 @@ startVolumes() {
 	
 	if [ "${USE_MDADM}" = '1' ]
 	then
-		/sbin/mdadm --assemble --scan
+		if [ -e '/sbin/mdadm' ]
+		then
+			/sbin/mdadm --assemble --scan
+		else
+			bad_msg "mdadm not found: skipping mdadm raid assembly!"
+		fi
 	fi
 
 	if [ "${USE_DMRAID_NORMAL}" = '1' ]
@@ -649,7 +654,12 @@ startVolumes() {
 	
 	if [ "${USE_ZFS}" = '1' ]
 	then
-		/sbin/zpool import -N -a ${ZPOOL_FORCE}
+		if [ -e '/sbin/zpool' ]
+		then
+			/sbin/zpool import -N -a ${ZPOOL_FORCE}
+		else
+			bad_msg "zpool not found: skipping ZFS pool import!"
+		fi
 	fi
 }
 
