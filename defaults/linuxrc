@@ -251,6 +251,11 @@ fi
 # Set variables based on the value of REAL_ROOT
 case "${REAL_ROOT}" in
 	ZFS*)
+		ZFS_POOL=${REAL_ROOT#*=}
+		ZFS_POOL=${ZFS_POOL%%/*}
+		USE_ZFS=1
+	;;
+	ZFS)
 		USE_ZFS=1
 	;;
 esac
@@ -258,12 +263,15 @@ esac
 # Verify that it is safe to use ZFS
 if [ "USE_ZFS" = "1" ]
 then
-	if [ -x /sbin/zfs ]
+	if [ -x /sbin/zfs -a -x /sbin/zpool ]
 	then
 		MY_HWOPTS="${MY_HWOPTS} zfs"
 	else
-		bad_msg 'zfs binary not found: aborting use of zfs!'
 		USE_ZFS=0
+
+		[ -x /sbin/zfs ] || bad_msg '/sbin/zfs not found!'
+		[ -x /sbin/zpool ] || bad_msg '/sbin/zpool not found!'
+		bad_msg 'Aborting use of zfs!'
 	fi
 fi
 
@@ -486,16 +494,24 @@ do
 				fi
 				;;
 			ZFS*)
+				if [ "${USE_ZFS}" = '0' ]; then
+					prompt_user "REAL_ROOT" "root block device"
+					continue
+				fi
+					
 				ROOT_DEV="${REAL_ROOT#*=}"
 				if [ "${ROOT_DEV}" != 'ZFS' ] 
 				then
-					zfs get type ${ROOT_DEV} > /dev/null
-
-					if [ "$?" = '0' ]
+					if [ "$(zfs get type -o value -H ${ROOT_DEV})" = 'filesystem' ]
 					then
 						got_good_root=1;
 						REAL_ROOT=${ROOT_DEV}
 						ROOTFSTYPE=zfs
+					else
+						bad_msg "${ROOT_DEV} is not a filesystem"
+						prompt_user "REAL_ROOT" "root block device"
+						got_good_root=0
+						continue
 					fi
 				else
 					BOOTFS=$(/sbin/zpool list -H -o bootfs)
@@ -563,7 +579,12 @@ do
 
 		if [ "${ROOTFSTYPE}" = 'zfs' ]
 		then
-			MOUNT_STATE=rw
+			if [ "zfs get -H -o value mountpoint ${REAL_ROOT}" = 'legacy' ]
+			then
+				MOUNT_STATE=rw
+			else
+				MOUNT_STATE=rw,zfsutil
+			fi
 		else
 			MOUNT_STATE=ro
 		fi

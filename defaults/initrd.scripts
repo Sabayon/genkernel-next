@@ -654,11 +654,29 @@ startVolumes() {
 	
 	if [ "${USE_ZFS}" = '1' ]
 	then
-		if [ -e '/sbin/zpool' ]
+		if [ -z "${ZFS_POOL}" ];
 		then
-			/sbin/zpool import -N -a ${ZPOOL_FORCE}
+			good_msg "Importing ZFS pools"
+
+			/sbin/zpool import -N -a "${ZPOOL_FORCE}"
+
+			if [ "$?" = '0' ]
+			then
+				good_msg "Importing ZFS pools succeeded"
+			else
+				bad_msg "Imported ZFS pools failed"
+			fi
 		else
-			bad_msg "zpool not found: skipping ZFS pool import!"
+			good_msg "Importing ZFS pool ${ZFS_POOL}"
+
+			/sbin/zpool import -N "${ZPOOL_FORCE}" "${ZFS_POOL}"
+
+			if [ "$?" = '0' ]
+			then
+				good_msg "Importing ${ZFS_POOL} succeeded"
+			else
+				bad_msg "Importing ${ZFS_POOL} failed"
+			fi
 		fi
 	fi
 }
