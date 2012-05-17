@@ -11,6 +11,10 @@ Phases:
 - source global scripts
 - 
 
+Testing things:
+  $ cd genkernel
+  $ sudo GK_SHARE="$PWD" ./genkernel initramfs --no-install --no-postclear --loglevel=2
+
 Rolling a release:
 - Bump the version in the main genkernel file.
 - echangelog commit the bump
