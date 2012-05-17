@@ -801,7 +801,7 @@ openLUKS() {
 					fi
 
 					if [ "${retval}" -ne 0 ]; then
-						REAL_LUKS=`blkid -l -t "${LUKS_DEVICE}" | cut -d ":" -f 1 2>/dev/null`
+						REAL_LUKS=`blkid -o device -l -t "${LUKS_DEVICE}"`
 						retval=$?
 					fi
 

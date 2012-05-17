@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  17 May 2012; Sebastian Pipping <sping@gentoo.org> defaults/linuxrc:
+  Fix call to blkid as "blkid -l -t UUID=foo" (without -o device) does not seem
+  to work well with blkid of util-linux
+
   17 May 2012; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.33
 

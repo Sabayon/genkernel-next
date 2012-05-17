@@ -372,7 +372,7 @@ then
 				fi
 
 				if [ ${retval} -ne 0 ]; then
-					RESUME_DEV=$(blkid -l -t "${REAL_RESUME}" | cut -d ":" -f 1 2>/dev/null)
+					RESUME_DEV=$(blkid -o device -l -t "${REAL_RESUME}")
 					retval=$?
 				fi
 
@@ -480,7 +480,7 @@ do
 				fi
 
 				if [ ${retval} -ne 0 ]; then
-					ROOT_DEV=$(blkid -l -t "${REAL_ROOT}" | cut -d ":" -f 1 2>/dev/null)
+					ROOT_DEV=$(blkid -o device -l -t "${REAL_ROOT}")
 					retval=$?
 				fi
 
