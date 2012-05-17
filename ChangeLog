@@ -5,6 +5,11 @@
 # Distributed under the GPL v2
 # $Id$
 
+  17 May 2012; Sebastian Pipping <sping@gentoo.org>
+  -patches/e2fsprogs/1.42/e2fsprogs-1.41.12-getpagesize.patch, gen_compile.sh,
+  gen_initramfs.sh, genkernel, genkernel.conf:
+  Use blkid from system's util-linux rather than compiling e2fsprogs ourselves
+
   14 May 2012; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.32
 

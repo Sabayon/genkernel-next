@@ -279,8 +279,6 @@ fi
 
 if [ "${BUILD_RAMDISK}" = '1' ]
 then
-	[ "${DISKLABEL}" = '1' ] && compile_e2fsprogs
-
 	if [ "${BUSYBOX}" = '1' ]
 	then
 		# Compile Busybox

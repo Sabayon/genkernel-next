@@ -133,10 +133,12 @@ append_blkid(){
 		rm -r "${TEMP}/initramfs-blkid-temp/"
 	fi
 	cd ${TEMP}
-	mkdir -p "${TEMP}/initramfs-blkid-temp/sbin/"
-	[ "${DISKLABEL}" = '1' ] && { /bin/bzip2 -dc "${BLKID_BINCACHE}" > "${TEMP}/initramfs-blkid-temp/sbin/blkid" ||
-		gen_die "Could not extract blkid binary cache!"; }
-	chmod a+x "${TEMP}/initramfs-blkid-temp/sbin/blkid"
+	mkdir -p "${TEMP}/initramfs-blkid-temp/"
+
+	if [[ "${DISKLABEL}" = "1" ]]; then
+		copy_binaries "${TEMP}"/initramfs-blkid-temp/ /sbin/blkid
+	fi
+
 	cd "${TEMP}/initramfs-blkid-temp/"
 	log_future_cpio_content
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \

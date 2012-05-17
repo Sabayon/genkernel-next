@@ -565,40 +565,6 @@ compile_device_mapper() {
 	compile_lvm
 }
 
-compile_e2fsprogs() {
-	if [ -f "${BLKID_BINCACHE}" ]
-	then
-		print_info 1 "blkid: >> Using cache"
-	else
-		[ ! -f "${E2FSPROGS_SRCTAR}" ] &&
-			gen_die "Could not find e2fsprogs source tarball: ${E2FSPROGS_SRCTAR}. Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
-		cd "${TEMP}"
-		rm -rf "${E2FSPROGS_DIR}"
-		tar -zxpf "${E2FSPROGS_SRCTAR}"
-		[ ! -d "${E2FSPROGS_DIR}" ] &&
-			gen_die "e2fsprogs directory ${E2FSPROGS_DIR} invalid"
-		cd "${E2FSPROGS_DIR}"
-		apply_patches e2fsprogs ${E2FSPROGS_VER}
-		print_info 1 'e2fsprogs: >> Configuring...'
-		LDFLAGS=-static ./configure >> ${LOGFILE} 2>&1 ||
-			gen_die 'Configuring e2fsprogs failed!'
-		print_info 1 'e2fsprogs: >> Compiling...'
-		MAKE=${UTILS_MAKE} MAKEOPTS="${MAKEOPTS} -j1" compile_generic "" ""
-		print_info 1 'blkid: >> Copying to cache...'
-		[ -f "${TEMP}/${E2FSPROGS_DIR}/misc/blkid" ] ||
-			gen_die 'Blkid executable does not exist!'
-		${UTILS_CROSS_COMPILE}strip "${TEMP}/${E2FSPROGS_DIR}/misc/blkid" ||
-			gen_die 'Could not strip blkid binary!'
-		bzip2 "${TEMP}/${E2FSPROGS_DIR}/misc/blkid" ||
-			gen_die 'bzip2 compression of blkid failed!'
-		mv "${TEMP}/${E2FSPROGS_DIR}/misc/blkid.bz2" "${BLKID_BINCACHE}" ||
-			gen_die 'Could not copy the blkid binary to the package directory, does the directory exist?'
-
-		cd "${TEMP}"
-		rm -rf "${E2FSPROGS_DIR}" > /dev/null
-	fi
-}
-
 compile_fuse() {
 	if [ ! -f "${FUSE_BINCACHE}" ]
 	then
