@@ -42,6 +42,15 @@ copy_binaries() {
 			|| gen_die "Binary ${f} or some of its library dependencies could not be copied"
 }
 
+log_future_cpio_content() {
+	if [[ "${LOGLEVEL}" -gt 1 ]]; then
+		echo =================================================================
+		echo "About to add these files from '${PWD}' to cpio archive:"
+		find . | xargs ls -ald
+		echo =================================================================
+	fi
+}
+
 append_base_layout() {
 	if [ -d "${TEMP}/initramfs-base-temp" ]
 	then
@@ -81,6 +90,7 @@ append_base_layout() {
 	date -u '+%Y%m%d-%H%M%S' > ${TEMP}/initramfs-base-temp/etc/build_date
 
 	cd "${TEMP}/initramfs-base-temp/"
+	log_future_cpio_content
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 			|| gen_die "compressing baselayout cpio"
 	cd "${TEMP}"
@@ -110,6 +120,7 @@ append_busybox() {
 	done
 
 	cd "${TEMP}/initramfs-busybox-temp/"
+	log_future_cpio_content
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 			|| gen_die "compressing busybox cpio"
 	cd "${TEMP}"
@@ -127,6 +138,7 @@ append_blkid(){
 		gen_die "Could not extract blkid binary cache!"; }
 	chmod a+x "${TEMP}/initramfs-blkid-temp/sbin/blkid"
 	cd "${TEMP}/initramfs-blkid-temp/"
+	log_future_cpio_content
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 			|| gen_die "compressing blkid cpio"
 	cd "${TEMP}"
@@ -158,6 +170,7 @@ append_unionfs_fuse() {
 		gen_die 'Could not extract unionfs-fuse binary cache!'
 	chmod a+x "${TEMP}/initramfs-unionfs-fuse-temp/sbin/unionfs"
 	cd "${TEMP}/initramfs-unionfs-fuse-temp/"
+	log_future_cpio_content
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 			|| gen_die "compressing unionfs fuse cpio"
 	cd "${TEMP}"
@@ -178,6 +191,7 @@ append_unionfs_fuse() {
 #	cp -f /etc/suspend.conf "${TEMP}/initramfs-suspend-temp/etc" ||
 #		gen_die 'Could not copy /etc/suspend.conf'
 #	cd "${TEMP}/initramfs-suspend-temp/"
+#	log_future_cpio_content
 #	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 #			|| gen_die "compressing suspend cpio"
 #	rm -r "${TEMP}/initramfs-suspend-temp/"
@@ -205,6 +219,7 @@ append_multipath(){
 		cp /etc/scsi_id.config "${TEMP}/initramfs-multipath-temp/etc/" || gen_die 'could not copy scsi_id.config'
 	fi
 	cd "${TEMP}/initramfs-multipath-temp"
+	log_future_cpio_content
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 			|| gen_die "compressing multipath cpio"
 	cd "${TEMP}"
@@ -229,6 +244,7 @@ append_dmraid(){
 		ln -sf raid456.kp raid45.ko
 		cd "${TEMP}/initramfs-dmraid-temp/"
 	fi
+	log_future_cpio_content
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 			|| gen_die "compressing dmraid cpio"
 	cd "${TEMP}"
@@ -248,6 +264,7 @@ append_iscsi(){
 		gen_die "Could not extract iscsi binary cache!"
 	chmod a+x "${TEMP}/initramfs-iscsi-temp/bin/iscsistart"
 	cd "${TEMP}/initramfs-iscsi-temp/"
+	log_future_cpio_content
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 			|| gen_die "compressing iscsi cpio"
 	cd "${TEMP}"
@@ -307,6 +324,7 @@ append_lvm(){
 #		fi
 	fi
 	cd "${TEMP}/initramfs-lvm-temp/"
+	log_future_cpio_content
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 			|| gen_die "compressing lvm cpio"
 	cd "${TEMP}"
@@ -350,6 +368,7 @@ append_mdadm(){
 		fi
 	fi
 	cd "${TEMP}/initramfs-mdadm-temp/"
+	log_future_cpio_content
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 			|| gen_die "compressing mdadm cpio"
 	cd "${TEMP}"
@@ -375,6 +394,7 @@ append_zfs(){
 	copy_binaries "${TEMP}/initramfs-zfs-temp" /sbin/{mount.zfs,zfs,zpool}
 
 	cd "${TEMP}/initramfs-zfs-temp/"
+	log_future_cpio_content
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 			|| gen_die "compressing zfs cpio"
 	cd "${TEMP}"
@@ -402,6 +422,7 @@ append_splash(){
 			cp -f "/usr/share/splashutils/initrd.splash" "${TEMP}/initramfs-splash-temp/etc"
 		fi
 		cd "${TEMP}/initramfs-splash-temp/"
+		log_future_cpio_content
 		find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 			|| gen_die "compressing splash cpio"
 		cd "${TEMP}"
@@ -413,6 +434,7 @@ append_splash(){
 
 append_overlay(){
 	cd ${INITRAMFS_OVERLAY}
+	log_future_cpio_content
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 			|| gen_die "compressing overlay cpio"
 }
@@ -440,6 +462,7 @@ append_luks() {
 		copy_binaries "${TEMP}/initramfs-luks-temp/" /sbin/cryptsetup
 	fi
 
+	log_future_cpio_content
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 		|| gen_die "appending cryptsetup to cpio"
 
@@ -470,6 +493,7 @@ append_firmware() {
 	else
 		cp -a "${FIRMWARE_DIR}"/* ${TEMP}/initramfs-firmware-temp/lib/firmware/
 	fi
+	log_future_cpio_content
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 		|| gen_die "appending firmware to cpio"
 	cd "${TEMP}"
@@ -491,6 +515,7 @@ append_gpg() {
 		gen_die 'Could not extract gpg binary cache!'
 	chmod a+x "${TEMP}/initramfs-gpg-temp/sbin/gpg"
 	cd "${TEMP}/initramfs-gpg-temp/"
+	log_future_cpio_content
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
 	rm -rf "${TEMP}/initramfs-gpg-temp" > /dev/null
 }
@@ -543,6 +568,7 @@ append_modules() {
 		print_list ${!group_modules} > "${TEMP}/initramfs-modules-${KV}-temp/etc/modules/${group}"
 	done
 	cd "${TEMP}/initramfs-modules-${KV}-temp/"
+	log_future_cpio_content
 	find . | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 			|| gen_die "compressing modules cpio"
 	cd "${TEMP}"
@@ -647,6 +673,7 @@ append_auxilary() {
 	fi
 
 	cd "${TEMP}/initramfs-aux-temp/"
+	log_future_cpio_content
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 			|| gen_die "compressing auxilary cpio"
 	cd "${TEMP}"
