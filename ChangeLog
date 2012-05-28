@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  28 May 2012; Sebastian Pipping <sping@gentoo.org> gen_funcs.sh:
+  Fix an e2fsprogs compilation leftover (bug #417095), reported by Juergen Rose
+
   17 May 2012; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump to 3.4.33.1
 
