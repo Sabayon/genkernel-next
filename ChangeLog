@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  02 Jun 2012; Sebastian Pipping <sping@gentoo.org> defaults/linuxrc:
+  Support bind mounts from /etc/initramfs.mounts (bug #418463)
+
   28 May 2012; Sebastian Pipping <sping@gentoo.org> gen_funcs.sh:
   Fix an e2fsprogs compilation leftover (bug #417095), reported by Juergen Rose
 
