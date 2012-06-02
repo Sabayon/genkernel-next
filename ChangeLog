@@ -5,6 +5,11 @@
 # Distributed under the GPL v2
 # $Id$
 
+  02 Jun 2012; Sebastian Pipping <sping@gentoo.org> arch/x86/modules_load,
+  arch/x86_64/modules_load, defaults/modules_load:
+  Make sure that cbc.ko and aes*.ko needed for cbc-essiv:sha256 (=default) disk
+  encryption are included with the initramfs (bug #416973)
+
   28 May 2012; Sebastian Pipping <sping@gentoo.org> gen_funcs.sh:
   Fix an e2fsprogs compilation leftover (bug #417095), reported by Juergen Rose
 
