@@ -847,8 +847,13 @@ for fs in $fslist; do
 	# and not a mountpoint
 	[ -z "$dev" ] && continue
 	fstype=$(get_mount_fstype $fs)
-	# ro must be trailing, and the options will always contain at least 'defaults'
-	opts="$(get_mount_options $fs | strip_mount_options),ro"
+	if get_mount_options $fs | fgrep -q bind ; then
+		opts='bind'
+		dev=${NEW_ROOT}${dev}
+	else
+		# ro must be trailing, and the options will always contain at least 'defaults'
+		opts="$(get_mount_options $fs | strip_mount_options),ro"
+	fi
 	mnt=${NEW_ROOT}${fs}
 	cmd="mount -t $fstype -o $opts $dev $mnt"
 	good_msg "Mounting $dev as ${fs}: $cmd"

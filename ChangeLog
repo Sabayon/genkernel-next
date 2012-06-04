@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  02 Jun 2012; Sebastian Pipping <sping@gentoo.org> defaults/linuxrc:
+  Support bind mounts from /etc/initramfs.mounts (bug #418463)
+
   02 Jun 2012; Sebastian Pipping <sping@gentoo.org> arch/x86/modules_load,
   arch/x86_64/modules_load, defaults/modules_load:
   Make sure that cbc.ko and aes*.ko needed for cbc-essiv:sha256 (=default) disk
