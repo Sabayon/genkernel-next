@@ -17,7 +17,8 @@ Testing things:
 
 Rolling a release:
 - Bump the version in the main genkernel file.
-- echangelog commit the bump
+- echangelog "Bump version to ${PV}"
+- git commit -a -m "Bump version to ${PV}"
 - git tag -a -m "Tag release v${PV}" v${PV}
 - git push ${REMOTE} master --tags
 - make dist
