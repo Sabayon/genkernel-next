@@ -756,7 +756,7 @@ openLUKS() {
 	case $1 in
 		root)
 			local TYPE=ROOT
-			[ -n "${REAL_ROOT}" ] && local LUKS_NAME="$(echo "$REAL_ROOT" | sed -e 's/.*\///')"
+			[ -n "${REAL_ROOT}" ] && local LUKS_NAME="`echo "${REAL_ROOT}" | sed -e 's|.*/||'`"
 			;;
 		swap)
 			local TYPE=SWAP
