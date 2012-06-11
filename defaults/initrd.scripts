@@ -751,16 +751,19 @@ openLUKS() {
 	# please use 'tr' and this line, or remove it
 	# eval local TYPE=`uppercase $1`
 
+	local LUKS_NAME="$1"
+
 	case $1 in
 		root)
 			local TYPE=ROOT
+			[ -n "${REAL_ROOT}" ] && local LUKS_NAME="$(echo "$REAL_ROOT" | sed -e 's/.*\///')"
 			;;
 		swap)
 			local TYPE=SWAP
 			;;
 	esac
 
-	eval local LUKS_DEVICE='"${CRYPT_'${TYPE}'}"' LUKS_NAME="$1" LUKS_KEY='"${CRYPT_'${TYPE}'_KEY}"' LUKS_KEYDEV='"${CRYPT_'${TYPE}'_KEYDEV}"' LUKS_TRIM='"${CRYPT_'${TYPE}'_TRIM}"'
+	eval local LUKS_DEVICE='"${CRYPT_'${TYPE}'}"' LUKS_NAME="$LUKS_NAME" LUKS_KEY='"${CRYPT_'${TYPE}'_KEY}"' LUKS_KEYDEV='"${CRYPT_'${TYPE}'_KEYDEV}"' LUKS_TRIM='"${CRYPT_'${TYPE}'_TRIM}"'
 	local DEV_ERROR=0 KEY_ERROR=0 KEYDEV_ERROR=0
 	local mntkey="/mnt/key/" cryptsetup_options=''
 
