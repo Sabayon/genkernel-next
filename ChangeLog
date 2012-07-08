@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  08 Jul 2012; Sebastian Pipping <sping@gentoo.org> arch/x86/modules_load,
+  arch/x86_64/modules_load, defaults/modules_load:
+  Add xts to MODULES_CRYPTO (bug #425028)
+
   01 Jul 2012; Sebastian Pipping <sping@gentoo.org> gen_configkernel.sh,
   gen_package.sh:
   Support --kernel-config=/proc/config.gz (bug #421027)
