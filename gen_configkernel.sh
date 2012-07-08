@@ -56,7 +56,13 @@ config_kernel() {
 	# or we might remove configurations someone is trying to test.
 	if isTrue "${MRPROPER}" || [ ! -f "${KERNEL_DIR}/.config" ]
 	then
-		cp "${KERNEL_CONFIG}" "${KERNEL_DIR}/.config" || gen_die 'Could not copy configuration file!'
+		local message='Could not copy configuration file!'
+		if [[ "$(file --brief --mime-type "${KERNEL_CONFIG}")" == application/x-gzip ]]; then
+			# Support --kernel-config=/proc/config.gz, mainly
+			zcat "${KERNEL_CONFIG}" > "${KERNEL_DIR}/.config" || gen_die "${message}"
+		else
+			cp "${KERNEL_CONFIG}" "${KERNEL_DIR}/.config" || gen_die "${message}"
+		fi
 	fi
 
 	if isTrue "${OLDCONFIG}"

@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  01 Jul 2012; Sebastian Pipping <sping@gentoo.org> gen_configkernel.sh,
+  gen_package.sh:
+  Support --kernel-config=/proc/config.gz (bug #421027)
+
   08 Jul 2012; Kenny Cheng <kenny97821419@gmail.com> defaults/linuxrc:
   Add /run to support openrc >=0.10
 
