@@ -806,7 +806,7 @@ then
 		fi
 	done
 
-	mkdir initramfs proc tmp sys 2>/dev/null
+	mkdir initramfs proc tmp sys run 2>/dev/null
 	chmod 1777 tmp
 
 	fi
@@ -876,7 +876,7 @@ verbose_kmsg
 echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting (initramfs)${NORMAL}"
 
 cd "${CHROOT}"
-mkdir "${CHROOT}/proc" "${CHROOT}/sys" 2>/dev/null
+mkdir "${CHROOT}/proc" "${CHROOT}/sys" "${CHROOT}/run" 2>/dev/null
 echo -ne "${BOLD}.${NORMAL}"
 
 # If devtmpfs is mounted, try move it to the new root
