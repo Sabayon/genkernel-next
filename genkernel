@@ -117,6 +117,7 @@ done
 # get the real arguments for usage...
 
 determine_real_args
+determine_config_file
 
 set_kernel_arch
 
@@ -129,6 +130,7 @@ check_distfiles
 dump_debugcache
 
 NORMAL=${BOLD} print_info 1 "Linux Kernel ${BOLD}${KV}${NORMAL} for ${BOLD}${ARCH}${NORMAL}..."
+print_info 1 ".. with config file ${KERNEL_CONFIG}"
 
 # Check BOOTDIR is mounted
 if ! isTrue ${CMD_INSTALL}
@@ -352,10 +354,20 @@ then
 	[ "${ZFS}" = '1' ] && print_warning 1 'add "dozfs" for ZFS volume management support'
 	[ "${ZFS}" = '1' ] && print_warning 1 'add either "real_root=ZFS" (bootfs autodetection) or "real_root=ZFS=<dataset>" to boot from a ZFS dataset'
 	[ "${ISCSI}" = '1' ] && print_warning 1 'add at least "iscsi_initiatorname=<initiator name> iscsi_target=<target name> and iscsi_address=<target ip>" for iscsi support'
-	if [ `grep 'CONFIG_EXT[0-9]_FS=' "${KERNEL_DIR}"/.config | wc -l` -ge 2 ]; then
-		print_warning 1 'With support for several ext* filesystems around it may be needed to'
-		print_warning 1 'add "rootfstype=ext3" or "rootfstype=ext4"'
+
+	if [[ "$(file --brief --mime-type "${KERNEL_CONFIG}")" == application/x-gzip ]]; then
+		# Support --kernel-config=/proc/config.gz, mainly
+		CONFGREP=zgrep
+	else
+		CONFGREP=grep
 	fi
+
+	if [ `${CONFGREP} 'CONFIG_EXT[0-9]_FS=' "${KERNEL_CONFIG}" | wc -l` -ge 2 ]; then
+		print_warning 1 'With support for several ext* filesystems available, it may be needed to'
+		print_warning 1 'add "rootfstype=ext3" or "rootfstype=ext4" to the list of boot parameters.'
+	fi
+
+	unset CONFGREP
 fi
 
 [ "${BOOTRW}" != '' ] && mount -o remount,ro ${BOOTDIR}
