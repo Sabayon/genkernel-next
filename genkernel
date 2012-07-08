@@ -117,6 +117,7 @@ done
 # get the real arguments for usage...
 
 determine_real_args
+determine_config_file
 
 set_kernel_arch
 
@@ -129,6 +130,7 @@ check_distfiles
 dump_debugcache
 
 NORMAL=${BOLD} print_info 1 "Linux Kernel ${BOLD}${KV}${NORMAL} for ${BOLD}${ARCH}${NORMAL}..."
+print_info 1 ".. with config file ${KERNEL_CONFIG}"
 
 # Check BOOTDIR is mounted
 if ! isTrue ${CMD_INSTALL}

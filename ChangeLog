@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  08 Jul 2012; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh,
+  genkernel:
+  Always report used kernel config file
+
   08 Jul 2012; Sebastian Pipping <sping@gentoo.org> gen_configkernel.sh,
   gen_initramfs.sh:
   Catch case with no initramfs compression supported by kernel (bug #423847)
