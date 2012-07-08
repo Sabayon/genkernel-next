@@ -10,7 +10,7 @@
   Support --kernel-config=/proc/config.gz (bug #421027)
 
   08 Jul 2012; Kenny Cheng <kenny97821419@gmail.com> defaults/linuxrc:
-  Add /run to support openrc >=0.10
+  Add /run to support openrc >=0.10 (bug #425180)
 
   11 Jun 2012; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.36
