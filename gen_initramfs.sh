@@ -779,7 +779,7 @@ create_initramfs() {
 					for tuple in \
 							'CONFIG_RD_XZ    cmd_xz    xz' \
 							'CONFIG_RD_LZMA  cmd_lzma  lzma' \
-							'CONFIG_RD_BZIP2 cmd_bzip2 bzip' \
+							'CONFIG_RD_BZIP2 cmd_bzip2 bzip2' \
 							'CONFIG_RD_GZIP  cmd_gzip  gzip' \
 							'CONFIG_RD_LZO   cmd_lzop  lzop'; do
 						set -- ${tuple}
