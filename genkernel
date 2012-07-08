@@ -363,8 +363,8 @@ then
 	fi
 
 	if [ `${CONFGREP} 'CONFIG_EXT[0-9]_FS=' "${KERNEL_CONFIG}" | wc -l` -ge 2 ]; then
-		print_warning 1 'With support for several ext* filesystems around it may be needed to'
-		print_warning 1 'add "rootfstype=ext3" or "rootfstype=ext4"'
+		print_warning 1 'With support for several ext* filesystems available, it may be needed to'
+		print_warning 1 'add "rootfstype=ext3" or "rootfstype=ext4" to the list of boot parameters.'
 	fi
 
 	unset CONFGREP
