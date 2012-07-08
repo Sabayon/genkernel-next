@@ -790,6 +790,7 @@ create_initramfs() {
 							[[ ${COMPRESS_INITRD_TYPE} == best ]] && break
 						fi
 					done
+					[[ -z "${compression}" ]] && gen_die "None of the initramfs we tried are supported by your kernel (config file \"${KERNEL_CONFIG}\"), strange!?"
 					;;
 				*)
 					gen_die "Compression '${COMPRESS_INITRD_TYPE}' unknown"

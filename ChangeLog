@@ -7,6 +7,10 @@
 
   08 Jul 2012; Sebastian Pipping <sping@gentoo.org> gen_configkernel.sh,
   gen_initramfs.sh:
+  Catch case with no initramfs compression supported by kernel (bug #423847)
+
+  08 Jul 2012; Sebastian Pipping <sping@gentoo.org> gen_configkernel.sh,
+  gen_initramfs.sh:
   Fix detection of initramfs compression with bzip2 as best candidate
 
   08 Jul 2012; Sebastian Pipping <sping@gentoo.org> arch/x86/modules_load,
