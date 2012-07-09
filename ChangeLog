@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  09 Jul 2012; Sebastian Pipping <sping@gentoo.org>
+  patches/fuse/2.8.6/fuse-2.8.6-glibc-2.14.patch:
+  Allow compilation of FUSE 2.8.6 with glibc 2.14 (bug #370411)
+
   09 Jul 2012; Sebastian Pipping <sping@gentoo.org> defaults/initrd.scripts:
   Restore previous handling of real_root due to report of regressions (bug
   #419965)

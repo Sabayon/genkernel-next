@@ -1,0 +1,10 @@
+--- util/fusermount.c	2012-07-10 00:18:25.228755618 +0200
++++ util/fusermount.c	2012-07-10 00:17:47.574226365 +0200
+@@ -9,6 +9,7 @@
+ 
+ #include <config.h>
+ 
++#define _GNU_SOURCE /* for clone */
+ #include "mount_util.h"
+ #include <stdio.h>
+ #include <stdlib.h>
