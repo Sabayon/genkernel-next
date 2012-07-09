@@ -578,7 +578,7 @@ compile_fuse() {
 		cd "${FUSE_DIR}"
 		apply_patches fuse ${FUSE_VER}
 		print_info 1 'fuse: >> Configuring...'
-		./configure  --disable-kernel-module --disable-example >> ${LOGFILE} 2>&1 ||
+		./configure --disable-example >> ${LOGFILE} 2>&1 ||
 			gen_die 'Configuring fuse failed!'
 		print_info 1 'fuse: >> Compiling...'
 		MAKE=${UTILS_MAKE} compile_generic "" ""
