@@ -552,7 +552,8 @@ which the ramdisk scripts would recognize.
     TO BE DOCUMENTED
 
 *isoboot*=<...>::
-    TO BE DOCUMENTED
+    Loop-mount an ISO file from the boot device to get the filesystem image.
+    Useful with chain-loading environments and USB keys.
 
 
 NETBOOTING
