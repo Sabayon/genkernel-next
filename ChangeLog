@@ -4,6 +4,9 @@
 # - 2008-2011 Various authors (see AUTHORS)
 # Distributed under the GPL v2
 # $Id$
+
+  17 Jul 2012; Robin H. Johnson <robbat2@gentoo.org> arch/x86_64/kernel-config:
+  Bug #399703: amd64 default kernel config did not have EFI support.
   
   15 July 2012; Robin H. Johnson <robbat2@gentoo.org> doc/genkernel.8.txt,
   Document the isoboot option, as designed for GRUB2 usage 3 years ago.
