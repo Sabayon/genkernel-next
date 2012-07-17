@@ -533,6 +533,8 @@ do
 						
 						done;
 
+					else
+						got_good_root=0
 					fi
 
 				fi
