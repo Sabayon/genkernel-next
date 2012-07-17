@@ -250,7 +250,7 @@ fi
 
 # Set variables based on the value of REAL_ROOT
 case "${REAL_ROOT}" in
-	ZFS*)
+	ZFS=*)
 		ZFS_POOL=${REAL_ROOT#*=}
 		ZFS_POOL=${ZFS_POOL%%/*}
 		USE_ZFS=1
