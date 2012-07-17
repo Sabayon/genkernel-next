@@ -307,12 +307,16 @@ mount_devfs () {
 	fi
 
 	# Options copied from /etc/init.d/udev-mount, should probably be kept in sync
-	mount -t $devfs -o "exec,nosuid,mode=0755,size=10M" udev /dev \
-		|| bad_msg "Failed to mount /dev as ${devfs}"
+	if grep -qs grep '^devtmpfs' /proc/mounts; then
+		mount -t $devfs -o "exec,nosuid,mode=0755,size=10M" udev /dev \
+			|| bad_msg "Failed to mount /dev as ${devfs}"
+	fi
 
 	# http://git.busybox.net/busybox/plain/docs/mdev.txt
-	mkdir -m 0755 /dev/pts
-	mount -t devpts -o gid=5,mode=0620 devpts /dev/pts  || bad_msg "Failed to mount /dev/pts"
+	if grep -qs grep '^devpts' /proc/mounts; then
+		mkdir -m 0755 /dev/pts
+		mount -t devpts -o gid=5,mode=0620 devpts /dev/pts  || bad_msg "Failed to mount /dev/pts"
+	fi
 }
 
 test_success() {
