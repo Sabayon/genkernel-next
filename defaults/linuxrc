@@ -241,22 +241,12 @@ do
 		nounionfs)
 			USE_UNIONFS_NORMAL=0
 			;;
-		## for "module.param[=val]" we creating
-		## /etc/modprobe.d/module.param.conf: "options module param[=val]"
-		## /etc/cmdline/module.param:"param[=val]"
-		## first for CONFIG_MODPROBE_SMALL=n, next for script modprobe
 		*=*)
 			case "${x%%=*}" in
 			*.*)
-				y="${x%%[=/]*}"
-				echo "options ${x%%.*} ${x#*.}" >"/etc/modprobe.d/$y.conf"
-				echo "${x#*.}" >"/etc/cmdline/$y"
+				echo "${x#*.}" >> "/etc/module_options/${x%%.*}.conf"
 			;;
 			esac
-		;;
-		*.*)
-			echo "options ${x%%.*} ${x#*.}" >"/etc/modprobe.d/${x%%/*}.conf"
-			echo "${x#*.}" >"/etc/cmdline/${x%%/*}"
 		;;
 	esac
 done

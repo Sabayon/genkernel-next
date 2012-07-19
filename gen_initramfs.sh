@@ -577,6 +577,41 @@ append_modules() {
 	rm -r "${TEMP}/initramfs-modules-${KV}-temp/"	
 }
 
+append_modprobed() {
+	local TDIR="${TEMP}/initramfs-modprobe.d-temp"
+	if [ -d "${TDIR}" ]
+	then
+		rm -r "${TDIR}"
+	fi
+
+	mkdir -p "${TDIR}/etc/module_options/"
+
+	# Load module parameters
+	for dir in $(find "${MODPROBEDIR}"/*)
+	do
+		while read x
+		do
+			case "${x}" in
+				options*)
+					module_name="$(echo "$x" | cut -d ' ' -f 2)"
+					[ "${module_name}" != "$(echo)" ] || continue
+					module_options="$(echo "$x" | cut -d ' ' -f 3-)"
+					[ "${module_options}" != "$(echo)" ] || continue
+					echo "${module_options}" >> "${TDIR}/etc/module_options/${module_name}.conf"
+				;;
+			esac
+		done < "${dir}"
+	done
+
+	cd "${TDIR}"
+	log_future_cpio_content
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+			|| gen_die "compressing modprobe.d cpio"
+
+	cd "${TEMP}"
+	rm -rf "${TDIR}" > /dev/null
+}
+
 # check for static linked file with objdump
 is_static() {
 	LANG="C" LC_ALL="C" objdump -T $1 2>&1 | grep "not a dynamic object" > /dev/null
@@ -728,6 +763,8 @@ create_initramfs() {
 	append_data 'unionfs_fuse' "${UNIONFS}"
 
 	append_data 'splash' "${SPLASH}"
+
+	append_data 'modprobed'
 
 	if isTrue "${FIRMWARE}" && [ -n "${FIRMWARE_DIR}" ]
 	then

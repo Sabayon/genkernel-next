@@ -221,6 +221,9 @@ LOW-LEVEL COMPILATION OPTIONS
 *--bootdir*=<dir>::
     Set the location of the boot-directory, default is '/boot'.
 
+*--modprobedir*=<dir>::
+    Set the location of the modprobe.d-directory, default is '/etc/modprobe.d'.
+
 *--makeopts*=<makeopts>::
     GNU Make options such as -j2, etc.
 

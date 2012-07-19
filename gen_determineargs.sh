@@ -90,6 +90,7 @@ determine_real_args() {
 	set_config_with_override STRING KERNEL_CROSS_COMPILE CMD_KERNEL_CROSS_COMPILE
 	set_config_with_override STRING UTILS_CROSS_COMPILE  CMD_UTILS_CROSS_COMPILE
 	set_config_with_override STRING BOOTDIR              CMD_BOOTDIR              "/boot"
+	set_config_with_override STRING MODPROBEDIR          CMD_MODPROBEDIR              "/etc/modprobe.d"
 
 	set_config_with_override BOOL   SPLASH               CMD_SPLASH
 	set_config_with_override BOOL   POSTCLEAR            CMD_POSTCLEAR
@@ -135,6 +136,7 @@ determine_real_args() {
 
 	BOOTDIR=`arch_replace "${BOOTDIR}"`
 	BOOTDIR=${BOOTDIR%/}    # Remove any trailing slash
+	MODPROBEDIR=${MODPROBEDIR%/}    # Remove any trailing slash
 
 	CACHE_DIR=`arch_replace "${CACHE_DIR}"`
 	BUSYBOX_BINCACHE=`cache_replace "${BUSYBOX_BINCACHE}"`

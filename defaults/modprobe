@@ -112,7 +112,7 @@ modprobe2() {
 	done
 	# placing options into x
 	x="${real_path##*/}"
-	x="`cat "/etc/cmdline/${x%.ko*}".* 2>/dev/null`"
+	x="`cat "/etc/module_options/${x%.ko*}".* 2>/dev/null`"
 	${INSMOD} ${real_path} ${x} > /dev/null 2>&1
 	ret=$?
 	if [ ${ret} -eq 0 ]

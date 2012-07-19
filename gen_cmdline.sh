@@ -75,6 +75,7 @@ longusage() {
   echo "	--mountboot		Mount BOOTDIR automatically if mountable"
   echo "	--no-mountboot		Don't mount BOOTDIR automatically"  
   echo "	--bootdir=<dir>		Set the location of the boot-directory, default is /boot"
+  echo "	--modprobedir=<dir>	Set the location of the modprobe.d-directory, default is /etc/modprobe.d"
   echo "  Initialization"
   echo "	--splash=<theme>	Enable framebuffer splash using <theme>"
   echo "	--splash-res=<res>	Select splash theme resolutions to install"
@@ -247,6 +248,10 @@ parse_cmdline() {
 		--bootdir=*)
 			CMD_BOOTDIR=`parse_opt "$*"`
 			print_info 2 "CMD_BOOTDIR: ${CMD_BOOTDIR}"
+			;;
+		--modprobedir=*)
+			CMD_MODPROBEDIR=`parse_opt "$*"`
+			print_info 2 "CMD_MODPROBEDIR: ${CMD_MODPROBEDIR}"
 			;;
 		--do-keymap-auto)
 			CMD_DOKEYMAPAUTO=1
