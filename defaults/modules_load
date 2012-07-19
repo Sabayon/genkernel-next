@@ -21,7 +21,7 @@ MODULES_ISCSI="scsi_transport_iscsi libiscsi iscsi_tcp"
 # Hardware (Pluggable)
 MODULES_FIREWIRE="ieee1394 ohci1394 sbp2"
 MODULES_PCMCIA="pcmcia pcmcia_core yenta_socket pd6729 i82092 i82365 tcic ds ide-cs firmware_class"
-MODULES_USB="ehci-hcd uhci usb-ohci hid usb-storage uhci-hcd ohci-hcd usbhid sl811-hcd"
+MODULES_USB="ehci-hcd uhci usb-ohci hid usb-storage uhci-hcd ohci-hcd usbhid hid-generic sl811-hcd"
 
 # Filesystems
 MODULES_FS="ext2 ext3 ext4 btrfs reiserfs jfs nfs xfs zfs fuse"
