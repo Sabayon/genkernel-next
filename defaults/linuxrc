@@ -293,7 +293,7 @@ mount_devfs
 # Mount sysfs
 mount_sysfs
 
-# Start mdev
+# Initialize mdev
 if [ "${KV_2_6_OR_GREATER}" ]
 then
 	good_msg 'Activating mdev'
@@ -303,9 +303,6 @@ then
 
 	# Setup hotplugging for firmware loading
 	echo /sbin/mdev > /proc/sys/kernel/hotplug
-
-	# Setup mdev netlink socket daemon
-	( cd /sys && mdev -s ) || bad_msg "Failed to receive dynamic updates from mdev"
 fi
 
 # Load modules listed in MY_HWOPTS if /lib/modules exists for the running kernel
@@ -327,6 +324,12 @@ then
 	modules_load ${MDOLIST}
 else
 	good_msg 'Skipping module load; no modules in the ramdisk!'
+fi
+
+# Ensure that device nodes are properly configured
+if [ "${KV_2_6_OR_GREATER}" ]
+then
+	mdev -s || bad_msg "mdev -s failed"
 fi
 
 # Apply scan delay if specified
