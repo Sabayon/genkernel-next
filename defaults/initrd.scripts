@@ -313,7 +313,7 @@ mount_devfs () {
 	fi
 
 	# http://git.busybox.net/busybox/plain/docs/mdev.txt
-	if awk 'BEGIN{m=1;} /devtmpfs/{if($3 == "devpts") {m=0;} } END { exit m;}' /proc/mounts; then
+	if awk 'BEGIN{m=1;} /devpts/{if($3 == "devpts") {m=0;} } END { exit m;}' /proc/mounts; then
 		mkdir -m 0755 /dev/pts
 		mount -t devpts -o gid=5,mode=0620 devpts /dev/pts  || bad_msg "Failed to mount /dev/pts"
 	fi

@@ -4,7 +4,10 @@
 # - 2008-2011 Various authors (see AUTHORS)
 # Distributed under the GPL v2
 # $Id$
-  
+
+  24 Jul 2012; Robin H. Johnson <robbat2@gentoo.org> defaults/initrd.scripts:
+  Minor thinko in devpts check.
+
   24 Jul 2012; Robin H. Johnson <robbat2@gentoo.org> defaults/initrd.scripts:
   Prior commit to only mount devtmpfs and devpts if they were not already
   mounted made assumptions about the device names they were mounted as. Check
