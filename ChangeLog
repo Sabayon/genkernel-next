@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  27 Jul 2012; Sebastian Pipping <sping@gentoo.org> defaults/initrd.scripts,
+  genkernel:
+  Bump version to 3.4.40
+
   24 Jul 2012; Robin H. Johnson <robbat2@gentoo.org> defaults/initrd.scripts:
   Flip awk return values.
 
