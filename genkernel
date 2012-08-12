@@ -102,9 +102,13 @@ echo
 get_official_arch
 
 # Read arch-specific config
+print_info 1 "Using genkernel.conf from ${_GENKERNEL_CONF}"
+print_info 1 "Sourcing arch-specific config.sh from ${ARCH_CONFIG} .."
 source ${ARCH_CONFIG} || gen_die "Could not read ${ARCH_CONFIG}"
 _MODULES_LOAD=${GK_SHARE}/arch/${ARCH}/modules_load
+print_info 1 "Sourcing arch-specific modules_load from ${_MODULES_LOAD} .."
 source "${_MODULES_LOAD}" || gen_die "Could not read ${_MODULES_LOAD}"
+echo
 
 # Merge modules_load from config
 for group_modules in ${!AMODULES_*}; do
