@@ -1,11 +1,13 @@
 # NOTE:
-# - This file (software.sh) is sourced by genkernel .
+# - This file (software.sh) is sourced by genkernel.
 #   Rather than changing this very file, please override specific versions/variables
 #   somewhere in /etc/genkernel.conf .
 #
-# - The VERSION_* variables below in here are/were filled with actual version strings
-#   by the genkernel ebuild.
-# - This file should not override already existing vars, as they are probably from genkernel.conf
+# - Any VERSION_* magic strings below will be filled (or already have been)
+#   with actual version strings by the genkernel ebuild.
+#
+# - This file should not override previously defined variables, as their values may
+#   originate from user changes to /etc/genkernel.conf .
 
 BUSYBOX_VER="${BUSYBOX_VER:-VERSION_BUSYBOX}"
 BUSYBOX_SRCTAR="${BUSYBOX_SRCTAR:-${DISTDIR}/busybox-${BUSYBOX_VER}.tar.bz2}"
