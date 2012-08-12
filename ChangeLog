@@ -5,6 +5,14 @@
 # Distributed under the GPL v2
 # $Id$
 
+  12 Aug 2012; Sebastian Pipping <sping@gentoo.org> +defaults/software.sh,
+  genkernel.conf:
+  Move software version defaults for defaults/software.sh to ease the
+  etc-update game
+
+  12 Aug 2012; Sebastian Pipping <sping@gentoo.org> genkernel:
+  Fix parsing of --config=... command line option
+
   27 Jul 2012; Sebastian Pipping <sping@gentoo.org> defaults/initrd.scripts,
   genkernel:
   Bump version to 3.4.40

@@ -25,14 +25,16 @@ parse_opt() {
 
 # We don't know where our config is, so we check for it, and default to using
 # /etc/genkernel.conf if nobody has specified one.
-case "$*" in
-	--config=*)
-		CMD_GK_CONFIG=`parse_opt "$*"`
-	;;
-esac
+
+# NOTE: We are look for --config=... in a way that doesn't modify $@ since we access that again, later
+for (( i=1; i<=$# ; i=i+1 )); do
+	eval arg="\$$i"
+	[[ "${arg}" = --config=* ]] && CMD_GK_CONFIG=`parse_opt "${arg}"`
+done
 
 # Pull in our configuration
-source ${CMD_GK_CONFIG:-/etc/genkernel.conf} || small_die "Could not read /etc/genkernel.conf"
+_GENKERNEL_CONF=${CMD_GK_CONFIG:-/etc/genkernel.conf}
+source "${_GENKERNEL_CONF}" || small_die "Could not read ${_GENKERNEL_CONF}"
 
 # Start sourcing other scripts
 source ${GK_SHARE}/gen_funcs.sh || small_die "Could not read ${GK_SHARE}/gen_funcs.sh"
@@ -101,8 +103,13 @@ echo
 get_official_arch
 
 # Read arch-specific config
+print_info 1 "Using genkernel.conf from ${_GENKERNEL_CONF}"
+print_info 1 "Sourcing arch-specific config.sh from ${ARCH_CONFIG} .."
 source ${ARCH_CONFIG} || gen_die "Could not read ${ARCH_CONFIG}"
-source ${GK_SHARE}/arch/${ARCH}/modules_load || gen_die "Could not read ${GK_SHARE}/arch/${ARCH}/modules_load"
+_MODULES_LOAD=${GK_SHARE}/arch/${ARCH}/modules_load
+print_info 1 "Sourcing arch-specific modules_load from ${_MODULES_LOAD} .."
+source "${_MODULES_LOAD}" || gen_die "Could not read ${_MODULES_LOAD}"
+echo
 
 # Merge modules_load from config
 for group_modules in ${!AMODULES_*}; do
