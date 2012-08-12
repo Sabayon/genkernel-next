@@ -25,11 +25,12 @@ parse_opt() {
 
 # We don't know where our config is, so we check for it, and default to using
 # /etc/genkernel.conf if nobody has specified one.
-case "$*" in
-	--config=*)
-		CMD_GK_CONFIG=`parse_opt "$*"`
-	;;
-esac
+
+# NOTE: We are look for --config=... in a way that doesn't modify $@ since we access that again, later
+for (( i=1; i<=$# ; i=i+1 )); do
+	eval arg="\$$i"
+	[[ "${arg}" = --config=* ]] && CMD_GK_CONFIG=`parse_opt "${arg}"`
+done
 
 # Pull in our configuration
 _GENKERNEL_CONF=${CMD_GK_CONFIG:-/etc/genkernel.conf}
