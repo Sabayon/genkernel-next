@@ -32,7 +32,8 @@ case "$*" in
 esac
 
 # Pull in our configuration
-source ${CMD_GK_CONFIG:-/etc/genkernel.conf} || small_die "Could not read /etc/genkernel.conf"
+_GENKERNEL_CONF=${CMD_GK_CONFIG:-/etc/genkernel.conf}
+source "${_GENKERNEL_CONF}" || small_die "Could not read ${_GENKERNEL_CONF}"
 
 # Start sourcing other scripts
 source ${GK_SHARE}/gen_funcs.sh || small_die "Could not read ${GK_SHARE}/gen_funcs.sh"
