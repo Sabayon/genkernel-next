@@ -19,9 +19,23 @@ Rolling a release:
 - Bump the version in the main genkernel file.
 - echangelog "Bump version to ${PV}"
 - git commit -a -m "Bump version to ${PV}"
+- make dist
 - git tag -a -m "Tag release v${PV}" v${PV}
 - git push ${REMOTE} master --tags
-- make dist
 - upload genkernel-${PV}.tar.bz2 to the hosting:
     scp genkernel-${PV}.tar.bz2 ${USER}@dev.gentoo.org:/space/distfiles-local/
+- copy to portage's DISTDIR so you can bump the ebuild
+  before the tarball hits distfile mirrors
+  - cp genkernel-${PV}.tar.bz2 /usr/portage/distfiles/
+- Bump the ebuild
+- Propagate ebuild changes to the live ebuild
 - check open bugs with keyword "InSVN" or "InVCS" for closability
+  and close these bugs with a comment like "Fixed in ${PV}, just released.  Closing."
+- Send a mail with subject "genkernel ${PV} released" to both
+  <gentoo-genkernel@lists.gentoo.org> and <genkernel@gentoo.org>.
+  Use
+
+    PV_PREV=$(git tag -l | tail -n 2 | head -n 1)
+    git diff ${PV_PREV}..${PV} ChangeLog | /bin/grep '^+\($\|  \)' | sed 's|^+ *||' | xsel
+
+  to generate that the mail body.
