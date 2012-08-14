@@ -29,6 +29,7 @@ Rolling a release:
   - cp genkernel-${PV}.tar.bz2 /usr/portage/distfiles/
 - Bump the ebuild
 - Propagate ebuild changes to the live ebuild
+    diff genkernel-${OLD_PV}.ebuild genkernel-${NEW_PV}.ebuild | patch genkernel-9999.ebuild
 - check open bugs with keyword "InSVN" or "InVCS" for closability
   and close these bugs with a comment like "Fixed in ${PV}, just released.  Closing."
 - Send a mail with subject "genkernel ${PV} released" to both
