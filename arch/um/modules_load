@@ -3,7 +3,7 @@
 # RAID
 MODULES_ATARAID="ataraid pdcraid hptraid"
 MODULES_DMRAID="dm-mod dm-mirror"
-MODULES_LVM="dm-mod dm-snapshot dm-mirror dm-bbr dm-bufio dm-crypt dm-delay dm-flakey dm-log dm-log-userspace dm-multipath dm-queue-length dm-raid dm-region-hash dm-round-robin dm-service-time dm-thin-pool dm-zero"
+MODULES_LVM="dm-mod dm-snapshot dm-mirror dm-bbr dm-bufio dm-crypt dm-delay dm-flakey dm-log dm-log-userspace dm-multipath dm-queue-length dm-raid dm-region-hash dm-round-robin dm-service-time dm-thin-pool dm-persistent-data libcrc32c dm-zero"
 MODULES_MDADM="dm-mod dm-snapshot dm-mirror dm-bbr dm-raid dm-crypt raid0 raid1 raid456 raid5 raid6 raid10 linear multipath"
 
 # Hardware (IDE/SCSI/SATA)
