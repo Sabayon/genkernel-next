@@ -904,10 +904,10 @@ openLUKS() {
 					if [ "$(echo ${LUKS_KEY} | grep -o '.gpg$')" = ".gpg" ] && [ -e /sbin/gpg ] ; then
 						[ -e /dev/tty ] && mv /dev/tty /dev/tty.org
 						mknod /dev/tty c 5 1
-						cryptsetup_options="-d -"
+						cryptsetup_options="${cryptsetup_options} -d -"
 						gpg_cmd="/sbin/gpg --logger-file /dev/null --quiet --decrypt ${mntkey}${LUKS_KEY} |"
 					else
-						cryptsetup_options="-d ${mntkey}${LUKS_KEY}"
+						cryptsetup_options="${cryptsetup_options} -d ${mntkey}${LUKS_KEY}"
 					fi
 				fi
 				# At this point, keyfile or not, we're ready!
