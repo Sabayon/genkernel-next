@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  30 Aug 2012; Fabio Erculiani <lxnay@gentoo.org> defaults/linuxrc:
+  mount /mnt/cdrom inside target chroot even when aufs/unionfs is disabled
+
   14 Aug 2012; Richard Yao <ryao@gentoo.org> genkernel:
   Bump version to 3.4.41
 
