@@ -6,6 +6,10 @@
 # $Id$
 
   10 Sep 2012; Sebastian Pipping <sping@gentoo.org>
+  +patches/busybox/1.20.2/busybox-1.20.2-glibc-sys-resource.patch:
+  Add busybox 1.20.2 patch: busybox-1.20.2-glibc-sys-resource.patch
+
+  10 Sep 2012; Sebastian Pipping <sping@gentoo.org>
   +patches/busybox/1.20.2/1.18.1-openvt.diff,
   +patches/busybox/1.20.2/busybox-1.7.4-signal-hack.patch,
   +patches/busybox/1.20.2/busybox-1.20.1-mdstart.patch:
