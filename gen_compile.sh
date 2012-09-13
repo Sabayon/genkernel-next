@@ -25,6 +25,10 @@ compile_kernel_args() {
 		then
 			ARGS="${ARGS} ARCH=\"${KERNEL_ARCH}\""
 		fi
+		if [ -n "${KERNEL_OUTPUTDIR}" ]
+		then
+			ARGS="${ARGS} O=\"${KERNEL_OUTPUTDIR}\""
+		fi
 	fi
 	echo -n "${ARGS}"
 }
@@ -318,7 +322,7 @@ compile_kernel() {
 		compile_generic "${KERNEL_MAKE_DIRECTIVE_2}" kernel
 	fi
 
-	local firmware_in_kernel_line=`fgrep CONFIG_FIRMWARE_IN_KERNEL "${KERNEL_DIR}"/.config`
+	local firmware_in_kernel_line=`fgrep CONFIG_FIRMWARE_IN_KERNEL "${KERNEL_OUTPUTDIR}"/.config`
 	if [ -n "${firmware_in_kernel_line}" -a "${firmware_in_kernel_line}" != CONFIG_FIRMWARE_IN_KERNEL=y ]
 	then
 		print_info 1 "        >> Installing firmware ('make firmware_install') due to CONFIG_FIRMWARE_IN_KERNEL != y..."

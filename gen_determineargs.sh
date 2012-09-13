@@ -90,6 +90,7 @@ determine_real_args() {
 	set_config_with_override STRING KERNEL_CROSS_COMPILE CMD_KERNEL_CROSS_COMPILE
 	set_config_with_override STRING UTILS_CROSS_COMPILE  CMD_UTILS_CROSS_COMPILE
 	set_config_with_override STRING BOOTDIR              CMD_BOOTDIR              "/boot"
+	set_config_with_override STRING KERNEL_OUTPUTDIR     CMD_KERNEL_OUTPUTDIR     "${DEFAULT_KERNEL_SOURCE}"
 	set_config_with_override STRING MODPROBEDIR          CMD_MODPROBEDIR          "/etc/modprobe.d"
 
 	set_config_with_override BOOL   SPLASH               CMD_SPLASH

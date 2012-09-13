@@ -298,6 +298,7 @@ copy_image_with_preserve() {
 
 	# Old product might be a different version.  If so, we need to read
 	# the symlink to see what it's name is, if there are symlinks.
+	cd ${KERNEL_OUTPUTDIR}
 	if [ "${SYMLINK}" = '1' ]
 	then
  		print_info 4 "automatically managing symlinks and old images." 1 0
@@ -508,7 +509,7 @@ find_kernel_binary() {
 	local kernel_binary=$*
 	local curdir=$(pwd)
 
-	cd "${KERNEL_DIR}"
+	cd "${KERNEL_OUTPUTDIR}"
 	for i in ${kernel_binary}
 	do
 		if [ -e "${i}" ]

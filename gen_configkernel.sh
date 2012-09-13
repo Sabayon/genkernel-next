@@ -32,14 +32,14 @@ config_kernel() {
 	cd "${KERNEL_DIR}" || gen_die 'Could not switch to the kernel directory!'
 
 	# Backup current kernel .config
-	if isTrue "${MRPROPER}" || [ ! -f "${KERNEL_DIR}/.config" ]
+	if isTrue "${MRPROPER}" || [ ! -f "${KERNEL_OUTPUTDIR}/.config" ]
 	then
 		print_info 1 "kernel: Using config from ${KERNEL_CONFIG}"
-		if [ -f "${KERNEL_DIR}/.config" ]
+		if [ -f "${KERNEL_OUTPUTDIR}/.config" ]
 		then
 			NOW=`date +--%Y-%m-%d--%H-%M-%S`
-			cp "${KERNEL_DIR}/.config" "${KERNEL_DIR}/.config${NOW}.bak" \
-					|| gen_die "Could not backup kernel config (${KERNEL_DIR}/.config)"
+			cp "${KERNEL_OUTPUTDIR}/.config" "${KERNEL_OUTPUTDIR}/.config${NOW}.bak" \
+					|| gen_die "Could not backup kernel config (${KERNEL_OUTPUTDIR}/.config)"
 			print_info 1 "        Previous config backed up to .config${NOW}.bak"
 		fi
 	fi
@@ -54,14 +54,14 @@ config_kernel() {
 
 	# If we're not cleaning a la mrproper, then we don't want to try to overwrite the configs
 	# or we might remove configurations someone is trying to test.
-	if isTrue "${MRPROPER}" || [ ! -f "${KERNEL_DIR}/.config" ]
+	if isTrue "${MRPROPER}" || [ ! -f "${KERNEL_OUTPUTDIR}/.config" ]
 	then
 		local message='Could not copy configuration file!'
 		if [[ "$(file --brief --mime-type "${KERNEL_CONFIG}")" == application/x-gzip ]]; then
 			# Support --kernel-config=/proc/config.gz, mainly
-			zcat "${KERNEL_CONFIG}" > "${KERNEL_DIR}/.config" || gen_die "${message}"
+			zcat "${KERNEL_CONFIG}" > "${KERNEL_OUTPUTDIR}/.config" || gen_die "${message}"
 		else
-			cp "${KERNEL_CONFIG}" "${KERNEL_DIR}/.config" || gen_die "${message}"
+			cp "${KERNEL_CONFIG}" "${KERNEL_OUTPUTDIR}/.config" || gen_die "${message}"
 		fi
 	fi
 
@@ -106,21 +106,21 @@ config_kernel() {
 	then
 		# Make sure Ext2 support is on...
 		sed -e 's/#\? \?CONFIG_EXT2_FS[ =].*/CONFIG_EXT2_FS=y/g' \
-			-i ${KERNEL_DIR}/.config 
+			-i ${KERNEL_OUTPUTDIR}/.config
 	fi
 
 	# Make sure lvm modules are on if --lvm
 	if isTrue ${CMD_LVM}
 	then
-		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_BLK_DEV_DM is.*/CONFIG_BLK_DEV_DM=m/g'
-		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_DM_SNAPSHOT is.*/CONFIG_DM_SNAPSHOT=m/g'
-		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_DM_MIRROR is.*/CONFIG_DM_MIRROR=m/g'
+		sed -i ${KERNEL_OUTPUTDIR}/.config -e 's/#\? \?CONFIG_BLK_DEV_DM is.*/CONFIG_BLK_DEV_DM=m/g'
+		sed -i ${KERNEL_OUTPUTDIR}/.config -e 's/#\? \?CONFIG_DM_SNAPSHOT is.*/CONFIG_DM_SNAPSHOT=m/g'
+		sed -i ${KERNEL_OUTPUTDIR}/.config -e 's/#\? \?CONFIG_DM_MIRROR is.*/CONFIG_DM_MIRROR=m/g'
 	fi
 
 	# Make sure dmraid modules are on if --dmraid
 	if isTrue ${CMD_DMRAID}
 	then
-		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_BLK_DEV_DM is.*/CONFIG_BLK_DEV_DM=m/g'
+		sed -i ${KERNEL_OUTPUTDIR}/.config -e 's/#\? \?CONFIG_BLK_DEV_DM is.*/CONFIG_BLK_DEV_DM=m/g'
 	fi
 
 	# Make sure iSCSI modules are enabled in the kernel, if --iscsi
@@ -128,15 +128,15 @@ config_kernel() {
 	# CONFIG_ISCSI_TCP
 	if isTrue ${CMD_ISCSI}
 	then
-		sed -i ${KERNEL_DIR}/.config -e 's/\# CONFIG_ISCSI_TCP is not set/CONFIG_ISCSI_TCP=m/g'
-		sed -i ${KERNEL_DIR}/.config -e 's/\# CONFIG_SCSI_ISCSI_ATTRS is not set/CONFIG_SCSI_ISCSI_ATTRS=m/g'
+		sed -i ${KERNEL_OUTPUTDIR}/.config -e 's/\# CONFIG_ISCSI_TCP is not set/CONFIG_ISCSI_TCP=m/g'
+		sed -i ${KERNEL_OUTPUTDIR}/.config -e 's/\# CONFIG_SCSI_ISCSI_ATTRS is not set/CONFIG_SCSI_ISCSI_ATTRS=m/g'
 
-		sed -i ${KERNEL_DIR}/.config -e 's/CONFIG_ISCSI_TCP=y/CONFIG_ISCSI_TCP=m/g'
-		sed -i ${KERNEL_DIR}/.config -e 's/CONFIG_SCSI_ISCSI_ATTRS=y/CONFIG_SCSI_ISCSI_ATTRS=m/g'
+		sed -i ${KERNEL_OUTPUTDIR}/.config -e 's/CONFIG_ISCSI_TCP=y/CONFIG_ISCSI_TCP=m/g'
+		sed -i ${KERNEL_OUTPUTDIR}/.config -e 's/CONFIG_SCSI_ISCSI_ATTRS=y/CONFIG_SCSI_ISCSI_ATTRS=m/g'
 	fi
 
 	if isTrue ${SPLASH}
 	then
-		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_FB_SPLASH is.*/CONFIG_FB_SPLASH=y/g'
+		sed -i ${KERNEL_OUTPUTDIR}/.config -e 's/#\? \?CONFIG_FB_SPLASH is.*/CONFIG_FB_SPLASH=y/g'
 	fi
 }

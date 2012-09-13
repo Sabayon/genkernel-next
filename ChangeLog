@@ -5,6 +5,12 @@
 # Distributed under the GPL v2
 # $Id$
 
+  13 Oct 2012; Łukasz Stelmach <stlman@poczta.fm> gen_cmdline.sh,
+  gen_compile.sh, gen_configkernel.sh, gen_determineargs.sh, gen_funcs.sh,
+  genkernel:
+  Bug #435210 support external kernel output location, to allow pristine
+  source.
+
   13 Oct 2012; Robin H. Johnson <robbat2@gentoo.org> gen_compile.sh:
   Bug #397947: Run depmod on new modules to avoid need to run at every boot on
   unionfs systems, or systemd that never runs it.
