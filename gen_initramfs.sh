@@ -127,6 +127,23 @@ append_busybox() {
 	rm -rf "${TEMP}/initramfs-busybox-temp" > /dev/null
 }
 
+append_e2fstools(){
+	if [ -d "${TEMP}"/initramfs-e2fsprogs-temp ]
+	then
+		rm -r "${TEMP}"/initramfs-e2fsprogs-temp
+	fi
+
+	cd "${TEMP}" \
+			|| gen_die "cd '${TEMP}' failed"
+	mkdir -p initramfs-e2fsprogs-temp
+	copy_binaries "${TEMP}"/initramfs-e2fsprogs-temp/ /sbin/{e2fsck,mke2fs}
+
+	cd "${TEMP}"/initramfs-e2fsprogs-temp \
+			|| gen_die "cd '${TEMP}/initramfs-e2fsprogs-temp' failed"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	rm -rf "${TEMP}"/initramfs-e2fsprogs-temp > /dev/null
+}
+
 append_blkid(){
 	if [ -d "${TEMP}/initramfs-blkid-temp" ]
 	then
@@ -741,6 +758,7 @@ create_initramfs() {
 	append_data 'base_layout'
 	append_data 'auxilary' "${BUSYBOX}"
 	append_data 'busybox' "${BUSYBOX}"
+	append_data 'e2fstools'
 	append_data 'lvm' "${LVM}"
 	append_data 'dmraid' "${DMRAID}"
 	append_data 'iscsi' "${ISCSI}"

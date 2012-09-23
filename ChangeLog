@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  23 Sep 2012; Sebastian Pipping <sping@gentoo.org> gen_initramfs.sh:
+  Append e2fsck and mke2fs to initramfs. Original patch by Rick Farina
+
   10 Sep 2012; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.42
 
