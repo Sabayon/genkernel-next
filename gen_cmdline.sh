@@ -91,6 +91,8 @@ longusage() {
   echo "	--mdadm-config=<file>	Use file as mdadm.conf in initramfs"
   echo "	--dmraid		Include DMRAID support"
   echo "	--no-dmraid		Exclude DMRAID support"
+  echo "	--e2fsprogs		Include e2fsprogs"
+  echo "	--no-e2fsprogs		Exclude e2fsprogs"
   echo "	--zfs			Include ZFS support"
   echo "	--no-zfs		Exclude ZFS support"
   echo "	--multipath		Include Multipath support"
@@ -305,6 +307,10 @@ parse_cmdline() {
 				exit 1
 			fi
 			print_info 2 "CMD_DMRAID: ${CMD_DMRAID}"
+			;;
+		--e2fsprogs|--no-e2fsprogs)
+			CMD_E2FSPROGS=`parse_optbool "$*"`
+			print_info 2 "CMD_E2FSPROGS: ${CMD_E2FSPROGS}"
 			;;
 		--zfs|--no-zfs)
 			CMD_ZFS=`parse_optbool "$*"`

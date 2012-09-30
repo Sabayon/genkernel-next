@@ -127,7 +127,7 @@ append_busybox() {
 	rm -rf "${TEMP}/initramfs-busybox-temp" > /dev/null
 }
 
-append_e2fstools(){
+append_e2fsprogs(){
 	if [ -d "${TEMP}"/initramfs-e2fsprogs-temp ]
 	then
 		rm -r "${TEMP}"/initramfs-e2fsprogs-temp
@@ -758,7 +758,7 @@ create_initramfs() {
 	append_data 'base_layout'
 	append_data 'auxilary' "${BUSYBOX}"
 	append_data 'busybox' "${BUSYBOX}"
-	append_data 'e2fstools'
+	isTrue "${CMD_E2FSPROGS}" && append_data 'e2fsprogs'
 	append_data 'lvm' "${LVM}"
 	append_data 'dmraid' "${DMRAID}"
 	append_data 'iscsi' "${ISCSI}"

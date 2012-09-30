@@ -122,6 +122,7 @@ determine_real_args() {
 	set_config_with_override BOOL   GPG                  CMD_GPG
 	set_config_with_override BOOL   MDADM                CMD_MDADM
 	set_config_with_override STRING MDADM_CONFIG         CMD_MDADM_CONFIG
+	set_config_with_override BOOL   E2FSPROGS            CMD_E2FSPROGS            "no"
 	set_config_with_override BOOL   ZFS                  CMD_ZFS
 	set_config_with_override BOOL   MULTIPATH            CMD_MULTIPATH
 	set_config_with_override BOOL   FIRMWARE             CMD_FIRMWARE

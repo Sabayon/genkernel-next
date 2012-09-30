@@ -263,6 +263,9 @@ INITIALIZATION
 *--*[*no-*]*dmraid*::
     Includes or excludes DMRAID support.
 
+*--*[*no-*]*e2fsprogs*::
+    Includes or excludes e2fsprogs.
+
 *--*[*no-*]*zfs*::
     Includes or excludes ZFS support.
 
