@@ -809,7 +809,15 @@ create_initramfs() {
 	else
 		if isTrue "${COMPRESS_INITRD}"
 		then
-			if [[ "$(file --brief --mime-type "${KERNEL_CONFIG}")" == application/x-gzip ]]; then
+			# NOTE:  We do not work with ${KERNEL_CONFIG} here, since things like
+			#        "make oldconfig" or --noclean could be in effect.
+			if [ -f "${KERNEL_DIR}"/.config ]; then
+				local ACTUAL_KERNEL_CONFIG="${KERNEL_DIR}"/.config
+			else
+				local ACTUAL_KERNEL_CONFIG="${KERNEL_CONFIG}"
+			fi
+
+			if [[ "$(file --brief --mime-type "${ACTUAL_KERNEL_CONFIG}")" == application/x-gzip ]]; then
 				# Support --kernel-config=/proc/config.gz, mainly
 				local CONFGREP=zgrep
 			else
@@ -840,12 +848,12 @@ create_initramfs() {
 						set -- ${tuple}
 						kernel_option=$1
 						cmd_variable_name=$2
-						if ${CONFGREP} -q "^${kernel_option}=y" "${KERNEL_CONFIG}" && test -n "${!cmd_variable_name}" ; then
+						if ${CONFGREP} -q "^${kernel_option}=y" "${ACTUAL_KERNEL_CONFIG}" && test -n "${!cmd_variable_name}" ; then
 							compression=$3
 							[[ ${COMPRESS_INITRD_TYPE} == best ]] && break
 						fi
 					done
-					[[ -z "${compression}" ]] && gen_die "None of the initramfs we tried are supported by your kernel (config file \"${KERNEL_CONFIG}\"), strange!?"
+					[[ -z "${compression}" ]] && gen_die "None of the initramfs compression methods we tried are supported by your kernel (config file \"${ACTUAL_KERNEL_CONFIG}\"), strange!?"
 					;;
 				*)
 					gen_die "Compression '${COMPRESS_INITRD_TYPE}' unknown"
