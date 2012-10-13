@@ -5,6 +5,14 @@
 # Distributed under the GPL v2
 # $Id$
 
+  13 Oct 2012; Robin H. Johnson <robbat2@gentoo.org> arch/alpha/kernel-config,
+  arch/ppc/kernel-config, arch/x86/kernel-config, arch/x86_64/kernel-config,
+  defaults/kernel-config:
+  Bug #336170: amd74xx was long-replaced by pata_amd. The old driver is
+  problematic, as even with the pata_amd module loaded, it will not release the
+  device. Disable the old driver on remaining platforms, add pata_amd where
+  missing & needed (not alpha).
+
   13 Oct 2012; Robin H. Johnson <robbat2@gentoo.org> gen_initramfs.sh:
   Bug #414581: ensure built-in initramfs compress config options are set to
   avoid silentoldconfig bailing out.
