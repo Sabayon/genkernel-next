@@ -5,6 +5,14 @@
 # Distributed under the GPL v2
 # $Id$
 
+  13 Oct 2012; Robin H. Johnson <robbat2@gentoo.org> arch/alpha/modules_load,
+  arch/arm/modules_load, arch/ia64/modules_load, arch/mips/modules_load,
+  arch/parisc/modules_load, arch/parisc64/modules_load, arch/ppc/modules_load,
+  arch/ppc64/modules_load, arch/sparc/modules_load, arch/sparc64/modules_load,
+  arch/um/modules_load, arch/x86/modules_load, arch/x86_64/modules_load,
+  defaults/modules_load:
+  Clean up module drift over the years. Just MODULES_CRYPTO left.
+
   13 Oct 2012; Robin H. Johnson <robbat2@gentoo.org> doc/genkernel.8.txt:
   Document resume parameters.
 
