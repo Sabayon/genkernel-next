@@ -88,6 +88,7 @@ append_base_layout() {
 	mknod -m 600 ttyS0 c 4 64
 
 	date -u '+%Y%m%d-%H%M%S' > ${TEMP}/initramfs-base-temp/etc/build_date
+	echo "Genkernel $GK_V" > ${TEMP}/initramfs-base-temp/etc/build_id
 
 	cd "${TEMP}/initramfs-base-temp/"
 	log_future_cpio_content
