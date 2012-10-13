@@ -616,6 +616,16 @@ startVolumes() {
 		fi
 	fi
 
+	if [ "${USE_MULTIPATH_NORMAL}" = '1' ] 
+	then 
+		good_msg "Scanning for multipath devices" 
+		/sbin/multipath -v 0
+		sleep 2
+		good_msg "Activating multipath devices" 
+		/sbin/dmsetup ls --target multipath --exec "/sbin/kpartx -a -v" 
+		#for MULTIPATH_VOLUMES in /dev/mapper/*; do kpartx -a $MULTIPATH_VOLUMES; done
+	fi 
+
 	if [ "${USE_DMRAID_NORMAL}" = '1' ]
 	then
 		if [ -e '/sbin/dmraid' ]

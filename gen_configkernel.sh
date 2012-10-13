@@ -117,6 +117,14 @@ config_kernel() {
 		sed -i ${KERNEL_OUTPUTDIR}/.config -e 's/#\? \?CONFIG_DM_MIRROR is.*/CONFIG_DM_MIRROR=m/g'
 	fi
 
+	# Multipath
+	if isTrue ${CMD_MULTIPATH} 
+	then 
+		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_BLK_DEV_DM is.*/CONFIG_BLK_DEV_DM=m/g' 
+		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_DM_MULTIPATH is.*/CONFIG_DM_MULTIPATH=m/g' 
+		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_DM_MULTIPATH_RDAC is.*/CONFIG_DM_MULTIPATH_RDAC=m/g' 
+	fi 
+
 	# Make sure dmraid modules are on if --dmraid
 	if isTrue ${CMD_DMRAID}
 	then

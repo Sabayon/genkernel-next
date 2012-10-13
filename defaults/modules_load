@@ -5,6 +5,7 @@ MODULES_ATARAID="ataraid pdcraid hptraid"
 MODULES_DMRAID="dm-mod dm-mirror"
 MODULES_LVM="dm-mod dm-snapshot dm-mirror dm-bbr dm-bufio dm-crypt dm-delay dm-flakey dm-log dm-log-userspace dm-multipath dm-queue-length dm-raid dm-region-hash dm-round-robin dm-service-time dm-thin-pool dm-zero"
 MODULES_MDADM="dm-mod dm-snapshot dm-mirror dm-bbr dm-raid dm-crypt raid0 raid1 raid456 raid5 raid6 raid10 linear multipath"
+MODULES_MULTIPATH="dm-mod dm-multipath dm-round-robin dm-rdac dm-queue-length dm-service-time"
 
 # Hardware (IDE/SCSI/SATA)
 MODULES_PATA="pata_mpiix pata_pdc2027x pata_radisys pata_sil680 pata_rz1000 pata_efar pata_cmd64x pata_hpt366 pata_hpt37x pata_hpt3x3 pata_hpt3x2n pata_optidma pata_it821x pata_artop pata_oldpiix pata_cypress pata_platform pata_serverworks pata_legacy pata_ns87410 pata_ns87415 pata_pcmcia pata_isapnp pata_it8213 pata_ali pata_amd pata_opti pata_atiixp pata_triflex pata_pdc202xx_old pata_sc1200 pata_qdi pata_netcell pata_sis pata_hpt3x2n pata_marvell pata_jmicron pata_via pata_cs5520 pata_cs5530 pata_cs5535 pata_sl82c105 libata"

@@ -226,7 +226,10 @@ append_multipath(){
 	mkdir -p "${TEMP}"/initramfs-multipath-temp/{bin,etc,sbin,lib}/
 
 	# Copy files
-	copy_binaries "${TEMP}/initramfs-multipath-temp" /sbin/{multipath,kpartx,mpath_prio_*,devmap_name,dmsetup} /lib64/udev/scsi_id /bin/mountpoint
+	copy_binaries "${TEMP}/initramfs-multipath-temp" \
+		/bin/mountpoint \
+		/sbin/{multipath,kpartx,mpath_prio_*,devmap_name,dmsetup} \
+		/{lib,lib64}/{udev/scsi_id,multipath/*so} 
 
 	if [ -x /sbin/multipath ]
 	then

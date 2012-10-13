@@ -457,6 +457,9 @@ which the ramdisk scripts would recognize.
     Scan for bootable ZFS pools on bootup. Optionally force import if
     necessary.
 
+*domultipath*::
+    Activate Multipath on bootup
+
 *doscsi*::
     Activate SCSI devices on bootup, necessary when SCSI support is
     compiled as modules and you're using SCSI or SATA devices.

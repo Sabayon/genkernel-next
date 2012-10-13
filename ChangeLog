@@ -5,6 +5,15 @@
 # Distributed under the GPL v2
 # $Id$
 
+  13 Oct 2012; Robin H. Johnson <robbat2@gentoo.org> arch/alpha/modules_load,
+  arch/arm/modules_load, arch/ia64/modules_load, arch/mips/modules_load,
+  arch/parisc/modules_load, arch/parisc64/modules_load, arch/ppc/modules_load,
+  arch/ppc64/modules_load, arch/sparc/modules_load, arch/sparc64/modules_load,
+  arch/um/modules_load, arch/x86/modules_load, arch/x86_64/modules_load,
+  defaults/initrd.scripts, defaults/linuxrc, defaults/modules_load,
+  gen_configkernel.sh, gen_initramfs.sh:
+  Bug #286187: Complete multipath support.
+
   13 Oct 2012; Robin H. Johnson <robbat2@gentoo.org> defaults/initrd.defaults,
   defaults/initrd.scripts, defaults/linuxrc, doc/genkernel.8.txt:
   Bug #351873: More livecd control, and initramfs livecd argument
