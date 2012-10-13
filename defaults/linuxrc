@@ -409,7 +409,7 @@ then
 	good_msg "Making tmpfs for ${NEW_ROOT}"
 	mount -n -t tmpfs tmpfs "${NEW_ROOT}"
 
-	for i in dev mnt mnt/livecd mnt/key tmp tmp/.initrd mnt/gentoo sys
+	for i in dev mnt proc run sys tmp mnt/livecd mnt/key tmp/.initrd mnt/gentoo
 	do
 		mkdir -p "${NEW_ROOT}/${i}"
 		chmod 755 "${NEW_ROOT}/${i}"
