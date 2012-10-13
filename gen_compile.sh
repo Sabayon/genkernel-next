@@ -297,6 +297,8 @@ compile_modules() {
 	export UNAME_MACHINE="${ARCH}"
 	[ "${INSTALL_MOD_PATH}" != '' ] && export INSTALL_MOD_PATH
 	MAKEOPTS="${MAKEOPTS} -j1" compile_generic "modules_install" kernel
+	print_info 1 "        >> Generating module dependency data..."
+	depmod -a -e -b "${INSTALL_MOD_PATH}"/lib/modules/$KV ${KV}
 	unset UNAME_MACHINE
 }
 
