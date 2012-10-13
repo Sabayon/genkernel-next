@@ -550,7 +550,9 @@ which the ramdisk scripts would recognize.
 *real_resume*=<...>::
 *resume*=<...>::
 *noresume*::
-    TO BE DOCUMENTED
+    *noresume* disables any default resume parameters. *resume* and
+    *real_resume* specify a device via LABEL or UUID to use for for loading a
+    TuxOnICE, SWSUSP or Suspend2 resume image.
 
 *cdroot*[=<...>]::
 *cdroot_type*=<...>::
