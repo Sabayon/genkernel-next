@@ -1,9 +1,15 @@
 # ChangeLog for genkernel
 # Copyright: 
 # - 2003-2008 Gentoo Foundation
-# - 2008-2011 Various authors (see AUTHORS)
+# - 2008-2012 Various authors (see AUTHORS)
 # Distributed under the GPL v2
 # $Id$
+
+  13 Oct 2012; Robin H. Johnson <robbat2@gentoo.org> gen_initramfs.sh:
+  Put the version of genkernel used in a build into /etc/build_id.
+
+  13 Oct 2012; Robin H. Johnson <robbat2@gentoo.org> defaults/linuxrc:
+  Extra creation of /run in the LiveCD scope, before any union/aufs mount.
 
   03 Oct 2012; Sebastian Pipping <sping@gentoo.org> genkernel:
   Bump version to 3.4.43
