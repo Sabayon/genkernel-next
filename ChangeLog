@@ -5,6 +5,11 @@
 # Distributed under the GPL v2
 # $Id$
 
+  13 Oct 2012; Robin H. Johnson <robbat2@gentoo.org> defaults/initrd.defaults,
+  defaults/initrd.scripts, defaults/linuxrc, doc/genkernel.8.txt:
+  Bug #351873: More livecd control, and initramfs livecd argument
+  documentation.
+
   13 Oct 2012; Robin H. Johnson <robbat2@gentoo.org> arch/alpha/kernel-config,
   arch/ppc/kernel-config, arch/x86/kernel-config, arch/x86_64/kernel-config,
   defaults/kernel-config:

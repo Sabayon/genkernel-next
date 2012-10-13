@@ -39,6 +39,7 @@ FAKE_ROOT=''
 REAL_ROOTFLAGS=''
 ROOTFSTYPE='auto'
 CRYPT_SILENT=0
+
 mkdir -p /etc/cmdline /etc/modprobe.d
 for x in ${CMDLINE}
 do
@@ -68,6 +69,9 @@ do
 		;;
 		cdroot_type=*)
 			CDROOT_TYPE=${x#*=}
+		;;
+		cdroot_marker=*)
+			CDROOT_MARKER=${x#*=}
 		;;
 		# Start livecd loop, looptype options
 		loop=*)
@@ -657,7 +661,7 @@ then
 	# If encrypted, find key and mount, otherwise mount as usual
 	if [ -n "${CRYPT_ROOT}" ]
 	then
-		CRYPT_ROOT_KEY="$(head -n 1 "${CDROOT_PATH}"/livecd)"
+		CRYPT_ROOT_KEY="$(head -n 1 "${CDROOT_PATH}"/${CDROOT_MARKER})"
 		CRYPT_ROOT='/dev/loop0'
 		good_msg 'You booted an encrypted livecd' "${CRYPT_SILENT}"
 

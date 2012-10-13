@@ -159,7 +159,7 @@ bootstrapCD() {
 	# a bunch of extra devices
 	[ -n "${CDROOT_DEV}" ] && DEVICES="${CDROOT_DEV}"
 
-	findmediamount "cdrom" "${SUBDIR}/livecd" "REAL_ROOT" "${CDROOT_PATH}" ${DEVICES}
+	findmediamount "cdrom" "${SUBDIR}/${CDROOT_MARKER}" "REAL_ROOT" "${CDROOT_PATH}" ${DEVICES}
 }
 
 bootstrapKey() {

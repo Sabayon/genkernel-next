@@ -551,11 +551,21 @@ which the ramdisk scripts would recognize.
 
 *cdroot*[=<...>]::
 *cdroot_type*=<...>::
-    TO BE DOCUMENTED
+*cdroot_marker*=<...>::
+    Used for LiveCDs. *cdroot* without arguments will cause the initramfs to
+    scan all devices for a LiveCD. An argument to *cdroot* will cause it to
+    scan only that device. A LiveCD is any device containing a file with the
+    name & Path of *cdroot_marker* (default of "/livecd"). *cdroot_type*
+    (default of "auto") is the filesystem type to use while mounting devices
+    to check. On success, the LiveCD will be mounted at $CDROOT_PATH.
 
 *loop*=<...>::
 *looptype*=<...>::
-    TO BE DOCUMENTED
+    Used for LiveCDs. After mounting the LiveCD or ISO, look for a file at
+    *loop*=path to use as a loopback image for the main type. Mount it with
+    filesystem type *looptype*. Possible values for *looptype*: normal,
+    squashfs, gcloop, zisofs, noloop, sgimips. If *looptype* is not specified,
+    a guess is made, based on the name or extension of *loop*.
 
 *isoboot*=<...>::
     Loop-mount an ISO file from the boot device to get the filesystem image.

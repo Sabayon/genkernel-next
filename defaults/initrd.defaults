@@ -67,12 +67,15 @@ else
 fi
 
 REAL_ROOT=''
+CONSOLE='/dev/console'
+NEW_ROOT='/newroot'
 CDROOT='0'
 CDROOT_DEV=''
 CDROOT_TYPE='auto'
-NEW_ROOT='/newroot'
 CDROOT_PATH='/mnt/cdrom'
-CONSOLE='/dev/console'
+# This is the file that the cdroot will be checked for as a
+# marker. It must exist RELATIVE to the cdroot.
+CDROOT_MARKER='/livecd'
 
 LOOPS='/livecd.loop /zisofs /livecd.squashfs /image.squashfs /livecd.gcloop'
 
