@@ -31,6 +31,7 @@ longusage() {
   echo "	--no-xconfig		Don't run xconfig after oldconfig"
   echo "	--save-config		Save the configuration to /etc/kernels"
   echo "	--no-save-config	Don't save the configuration to /etc/kernels"
+  echo "	--virtio			Include VirtIO kernel code"
   echo "  Kernel Compile settings"
   echo "	--oldconfig		Implies --no-clean and runs a 'make oldconfig'"
   echo "	--clean			Run make clean before compilation"
@@ -320,6 +321,10 @@ parse_cmdline() {
 		--zfs|--no-zfs)
 			CMD_ZFS=`parse_optbool "$*"`
 			print_info 2 "CMD_ZFS: ${CMD_ZFS}"
+			;;
+		--virtio)
+			CMD_VIRTIO=`parse_optbool "$*"`
+			print_info 2 "CMD_VIRTIO: ${CMD_VIRTIO}"
 			;;
 		--multipath|--no-multipath)
 			CMD_MULTIPATH=`parse_optbool "$*"`

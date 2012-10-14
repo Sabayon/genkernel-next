@@ -147,4 +147,17 @@ config_kernel() {
 	then
 		sed -i ${KERNEL_OUTPUTDIR}/.config -e 's/#\? \?CONFIG_FB_SPLASH is.*/CONFIG_FB_SPLASH=y/g'
 	fi
+	
+	# VirtIO
+	if isTrue ${CMD_VIRTIO} 
+	then 
+		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_PARAVIRT_GUEST.*/CONFIG_PARAVIRT_GUEST=y/g'
+		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_VIRTIO_PCI.*/CONFIG_VIRTIO_PCI=y/g'
+		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_VIRTIO_BALLOON.*/CONFIG_VIRTIO_BALLOON=y/g'
+		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_VIRTIO_MMIO.*/CONFIG_VIRTIO_MMIO=y/g'
+		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_VIRTIO_BLK.*/CONFIG_VIRTIO_BLK=y/g'
+		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_SCSI_VIRTIO.*/CONFIG_SCSI_VIRTIO=y/g'
+		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_VIRTIO_NET.*/CONFIG_VIRTIO_NET=y/g'
+		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_VHOST_NET.*/CONFIG_VHOST_NET=y/g'
+	fi 
 }

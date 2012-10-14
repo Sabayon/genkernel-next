@@ -5,6 +5,10 @@
 # Distributed under the GPL v2
 # $Id$
 
+  14 Oct 2012; Robin H. Johnson <robbat2@gentoo.org> gen_cmdline.sh,
+  gen_configkernel.sh, gen_determineargs.sh:
+  Bug #432956: Easy to include VirtIO support in kernel.
+
   13 Oct 2012; Robin H. Johnson <robbat2@gentoo.org> arch/alpha/modules_load,
   arch/arm/modules_load, arch/ia64/modules_load, arch/mips/modules_load,
   arch/parisc/modules_load, arch/parisc64/modules_load, arch/ppc/modules_load,
