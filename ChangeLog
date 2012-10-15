@@ -4,7 +4,10 @@
 # - 2008-2012 Various authors (see AUTHORS)
 # Distributed under the GPL v2
 # $Id$
-  
+
+  15 Oct 2012; Robin H. Johnson <robbat2@gentoo.org> genkernel:
+  Bump for 3.4.44.1 with bugfix-only.
+
   15 Oct 2012; Robin H. Johnson <robbat2@gentoo.org> gen_compile.sh,
   gen_package.sh:
   Fix corner cases on OUTPUTDIR.
