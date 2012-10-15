@@ -25,7 +25,7 @@ compile_kernel_args() {
 		then
 			ARGS="${ARGS} ARCH=\"${KERNEL_ARCH}\""
 		fi
-		if [ -n "${KERNEL_OUTPUTDIR}" ]
+		if [ -n "${KERNEL_OUTPUTDIR}" -a "${KERNEL_OUTPUTDIR}" != "${KERNEL_DIR}" ]
 		then
 			ARGS="${ARGS} O=\"${KERNEL_OUTPUTDIR}\""
 		fi
