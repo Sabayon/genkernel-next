@@ -5,6 +5,9 @@
 # Distributed under the GPL v2
 # $Id$
 
+  15 Oct 2012; Robin H. Johnson <robbat2@gentoo.org> genkernel:
+  Bump to 3.4.44.2 with depmod corner cases by xake.
+
   15 Oct 2012; Peter Hjalmarsson <xake@rymdraket.net> gen_compile.sh:
   Fix calling of depmod.
 
