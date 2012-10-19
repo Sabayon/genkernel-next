@@ -91,6 +91,7 @@ set_bootloader_grub() {
 			echo "title=Gentoo Linux ($KV)" >> ${GRUB_CONF}
 			echo -e "\tkernel /kernel-${KNAME}-${ARCH}-${KV} root=${GRUB_ROOTFS}" >> ${GRUB_CONF}
 			if [ "${BUILD_INITRD}" = '1' ]
+			then
 				if [ "${PAT}" -gt '4' ]
 				then
 				    echo -e "\tinitrd /initramfs-${KNAME}-${ARCH}-${KV}" >> ${GRUB_CONF}
