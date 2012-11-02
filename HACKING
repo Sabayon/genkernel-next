@@ -17,10 +17,9 @@ Testing things:
 
 Rolling a release:
 - Bump the version in the main genkernel file.
-- echangelog "Bump version to ${PV}"
-- git commit -a -m "Bump version to ${PV}"
+- git commit -s -a -m "Bump version to ${PV}"
 - make dist
-- git tag -a -m "Tag release v${PV}" v${PV}
+- git tag -s -a -m "Tag release v${PV}" v${PV}
 - git push ${REMOTE} master --tags
 - upload genkernel-${PV}.tar.bz2 to the hosting:
     scp genkernel-${PV}.tar.bz2 ${USER}@dev.gentoo.org:/space/distfiles-local/

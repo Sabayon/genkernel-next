@@ -1,9 +1,11 @@
+# After 2012/11/01, the changelog is now auto-generated.
+# This file is for historical purposes only.
 # ChangeLog for genkernel
 # Copyright: 
 # - 2003-2008 Gentoo Foundation
 # - 2008-2012 Various authors (see AUTHORS)
 # Distributed under the GPL v2
-# $Id$
+# $Id: 7902101f65eb47fdc5ed4b116ee234aa23686e1b $
 
   19 Oct 2012; Robin H. Johnson <robbat2@gentoo.org> gen_bootloader.sh:
   Missing then keyword.
