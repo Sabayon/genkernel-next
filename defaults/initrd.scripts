@@ -282,6 +282,36 @@ findnfsmount() {
 	fi
 }
 
+find_real_device() {
+	local DEVICE="${1}"
+	case "${DEVICE}" in
+		UUID\=*|LABEL\=*)
+			local REAL_DEVICE=""
+			local retval=1
+
+			if [ "${retval}" -ne 0 ]; then
+				REAL_DEVICE=`findfs "${DEVICE}" 2>/dev/null`
+				retval=$?
+			fi
+
+			if [ "$retval" -ne 0 ]; then
+				REAL_DEVICE=`busybox findfs "${DEVICE}" 2>/dev/null`
+				retval=$?
+			fi
+
+			if [ "${retval}" -ne 0 ]; then
+				REAL_DEVICE=`blkid -o device -l -t "${DEVICE}"`
+				retval=$?
+			fi
+
+			if [ "${retval}" -eq 0 ] && [ -n "${REAL_DEVICE}" ]; then
+				DEVICE="${REAL_DEVICE}"
+			fi
+		;;
+	esac
+	echo -n "${DEVICE}"
+}
+
 check_loop() {
 	if [ "${LOOP}" = '' -o ! -e "${CDROOT_PATH}/${LOOP}" ]
 	then
@@ -811,32 +841,7 @@ openLUKS() {
 			prompt_user "LUKS_KEYDEV" "${LUKS_NAME} key device"
 			KEYDEV_ERROR=0
 		else
-			case "${LUKS_DEVICE}" in
-				UUID\=*|LABEL\=*)
-					local REAL_LUKS=""
-					local retval=1
-
-					if [ "${retval}" -ne 0 ]; then
-						REAL_LUKS=`findfs "${LUKS_DEVICE}" 2>/dev/null`
-						retval=$?
-					fi
-
-					if [ "$retval" -ne 0 ]; then
-						REAL_LUKS=`busybox findfs "${LUKS_DEVICE}" 2>/dev/null`
-						retval=$?
-					fi
-
-					if [ "${retval}" -ne 0 ]; then
-						REAL_LUKS=`blkid -o device -l -t "${LUKS_DEVICE}"`
-						retval=$?
-					fi
-
-					if [ "${retval}" -eq 0 ] && [ -n "${REAL_LUKS}" ]; then
-						good_msg "Detected device ${REAL_LUKS}"
-						LUKS_DEVICE="${REAL_LUKS}"
-					fi
-				;;
-			esac
+			LUKS_DEVICE=$(find_real_device "${LUKS_DEVICE}")
 
 			setup_md_device ${LUKS_DEVICE}
 			cryptsetup isLuks ${LUKS_DEVICE}
@@ -855,10 +860,12 @@ openLUKS() {
 
 				if [ -n "${LUKS_KEY}" ] 
 				then
+					local REAL_LUKS_KEYDEV="${LUKS_KEYDEV}"
 					if [ ! -e "${mntkey}${LUKS_KEY}" ] 
 					then
-						if [ -b "${LUKS_KEYDEV}" ]
-						then good_msg "Using key device ${LUKS_KEYDEV}." ${CRYPT_SILENT}
+						REAL_LUKS_KEYDEV=$(find_real_device "${LUKS_KEYDEV}")
+						if [ -b "${REAL_LUKS_KEYDEV}" ]
+						then good_msg "Using key device ${REAL_LUKS_KEYDEV}." ${CRYPT_SILENT}
 						else
 							good_msg "Please insert removable device ${LUKS_KEYDEV} for ${LUKS_NAME}" ${CRYPT_SILENT}
 							# abort after 10 secs
@@ -867,18 +874,20 @@ openLUKS() {
 							do 
 								count=$((count-1))
 								sleep 1
-								if [ -b "${LUKS_KEYDEV}" ]
+								REAL_LUKS_KEYDEV=$(find_real_device "${LUKS_KEYDEV}")
+								if [ -b "${REAL_LUKS_KEYDEV}" ]
 								then
-									good_msg "Removable device ${LUKS_KEYDEV} detected." ${CRYPT_SILENT}
+									good_msg "Removable device ${REAL_LUKS_KEYDEV} detected." ${CRYPT_SILENT}
 									break
 								fi
 							done
-							if [ ! -b "${LUKS_KEYDEV}" ]
+							if [ ! -b "${REAL_LUKS_KEYDEV}" ]
 							then
 								eval CRYPT_${TYPE}_KEY=${LUKS_KEY}
 								bootstrapKey ${TYPE}
 								eval LUKS_KEYDEV='"${CRYPT_'${TYPE}'_KEYDEV}"'
-								if [ ! -b "${LUKS_KEYDEV}" ]; then
+								REAL_LUKS_KEYDEV=$(find_real_device "${LUKS_KEYDEV}")
+								if [ ! -b "${REAL_LUKS_KEYDEV}" ]; then
 									KEYDEV_ERROR=1
 									bad_msg "Removable device ${LUKS_KEYDEV} not found." ${CRYPT_SILENT}
 									continue
@@ -890,27 +899,27 @@ openLUKS() {
 						# At this point a device was recognized, now let's see if the key is there
 						[ ! -d "$mntkey" ] && mkdir -p ${mntkey} 2>/dev/null >/dev/null
 
-						mount -n -o ro ${LUKS_KEYDEV} ${mntkey} >/dev/null 2>/dev/null
+						mount -n -o ro ${REAL_LUKS_KEYDEV} ${mntkey} >/dev/null 2>/dev/null
 						if [ "$?" != '0' ]
 						then
 							KEYDEV_ERROR=1
-							bad_msg "Mounting of device ${LUKS_KEYDEV} failed." ${CRYPT_SILENT}
+							bad_msg "Mounting of device ${REAL_LUKS_KEYDEV} failed." ${CRYPT_SILENT}
 							continue
 						else
-							good_msg "Removable device ${LUKS_KEYDEV} mounted." ${CRYPT_SILENT}
+							good_msg "Removable device ${REAL_LUKS_KEYDEV} mounted." ${CRYPT_SILENT}
 							sleep 2
 							# keyfile exists?
 							if [ ! -e "${mntkey}${LUKS_KEY}" ]; then
 								umount -n ${mntkey} 2>/dev/null >/dev/null
 								KEY_ERROR=1
 								KEYDEV_ERROR=1
-								bad_msg "Key {LUKS_KEY} on device ${LUKS_KEYDEV} not found." ${CRYPT_SILENT}
+								bad_msg "Key {LUKS_KEY} on device ${REAL_LUKS_KEYDEV} not found." ${CRYPT_SILENT}
 								continue
 							fi
 						fi
 					fi
 					# At this point a candidate key exists (either mounted before or not)
-					good_msg "${LUKS_KEY} on device ${LUKS_KEYDEV} found" ${CRYPT_SILENT}
+					good_msg "${LUKS_KEY} on device ${REAL_LUKS_KEYDEV} found" ${CRYPT_SILENT}
 					if [ "$(echo ${LUKS_KEY} | grep -o '.gpg$')" = ".gpg" ] && [ -e /sbin/gpg ] ; then
 						[ -e /dev/tty ] && mv /dev/tty /dev/tty.org
 						mknod /dev/tty c 5 1
