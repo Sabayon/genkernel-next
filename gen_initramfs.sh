@@ -410,7 +410,7 @@ append_zfs(){
 	for i in /etc/zfs/{zdev.conf,zpool.cache}
 	do
 		cp -a "${i}" "${TEMP}/initramfs-zfs-temp/etc/zfs" \
-			|| gen_die "Could not copy file ${i} for ZFS"
+			|| print_warning 1 "Could not copy file ${i} for ZFS"
 	done
 
 	# Copy binaries
