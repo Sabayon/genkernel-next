@@ -520,12 +520,10 @@ which the ramdisk scripts would recognize.
 *console*=<...>::
     Override location of console, default is "/dev/console".
 
-*part*=<...>::
-    Specify part for mdadm to start.  This is the relevant code in mdstart:
-------------------------------------------
-    fd = open("/dev/md<MD_NUMBER>", 0, 0);
-    ioctl(fd, RAID_AUTORUN, <MDPART>);
-------------------------------------------
+*part*[=<0,1>]::
+*partitionable*::
+	Enable/Disable partitionable RAIDs (metadata 0.x) during auto-run.
+	Standalone *part* and *partitionable* keywords for kernel compatability.
 
 *iscsi_initiatorname*=<...>::
 *iscsi_target*=<...>::

@@ -156,6 +156,9 @@ do
 		part=*)
 			MDPART=${x#*=}
 		;;
+		part|partitionable)
+			MDPART=1
+		;;
 		# NFS
 		ip=*)
 			IP=${x#*=}
