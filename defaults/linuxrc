@@ -38,6 +38,7 @@ CMDLINE=$(cat /proc/cmdline)
 FAKE_ROOT=''
 FAKE_INIT=''
 REAL_ROOTFLAGS=''
+INIT_OPTS=''
 ROOTFSTYPE='auto'
 CRYPT_SILENT=0
 
