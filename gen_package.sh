@@ -144,7 +144,7 @@ gen_kerncache_extract_modules()
 
 gen_kerncache_extract_config()
 {
-    if [ -e "${KERNCACHE}" ]
+    if [ -e "${KERNCACHE}" -a "${SAVE_CONFIG}" = '1' ]
     then
         print_info 1 'Extracting kerncache config to /etc/kernels'
         mkdir -p /etc/kernels
