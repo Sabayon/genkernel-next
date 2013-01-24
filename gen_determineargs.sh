@@ -4,6 +4,7 @@
 get_KV() {
     if [ "${KERNEL_SOURCES}" = '0' -a -e "${KERNCACHE}" ]
     then
+        mkdir -p ${TEMP}
         /bin/tar -xj -C ${TEMP} -f ${KERNCACHE} kerncache.config 
         if [ -e ${TEMP}/kerncache.config ]
         then
