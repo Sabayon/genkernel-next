@@ -12,7 +12,7 @@ get_KV() {
             PAT=`grep ^PATCHLEVEL\ \= ${TEMP}/kerncache.config | awk '{ print $3 };'`
             SUB=`grep ^SUBLEVEL\ \= ${TEMP}/kerncache.config | awk '{ print $3 };'`
             EXV=`grep ^EXTRAVERSION\ \= ${TEMP}/kerncache.config | sed -e "s/EXTRAVERSION =//" -e "s/ //g"`
-            LOV=`grep ^CONFIG_LOCALVERSION\= ${TEMP}/kerncache.config | sed -e "s/CONFIG_LOCALVERSION=\"\(.*\)\"/\1/"`
+            LOV=`grep ^CONFIG_LOCALVERSION\ \= ${TEMP}/kerncache.config | sed -e "s/CONFIG_LOCALVERSION =//" -e "s/ //g"`
             KV=${VER}.${PAT}.${SUB}${EXV}${LOV}
         else
             gen_die "Could not find kerncache.config in the kernel cache! Exiting."

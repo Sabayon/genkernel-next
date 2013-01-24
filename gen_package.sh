@@ -95,6 +95,7 @@ gen_kerncache()
     echo "PATCHLEVEL = ${PAT}" >> "${TEMP}/kerncache/kerncache.config"
     echo "SUBLEVEL = ${SUB}" >> "${TEMP}/kerncache/kerncache.config"
     echo "EXTRAVERSION = ${EXV}" >> "${TEMP}/kerncache/kerncache.config"
+    echo "CONFIG_LOCALVERSION = ${LOV}" >> "${TEMP}/kerncache/kerncache.config"
 
     mkdir -p "${TEMP}/kerncache/lib/modules/"
 
