@@ -155,7 +155,7 @@ gen_kerncache_extract_config()
 gen_kerncache_is_valid()
 {
     KERNCACHE_IS_VALID=0
-    if [ "${NO_KERNEL_SOURCES}" = '1' ]
+    if [ "${KERNEL_SOURCES}" = '0' ]
     then
 
         BUILD_KERNEL=0
