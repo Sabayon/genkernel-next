@@ -273,7 +273,7 @@ append_iscsi(){
 append_lvm(){
     if [ -d "${TEMP}/initramfs-lvm-temp" ]
     then
-        rm -r "${TEMP}/initramfs-lvm-temp/"
+        rm -rf "${TEMP}/initramfs-lvm-temp/"
     fi
     cd ${TEMP}
     mkdir -p "${TEMP}/initramfs-lvm-temp"/{bin,sbin}
@@ -305,7 +305,7 @@ append_lvm(){
     find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
             || gen_die "compressing lvm cpio"
     cd "${TEMP}"
-    rm -r "${TEMP}/initramfs-lvm-temp/"
+    rm -rf "${TEMP}/initramfs-lvm-temp/"
 }
 
 append_mdadm(){
