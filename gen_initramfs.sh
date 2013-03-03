@@ -34,21 +34,18 @@ copy_binaries() {
 	done
 	# This must be OUTSIDE the for loop, we only want to run lddtree etc ONCE.
 	# lddtree does not have the -V (version) nor the -l (list) options prior to version 1.18
+	(
 	if lddtree -V > /dev/null 2>&1 ; then
-		lddtree -l "$@" \
-			| sort \
-			| uniq \
-			| cpio -p --make-directories --dereference --quiet "${destdir}" \
-			|| gen_die "Binary ${f} or some of its library dependencies could not be copied"
+		lddtree -l "$@"
 	else
 		lddtree "$@" \
 			| tr ')(' '\n' \
-			| awk  '/=>/{ if($3 ~ /^\//){print $3}}' \
+			| awk  '/=>/{ if($3 ~ /^\//){print $3}}'
+	fi ) \
 			| sort \
 			| uniq \
 			| cpio -p --make-directories --dereference --quiet "${destdir}" \
 			|| gen_die "Binary ${f} or some of its library dependencies could not be copied"
-	fi
 }
 
 log_future_cpio_content() {
