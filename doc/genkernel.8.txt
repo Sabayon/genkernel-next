@@ -545,9 +545,13 @@ which the ramdisk scripts would recognize.
 *aufs*::
     Enables support for AUFS2 (if available in the kernel).
 
-*real_rootflags*=<...>::
+*rootflags*=<...>::
     Additional flags to mount the real root system with.
-    For example *real_rootflags*=noatime would make "-o ro,noatime".
+    For example *rootflags*=noatime would make "-o ro,noatime".
+
+*real_rootflags*=<...>::
+    Legacy kernel parameter from kernel-2.4 initrd.
+    Does the same as *rootflags*=, which should be used in its place.
 
 *real_resume*=<...>::
 *resume*=<...>::
