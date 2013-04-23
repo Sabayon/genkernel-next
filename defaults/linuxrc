@@ -324,16 +324,13 @@ mount_devfs
 mount_sysfs
 
 # Initialize mdev
-if [ "${KV_2_6_OR_GREATER}" ]
-then
-	good_msg 'Activating mdev'
+good_msg 'Activating mdev'
 
-	# Serialize hotplug events
-	touch /dev/mdev.seq
+# Serialize hotplug events
+touch /dev/mdev.seq
 
-	# Setup hotplugging for firmware loading
-	echo /sbin/mdev > /proc/sys/kernel/hotplug
-fi
+# Setup hotplugging for firmware loading
+echo /sbin/mdev > /proc/sys/kernel/hotplug
 
 # Load modules listed in MY_HWOPTS if /lib/modules exists for the running kernel
 if [ -z "${DO_modules}" ]
@@ -357,10 +354,7 @@ else
 fi
 
 # Ensure that device nodes are properly configured
-if [ "${KV_2_6_OR_GREATER}" ]
-then
-	mdev -s || bad_msg "mdev -s failed"
-fi
+mdev -s || bad_msg "mdev -s failed"
 
 # Apply scan delay if specified
 sdelay

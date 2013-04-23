@@ -50,11 +50,6 @@ KMINOR=`echo $KV | cut -f2 -d.`
 KVER="${KMAJOR}.${KMINOR}"
 MISCOPTS='debug detect'
 
-if [ "${KMAJOR}" -ge 3 ] || [ "${KMAJOR}" -eq 2 -a "${KMINOR}" -eq '6' ]
-then
-	KV_2_6_OR_GREATER="yes"
-fi
-
 QUIET='1'
 ROOT_LINKS='bin sbin lib lib32 lib64 boot usr opt emul'
 ROOT_TREES='etc root home var'
