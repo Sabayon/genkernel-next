@@ -420,7 +420,7 @@ prompt_user(){
 
 	eval local oldvalue='$'${1}
 
-	[ \( $# != 2 \) -a \( $# != 3 \) ] && \
+	[ $# != 2 -a $# != 3 ] && \
 		bad_msg "Bad invocation of function prompt_user, please file a bug \
 		report with this message" && exit 1
 	[ -n "${3}" ] && local explnt=" or : ${3}" || local explnt="."
