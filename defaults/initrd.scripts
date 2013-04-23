@@ -157,12 +157,15 @@ devicelist(){
 }
 
 bootstrapCD() {
-	local DEVICES=`devicelist`
-	# The device was specified on the command line, so there's no need to scan
-	# a bunch of extra devices
-	[ -n "${CDROOT_DEV}" ] && DEVICES="${CDROOT_DEV}"
+	local DEVICES=
 
-	findmediamount "cdrom" "${SUBDIR}/${CDROOT_MARKER}" "REAL_ROOT" "${CDROOT_PATH}" ${DEVICES}
+	# The device was specified on the command line, so there's no need
+	# to scan a bunch of extra devices
+	[ -n "${CDROOT_DEV}" ] && DEVICES="${CDROOT_DEV}"
+	[ -z "${CDROOT_DEV}" ] && DEVICES=$(devicelist)
+
+	findmediamount "cdrom" "${SUBDIR}/${CDROOT_MARKER}" \
+		"REAL_ROOT" "${CDROOT_PATH}" ${DEVICES}
 }
 
 bootstrapKey() {
