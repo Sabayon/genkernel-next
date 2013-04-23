@@ -120,9 +120,23 @@ append_busybox() {
 	chmod +x "${TEMP}/initramfs-busybox-temp/usr/share/udhcpc/default.script"
 
 	# Set up a few default symlinks
-	for i in ${BUSYBOX_APPLETS:-[ ash sh mount uname echo cut cat}; do
-		rm -f ${TEMP}/initramfs-busybox-temp/bin/$i > /dev/null
+	local default_applets="[ ash sh mount uname echo cut cat"
+	for i in ${BUSYBOX_APPLETS:-${default_applets}}; do
+		rm -f ${TEMP}/initramfs-busybox-temp/bin/$i
 		ln -s busybox ${TEMP}/initramfs-busybox-temp/bin/$i ||
+			gen_die "Busybox error: could not link ${i}!"
+	done
+
+	local mod_applets="sbin/modprobe sbin/insmod sbin/rmmod bin/lsmod"
+	local dir=
+	local name=
+	for i in ${mod_applets}; do
+		dir=$(dirname $i)
+		name=$(basename $i)
+		rm -f ${TEMP}/initramfs-busybox-temp/$dir/$name
+		mkdir -p ${TEMP}/initramfs-busybox-temp/$dir ||
+			gen_die "Busybox error: could not create dir: $dir"
+		ln -s ../bin/busybox ${TEMP}/initramfs-busybox-temp/$dir/$name ||
 			gen_die "Busybox error: could not link ${i}!"
 	done
 
@@ -705,12 +719,6 @@ append_auxilary() {
 	done
 	echo '"' >> "${TEMP}/initramfs-aux-temp/etc/initrd.defaults"
 
-	if [ -f "${GK_SHARE}/arch/${ARCH}/modprobe" ]
-	then
-		cp "${GK_SHARE}/arch/${ARCH}/modprobe" "${TEMP}/initramfs-aux-temp/sbin/modprobe"
-	else
-		cp "${GK_SHARE}/defaults/modprobe" "${TEMP}/initramfs-aux-temp/sbin/modprobe"
-	fi
 	if isTrue $CMD_DOKEYMAPAUTO
 	then
 		echo 'MY_HWOPTS="${MY_HWOPTS} keymap"' >> ${TEMP}/initramfs-aux-temp/etc/initrd.defaults
@@ -728,7 +736,6 @@ append_auxilary() {
 	chmod +x "${TEMP}/initramfs-aux-temp/init"
 	chmod +x "${TEMP}/initramfs-aux-temp/etc/initrd.scripts"
 	chmod +x "${TEMP}/initramfs-aux-temp/etc/initrd.defaults"
-	chmod +x "${TEMP}/initramfs-aux-temp/sbin/modprobe"
 
 	if isTrue ${NETBOOT}
 	then
