@@ -446,27 +446,6 @@ prompt_user(){
 	esac
 }
 
-setup_slowusb() {
-	# This function removes unset DO_slowusb if there is no usb-storage attached.
-	# If noslowusb is set, skip this function
-	[ "${DO_slowusb}" ] || return
-
-	# Unset DO_slowusb, so we can set it again if usb-storage has something attached
-	unset DO_slowusb
-
-	local usb_storage_dir="/sys/bus/usb/drivers/usb-storage"
-	if [ ! -d "${usb_storage_dir}" ]
-	then
-		# no automated slowusb required. no usb-storage devices attached.
-		return
-	fi
-	for x in "${usb_storage_dir}"/*
-	do
-		[ -d "${x}" ]  && [ "${x}" != "${usb_storage_dir}/module" ] \
-			&& { DO_slowusb="1" ; break ; }
-	done
-}
-
 cmdline_hwopts() {
 	# Scan CMDLINE for any "doscsi" or "noscsi"-type arguments
 	local FOUND

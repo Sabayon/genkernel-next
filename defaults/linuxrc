@@ -359,13 +359,7 @@ mdev -s || bad_msg "mdev -s failed"
 # Apply scan delay if specified
 sdelay
 
-# Setup slow USB bits
-setup_slowusb
-
 cd /
-
-# if doslowusb is passed, pause other 10 seconds here, after mdev load
-[ "${DO_slowusb}" ] && sleep 10
 
 # Start iSCSI
 if [ -e /bin/iscsistart ]
