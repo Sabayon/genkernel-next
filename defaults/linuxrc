@@ -31,8 +31,6 @@ then
 	[ -e /linuxrc ] && rm /linuxrc
 fi
 
-quiet_kmsg
-
 CMDLINE=$(cat /proc/cmdline)
 # Scan CMDLINE for any specified real_root= or cdroot arguments
 FAKE_ROOT=''
@@ -41,6 +39,7 @@ FAKE_ROOTFLAGS=''
 INIT_OPTS=''
 ROOTFSTYPE='auto'
 CRYPT_SILENT=0
+QUIET=''
 
 mkdir -p /etc/cmdline /etc/modprobe.d
 for x in ${CMDLINE}
@@ -117,6 +116,9 @@ do
 			then
 				ZPOOL_FORCE=-f
 			fi
+		;;
+		quiet)
+			QUIET=1
 		;;
 		# Debug Options
 		debug)
@@ -269,6 +271,8 @@ do
 		;;
 	esac
 done
+
+quiet_kmsg
 
 if [ "${CDROOT}" = '0' ]
 then
@@ -457,17 +461,13 @@ then
 
 	if [ "${REAL_ROOT}" = '' ]
 	then
-		echo -n -e "${WARN}>>${NORMAL}${BOLD} No bootable medium found. Waiting for new devices"
-
+		warn_msg "No bootable medium found. Waiting for new devices..."
 		COUNTER=0
 		while [ ${COUNTER} -lt 3 ]; do
 			sleep 3
-			echo -n '.'
 			let COUNTER=${COUNTER}+1
 		done
-
 		sleep 1
-		echo -e "${NORMAL}"
 		bootstrapCD
 	fi
 
@@ -909,43 +909,42 @@ fi
 
 verbose_kmsg
 
-echo -ne "${GOOD}>>${NORMAL}${BOLD} Booting (initramfs)${NORMAL}"
+good_msg "Booting (initramfs)"
 
 cd "${CHROOT}"
 mkdir "${CHROOT}/proc" "${CHROOT}/sys" "${CHROOT}/run" 2>/dev/null
-echo -ne "${BOLD}.${NORMAL}"
 
 # If devtmpfs is mounted, try move it to the new root
-# If that fails, try to unmount all possible mounts of devtmpfs as stuff breaks otherwise
+# If that fails, try to unmount all possible mounts of
+# devtmpfs as stuff breaks otherwise
 for fs in /dev /sys /proc
 do
 	if grep -qs "$fs" /proc/mounts
 	then
 		if ! mount --move $fs "${CHROOT}"$fs
 		then
-			umount $fs || echo '*: Failed to move and unmount the ramdisk $fs!'
+			umount $fs || \
+			bad_msg "Failed to move and unmount the ramdisk $fs!"
 		fi
 	fi
 done
 
 if [ ! -e "${CHROOT}/dev/console" ] || [ ! -e "${CHROOT}/dev/null" ]
 then
-	echo -ne "${BAD}>>${NORMAL}${BOLD} ERROR: your real /dev is missing files required to boot (console and null)${NORMAL}"
+	bad_msg "ERROR: your real /dev is missing console and null"
 elif [ -e /etc/initrd.splash -a ! -e "${CHROOT}/dev/tty1" ]
 then
-	echo -ne "${BAD}>>${NORMAL}${BOLD} ERROR: your real /dev is missing tty1, which is required for splash${NORMAL}"
+	bad_msg "ERROR: your real /dev is missing tty1, required for splash"
 fi
-
-echo -e "${BOLD}.${NORMAL}"
 
 exec /sbin/switch_root -c "/dev/console" "${CHROOT}" "${REAL_INIT:-/sbin/init}" "${INIT_OPTS}"
 
 # If we get here, something bad has happened
 splash 'verbose'
 
-echo "A fatal error has probably occured since ${REAL_INIT:-/sbin/init} did not"
-echo "boot correctly. Trying to open a shell..."
-echo
+bad_msg "A fatal error has occured since ${REAL_INIT:-/sbin/init} did not"
+bad_msg "boot correctly. Trying to open a shell..."
+
 exec /bin/bash
 exec /bin/sh
 exec /bin/ash

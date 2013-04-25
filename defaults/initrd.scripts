@@ -16,15 +16,16 @@ modules_scan() {
 	local loaded
 
 	MODS=$(cat /etc/modules/${1} 2>/dev/null)
-	[ -n "${MODS}" ] && echo -ne "${BOLD}   ::${NORMAL} "
-	[ -n "${MODS}" ] && echo -ne "Loading from ${1}: "
+	[ -n "${MODS}" ] && [ -z "${QUIET}" ] && \
+		echo -ne "${BOLD}   ::${NORMAL} Loading from ${1}: "
 
 	for x in ${MODS}
 	do
 		MLOAD=$(echo ${MLIST} | sed -e "s/.*${x}.*/${x}/")
 		if [ "${MLOAD}" = "${x}" ] # Only module to no-load
 		then
-			echo -e "${BOLD}   ::${NORMAL} Skipping ${x}..."
+			[ -z "${QUIET}" ] && \
+				echo -e "${BOLD}   ::${NORMAL} Skipping ${x}..."
 		elif [ "${MLOAD}" = "${MLIST}" ]
 		then
 			if [ -n "${DEBUG}" ]; then
@@ -33,17 +34,21 @@ modules_scan() {
 			fi
 			modprobe ${x} > /dev/null 2>&1
 			loaded=${?}
+
 			[ -n "${DEBUG}" -a "${loaded}" = "0" ] && \
 				echo "loaded"
 			[ -n "${DEBUG}" -a "${loaded}" != "0" ] && \
 				echo "not loaded"
+
 			[ -z "${DEBUG}" -a "${loaded}" = "0" ] && \
+				[ -z "${QUIET}" ] && \
 				echo -en "${x} "
 		else
-			echo -e "${BOLD}   ::${NORMAL} Skipping ${x}..."
+			[ -z "${QUIET}" ] && \
+				echo -e "${BOLD}   ::${NORMAL} Skipping ${x}..."
 		fi
 	done
-	[ -n "${MODS}" ] && echo
+	[ -n "${MODS}" ] && [ -z "${QUIET}" ] && echo
 }
 
 uppercase(){
@@ -377,7 +382,9 @@ test_success() {
 # $1 string
 # $2 hide flag
 
-good_msg() {	
+good_msg() {
+	[ -n "${QUIET}" ] && [ -z "${DEBUG}" ] && return 0
+
 	msg_string=$1
 	msg_string="${msg_string:-...}"
 	[ "$2" != 1 ] && echo -e "${GOOD}>>${NORMAL}${BOLD} ${msg_string} ${NORMAL}"
@@ -424,12 +431,15 @@ prompt_user(){
 	eval local oldvalue='$'${1}
 
 	[ $# != 2 -a $# != 3 ] && \
-		bad_msg "Bad invocation of function prompt_user, please file a bug \
-		report with this message" && exit 1
+		bad_msg "Bad invocation of function prompt_user."
+		bad_msg "Please file a bug report with this message" && exit 1
 	[ -n "${3}" ] && local explnt=" or : ${3}" || local explnt="."
-	
+
 	bad_msg "Could not find the ${2} in ${oldvalue}${explnt}"
-	echo '   Please specify another value or: press Enter for the same, type "shell" for a shell, or "q" to skip...'
+	bad_msg "Please specify another value or:"
+	bad_msg "- press Enter for the same"
+	bad_msg '- type "shell" for a shell'
+	bad_msg '- type "q" to skip...'
 	echo -n "${2}(${oldvalue}) :: "
 	read ${1}
 	case `eval echo '$'${1}` in
@@ -440,7 +450,7 @@ prompt_user(){
 			;;
 		'shell')
 			eval ${1}'='${oldvalue}
-			echo "To leave and try again just press <Ctrl>+D"
+			warn_msg "To leave and try again just press <Ctrl>+D"
 			run_shell
 			;;
 		'')
@@ -600,7 +610,7 @@ chooseKeymap() {
 		splash set_msg "Set keymap to ${keymap}"
 	elif [ -z "${keymap}" ]
 	then
-		echo
+		good_msg
 		good_msg "Keeping default keymap"
 		splash set_msg "Keeping default keymap"
 	else

@@ -493,6 +493,10 @@ which the ramdisk scripts would recognize.
     switch_root into "<CHROOT>/<SUBDIR>" instead of "<CHROOT>/".
     <CHROOT> is "/newroot" (or "/union") usually.
 
+*quiet*::
+    Do not print anything but error and warning messages during
+    the execution of the initramfs init scripts.
+
 *debug*::
     Drop into a debug shell early in the process.
 
