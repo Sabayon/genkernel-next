@@ -1055,6 +1055,7 @@ rundebugshell() {
 	if [ -n "$DEBUG" ]
 	then
 		good_msg 'Starting debug shell as requested by "debug" option.'
+		good_msg "Stopping by: ${1}"
 		do_rundebugshell
 	fi
 }

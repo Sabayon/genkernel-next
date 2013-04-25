@@ -424,7 +424,7 @@ mkdir -p "${NEW_ROOT}"
 CHROOT="${NEW_ROOT}"
 
 # Run debug shell if requested
-rundebugshell
+rundebugshell "before setting up the root filesystem"
 
 if [ "${CDROOT}" = '1' ]
 then
@@ -936,6 +936,9 @@ elif [ -e /etc/initrd.splash -a ! -e "${CHROOT}/dev/tty1" ]
 then
 	bad_msg "ERROR: your real /dev is missing tty1, required for splash"
 fi
+
+# Run debug shell if requested
+rundebugshell "before entering switch_root"
 
 exec /sbin/switch_root -c "/dev/console" "${CHROOT}" "${REAL_INIT:-/sbin/init}" "${INIT_OPTS}"
 
