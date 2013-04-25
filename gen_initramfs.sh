@@ -563,6 +563,39 @@ append_gpg() {
 	rm -rf "${TEMP}/initramfs-gpg-temp" > /dev/null
 }
 
+append_udev() {
+	if [ -d "${TEMP}/initramfs-udev-temp" ]
+	then
+		rm -r "${TEMP}/initramfs-udev-temp"
+	fi
+
+	udev_files="
+		/lib/udev/rules.d/50-udev-default.rules
+		/lib/udev/rules.d/60-persistent-storage.rules
+		/lib/udev/rules.d/80-drivers.rules
+		/lib/udev/rules.d/99-systemd.rules
+		/etc/udev/udev.conf
+	"
+	for f in ${udev_files}; do
+		mkdir -p "${TEMP}/initramfs-udev-temp"/$(dirname "${f}") || \
+			gen_die "cannot create rules.d directory"
+		cp "${f}" "${TEMP}/initramfs-udev-temp/${f}" || \
+			gen_die "cannot copy ${f} from system"
+	done
+
+	# Copy binaries
+	copy_binaries "${TEMP}/initramfs-udev-temp" \
+		/sbin/udevd /bin/udevadm /lib/udev/scsi_id \
+		/lib/udev/ata_id /lib/udev/mtd_probe
+
+	cd "${TEMP}/initramfs-udev-temp/"
+	log_future_cpio_content
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+			|| gen_die "compressing udev cpio"
+	cd "${TEMP}"
+	rm -rf "${TEMP}/initramfs-udev-temp" > /dev/null
+}
+
 print_list()
 {
 	local x
@@ -773,6 +806,7 @@ create_initramfs() {
 		|| gen_die "Could not create empty cpio at ${CPIO}"
 
 	append_data 'base_layout'
+	append_data 'udev' "${UDEV}"
 	append_data 'auxilary' "${BUSYBOX}"
 	append_data 'busybox' "${BUSYBOX}"
 	isTrue "${CMD_E2FSPROGS}" && append_data 'e2fsprogs'

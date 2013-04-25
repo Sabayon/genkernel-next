@@ -247,6 +247,10 @@ INITIALIZATION
 *--*[*no-*]*keymap*::
     Enables or disables keymap selection at boot.
 
+*--*[*no-*]*udev*::
+        Adds or exclude in udev support from static binaries if they exist on
+        the system.
+
 *--*[*no-*]*lvm*::
 	Adds or skips in LVM support from static binaries if they exist on the
 	system,  or compile static LVM binaries if static ones do not exist.

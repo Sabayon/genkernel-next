@@ -55,6 +55,8 @@ ROOT_LINKS='bin sbin lib lib32 lib64 boot usr opt emul'
 ROOT_TREES='etc root home var'
 KSUFF='.ko'
 
+UDEVD='/sbin/udevd'
+MDEVD='/sbin/mdev'
 REAL_ROOT=''
 CONSOLE='/dev/console'
 NEW_ROOT='/newroot'

@@ -86,6 +86,8 @@ longusage() {
   echo "	--do-keymap-auto	Forces keymap selection at boot"
   echo "	--keymap		Enables keymap selection support"
   echo "	--no-keymap		Disables keymap selection support"
+  echo "	--udev			Include udev and use it instead of mdev"
+  echo "	--no-udev		Exclude udev and use it instead of mdev"
   echo "	--lvm			Include LVM support"
   echo "	--no-lvm		Exclude LVM support"
   echo "	--mdadm			Include MDADM/MDMON support"
@@ -269,6 +271,10 @@ parse_cmdline() {
 		--keymap|--no-keymap)
 			CMD_KEYMAP=`parse_optbool "$*"`
 			print_info 2 "CMD_KEYMAP: ${CMD_KEYMAP}"
+			;;
+		--udev|--no-udev)
+			CMD_UDEV=`parse_optbool "$*"`
+			print_info 2 "CMD_UDEV: ${CMD_UDEV}"
 			;;
 		--lvm|--no-lvm)
 			CMD_LVM=`parse_optbool "$*"`

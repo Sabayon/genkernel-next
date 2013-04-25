@@ -22,6 +22,7 @@ fi
 
 mount -t proc -o noexec,nosuid,nodev proc /proc >/dev/null 2>&1
 mount -o remount,rw / >/dev/null 2>&1
+mount -t tmpfs -o rw,nosuid,nodev,relatime,mode=755 none /run 2>&1
 
 # Set up symlinks
 /bin/busybox --install -s
@@ -86,6 +87,9 @@ do
 		;;
 		isoboot=*)
 			ISOBOOT=${x#*=}
+		;;
+		domdev)
+			USE_MDEV=1
 		;;
 		# Start Volume manager options
 		dolvm)
@@ -327,14 +331,18 @@ mount_devfs
 # Mount sysfs
 mount_sysfs
 
-# Initialize mdev
-good_msg 'Activating mdev'
-
-# Serialize hotplug events
-touch /dev/mdev.seq
-
 # Setup hotplugging for firmware loading
-echo /sbin/mdev > /proc/sys/kernel/hotplug
+if is_udev
+then
+	good_msg 'Activating udev'
+	echo "${UDEVD}" > /proc/sys/kernel/hotplug
+	echo "" > /sys/kernel/uevent_helper
+else
+	good_msg 'Activating mdev'
+	# Serialize hotplug events
+	touch /dev/mdev.seq
+	echo "${MDEVD}" > /proc/sys/kernel/hotplug
+fi
 
 # Load modules listed in MY_HWOPTS if /lib/modules exists for the running kernel
 if [ -z "${DO_modules}" ]
@@ -357,8 +365,19 @@ else
 	good_msg 'Skipping module load; no modules in the ramdisk!'
 fi
 
-# Ensure that device nodes are properly configured
-mdev -s || bad_msg "mdev -s failed"
+if is_udev
+then
+	# Initialize udev
+	"${UDEVD}" --daemon --resolve-names=never && \
+		udevadm trigger --action=add && \
+		udevadm settle || bad_msg "udevd failed to run"
+elif is_mdev
+then
+	# Ensure that device nodes are properly configured
+	"${MDEVD}" -s || bad_msg "mdev -s failed"
+else
+	bad_msg "Cannot find either udev or mdev"
+fi
 
 # Apply scan delay if specified
 sdelay
@@ -375,7 +394,7 @@ fi
 setup_btrfsctl
 
 # Setup md device nodes if they dont exist
-setup_md_device
+is_mdev && setup_md_device
 
 # Scan volumes
 startVolumes
@@ -914,10 +933,16 @@ good_msg "Booting (initramfs)"
 cd "${CHROOT}"
 mkdir "${CHROOT}/proc" "${CHROOT}/sys" "${CHROOT}/run" 2>/dev/null
 
+is_udev && udevadm settle
+
+if is_udev
+then
+	udevadm control --exit || bad_msg "Unable to terminate udevd"
+fi
+
 # If devtmpfs is mounted, try move it to the new root
-# If that fails, try to unmount all possible mounts of
-# devtmpfs as stuff breaks otherwise
-for fs in /dev /sys /proc
+# If that fails, try to unmount all possible mounts of devtmpfs as stuff breaks otherwise
+for fs in /run /dev /sys /proc
 do
 	if grep -qs "$fs" /proc/mounts
 	then

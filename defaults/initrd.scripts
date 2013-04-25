@@ -344,6 +344,19 @@ fs_type_in_use() {
 	cut -d ' ' -f 3 < /proc/mounts | fgrep -q "${fs_type}"
 }
 
+is_udev() {
+	[ -x "${UDEVD}" ] && [ -z "${USE_MDEV}" ] && return 0
+	return 1
+}
+
+is_mdev() {
+	if [ ! -x "${UDEVD}" ] || [ -n "${USE_MDEV}" ]
+	then
+		return 0
+	fi
+	return 1
+}
+
 mount_devfs () {
 	# Use devtmpfs if enabled in kernel,
 	# else tmpfs. Always run mdev just in case
@@ -736,6 +749,8 @@ startVolumes() {
 			fi
 		fi
 	fi
+
+	is_udev && udevadm settle
 }
 
 startiscsi() {
