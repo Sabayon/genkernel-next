@@ -144,7 +144,6 @@ determine_real_args() {
 
 	CACHE_DIR=`arch_replace "${CACHE_DIR}"`
 	BUSYBOX_BINCACHE=`cache_replace "${BUSYBOX_BINCACHE}"`
-	MDADM_BINCACHE=`cache_replace "${MDADM_BINCACHE}"`
 	ISCSI_BINCACHE=`cache_replace "${ISCSI_BINCACHE}"`
 	BLKID_BINCACHE=`cache_replace "${BLKID_BINCACHE}"`
 	FUSE_BINCACHE=`cache_replace "${FUSE_BINCACHE}"`
@@ -154,7 +153,6 @@ determine_real_args() {
 	DEFAULT_KERNEL_CONFIG=`arch_replace "${DEFAULT_KERNEL_CONFIG}"`
 	BUSYBOX_CONFIG=`arch_replace "${BUSYBOX_CONFIG}"`
 	BUSYBOX_BINCACHE=`arch_replace "${BUSYBOX_BINCACHE}"`
-	MDADM_BINCACHE=`arch_replace "${MDADM_BINCACHE}"`
 	ISCSI_BINCACHE=`arch_replace "${ISCSI_BINCACHE}"`
 	BLKID_BINCACHE=`arch_replace "${BLKID_BINCACHE}"`
 	FUSE_BINCACHE=`arch_replace "${FUSE_BINCACHE}"`

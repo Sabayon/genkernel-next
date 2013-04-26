@@ -357,34 +357,24 @@ append_mdadm(){
 	cd ${TEMP}
 	mkdir -p "${TEMP}/initramfs-mdadm-temp/etc/"
 	mkdir -p "${TEMP}/initramfs-mdadm-temp/sbin/"
-	if [ "${MDADM}" = '1' ]
-	then
-		if [ -n "${MDADM_CONFIG}" ]
-		then
-			if [ -f "${MDADM_CONFIG}" ]
-			then
-				cp -a "${MDADM_CONFIG}" "${TEMP}/initramfs-mdadm-temp/etc/mdadm.conf" \
-				|| gen_die "Could not copy mdadm.conf!"
-			else
-				gen_die 'sl${MDADM_CONFIG} does not exist!'
-			fi
-		else
-			print_info 1 '		MDADM: Skipping inclusion of mdadm.conf'
-		fi
 
-		if [ -e '/sbin/mdadm' ] && LC_ALL="C" ldd /sbin/mdadm | grep -q 'not a dynamic executable' \
-		&& [ -e '/sbin/mdmon' ] && LC_ALL="C" ldd /sbin/mdmon | grep -q 'not a dynamic executable'
+	copy_binaries "${TEMP}/initramfs-mdadm-temp" \
+		/sbin/mdadm /sbin/mdmon /sbin/mdassemble
+
+	if [ -n "${MDADM_CONFIG}" ]
+	then
+		if [ -f "${MDADM_CONFIG}" ]
 		then
-			print_info 1 '		MDADM: Adding support (using local static binaries /sbin/mdadm and /sbin/mdmon)...'
-			cp /sbin/mdadm /sbin/mdmon "${TEMP}/initramfs-mdadm-temp/sbin/" ||
-				gen_die 'Could not copy over mdadm!'
+			cp -a "${MDADM_CONFIG}" \
+				"${TEMP}/initramfs-mdadm-temp/etc/mdadm.conf" \
+			|| gen_die "Could not copy mdadm.conf!"
 		else
-			print_info 1 '		MDADM: Adding support (compiling binaries)...'
-			compile_mdadm
-			/bin/tar -jxpf "${MDADM_BINCACHE}" -C "${TEMP}/initramfs-mdadm-temp" ||
-				gen_die "Could not extract mdadm binary cache!";
+			gen_die 'sl${MDADM_CONFIG} does not exist!'
 		fi
+	else
+		print_info 1 '         MDADM: Skipping inclusion of mdadm.conf'
 	fi
+
 	cd "${TEMP}/initramfs-mdadm-temp/"
 	log_future_cpio_content
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \

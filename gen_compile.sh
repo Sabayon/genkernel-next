@@ -440,45 +440,6 @@ compile_busybox() {
 	fi
 }
 
-compile_mdadm() {
-	if [ -f "${MDADM_BINCACHE}" ]
-	then
-		print_info 1 '		MDADM: Using cache'
-	else
-		[ -f "${MDADM_SRCTAR}" ] ||
-			gen_die "Could not find MDADM source tarball: ${MDADM_SRCTAR}! Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
-		cd "${TEMP}"
-		rm -rf "${MDADM_DIR}" > /dev/null
-		/bin/tar -jxpf "${MDADM_SRCTAR}" ||
-			gen_die 'Could not extract MDADM source tarball!'
-		[ -d "${MDADM_DIR}" ] ||
-			gen_die "MDADM directory ${MDADM_DIR} is invalid!"
-
-		cd "${MDADM_DIR}"
-		apply_patches mdadm ${MDADM_VER}
-		sed -i "/^CFLAGS = /s:^CFLAGS = \(.*\)$:CFLAGS = -Os:" Makefile
-		sed -i "/^CXFLAGS = /s:^CXFLAGS = \(.*\)$:CXFLAGS = -Os:" Makefile
-		sed -i "/^CWFLAGS = /s:^CWFLAGS = \(.*\)$:CWFLAGS = -Wall:" Makefile
-		sed -i "s/^# LDFLAGS = -static/LDFLAGS = -static/" Makefile
-
-		print_info 1 'mdadm: >> Compiling...'
-			compile_generic 'mdadm mdmon' utils
-
-		mkdir -p "${TEMP}/mdadm/sbin"
-		install -m 0755 -s mdadm "${TEMP}/mdadm/sbin/mdadm"
-		install -m 0755 -s mdmon "${TEMP}/mdadm/sbin/mdmon"
-		print_info 1 '      >> Copying to bincache...'
-		cd "${TEMP}/mdadm"
-		${UTILS_CROSS_COMPILE}strip "sbin/mdadm" "sbin/mdmon" ||
-			gen_die 'Could not strip mdadm binaries!'
-		/bin/tar -cjf "${MDADM_BINCACHE}" sbin/mdadm sbin/mdmon ||
-			gen_die 'Could not create binary cache'
-
-		cd "${TEMP}"
-		rm -rf "${MDADM_DIR}" mdadm
-	fi
-}
-
 compile_fuse() {
 	if [ ! -f "${FUSE_BINCACHE}" ]
 	then
