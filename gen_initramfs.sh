@@ -319,14 +319,9 @@ append_lvm(){
 	mkdir -p "${TEMP}/initramfs-lvm-temp/etc/lvm/"
 	print_info 1 'LVM: Adding support (copying binaries from system)...'
 
-	udev_files="
-		/lib/udev/rules.d/95-dm-notify.rules
-		/lib/udev/rules.d/13-dm-disk.rules
-		/lib/udev/rules.d/10-dm.rules
-		/lib/udev/rules.d/69-dm-lvm-metad.rules
-		/lib/udev/rules.d/11-dm-lvm.rules
-	"
-	for f in ${udev_files}; do
+	udev_files=( $(qlist -e sys-fs/lvm2:0 | grep ^/lib/udev/rules.d) )
+	for f in "${udev_files[@]}"; do
+		[ -f "${f}" ] || gen_die "append_lvm: not a file: ${f}"
 		mkdir -p "${TEMP}/initramfs-lvm-temp"/$(dirname "${f}") || \
 			gen_die "cannot create rules.d directory"
 		cp "${f}" "${TEMP}/initramfs-lvm-temp/${f}" || \
