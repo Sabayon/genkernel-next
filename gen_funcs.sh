@@ -496,7 +496,7 @@ set_config_with_override() {
 }
 
 check_distfiles() {
-	for i in $BUSYBOX_SRCTAR $MULTIPATH_SRCTAR $LVM_SRCTAR $DMRAID_SRCTAR $ISCSI_SRCTAR $GPG_SRCTAR
+	for i in $BUSYBOX_SRCTAR $MULTIPATH_SRCTAR $DMRAID_SRCTAR $ISCSI_SRCTAR $GPG_SRCTAR
 	do
 		if [ ! -f "${i}" ]
 		then

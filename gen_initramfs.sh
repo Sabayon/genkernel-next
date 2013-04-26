@@ -320,51 +320,31 @@ append_lvm(){
 		rm -r "${TEMP}/initramfs-lvm-temp/"
 	fi
 	cd ${TEMP}
-	mkdir -p "${TEMP}/initramfs-lvm-temp/bin/"
+	mkdir -p "${TEMP}/initramfs-lvm-temp"/{bin,sbin}
 	mkdir -p "${TEMP}/initramfs-lvm-temp/etc/lvm/"
-	if false && [ -e '/sbin/lvm.static' ]
+	print_info 1 'LVM: Adding support (copying binaries from system)...'
+
+	udev_files="
+		/lib/udev/rules.d/95-dm-notify.rules
+		/lib/udev/rules.d/13-dm-disk.rules
+		/lib/udev/rules.d/10-dm.rules
+		/lib/udev/rules.d/69-dm-lvm-metad.rules
+		/lib/udev/rules.d/11-dm-lvm.rules
+	"
+	for f in ${udev_files}; do
+		mkdir -p "${TEMP}/initramfs-lvm-temp"/$(dirname "${f}") || \
+			gen_die "cannot create rules.d directory"
+		cp "${f}" "${TEMP}/initramfs-lvm-temp/${f}" || \
+			gen_die "cannot copy ${f} from system"
+	done
+
+	copy_binaries "${TEMP}/initramfs-lvm-temp" \
+		/sbin/lvm /sbin/dmsetup
+
+	if [ -x /sbin/lvm ]
 	then
-		print_info 1 '          LVM: Adding support (using local static binary /sbin/lvm.static)...'
-		cp /sbin/lvm.static "${TEMP}/initramfs-lvm-temp/bin/lvm" ||
-			gen_die 'Could not copy over lvm!'
-		# See bug 382555
-		if [ -e '/sbin/dmsetup.static' ]
-		then
-			cp /sbin/dmsetup.static "${TEMP}/initramfs-lvm-temp/bin/dmsetup"
-		fi
-	elif false && [ -e '/sbin/lvm' ] && LC_ALL="C" ldd /sbin/lvm|grep -q 'not a dynamic executable'
-	then
-		print_info 1 '          LVM: Adding support (using local static binary /sbin/lvm)...'
-		cp /sbin/lvm "${TEMP}/initramfs-lvm-temp/bin/lvm" ||
-			gen_die 'Could not copy over lvm!'
-		# See bug 382555
-		if [ -e '/sbin/dmsetup' ] && LC_ALL="C" ldd /sbin/dmsetup | grep -q 'not a dynamic executable'
-		then
-			cp /sbin/dmsetup "${TEMP}/initramfs-lvm-temp/bin/dmsetup"
-		fi
-	else
-		print_info 1 '          LVM: Adding support (compiling binaries)...'
-		compile_lvm
-		/bin/tar -jxpf "${LVM_BINCACHE}" -C "${TEMP}/initramfs-lvm-temp" ||
-			gen_die "Could not extract lvm binary cache!";
-		mv ${TEMP}/initramfs-lvm-temp/sbin/lvm.static ${TEMP}/initramfs-lvm-temp/bin/lvm ||
-			gen_die 'LVM error: Could not move lvm.static to lvm!'
-		# See bug 382555
-		mv ${TEMP}/initramfs-lvm-temp/sbin/dmsetup.static ${TEMP}/initramfs-lvm-temp/bin/dmsetup ||
-			gen_die 'LVM error: Could not move dmsetup.static to dmsetup!'
-		rm -rf ${TEMP}/initramfs-lvm-temp/{lib,share,man,include,sbin/{lvm,dmsetup}}
-	fi
-	if [ -x /sbin/lvm -o -x /bin/lvm ]
-	then
-#		lvm dumpconfig 2>&1 > /dev/null || gen_die 'Could not copy over lvm.conf!'
-#		ret=$?
-#		if [ ${ret} != 0 ]
-#		then
-			cp /etc/lvm/lvm.conf "${TEMP}/initramfs-lvm-temp/etc/lvm/" ||
-				gen_die 'Could not copy over lvm.conf!'
-#		else
-#			gen_die 'Could not copy over lvm.conf!'
-#		fi
+		cp /etc/lvm/lvm.conf "${TEMP}/initramfs-lvm-temp/etc/lvm/" ||
+			gen_die 'Could not copy over lvm.conf!'
 	fi
 	cd "${TEMP}/initramfs-lvm-temp/"
 	log_future_cpio_content

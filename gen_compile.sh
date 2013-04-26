@@ -440,49 +440,6 @@ compile_busybox() {
 	fi
 }
 
-compile_lvm() {
-	if [ -f "${LVM_BINCACHE}" ]
-	then
-		print_info 1 "lvm: >> Using cache"
-	else
-		[ -f "${LVM_SRCTAR}" ] ||
-			gen_die "Could not find LVM source tarball: ${LVM_SRCTAR}! Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
-		cd "${TEMP}"
-		rm -rf ${LVM_DIR} > /dev/null
-		/bin/tar -zxpf ${LVM_SRCTAR} ||
-			gen_die 'Could not extract LVM source tarball!'
-		[ -d "${LVM_DIR}" ] ||
-			gen_die "LVM directory ${LVM_DIR} is invalid!"
-		cd "${LVM_DIR}"
-		apply_patches lvm ${LVM_VER}
-		print_info 1 'lvm: >> Configuring...'
-			CFLAGS="-fPIC" \
-			./configure --enable-static_link --prefix=/ \
-				--with-lvm1=internal --with-clvmd=none --with-cluster=none \
-				--disable-readline --disable-selinux --with-mirrors=internal \
-				--with-snapshots=internal --with-pool=internal \
-				>> ${LOGFILE} 2>&1 || \
-				gen_die 'Configure of lvm failed!'
-		print_info 1 'lvm: >> Compiling...'
-		compile_generic '' utils
-		compile_generic "install DESTDIR=${TEMP}/lvm/" utils
-
-		cd "${TEMP}/lvm"
-		print_info 1 '      >> Copying to bincache...'
-		${UTILS_CROSS_COMPILE}strip "sbin/lvm.static" ||
-			gen_die 'Could not strip lvm.static!'
-		# See bug 382555
-		${UTILS_CROSS_COMPILE}strip "sbin/dmsetup.static" ||
-			gen_die 'Could not strip dmsetup.static'
-		/bin/tar -cjf "${LVM_BINCACHE}" . ||
-			gen_die 'Could not create binary cache'
-
-		cd "${TEMP}"
-		rm -rf "${TEMP}/lvm" > /dev/null
-		rm -rf "${LVM_DIR}" lvm
-	fi
-}
-
 compile_mdadm() {
 	if [ -f "${MDADM_BINCACHE}" ]
 	then
@@ -523,7 +480,6 @@ compile_mdadm() {
 }
 
 compile_dmraid() {
-	compile_device_mapper
 	if [ ! -f "${DMRAID_BINCACHE}" ]
 	then
 		[ -f "${DMRAID_SRCTAR}" ] ||
@@ -570,10 +526,6 @@ compile_dmraid() {
 		rm -rf "${TEMP}/lvm" > /dev/null
 		rm -rf "${DMRAID_DIR}" dmraid
 	fi
-}
-
-compile_device_mapper() {
-	compile_lvm
 }
 
 compile_fuse() {
