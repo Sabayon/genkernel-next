@@ -274,19 +274,14 @@ append_dmraid(){
 	then
 		rm -r "${TEMP}/initramfs-dmraid-temp/"
 	fi
-	print_info 1 'DMRAID: Adding support (compiling binaries)...'
-	compile_dmraid
-	mkdir -p "${TEMP}/initramfs-dmraid-temp/"
-	/bin/tar -jxpf "${DMRAID_BINCACHE}" -C "${TEMP}/initramfs-dmraid-temp" ||
-		gen_die "Could not extract dmraid binary cache!";
-	cd "${TEMP}/initramfs-dmraid-temp/"
-	RAID456=`find . -type f -name raid456.ko`
-	if [ -n "${RAID456}" ]
-	then
-		cd "${RAID456/raid456.ko/}"
-		ln -sf raid456.kp raid45.ko
-		cd "${TEMP}/initramfs-dmraid-temp/"
-	fi
+	print_info 1 'DMRAID: Adding support (copying binaries from system)...'
+
+	mkdir -p "${TEMP}/initramfs-dmraid-temp/sbin"
+
+	copy_binaries "${TEMP}/initramfs-dmraid-temp" \
+		/usr/sbin/dmraid /usr/sbin/dmevent_tool
+
+	cd "${TEMP}/initramfs-dmraid-temp"
 	log_future_cpio_content
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 			|| gen_die "compressing dmraid cpio"
