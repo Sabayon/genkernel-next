@@ -533,14 +533,27 @@ append_udev() {
 		/lib/udev/rules.d/50-udev-default.rules
 		/lib/udev/rules.d/60-persistent-storage.rules
 		/lib/udev/rules.d/80-drivers.rules
-		/lib/udev/rules.d/99-systemd.rules
 		/etc/udev/udev.conf
 	"
-	for f in ${udev_files}; do
+	udev_maybe_files="
+		/lib/udev/rules.d/99-systemd.rules
+	"
+	is_maybe=0
+	for f in ${udev_files} -- ${udev_maybe_files}; do
+		[ "${f}" = "--" ] && {
+			is_maybe=1;
+			continue;
+		}
 		mkdir -p "${TEMP}/initramfs-udev-temp"/$(dirname "${f}") || \
 			gen_die "cannot create rules.d directory"
-		cp "${f}" "${TEMP}/initramfs-udev-temp/${f}" || \
-			gen_die "cannot copy ${f} from system"
+		cp "${f}" "${TEMP}/initramfs-udev-temp/${f}"
+		if [ "${?}" != "0" ]
+		then
+			[ "${is_maybe}" = "0" ] && \
+				gen_die "cannot copy ${f} from udev"
+			[ "${is_maybe}" = "1" ] && \
+				print_warning 1 "cannot copy ${f} from udev"
+		fi
 	done
 
 	# Copy binaries
