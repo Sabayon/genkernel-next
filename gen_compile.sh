@@ -669,12 +669,12 @@ compile_iscsi() {
 		MAKE=${UTILS_MAKE} compile_generic "user" ""
 
 		# if kernel modules exist, copy them to initramfs, otherwise it will be compiled into the kernel
-		mkdir -p "${TEMP}/initramfs-iscsi-temp/lib/modules/${RELEASE}/kernel/drivers/scsi/"
+		mkdir -p "${TEMP}/initramfs-iscsi-temp/lib/modules/${KV}/kernel/drivers/scsi/"
 		for modname in iscsi_tcp libiscsi scsi_transport_iscsi
 		do
 			if [ -e "${CMD_KERNEL_DIR}/drivers/scsi/${modname}.ko" ]
 			then
-				cp ${CMD_KERNEL_DIR}/drivers/scsi/${modname}.ko "${TEMP}/initramfs-iscsi-temp/lib/modules/${RELEASE}/kernel/drivers/scsi/"
+				cp ${CMD_KERNEL_DIR}/drivers/scsi/${modname}.ko "${TEMP}/initramfs-iscsi-temp/lib/modules/${KV}/kernel/drivers/scsi/"
 			fi
 		done
 
