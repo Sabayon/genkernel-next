@@ -301,9 +301,6 @@ INITIALIZATION
 *--*[*no-*]*busybox*::
     Includes or excludes busybox in the initrd or initramfs.
 
-*--*[*no-*]*unionfs*::
-    Includes or excludes support for unionfs
-
 *--*[*no-*]*netboot*::
     Creates or does not create a self-contained env in the initramfs
 
@@ -534,10 +531,6 @@ which the ramdisk scripts would recognize.
 *iscsi_debug*=<...>::
 *iscsi_noibft*::
     Specify iSCSI parameters.
-
-*unionfs*::
-*nounionfs*::
-    Enables/disables UnionFS.
 
 *aufs*::
     Enables support for AUFS2 (if available in the kernel).

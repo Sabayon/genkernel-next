@@ -434,41 +434,6 @@ compile_fuse() {
 	fi
 }
 
-compile_unionfs_fuse() {
-	if [ ! -f "${UNIONFS_FUSE_BINCACHE}" ]
-	then
-
-		# We'll call compile_fuse() from here, since it's not needed directly by anything else
-		compile_fuse
-
-		[ ! -f "${UNIONFS_FUSE_SRCTAR}" ] &&
-			gen_die "Could not find unionfs-fuse source tarball: ${UNIONFS_FUSE_SRCTAR}. Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
-		cd "${TEMP}"
-		rm -rf "${UNIONFS_FUSE_DIR}"
-		tar -jxpf "${UNIONFS_FUSE_SRCTAR}"
-		[ ! -d "${UNIONFS_FUSE_DIR}" ] &&
-			gen_die "unionfs-fuse directory ${UNIONFS_FUSE_DIR} invalid"
-		cd "${UNIONFS_FUSE_DIR}"
-		apply_patches unionfs-fuse ${UNIONFS_FUSE_VER}
-		print_info 1 'unionfs-fuse: >> Compiling...'
-		sed -i "/^\(CFLAGS\|CPPFLAGS\)/s:^\\(.*\\)$:\\1 -static -I${TEMP}/${FUSE_DIR}/include -L${TEMP}/${FUSE_DIR}/lib/.libs:" Makefile src/Makefile
-		sed -i "/^LIB = /s:^LIB = \(.*\)$:LIB = -static -L${TEMP}/${FUSE_DIR}/lib/.libs \1 -ldl -lpthread -lrt:" Makefile src/Makefile
-		MAKE=${UTILS_MAKE} compile_generic "" ""
-		print_info 1 'unionfs-fuse: >> Copying to cache...'
-		[ -f "${TEMP}/${UNIONFS_FUSE_DIR}/src/unionfs" ] ||
-			gen_die 'unionfs binary does not exist!'
-		strip "${TEMP}/${UNIONFS_FUSE_DIR}/src/unionfs" ||
-			gen_die 'Could not strip unionfs binary!'
-		bzip2 "${TEMP}/${UNIONFS_FUSE_DIR}/src/unionfs" ||
-			gen_die 'bzip2 compression of unionfs binary failed!'
-		mv "${TEMP}/${UNIONFS_FUSE_DIR}/src/unionfs.bz2" "${UNIONFS_FUSE_BINCACHE}" ||
-			gen_die 'Could not copy the unionfs binary to the package directory, does the directory exist?'
-
-		cd "${TEMP}"
-		rm -rf "${UNIONFS_FUSE_DIR}" > /dev/null
-	fi
-}
-
 compile_iscsi() {
 	if [ ! -f "${ISCSI_BINCACHE}" ]
 	then

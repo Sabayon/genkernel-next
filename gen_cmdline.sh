@@ -114,8 +114,6 @@ longusage() {
   echo "	--no-gpg		Exclude GPG-armored LUKS key support"
   echo "	--busybox		Include busybox"
   echo "	--no-busybox	Exclude busybox"
-  echo "	--unionfs		Include support for unionfs"
-  echo "	--no-unionfs	Exclude support for unionfs"
   echo "	--netboot		Create a self-contained env in the initramfs"
   echo "	--no-netboot	Exclude --netboot env"
   echo "	--real-root=<foo>	Specify a default for real_root="
@@ -285,10 +283,6 @@ parse_cmdline() {
 		--busybox|--no-busybox)
 			CMD_BUSYBOX=`parse_optbool "$*"`
 			print_info 2 "CMD_BUSYBOX: ${CMD_BUSYBOX}"
-			;;
-		--unionfs|--no-unionfs)
-			CMD_UNIONFS=`parse_optbool "$*"`
-			print_info 2 "CMD_UNIONFS: ${CMD_UNIONFS}"
 			;;
 		--netboot|--no-netboot)
 			CMD_NETBOOT=`parse_optbool "$*"`

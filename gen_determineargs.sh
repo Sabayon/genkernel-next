@@ -114,7 +114,6 @@ determine_real_args() {
 	set_config_with_override BOOL   DMRAID               CMD_DMRAID
 	set_config_with_override BOOL   ISCSI                CMD_ISCSI
 	set_config_with_override BOOL   BUSYBOX              CMD_BUSYBOX              "yes"
-	set_config_with_override BOOL   UNIONFS              CMD_UNIONFS
 	set_config_with_override BOOL   NETBOOT              CMD_NETBOOT
 	set_config_with_override STRING REAL_ROOT            CMD_REAL_ROOT
 	set_config_with_override BOOL   DISKLABEL            CMD_DISKLABEL
@@ -145,7 +144,6 @@ determine_real_args() {
 	ISCSI_BINCACHE=`cache_replace "${ISCSI_BINCACHE}"`
 	BLKID_BINCACHE=`cache_replace "${BLKID_BINCACHE}"`
 	FUSE_BINCACHE=`cache_replace "${FUSE_BINCACHE}"`
-	UNIONFS_FUSE_BINCACHE=`cache_replace "${UNIONFS_FUSE_BINCACHE}"`
 	GPG_BINCACHE=`cache_replace "${GPG_BINCACHE}"`
 
 	DEFAULT_KERNEL_CONFIG=`arch_replace "${DEFAULT_KERNEL_CONFIG}"`
@@ -154,7 +152,6 @@ determine_real_args() {
 	ISCSI_BINCACHE=`arch_replace "${ISCSI_BINCACHE}"`
 	BLKID_BINCACHE=`arch_replace "${BLKID_BINCACHE}"`
 	FUSE_BINCACHE=`arch_replace "${FUSE_BINCACHE}"`
-	UNIONFS_FUSE_BINCACHE=`arch_replace "${UNIONFS_FUSE_BINCACHE}"`
 	GPG_BINCACHE=`arch_replace "${GPG_BINCACHE}"`
 
 	if [ -n "${CMD_BOOTLOADER}" ]

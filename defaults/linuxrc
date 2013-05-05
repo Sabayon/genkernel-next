@@ -254,18 +254,6 @@ do
 		aufs)
 			USE_AUFS_NORMAL=1
 		;;
-		unionfs)
-			if [ ! -x /sbin/unionfs ]
-			then
-				USE_UNIONFS_NORMAL=0
-				bad_msg 'unionfs binary not found: aborting use of unionfs!'
-			else
-				USE_UNIONFS_NORMAL=1
-			fi
-			;;
-		nounionfs)
-			USE_UNIONFS_NORMAL=0
-			;;
 		*=*)
 			case "${x%%=*}" in
 			*.*)
@@ -801,11 +789,7 @@ then
 	fi
 
 
-	if [ "${USE_UNIONFS_NORMAL}" = '1' ]
-	then
-		setup_unionfs ${NEW_ROOT} /${FS_LOCATION}
-		CHROOT=/union
-	elif [ "${USE_AUFS_NORMAL}" != '1' ]; then
+	if [ "${USE_AUFS_NORMAL}" != '1' ]; then
 
 	good_msg "Copying read-write image contents to tmpfs"
 	# Copy over stuff that should be writable
@@ -873,14 +857,6 @@ then
 	# Let Init scripts know that we booted from CD
 	export CDBOOT
 	CDBOOT=1
-else
-	if [ "${USE_UNIONFS_NORMAL}" = '1' ]
-	then
-		mkdir /union_changes
-		mount -t tmpfs tmpfs /union_changes
-		setup_unionfs /union_changes ${NEW_ROOT}
-		mkdir -p ${UNION}/tmp/.initrd
-	fi
 fi
 
 # Mount the additional things as required by udev & systemd

@@ -199,24 +199,6 @@ append_blkid(){
 #	rm -rf "${TEMP}/initramfs-fuse-temp" > /dev/null
 #}
 
-append_unionfs_fuse() {
-	if [ -d "${TEMP}/initramfs-unionfs-fuse-temp" ]
-	then
-		rm -r "${TEMP}/initramfs-unionfs-fuse-temp"
-	fi
-	cd ${TEMP}
-	mkdir -p "${TEMP}/initramfs-unionfs-fuse-temp/sbin/"
-	bzip2 -dc "${UNIONFS_FUSE_BINCACHE}" > "${TEMP}/initramfs-unionfs-fuse-temp/sbin/unionfs" ||
-		gen_die 'Could not extract unionfs-fuse binary cache!'
-	chmod a+x "${TEMP}/initramfs-unionfs-fuse-temp/sbin/unionfs"
-	cd "${TEMP}/initramfs-unionfs-fuse-temp/"
-	log_future_cpio_content
-	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
-			|| gen_die "compressing unionfs fuse cpio"
-	cd "${TEMP}"
-	rm -rf "${TEMP}/initramfs-unionfs-fuse-temp" > /dev/null
-}
-
 #append_suspend(){
 #	if [ -d "${TEMP}/initramfs-suspend-temp" ];
 #	then
@@ -801,8 +783,6 @@ create_initramfs() {
 	append_data 'zfs' "${ZFS}"
 
 	append_data 'blkid' "${DISKLABEL}"
-
-	append_data 'unionfs_fuse' "${UNIONFS}"
 
 	append_data 'splash' "${SPLASH}"
 
