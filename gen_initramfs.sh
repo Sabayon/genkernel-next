@@ -242,19 +242,18 @@ append_iscsi(){
 	then
 		rm -r "${TEMP}/initramfs-iscsi-temp/"
 	fi
-	print_info 1 'iSCSI: Adding support (compiling binaries)...'
-	compile_iscsi
-	cd ${TEMP}
-	mkdir -p "${TEMP}/initramfs-iscsi-temp/bin/"
-	/bin/bzip2 -dc "${ISCSI_BINCACHE}" > "${TEMP}/initramfs-iscsi-temp/bin/iscsistart" ||
-		gen_die "Could not extract iscsi binary cache!"
-	chmod a+x "${TEMP}/initramfs-iscsi-temp/bin/iscsistart"
-	cd "${TEMP}/initramfs-iscsi-temp/"
+	print_info 1 'iSCSI: Adding support (copying binaries from system)...'
+
+	mkdir -p "${TEMP}/initramfs-iscsi-temp/usr/sbin/"
+
+	copy_binaries /usr/sbin/iscsistart
+
+	cd "${TEMP}/initramfs-iscsi-temp"
 	log_future_cpio_content
 	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 			|| gen_die "compressing iscsi cpio"
 	cd "${TEMP}"
-	rm -rf "${TEMP}/initramfs-iscsi-temp" > /dev/null
+	rm -r "${TEMP}/initramfs-iscsi-temp/"
 }
 
 append_lvm(){

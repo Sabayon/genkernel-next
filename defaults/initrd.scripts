@@ -754,7 +754,6 @@ startVolumes() {
 }
 
 startiscsi() {
-	
 	if [ ! -n "${ISCSI_NOIBFT}" ]
 	then
 		good_msg "Activating iSCSI via iBFT"
@@ -771,7 +770,6 @@ startiscsi() {
 		else
 			ADDITIONAL="${ADDITIONAL} -g 1"
 		fi
-		
 		if [ "${ISCSI_PORT}" ]
 		then
 			ADDITIONAL="${ADDITIONAL} -p ${ISCSI_PORT}"
@@ -802,13 +800,14 @@ startiscsi() {
 			ADDITIONAL="${ADDITIONAL} -d ${ISCSI_DEBUG}"
 		fi
 
-		iscsistart -i "${ISCSI_INITIATORNAME}" -t "${ISCSI_TARGET}" -a "${ISCSI_ADDRESS}" ${ADDITIONAL}
+		iscsistart -i "${ISCSI_INITIATORNAME}" -t "${ISCSI_TARGET}" \
+			-a "${ISCSI_ADDRESS}" ${ADDITIONAL}
 
-		# let iscsid settle - otherwise mounting the iSCSI-disk will fail (very rarely, though)
+		# let iscsid settle - otherwise mounting the iSCSI-disk
+		# will fail (very rarely, though)
 		sleep 1
 	fi
 }
-
 
 # Open a LUKS device
 # It is either the root or a swap, other devices are supported in the scripts provided with sys-fs/cryptsetup-luks
