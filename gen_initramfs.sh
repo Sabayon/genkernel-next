@@ -456,18 +456,16 @@ append_gpg() {
 	then
 		rm -r "${TEMP}/initramfs-gpg-temp"
 	fi
-	cd ${TEMP}
 	mkdir -p "${TEMP}/initramfs-gpg-temp/sbin/"
-	if [ ! -e ${GPG_BINCACHE} ] ; then
-		print_info 1 '		GPG: Adding support (compiling binaries)...'
-		compile_gpg
-	fi
-	bzip2 -dc "${GPG_BINCACHE}" > "${TEMP}/initramfs-gpg-temp/sbin/gpg" ||
-		gen_die 'Could not extract gpg binary cache!'
-	chmod a+x "${TEMP}/initramfs-gpg-temp/sbin/gpg"
+
+	print_info 1 "Including GPG support"
+	copy_binaries /sbin/gpg
+
 	cd "${TEMP}/initramfs-gpg-temp/"
 	log_future_cpio_content
-	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+			|| gen_die "compressing gpg cpio"
+	cd "${TEMP}"
 	rm -rf "${TEMP}/initramfs-gpg-temp" > /dev/null
 }
 
