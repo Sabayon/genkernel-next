@@ -87,8 +87,6 @@ determine_real_args() {
 	set_config_with_override STRING UTILS_LD             CMD_UTILS_LD             "$DEFAULT_UTILS_LD"
 	set_config_with_override STRING UTILS_AS             CMD_UTILS_AS             "$DEFAULT_UTILS_AS"
 
-	set_config_with_override STRING KERNEL_CROSS_COMPILE CMD_KERNEL_CROSS_COMPILE
-	set_config_with_override STRING UTILS_CROSS_COMPILE  CMD_UTILS_CROSS_COMPILE
 	set_config_with_override STRING BOOTDIR              CMD_BOOTDIR              "/boot"
 	set_config_with_override STRING KERNEL_OUTPUTDIR     CMD_KERNEL_OUTPUTDIR     "${KERNEL_DIR}"
 	set_config_with_override STRING MODPROBEDIR          CMD_MODPROBEDIR          "/etc/modprobe.d"

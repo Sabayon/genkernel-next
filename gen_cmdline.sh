@@ -60,7 +60,6 @@ longusage() {
   echo "	--kernel-cc=<compiler>	Compiler to use for kernel (e.g. distcc)"
   echo "	--kernel-as=<assembler>	Assembler to use for kernel"
   echo "	--kernel-ld=<linker>	Linker to use for kernel"
-  echo "	--kernel-cross-compile=<cross var> CROSS_COMPILE kernel variable"
   echo "	--kernel-make=<makeprg> GNU Make to use for kernel"
   echo "	--kernel-target=<t>	Override default make target (bzImage)"
   echo "	--kernel-binary=<path>	Override default kernel binary path (arch/foo/boot/bar)"
@@ -70,7 +69,6 @@ longusage() {
   echo "	--utils-as=<assembler>	Assembler to use for utils"
   echo "	--utils-ld=<linker>	Linker to use for utils"
   echo "	--utils-make=<makeprog>	GNU Make to use for utils"
-  echo "	--utils-cross-compile=<cross var> CROSS_COMPILE utils variable"
   echo "	--utils-arch=<arch> 	Force to arch for utils only instead of"
   echo "				autodetect."
   echo "	--makeopts=<makeopts>	Make options such as -j2, etc..."
@@ -213,11 +211,6 @@ parse_cmdline() {
 			KERNEL_BINARY_OVERRIDE=`parse_opt "$*"`
 			print_info 2 "KERNEL_BINARY_OVERRIDE: ${KERNEL_BINARY_OVERRIDE}"
 			;;
-		--kernel-cross-compile=*)
-			CMD_KERNEL_CROSS_COMPILE=`parse_opt "$*"`
-			CMD_KERNEL_CROSS_COMPILE=$(echo ${CMD_KERNEL_CROSS_COMPILE}|sed -e 's/.*[^-]$/&-/g')
-			print_info 2 "CMD_KERNEL_CROSS_COMPILE: ${CMD_KERNEL_CROSS_COMPILE}"
-			;;
 		--kernel-outputdir=*)
 			CMD_KERNEL_OUTPUTDIR=`parse_opt "$*"`
 			print_info 2 "CMD_KERNEL_OUTPUTDIR: ${CMD_KERNEL_OUTPUTDIR}"
@@ -237,11 +230,6 @@ parse_cmdline() {
 		--utils-make=*)
 			CMD_UTILS_MAKE=`parse_opt "$*"`
 			print_info 2 "CMD_UTILS_MAKE: ${CMD_UTILS_MAKE}"
-			;;
-		--utils-cross-compile=*)
-			CMD_UTILS_CROSS_COMPILE=`parse_opt "$*"`
-			CMD_UTILS_CROSS_COMPILE=$(echo ${CMD_UTILS_CROSS_COMPILE}|sed -e 's/.*[^-]$/&-/g')
-			print_info 2 "CMD_UTILS_CROSS_COMPILE: ${CMD_UTILS_CROSS_COMPILE}"
 			;;
 		--utils-arch=*)
 			CMD_UTILS_ARCH=`parse_opt "$*"`

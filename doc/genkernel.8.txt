@@ -183,9 +183,6 @@ LOW-LEVEL COMPILATION OPTIONS
 *--kernel-ld*=<linker>::
     Linker to use for the kernel compilation.
 
-*--kernel-cross-compile*=<cross var>::
-    CROSS_COMPILE kernel variable.
-
 *--kernel-make*=<makeprg>::
     GNU Make to use for the kernel compilation.
 
@@ -208,9 +205,6 @@ LOW-LEVEL COMPILATION OPTIONS
 
 *--utils-make*=<makeprog>::
     GNU Make to use for utilities.
-
-*--utils-cross-compile*=<cross var>::
-    CROSS_COMPILE utils variable.
 
 *--utils-arch*=<arch>::
     Force to arch for utils only instead of autodetect.

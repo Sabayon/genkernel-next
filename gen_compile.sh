@@ -5,30 +5,25 @@ compile_kernel_args() {
 	local ARGS
 
 	ARGS=''
-	if [ "${KERNEL_CROSS_COMPILE}" != '' ]
+	if [ "${KERNEL_CC}" != '' ]
 	then
-		ARGS="${ARGS} CROSS_COMPILE=\"${KERNEL_CROSS_COMPILE}\""
-	else
-		if [ "${KERNEL_CC}" != '' ]
-		then
-			ARGS="CC=\"${KERNEL_CC}\""
-		fi
-		if [ "${KERNEL_LD}" != '' ]
-		then
-			ARGS="${ARGS} LD=\"${KERNEL_LD}\""
-		fi
-		if [ "${KERNEL_AS}" != '' ]
-		then
-			ARGS="${ARGS} AS=\"${KERNEL_AS}\""
-		fi
-		if [ -n "${KERNEL_ARCH}" ]
-		then
-			ARGS="${ARGS} ARCH=\"${KERNEL_ARCH}\""
-		fi
-		if [ -n "${KERNEL_OUTPUTDIR}" -a "${KERNEL_OUTPUTDIR}" != "${KERNEL_DIR}" ]
-		then
-			ARGS="${ARGS} O=\"${KERNEL_OUTPUTDIR}\""
-		fi
+		ARGS="CC=\"${KERNEL_CC}\""
+	fi
+	if [ "${KERNEL_LD}" != '' ]
+	then
+		ARGS="${ARGS} LD=\"${KERNEL_LD}\""
+	fi
+	if [ "${KERNEL_AS}" != '' ]
+	then
+		ARGS="${ARGS} AS=\"${KERNEL_AS}\""
+	fi
+	if [ -n "${KERNEL_ARCH}" ]
+	then
+		ARGS="${ARGS} ARCH=\"${KERNEL_ARCH}\""
+	fi
+	if [ -n "${KERNEL_OUTPUTDIR}" -a "${KERNEL_OUTPUTDIR}" != "${KERNEL_DIR}" ]
+	then
+		ARGS="${ARGS} O=\"${KERNEL_OUTPUTDIR}\""
 	fi
 	echo -n "${ARGS}"
 }
@@ -37,13 +32,6 @@ compile_utils_args()
 {
 	local ARGS
 	ARGS=''
-
-	if [ -n "${UTILS_CROSS_COMPILE}" ]
-	then
-		UTILS_CC="${UTILS_CROSS_COMPILE}gcc"
-		UTILS_LD="${UTILS_CROSS_COMPILE}ld"
-		UTILS_AS="${UTILS_CROSS_COMPILE}as"
-	fi
 
 	if [ "${UTILS_ARCH}" != '' ]
 	then
@@ -84,10 +72,6 @@ export_utils_args()
 	then
 		export AS="${UTILS_AS}"
 	fi
-	if [ "${UTILS_CROSS_COMPILE}" != '' ]
-	then
-		export CROSS_COMPILE="${UTILS_CROSS_COMPILE}"
-	fi
 }
 
 unset_utils_args()
@@ -108,10 +92,6 @@ unset_utils_args()
 	then
 		unset AS
 	fi
-	if [ "${UTILS_CROSS_COMPILE}" != '' ]
-	then
-		unset CROSS_COMPILE
-	fi
 	reset_args
 }
 
@@ -129,10 +109,6 @@ export_kernel_args()
 	then
 		export AS="${KERNEL_AS}"
 	fi
-	if [ "${KERNEL_CROSS_COMPILE}" != '' ]
-	then
-		export CROSS_COMPILE="${KERNEL_CROSS_COMPILE}"
-	fi
 }
 
 unset_kernel_args()
@@ -148,10 +124,6 @@ unset_kernel_args()
 	if [ "${KERNEL_AS}" != '' ]
 	then
 		unset AS
-	fi
-	if [ "${KERNEL_CROSS_COMPILE}" != '' ]
-	then
-		unset CROSS_COMPILE
 	fi
 }
 save_args()
@@ -171,10 +143,6 @@ save_args()
 	if [ "${AS}" != '' ]
 	then
 		export ORIG_AS="${AS}"
-	fi
-	if [ "${CROSS_COMPILE}" != '' ]
-	then
-		export ORIG_CROSS_COMPILE="${CROSS_COMPILE}"
 	fi
 }
 reset_args()
@@ -198,11 +166,6 @@ reset_args()
 	then
 		export AS="${ORIG_AS}"
 		unset ORIG_AS
-	fi
-	if [ "${ORIG_CROSS_COMPILE}" != '' ]
-	then
-		export CROSS_COMPILE="${ORIG_CROSS_COMPILE}"
-		unset ORIG_CROSS_COMPILE
 	fi
 }
 
@@ -430,7 +393,7 @@ compile_busybox() {
 		print_info 1 'busybox: >> Copying to cache...'
 		[ -f "${TEMP}/${BUSYBOX_DIR}/busybox" ] ||
 			gen_die 'Busybox executable does not exist!'
-		${UTILS_CROSS_COMPILE}strip "${TEMP}/${BUSYBOX_DIR}/busybox" ||
+		strip "${TEMP}/${BUSYBOX_DIR}/busybox" ||
 			gen_die 'Could not strip busybox binary!'
 		tar -cj -C "${TEMP}/${BUSYBOX_DIR}" -f "${BUSYBOX_BINCACHE}" busybox .config .config.gk_orig ||
 			gen_die 'Could not create the busybox bincache!'
@@ -462,8 +425,6 @@ compile_fuse() {
 #		print_info 1 'libfuse: >> Copying to cache...'
 #		[ -f "${TEMP}/${FUSE_DIR}/lib/.libs/libfuse.so" ] ||
 #			gen_die 'libfuse.so does not exist!'
-#		${UTILS_CROSS_COMPILE}strip "${TEMP}/${FUSE_DIR}/lib/.libs/libfuse.so" ||
-#			gen_die 'Could not strip libfuse.so!'
 #		cd "${TEMP}/${FUSE_DIR}/lib/.libs"
 #		tar -cjf "${FUSE_BINCACHE}" libfuse*so* ||
 #			gen_die 'Could not create fuse bincache!'
@@ -496,7 +457,7 @@ compile_unionfs_fuse() {
 		print_info 1 'unionfs-fuse: >> Copying to cache...'
 		[ -f "${TEMP}/${UNIONFS_FUSE_DIR}/src/unionfs" ] ||
 			gen_die 'unionfs binary does not exist!'
-		${UTILS_CROSS_COMPILE}strip "${TEMP}/${UNIONFS_FUSE_DIR}/src/unionfs" ||
+		strip "${TEMP}/${UNIONFS_FUSE_DIR}/src/unionfs" ||
 			gen_die 'Could not strip unionfs binary!'
 		bzip2 "${TEMP}/${UNIONFS_FUSE_DIR}/src/unionfs" ||
 			gen_die 'bzip2 compression of unionfs binary failed!'
@@ -546,7 +507,7 @@ compile_iscsi() {
 		print_info 1 'iscsistart: >> Copying to cache...'
 		[ -f "${TEMP}/${ISCSI_DIR}/usr/iscsistart" ] ||
 			gen_die 'iscsistart executable does not exist!'
-		${UTILS_CROSS_COMPILE}strip "${TEMP}/${ISCSI_DIR}/usr/iscsistart" ||
+		strip "${TEMP}/${ISCSI_DIR}/usr/iscsistart" ||
 			gen_die 'Could not strip iscsistart binary!'
 		bzip2 "${TEMP}/${ISCSI_DIR}/usr/iscsistart" ||
 			gen_die 'bzip2 compression of iscsistart failed!'
@@ -593,7 +554,7 @@ compile_gpg() {
 		print_info 1 'gnupg: >> Copying to cache...'
 		[ -f "${TEMP}/${GPG_DIR}/g10/gpg" ] ||
 			gen_die 'gnupg executable does not exist!'
-		${UTILS_CROSS_COMPILE}strip "${TEMP}/${GPG_DIR}/g10/gpg" ||
+		strip "${TEMP}/${GPG_DIR}/g10/gpg" ||
 			gen_die 'Could not strip gpg binary!'
 		bzip2 -z -c "${TEMP}/${GPG_DIR}/g10/gpg" > "${GPG_BINCACHE}" ||
 			gen_die 'Could not copy the gpg binary to the package directory, does the directory exist?'
