@@ -611,14 +611,7 @@ chooseKeymap() {
 	then
 		good_msg "Loading the ''${keymap}'' keymap"
 		loadkmap < /lib/keymaps/${keymap}.map
-#		xkeymap=${keymap}
-#		echo ${keymap} | egrep -e "[0-9]+" >/dev/null 2>&1
-#		if [ $? -eq 0 ]
-#		then
-#			xkeymap=`tail -n 8 /lib/keymaps/keymapList | grep ${keymap} | sed -r "s/.*\s+${keymap}\s+([a-z-]+).*/\1/g" | egrep -v 1`
-#		fi
 		mkdir -p /etc/sysconfig
-#		echo "XKEYBOARD=${xkeymap}" > /etc/sysconfig/keyboard
 		echo "XKEYBOARD=${keymap}" > /etc/sysconfig/keyboard
 		splash set_msg "Set keymap to ${keymap}"
 	elif [ -z "${keymap}" ]

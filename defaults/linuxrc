@@ -152,7 +152,6 @@ do
 		CONSOLE=*|console=*)
 			CONSOLE=${x#*=}
 			CONSOLE=$(basename ${CONSOLE})
-#			exec >${CONSOLE} <${CONSOLE} 2>&1
 		;;
 		# /dev/md
 		lvmraid=*)
@@ -662,8 +661,6 @@ do
 done
 # End determine root device
 
-#verbose_kmsg
-
 # If CD root is set determine the looptype to boot
 if [ "${CDROOT}" = '1' ]
 then
@@ -846,13 +843,6 @@ then
 	mount --bind "${CDROOT_PATH}" "${_new_cdroot}"
 
 	fi
-
-	#UML=$(cat /proc/cpuinfo|grep UML|sed -e 's|model name.*: ||')
-	#if [ "${UML}" = 'UML' ]
-	#then
-	#	# UML Fixes
-	#	good_msg 'Updating for uml system'
-	#fi
 
 	# Let Init scripts know that we booted from CD
 	export CDBOOT

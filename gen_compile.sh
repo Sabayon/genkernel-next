@@ -420,17 +420,7 @@ compile_fuse() {
 			gen_die 'Configuring fuse failed!'
 		print_info 1 'fuse: >> Compiling...'
 		MAKE=${UTILS_MAKE} compile_generic "" ""
-
-		# Since we're linking statically against libfuse, we don't need to cache the .so
-#		print_info 1 'libfuse: >> Copying to cache...'
-#		[ -f "${TEMP}/${FUSE_DIR}/lib/.libs/libfuse.so" ] ||
-#			gen_die 'libfuse.so does not exist!'
-#		cd "${TEMP}/${FUSE_DIR}/lib/.libs"
-#		tar -cjf "${FUSE_BINCACHE}" libfuse*so* ||
-#			gen_die 'Could not create fuse bincache!'
-
 		cd "${TEMP}"
-#		rm -rf "${FUSE_DIR}" > /dev/null
 	fi
 }
 
