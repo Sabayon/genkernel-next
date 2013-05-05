@@ -143,7 +143,6 @@ determine_real_args() {
 	BUSYBOX_BINCACHE=`cache_replace "${BUSYBOX_BINCACHE}"`
 	ISCSI_BINCACHE=`cache_replace "${ISCSI_BINCACHE}"`
 	BLKID_BINCACHE=`cache_replace "${BLKID_BINCACHE}"`
-	FUSE_BINCACHE=`cache_replace "${FUSE_BINCACHE}"`
 	GPG_BINCACHE=`cache_replace "${GPG_BINCACHE}"`
 
 	DEFAULT_KERNEL_CONFIG=`arch_replace "${DEFAULT_KERNEL_CONFIG}"`
@@ -151,7 +150,6 @@ determine_real_args() {
 	BUSYBOX_BINCACHE=`arch_replace "${BUSYBOX_BINCACHE}"`
 	ISCSI_BINCACHE=`arch_replace "${ISCSI_BINCACHE}"`
 	BLKID_BINCACHE=`arch_replace "${BLKID_BINCACHE}"`
-	FUSE_BINCACHE=`arch_replace "${FUSE_BINCACHE}"`
 	GPG_BINCACHE=`arch_replace "${GPG_BINCACHE}"`
 
 	if [ -n "${CMD_BOOTLOADER}" ]

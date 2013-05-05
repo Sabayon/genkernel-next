@@ -403,27 +403,6 @@ compile_busybox() {
 	fi
 }
 
-compile_fuse() {
-	if [ ! -f "${FUSE_BINCACHE}" ]
-	then
-		[ ! -f "${FUSE_SRCTAR}" ] &&
-			gen_die "Could not find fuse source tarball: ${FUSE_SRCTAR}. Please place it there, or place another version, changing /etc/genkernel.conf as necessary!"
-		cd "${TEMP}"
-		rm -rf "${FUSE_DIR}"
-		tar -zxpf "${FUSE_SRCTAR}"
-		[ ! -d "${FUSE_DIR}" ] &&
-			gen_die "fuse directory ${FUSE_DIR} invalid"
-		cd "${FUSE_DIR}"
-		apply_patches fuse ${FUSE_VER}
-		print_info 1 'fuse: >> Configuring...'
-		./configure --disable-example >> ${LOGFILE} 2>&1 ||
-			gen_die 'Configuring fuse failed!'
-		print_info 1 'fuse: >> Compiling...'
-		MAKE=${UTILS_MAKE} compile_generic "" ""
-		cd "${TEMP}"
-	fi
-}
-
 compile_iscsi() {
 	if [ ! -f "${ISCSI_BINCACHE}" ]
 	then
