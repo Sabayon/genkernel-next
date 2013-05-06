@@ -235,6 +235,13 @@ INITIALIZATION
     <theme>  rather than the default theme specified in your splash
     configuration. If *--no-splash* is specified, then splash is disabled.
 
+*--*[*no-*]*plymouth*::
+    Installs, or not, plymouth into the initramfs. If "splash" will be
+    passed at boot, plymouth will be activated.
+
+*--plymouth-theme*=<theme>::
+    Embeds the given plymouth theme into the initramfs.
+
 *--do-keymap-auto*::
     Force keymap selection at boot.
 

@@ -57,6 +57,9 @@ KSUFF='.ko'
 
 UDEVD='/sbin/udevd'
 MDEVD='/sbin/mdev'
+INITRD_SPLASH='/etc/initrd.splash'
+PLYMOUTHD_BIN='/sbin/plymouthd'
+PLYMOUTH_BIN='/bin/plymouth'
 REAL_ROOT=''
 CONSOLE='/dev/console'
 NEW_ROOT='/newroot'
@@ -75,4 +78,4 @@ DEFAULT_NFSOPTIONS="ro,nolock,rsize=1024,wsize=1024"
 # Only sections that are in by default or those that
 # are not module groups need to be defined here...
 HWOPTS='keymap cache modules pata sata scsi usb firewire waitscan lvm dmraid mdadm fs net'
-MY_HWOPTS='modules pata sata scsi usb firewire waitscan dmraid mdadm fs net iscsi crypto'
+MY_HWOPTS='modules pata sata scsi usb firewire waitscan dmraid mdadm fs net iscsi crypto plymouth'
