@@ -33,5 +33,8 @@ MODULES_CRYPTO="sha1_generic sha256_generic sha512_generic cbc aes_generic aes-x
 # Backward compatibility with previous releases
 MODULES_CRYPT="${MODULES_CRYPTO}"
 
+# Virtio support (KVM mainly)
+MODULES_VIRTIO="virtio virtio_balloon virtio_console virtio_net virtio_blk virtio_pci virtio_ring"
+
 # DRM (Plymouth support)
 MODULES_PLYMOUTH="radeon nouveau uvesafb"
