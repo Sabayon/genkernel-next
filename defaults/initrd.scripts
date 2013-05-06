@@ -6,6 +6,8 @@ splash() {
 	return 0
 }
 
+[ -e "${INITRD_SPLASH}" ] && . "${INITRD_SPLASH}"
+
 is_fbsplash() {
 	if [ -e "${INITRD_SPLASH}" ] && [ "${FBSPLASH}" = '1' ]
 	then
@@ -28,8 +30,6 @@ is_plymouth_started() {
 	is_plymouth && "${PLYMOUTH_BIN}" --ping 2>/dev/null && return 0
 	return 1
 }
-
-is_fbsplash && . "${INITRD_SPLASH}"
 
 splashcmd() {
 	# plymouth support
@@ -574,7 +574,7 @@ ask_for_password() {
 		if is_plymouth_started
 		then
 			"${PLYMOUTH_BIN}" ask-for-password \
-				--prompt "$ply_prompt" \
+				--prompt="$ply_prompt" \
 				--number-of-tries=$ply_tries \
 				--command="$ply_cmd"
 			ret=$?
@@ -615,10 +615,10 @@ crypt_exec() {
 	then
 		eval ${1} >/dev/null 2>/dev/null
 	else
-		ask_for_password --ply-tries 1 \
+		ask_for_password --ply-tries 5 \
 			--ply-cmd "${1}" \
-			--ply-prompt "Password (${LUKS_DEVICE})" \
-			--tty-tries 1 \
+			--ply-prompt "Encryption password (${LUKS_DEVICE}): " \
+			--tty-tries 5 \
 			--tty-cmd "${1}" || return 1
 		return 0
 	fi
