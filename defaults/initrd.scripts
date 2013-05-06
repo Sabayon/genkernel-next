@@ -1044,7 +1044,7 @@ openLUKS() {
 			LUKS_DEVICE=$(find_real_device "${LUKS_DEVICE}")
 
 			setup_md_device ${LUKS_DEVICE}
-			cryptsetup isLuks ${LUKS_DEVICE}
+			/sbin/cryptsetup isLuks ${LUKS_DEVICE}
 			if [ $? -ne 0 ]
 			then
 				bad_msg "The LUKS device ${LUKS_DEVICE} does not contain a LUKS header" ${CRYPT_SILENT}
@@ -1130,7 +1130,7 @@ openLUKS() {
 					fi
 				fi
 				# At this point, keyfile or not, we're ready!
-				crypt_exec "${gpg_cmd}cryptsetup ${cryptsetup_options} luksOpen ${LUKS_DEVICE} ${LUKS_NAME}"
+				crypt_exec "${gpg_cmd}/sbin/cryptsetup ${cryptsetup_options} luksOpen ${LUKS_DEVICE} ${LUKS_NAME}"
 				crypt_exec_ret=$?
 
 				[ -e /dev/tty.org ] \

@@ -63,7 +63,7 @@ append_base_layout() {
 		rm -rf "${TEMP}/initramfs-base-temp" > /dev/null
 	fi
 
-	mkdir -p ${TEMP}/initramfs-base-temp/dev
+	mkdir -p ${TEMP}/initramfs-base-temp/dev/shm
 	mkdir -p ${TEMP}/initramfs-base-temp/bin
 	mkdir -p ${TEMP}/initramfs-base-temp/etc
 	mkdir -p ${TEMP}/initramfs-base-temp/usr
