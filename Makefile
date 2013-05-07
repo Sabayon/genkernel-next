@@ -1,5 +1,5 @@
 VERSION ?= 
-distdir = genkernel-$(VERSION)
+distdir = genkernel-next-$(VERSION)
 
 # Add off-Git/generated files here that need to be shipped with releases
 EXTRA_DIST = genkernel.8
