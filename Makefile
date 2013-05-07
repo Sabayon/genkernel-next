@@ -20,5 +20,6 @@ dist: check-git-repository $(EXTRA_DIST)
 	git archive --prefix=$(distdir)/ --format=tar "v$(VERSION)" > $(distdir).tar
 	rm -f $(distdir).tar.xz
 	xz $(distdir).tar
+	scp $(distdir).tar.xz lxnay@dev.gentoo.org:~/public_html/genkernel-next/
 
 .PHONY: clean check-git-repository dist
