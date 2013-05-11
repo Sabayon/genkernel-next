@@ -14,7 +14,7 @@ CPIO_ARGS="--quiet -o -H newc"
 #                  CC0 are compatible with the GNU GPL."
 #                 (from https://www.gnu.org/licenses/license-list.html#CC0)
 #
-# Written by: 
+# Written by:
 # - Sebastian Pipping <sebastian@pipping.org> (error checking)
 # - Robin H. Johnson <robbat2@gentoo.org> (complete rewrite)
 # - Richard Yao <ryao@cs.stonybrook.edu> (original concept)
@@ -201,7 +201,7 @@ append_multipath(){
 	copy_binaries "${TEMP}/initramfs-multipath-temp" \
 		/bin/mountpoint \
 		/sbin/{multipath,kpartx,mpath_prio_*,devmap_name,dmsetup} \
-		/{lib,lib64}/{udev/scsi_id,multipath/*so} 
+		/{lib,lib64}/{udev/scsi_id,multipath/*so}
 
 	if [ -x /sbin/multipath ]
 	then
@@ -563,6 +563,7 @@ append_udev() {
 	"
 	udev_maybe_files="
 		/lib/udev/rules.d/99-systemd.rules
+		/etc/modprobe.d/blacklist.conf
 	"
 	is_maybe=0
 	for f in ${udev_files} -- ${udev_maybe_files}; do
@@ -647,42 +648,7 @@ append_modules() {
 	find . | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 			|| gen_die "compressing modules cpio"
 	cd "${TEMP}"
-	rm -r "${TEMP}/initramfs-modules-${KV}-temp/"	
-}
-
-append_modprobed() {
-	local TDIR="${TEMP}/initramfs-modprobe.d-temp"
-	if [ -d "${TDIR}" ]
-	then
-		rm -r "${TDIR}"
-	fi
-
-	mkdir -p "${TDIR}/etc/module_options/"
-
-	# Load module parameters
-	for dir in $(find "${MODPROBEDIR}"/*)
-	do
-		while read x
-		do
-			case "${x}" in
-				options*)
-					module_name="$(echo "$x" | cut -d ' ' -f 2)"
-					[ "${module_name}" != "$(echo)" ] || continue
-					module_options="$(echo "$x" | cut -d ' ' -f 3-)"
-					[ "${module_options}" != "$(echo)" ] || continue
-					echo "${module_options}" >> "${TDIR}/etc/module_options/${module_name}.conf"
-				;;
-			esac
-		done < "${dir}"
-	done
-
-	cd "${TDIR}"
-	log_future_cpio_content
-	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
-			|| gen_die "compressing modprobe.d cpio"
-
-	cd "${TEMP}"
-	rm -rf "${TDIR}" > /dev/null
+	rm -r "${TEMP}/initramfs-modules-${KV}-temp/"
 }
 
 # check for static linked file with objdump
@@ -832,8 +798,6 @@ create_initramfs() {
 
 	append_data 'plymouth' "${PLYMOUTH}"
 
-	append_data 'modprobed'
-
 	if isTrue "${FIRMWARE}" && [ -n "${FIRMWARE_DIR}" ]
 	then
 		append_data 'firmware'
@@ -940,7 +904,6 @@ create_initramfs() {
 				gzip) compress_ext='.gz' compress_cmd="${cmd_gzip} -f -9" ;;
 				lzop) compress_ext='.lzo' compress_cmd="${cmd_lzop} -f -9" ;;
 			esac
-	
 			if [ -n "${compression}" ]; then
 				print_info 1 "        >> Compressing cpio data (${compress_ext})..."
 				${compress_cmd} "${CPIO}" || gen_die "Compression (${compress_cmd}) failed"

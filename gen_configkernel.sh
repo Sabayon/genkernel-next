@@ -118,12 +118,12 @@ config_kernel() {
 	fi
 
 	# Multipath
-	if isTrue ${CMD_MULTIPATH} 
-	then 
+	if isTrue ${CMD_MULTIPATH}
+	then
 		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_BLK_DEV_DM is.*/CONFIG_BLK_DEV_DM=m/g' 
 		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_DM_MULTIPATH is.*/CONFIG_DM_MULTIPATH=m/g' 
 		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_DM_MULTIPATH_RDAC is.*/CONFIG_DM_MULTIPATH_RDAC=m/g' 
-	fi 
+	fi
 
 	# Make sure dmraid modules are on if --dmraid
 	if isTrue ${CMD_DMRAID}
@@ -147,10 +147,10 @@ config_kernel() {
 	then
 		sed -i ${KERNEL_OUTPUTDIR}/.config -e 's/#\? \?CONFIG_FB_SPLASH is.*/CONFIG_FB_SPLASH=y/g'
 	fi
-	
+
 	# VirtIO
-	if isTrue ${CMD_VIRTIO} 
-	then 
+	if isTrue ${CMD_VIRTIO}
+	then
 		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_PARAVIRT_GUEST.*/CONFIG_PARAVIRT_GUEST=y/g'
 		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_VIRTIO_PCI.*/CONFIG_VIRTIO_PCI=y/g'
 		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_VIRTIO_BALLOON.*/CONFIG_VIRTIO_BALLOON=y/g'
@@ -159,5 +159,5 @@ config_kernel() {
 		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_SCSI_VIRTIO.*/CONFIG_SCSI_VIRTIO=y/g'
 		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_VIRTIO_NET.*/CONFIG_VIRTIO_NET=y/g'
 		sed -i ${KERNEL_DIR}/.config -e 's/#\? \?CONFIG_VHOST_NET.*/CONFIG_VHOST_NET=y/g'
-	fi 
+	fi
 }

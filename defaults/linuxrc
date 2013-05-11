@@ -254,13 +254,6 @@ do
 		aufs)
 			USE_AUFS_NORMAL=1
 		;;
-		*=*)
-			case "${x%%=*}" in
-			*.*)
-				echo "${x#*.}" >> "/etc/module_options/${x%%.*}.conf"
-			;;
-			esac
-		;;
 	esac
 done
 
@@ -539,9 +532,8 @@ do
 					prompt_user "REAL_ROOT" "root block device"
 					continue
 				fi
-					
 				ROOT_DEV="${REAL_ROOT#*=}"
-				if [ "${ROOT_DEV}" != 'ZFS' ] 
+				if [ "${ROOT_DEV}" != 'ZFS' ]
 				then
 					if [ "$(zfs get type -o value -H ${ROOT_DEV})" = 'filesystem' ]
 					then
@@ -570,10 +562,8 @@ do
 								REAL_ROOT=${i}
 								ROOTFSTYPE=zfs
 								break
-							fi	
-						
-						done;
-
+							fi
+						done
 					else
 						got_good_root=0
 					fi
@@ -584,7 +574,6 @@ do
 					prompt_user "REAL_ROOT" "root block device"
 					got_good_root=0
 				fi
-					
 				continue
 				;;
 		esac
@@ -866,7 +855,7 @@ for fs in $fslist; do
 	dev=$(get_mount_device $fs)
 	[ -z "${dev}" ] && continue
 	# Resolve it like util-linux mount does
-	[ -L ${dev} ] && dev=`readlink ${dev}`
+	[ -L ${dev} ] && dev=$(readlink ${dev})
 	# In this case, it's probably part of the filesystem
 	# and not a mountpoint
 	[ -z "$dev" ] && continue
