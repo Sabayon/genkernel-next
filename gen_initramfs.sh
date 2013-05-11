@@ -563,6 +563,7 @@ append_udev() {
 	"
 	udev_maybe_files="
 		/lib/udev/rules.d/99-systemd.rules
+		/etc/modprobe.d/blacklist.conf
 	"
 	is_maybe=0
 	for f in ${udev_files} -- ${udev_maybe_files}; do
