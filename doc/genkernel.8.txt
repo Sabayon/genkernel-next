@@ -91,6 +91,9 @@ KERNEL CONFIGURATION
 *--*[*no-*]*menuconfig*::
     Runs, or does not run "make menuconfig" after running "make oldconfig".
 
+*--*[*no-*]*nconfig*::
+    Runs, or does not run "make nconfig" after running "make oldconfig".
+
 *--*[*no-*]*save-config*::
     Saves, or does not save the kernel configuration to '/etc/kernels'
     if the kernel is successfully compiled.
