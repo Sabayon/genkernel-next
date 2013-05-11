@@ -14,7 +14,7 @@ CPIO_ARGS="--quiet -o -H newc"
 #                  CC0 are compatible with the GNU GPL."
 #                 (from https://www.gnu.org/licenses/license-list.html#CC0)
 #
-# Written by: 
+# Written by:
 # - Sebastian Pipping <sebastian@pipping.org> (error checking)
 # - Robin H. Johnson <robbat2@gentoo.org> (complete rewrite)
 # - Richard Yao <ryao@cs.stonybrook.edu> (original concept)
@@ -201,7 +201,7 @@ append_multipath(){
 	copy_binaries "${TEMP}/initramfs-multipath-temp" \
 		/bin/mountpoint \
 		/sbin/{multipath,kpartx,mpath_prio_*,devmap_name,dmsetup} \
-		/{lib,lib64}/{udev/scsi_id,multipath/*so} 
+		/{lib,lib64}/{udev/scsi_id,multipath/*so}
 
 	if [ -x /sbin/multipath ]
 	then
@@ -647,7 +647,7 @@ append_modules() {
 	find . | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
 			|| gen_die "compressing modules cpio"
 	cd "${TEMP}"
-	rm -r "${TEMP}/initramfs-modules-${KV}-temp/"	
+	rm -r "${TEMP}/initramfs-modules-${KV}-temp/"
 }
 
 # check for static linked file with objdump
@@ -903,7 +903,6 @@ create_initramfs() {
 				gzip) compress_ext='.gz' compress_cmd="${cmd_gzip} -f -9" ;;
 				lzop) compress_ext='.lzo' compress_cmd="${cmd_lzop} -f -9" ;;
 			esac
-	
 			if [ -n "${compression}" ]; then
 				print_info 1 "        >> Compressing cpio data (${compress_ext})..."
 				${compress_cmd} "${CPIO}" || gen_die "Compression (${compress_cmd}) failed"

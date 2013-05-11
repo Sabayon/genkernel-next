@@ -1,4 +1,4 @@
-#!/bin/ash
+#!/bin/sh
 
 . /etc/initrd.defaults
 
@@ -169,7 +169,7 @@ findmediamount() {
 	# $2 = recognition file
 	# $3 = variable to have the device path
 	# $4 = actual mount dir path (full path)
-	# args remaining are possible devices 
+	# args remaining are possible devices
 
 	local media=$1 recon=$2 vrbl=$3 mntdir=$4
 	shift 4
@@ -332,16 +332,15 @@ findnfsmount() {
 
 		if [ "${NFSROOT}" = '' ]
 		then
-			# Obtain NFSIP	
+			# Obtain NFSIP
 			OPTIONS=$(busybox dmesg | grep rootserver | sed -e "s/,/ /g")
 			for OPTION in $OPTIONS
 			do
 				if [ $(echo $OPTION | sed -e "s/=/ /g" | cut -d " " -f 1) = 'rootserver' ]
 				then
 					NFSIP=$(echo $OPTION | sed -e "s/=/ /g" | cut -d " " -f 2)
-				fi 
+				fi
 			done
-			
 			# Obtain NFSPATH
 			OPTIONS=$(busybox dmesg | grep rootpath | sed -e "s/,/ /g")
 			for OPTION in $OPTIONS
@@ -383,7 +382,7 @@ findnfsmount() {
 				else
 					bad_msg "NFS Mounting failed. Is the path corrent ?"
 				fi
-			else	
+			else
 				good_msg "Attempting to mount NFS root on ${NFSROOT} with options ${NFSOPTIONS}"
 				mount -t nfs -o ${NFSOPTIONS} ${NFSROOT} ${NEW_ROOT}
 				if [ "$?" = '0' ]
@@ -433,11 +432,9 @@ find_real_device() {
 check_loop() {
 	if [ "${LOOP}" = '' -o ! -e "${CDROOT_PATH}/${LOOP}" ]
 	then
-	
 		bad_msg "Invalid loop location: ${LOOP}"
 		bad_msg 'Please export LOOP with a valid location, or reboot and pass a proper loop=...'
 		bad_msg 'kernel command line!'
-	
 		run_shell
 	fi
 }
@@ -487,7 +484,7 @@ mount_devfs () {
 
 test_success() {
 	retcode=$?
-	# If last command failed send error message and fall back to a shell	
+	# If last command failed send error message and fall back to a shell
 	if [ "$retcode" != '0' ]
 	then
 		error_string=$1
@@ -518,7 +515,7 @@ bad_msg() {
 		splashcmd verbose
 		echo -e "${BAD}!!${NORMAL}${BOLD} ${msg_string} ${NORMAL}"
 	fi
-} 
+}
 
 warn_msg() {
 	msg_string=$1
@@ -685,18 +682,17 @@ cmdline_hwopts() {
 			fi
 		done
 	done
-   
+
 	# Shouldnt need to sort this as the following loop should figure out the
 	# duplicates and strip them out
 	#MY_HWOPTS=$(echo ${MY_HWOPTS}|  sort)
-	
 	for x in ${MY_HWOPTS}
 	do
 		FOUND=0
 		for y in ${TMP_HWOPTS}
 		do
 			if [ "${y}" = "${x}" ]
-			then 
+			then
 				continue 2
 			fi
 		done
@@ -736,7 +732,7 @@ setup_keymap() {
 		[ -f /lib/keymaps/keymapList ] && chooseKeymap
 
 		[ "${DEVBIND}" = '1' ] && umount /dev
-		
+
 		if [ -e /etc/sysconfig/keyboard -a "${CDROOT}" = '1' ]
 		then
 			mkdir -p ${NEW_ROOT}/etc/sysconfig/
@@ -827,7 +823,7 @@ startVolumes() {
 		mkdir -p /dev/mapper
 		ln -sf /dev/device-mapper /dev/mapper/control
 	fi
-	
+
 	if [ "${USE_MDADM}" = '1' ]
 	then
 		if [ -e '/sbin/mdadm' ]
@@ -838,15 +834,15 @@ startVolumes() {
 		fi
 	fi
 
-	if [ "${USE_MULTIPATH_NORMAL}" = '1' ] 
-	then 
-		good_msg "Scanning for multipath devices" 
+	if [ "${USE_MULTIPATH_NORMAL}" = '1' ]
+	then
+		good_msg "Scanning for multipath devices"
 		/sbin/multipath -v 0
 		sleep 2
-		good_msg "Activating multipath devices" 
-		/sbin/dmsetup ls --target multipath --exec "/sbin/kpartx -a -v" 
+		good_msg "Activating multipath devices"
+		/sbin/dmsetup ls --target multipath --exec "/sbin/kpartx -a -v"
 		#for MULTIPATH_VOLUMES in /dev/mapper/*; do kpartx -a $MULTIPATH_VOLUMES; done
-	fi 
+	fi
 
 	if [ "${USE_DMRAID_NORMAL}" = '1' ]
 	then
@@ -899,7 +895,7 @@ startVolumes() {
 			bad_msg "vgscan or vgchange not found: skipping LVM volume group activation!"
 		fi
 	fi
-	
+
 	if [ "${USE_ZFS}" = '1' ]
 	then
 		if [ -z "${ZFS_POOL}" ]
@@ -1058,10 +1054,10 @@ openLUKS() {
 					cryptsetup_options="${cryptsetup_options} --allow-discards"
 				fi
 
-				if [ -n "${LUKS_KEY}" ] 
+				if [ -n "${LUKS_KEY}" ]
 				then
 					local REAL_LUKS_KEYDEV="${LUKS_KEYDEV}"
-					if [ ! -e "${mntkey}${LUKS_KEY}" ] 
+					if [ ! -e "${mntkey}${LUKS_KEY}" ]
 					then
 						REAL_LUKS_KEYDEV=$(find_real_device "${LUKS_KEYDEV}")
 						if [ -b "${REAL_LUKS_KEYDEV}" ]
@@ -1155,9 +1151,7 @@ openLUKS() {
 }
 
 startLUKS() {
-
 	# if key is set but key device isn't, find it
-	
 	[ -n "${CRYPT_ROOT_KEY}" ] && [ -z "${CRYPT_ROOT_KEYDEV}" ] \
 		&& sleep 6 && bootstrapKey "ROOT"
 
