@@ -63,7 +63,7 @@ append_base_layout() {
 		rm -rf "${TEMP}/initramfs-base-temp" > /dev/null
 	fi
 
-	mkdir -p ${TEMP}/initramfs-base-temp/dev
+	mkdir -p ${TEMP}/initramfs-base-temp/dev/shm
 	mkdir -p ${TEMP}/initramfs-base-temp/bin
 	mkdir -p ${TEMP}/initramfs-base-temp/etc
 	mkdir -p ${TEMP}/initramfs-base-temp/usr
@@ -80,7 +80,10 @@ append_base_layout() {
 	mkdir -p ${TEMP}/initramfs-base-temp/sbin
 	mkdir -p ${TEMP}/initramfs-base-temp/usr/bin
 	mkdir -p ${TEMP}/initramfs-base-temp/usr/sbin
+	mkdir -p ${TEMP}/initramfs-base-temp/usr/share
+	mkdir -p ${TEMP}/initramfs-base-temp/usr/lib
 	ln -s  lib  ${TEMP}/initramfs-base-temp/lib64
+	ln -s  lib  ${TEMP}/initramfs-base-temp/usr/lib64
 
 	echo "/dev/ram0     /           ext2    defaults	0 0" > ${TEMP}/initramfs-base-temp/etc/fstab
 	echo "proc          /proc       proc    defaults    0 0" >> ${TEMP}/initramfs-base-temp/etc/fstab
@@ -120,7 +123,8 @@ append_busybox() {
 	chmod +x "${TEMP}/initramfs-busybox-temp/usr/share/udhcpc/default.script"
 
 	# Set up a few default symlinks
-	local default_applets="[ ash sh mount uname echo cut cat"
+	local default_applets="[ ash sh mount uname ls echo cut cat flock stty"
+	default_applets+=" readlink"
 	for i in ${BUSYBOX_APPLETS:-${default_applets}}; do
 		rm -f ${TEMP}/initramfs-busybox-temp/bin/$i
 		ln -s busybox ${TEMP}/initramfs-busybox-temp/bin/$i ||
@@ -382,6 +386,83 @@ append_splash(){
 	fi
 }
 
+append_plymouth() {
+	[ -z "${PLYMOUTH_THEME}" ] && \
+		PLYMOUTH_THEME=$(plymouth-set-default-theme)
+	[ -z "${PLYMOUTH_THEME}" ] && PLYMOUTH_THEME=text
+
+	if [ -d "${TEMP}/initramfs-ply-temp" ]
+	then
+		rm -r "${TEMP}/initramfs-ply-temp"
+	fi
+
+	mkdir -p "${TEMP}/initramfs-ply-temp/usr/share/plymouth/themes"
+	mkdir -p "${TEMP}/initramfs-ply-temp/etc/plymouth"
+	mkdir -p "${TEMP}/initramfs-ply-temp/"{bin,sbin}
+
+	cd "${TEMP}/initramfs-ply-temp"
+
+	local theme_dir="/usr/share/plymouth/themes"
+	local t=
+
+	local p=
+	local ply="${theme_dir}/${PLYMOUTH_THEME}/${PLYMOUTH_THEME}.plymouth"
+	local plugin=$(grep "^ModuleName=" "${ply}" | cut -d= -f2-)
+	local plugin_binary=
+	if [ -n "${plugin}" ]
+	then
+		plugin_binary="$(plymouth --get-splash-plugin-path)/${plugin}.so"
+	fi
+
+	print_info 1 "  >> Installing plymouth [ using the ${PLYMOUTH_THEME} theme and plugin: \"${plugin}\" ]..."
+
+	for t in text details ${PLYMOUTH_THEME}; do
+		cp -R "${theme_dir}/${t}" \
+			"${TEMP}/initramfs-ply-temp${theme_dir}/" || \
+			gen_die "cannot copy ${theme_dir}/details"
+	done
+	cp /usr/share/plymouth/{bizcom.png,plymouthd.defaults} \
+		"${TEMP}/initramfs-ply-temp/usr/share/plymouth/" || \
+			gen_die "cannot copy bizcom.png and plymouthd.defaults"
+
+	# Do both config setup
+	echo -en "[Daemon]\nTheme=${PLYMOUTH_THEME}\n" > \
+		"${TEMP}/initramfs-ply-temp/etc/plymouth/plymouthd.conf" || \
+		gen_die "Cannot create /etc/plymouth/plymouthd.conf"
+	ln -sf "${PLYMOUTH_THEME}/${PLYMOUTH_THEME}.plymouth" \
+		"${TEMP}/initramfs-ply-temp${theme_dir}/default.plymouth" || \
+		gen_die "cannot setup the default plymouth theme"
+
+	local libs=(
+		"/lib*/libply-splash-core.so.*"
+		"/usr/lib*/libply-splash-graphics.so.*"
+		"/usr/lib*/plymouth/text.so"
+		"/usr/lib*/plymouth/details.so"
+		"/usr/lib*/plymouth/renderers/frame-buffer.so"
+		"/usr/lib*/plymouth/renderers/drm.so"
+		"${plugin_binary}"
+	)
+	# lib64 must take the precedence or all the cpio archive
+	# symlinks will be fubared
+	local slib= lib= final_lib= final_libs=()
+	for slib in "${libs[@]}"; do
+		lib=( ${slib} )
+		final_lib="${lib[0]}"
+		final_libs+=( "${final_lib}" )
+	done
+
+	copy_binaries "${TEMP}/initramfs-ply-temp" \
+		/sbin/plymouthd /bin/plymouth \
+		"${final_libs[@]}" || gen_die "cannot copy plymouth"
+
+	log_future_cpio_content
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+		|| gen_die "appending plymouth to cpio"
+
+	cd "${TEMP}"
+	rm -r "${TEMP}/initramfs-ply-temp/"
+}
+
 append_overlay(){
 	cd ${INITRAMFS_OVERLAY}
 	log_future_cpio_content
@@ -458,7 +539,7 @@ append_gpg() {
 	mkdir -p "${TEMP}/initramfs-gpg-temp/sbin/"
 
 	print_info 1 "Including GPG support"
-	copy_binaries /sbin/gpg
+	copy_binaries "${TEMP}/initramfs-gpg-temp" /sbin/gpg
 
 	cd "${TEMP}/initramfs-gpg-temp/"
 	log_future_cpio_content
@@ -713,6 +794,8 @@ create_initramfs() {
 	append_data 'blkid' "${DISKLABEL}"
 
 	append_data 'splash' "${SPLASH}"
+
+	append_data 'plymouth' "${PLYMOUTH}"
 
 	if isTrue "${FIRMWARE}" && [ -n "${FIRMWARE_DIR}" ]
 	then

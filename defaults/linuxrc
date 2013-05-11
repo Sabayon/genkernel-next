@@ -3,12 +3,6 @@
 . /etc/initrd.defaults
 . /etc/initrd.scripts
 
-splash() {
-	return 0
-}
-
-[ -e /etc/initrd.splash ] && . /etc/initrd.splash
-
 # Clean input/output
 exec >${CONSOLE} <${CONSOLE} 2>&1
 
@@ -23,6 +17,7 @@ fi
 mount -t proc -o noexec,nosuid,nodev proc /proc >/dev/null 2>&1
 mount -o remount,rw / >/dev/null 2>&1
 mount -t tmpfs -o rw,nosuid,nodev,relatime,mode=755 none /run 2>&1
+mount -t tmpfs none /dev/shm 2>&1
 
 # Set up symlinks
 /bin/busybox --install -s
@@ -152,6 +147,12 @@ do
 		CONSOLE=*|console=*)
 			CONSOLE=${x#*=}
 			CONSOLE=$(basename ${CONSOLE})
+		;;
+		splash)
+			PLYMOUTH=1
+		;;
+		splash=*)
+			FBSPLASH=1
 		;;
 		# /dev/md
 		lvmraid=*)
@@ -301,8 +302,6 @@ then
 	fi
 fi
 
-splash 'init'
-
 cmdline_hwopts
 
 # Mount devfs
@@ -317,11 +316,26 @@ then
 	good_msg 'Activating udev'
 	echo "${UDEVD}" > /proc/sys/kernel/hotplug
 	echo "" > /sys/kernel/uevent_helper
-else
+	"${UDEVD}" --daemon --resolve-names=never && \
+		udevadm trigger --action=add && \
+		udevadm settle || bad_msg "udevd failed to run"
+elif is_mdev
+then
 	good_msg 'Activating mdev'
 	# Serialize hotplug events
 	touch /dev/mdev.seq
 	echo "${MDEVD}" > /proc/sys/kernel/hotplug
+	# Ensure that device nodes are properly configured
+	"${MDEVD}" -s || bad_msg "mdev -s failed"
+else
+	bad_msg "Cannot find either udev or mdev"
+fi
+
+if is_udev
+then
+	# if udev, we can load the splash earlier
+	# In the plymouth case, udev will load KMS automatically
+	splashcmd init
 fi
 
 # Load modules listed in MY_HWOPTS if /lib/modules exists for the running kernel
@@ -345,18 +359,10 @@ else
 	good_msg 'Skipping module load; no modules in the ramdisk!'
 fi
 
-if is_udev
+# If we're mdev, we better wait for all the modules to be loaded.
+if is_mdev
 then
-	# Initialize udev
-	"${UDEVD}" --daemon --resolve-names=never && \
-		udevadm trigger --action=add && \
-		udevadm settle || bad_msg "udevd failed to run"
-elif is_mdev
-then
-	# Ensure that device nodes are properly configured
-	"${MDEVD}" -s || bad_msg "mdev -s failed"
-else
-	bad_msg "Cannot find either udev or mdev"
+	splashcmd init
 fi
 
 # Apply scan delay if specified
@@ -873,6 +879,8 @@ for fs in $fslist; do
 	fi
 done
 
+splashcmd hasroot "${NEW_ROOT}"
+
 # Execute script on the cdrom just before boot to update things if necessary
 cdupdate
 
@@ -924,7 +932,7 @@ rundebugshell "before entering switch_root"
 exec /sbin/switch_root -c "/dev/console" "${CHROOT}" "${REAL_INIT:-/sbin/init}" "${INIT_OPTS}"
 
 # If we get here, something bad has happened
-splash 'verbose'
+splashcmd verbose
 
 bad_msg "A fatal error has occured since ${REAL_INIT:-/sbin/init} did not"
 bad_msg "boot correctly. Trying to open a shell..."
