@@ -253,13 +253,6 @@ do
 		aufs)
 			USE_AUFS_NORMAL=1
 		;;
-		*=*)
-			case "${x%%=*}" in
-			*.*)
-				echo "${x#*.}" >> "/etc/module_options/${x%%.*}.conf"
-			;;
-			esac
-		;;
 	esac
 done
 
