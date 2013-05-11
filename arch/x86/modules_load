@@ -1,4 +1,3 @@
-
 # Module groups for genkernel initramfs auto-loading
 
 # RAID
@@ -32,4 +31,4 @@ MODULES_FS="ext2 ext3 ext4 btrfs reiserfs jfs nfs xfs zfs fuse"
 MODULES_CRYPTO="sha256_generic cbc aes_generic aes_586 aesni-intel xts"
 
 # DRM (Plymouth support)
-MODULES_PLYMOUTH="radeon nouveau uvesafb"
+MODULES_PLYMOUTH="uvesafb"
