@@ -85,6 +85,11 @@ config_kernel() {
 		print_info 1 'kernel: >> Invoking menuconfig...'
 		compile_generic menuconfig kernelruntask
 		[ "$?" ] || gen_die 'Error: menuconfig failed!'
+	elif isTrue ${NCONFIG}
+	then
+		print_info 1 'kernel: >> Invoking nconfig...'
+		compile_generic nconfig kernelruntask
+		[ "$?" ] || gen_die 'Error: nconfig failed!'
 	elif isTrue ${CMD_GCONFIG}
 	then
 		print_info 1 'kernel: >> Invoking gconfig...'

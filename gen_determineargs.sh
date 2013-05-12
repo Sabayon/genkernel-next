@@ -96,6 +96,7 @@ determine_real_args() {
 	set_config_with_override BOOL   POSTCLEAR            CMD_POSTCLEAR
 	set_config_with_override BOOL   MRPROPER             CMD_MRPROPER
 	set_config_with_override BOOL   MENUCONFIG           CMD_MENUCONFIG
+	set_config_with_override BOOL   NCONFIG              CMD_NCONFIG
 	set_config_with_override BOOL   CLEAN                CMD_CLEAN
 
 	set_config_with_override STRING MINKERNPACKAGE       CMD_MINKERNPACKAGE
