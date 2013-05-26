@@ -596,6 +596,58 @@ append_udev() {
 	rm -rf "${TEMP}/initramfs-udev-temp" > /dev/null
 }
 
+append_ld_so_conf() {
+	print_info 1 'ld.so.conf: adding /etc/ld.so.conf{.d/*,}...'
+
+	local tmp_dir="${TEMP}/initramfs-ld-temp"
+	rm -rf "${tmp_dir}"
+	mkdir -p "${tmp_dir}"
+
+	local f= f_dir=
+	for f in /etc/ld.so.conf /etc/ld.so.conf.d/*; do
+		if [ -f "${f}" ]; then
+			f_dir=$(dirname "${f}")
+			tmp_f_dir="${tmp_dir}/${f_dir}"
+
+			mkdir -p "${tmp_f_dir}" || \
+				gen_die "cannot create dir ${tmp_f_dir}"
+			cp -a "${f}" "${tmp_f_dir}/" || \
+				gen_die "cannot copy ${f} to ${tmp_f_dir}"
+		fi
+	done
+
+	cd "${tmp_dir}" || gen_die "cannot cd into ${tmp_dir}"
+	log_future_cpio_content
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+			|| gen_die "compressing ld.so.conf.* cpio"
+	cd "$(dirname "${tmp_dir}")"
+	rm -rf "${tmp_dir}"
+
+	# Unfortunately genkernel works by appending cruft over crut
+	# but we need to generate a valid ld.so.conf. So we extract the
+	# current CPIO archive, run ldconfig -r against it and append the
+	# last bits.
+	local tmp_dir_ext="${tmp_dir}/extracted"
+	mkdir -p "${tmp_dir_ext}"
+	mkdir -p "${tmp_dir}/etc"
+	cd "${tmp_dir_ext}" || gen_die "cannot cd into ${tmp_dir_ext}"
+	cpio -id --quiet < "${CPIO}" || gen_die "cannot re-extract ${CPIO}"
+
+	cd "${tmp_dir}" || gen_die "cannot cd into ${tmp_dir}"
+	ldconfig -r "${tmp_dir_ext}" || \
+		gen_die "cannot run ldconfig on ${tmp_dir_ext}"
+	cp -a "${tmp_dir_ext}/etc/ld.so.cache" "${tmp_dir}/etc/ld.so.cache" || \
+		gen_die "cannot copy ld.so.cache"
+	rm -rf "${tmp_dir_ext}"
+
+	cd "${tmp_dir}" || gen_die "cannot cd into ${tmp_dir}"
+	log_future_cpio_content
+	find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+			|| gen_die "compressing ld.so.cache cpio"
+	cd "$(dirname "${tmp_dir}")"
+	rm -rf "${tmp_dir}"
+}
+
 print_list()
 {
 	local x
@@ -808,6 +860,9 @@ create_initramfs() {
 	then
 		append_data 'overlay'
 	fi
+
+	# keep this at the very end, generates /etc/ld.so.conf* and cache
+	append_data 'ld_so_conf'
 
 	if isTrue "${INTEGRATED_INITRAMFS}"
 	then
