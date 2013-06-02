@@ -280,9 +280,10 @@ append_lvm(){
 	done
 
 	copy_binaries "${TEMP}/initramfs-lvm-temp" \
-		/sbin/lvm /sbin/dmsetup
+		/sbin/lvm /sbin/dmsetup /sbin/thin_check \
+		/sbin/thin_restore /sbin/thin_dump
 
-	if [ -x /sbin/lvm ]
+	if [ -f /etc/lvm/lvm.conf ]
 	then
 		cp /etc/lvm/lvm.conf "${TEMP}/initramfs-lvm-temp/etc/lvm/" ||
 			gen_die 'Could not copy over lvm.conf!'
