@@ -377,7 +377,7 @@ cd /
 # Start iSCSI
 if [ -e /usr/sbin/iscsistart ]
 then
-	startiscsi
+	start_iscsi
 fi
 
 # Setup btrfs, see bug 303529
@@ -387,14 +387,14 @@ setup_btrfsctl
 is_mdev && setup_md_device
 
 # Scan volumes
-startVolumes
+start_volumes
 
 setup_keymap
 
 # Initialize LUKS root device except for livecd's
 if [ "${CDROOT}" != 1 ]
 then
-	startLUKS
+	start_luks
 	if [ "${NORESUME}" != '1' ] && [ -n "${REAL_RESUME}" ]
 	then
 		case "${REAL_RESUME}" in
@@ -682,7 +682,7 @@ then
 		losetup /dev/loop0 "${CDROOT_PATH}/${LOOPEXT}${LOOP}"
 		test_success 'Preparing loop filesystem'
 
-		startLUKS
+		start_luks
 
 		case ${LOOPTYPE} in
 			normal)

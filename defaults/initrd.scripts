@@ -729,7 +729,7 @@ setup_keymap() {
 		fi
 		[ ! -e /dev/tty0 ] && ln -s /dev/tty1 /dev/tty0
 
-		[ -f /lib/keymaps/keymapList ] && chooseKeymap
+		[ -f /lib/keymaps/keymapList ] && choose_keymap
 
 		[ "${DEVBIND}" = '1' ] && umount /dev
 
@@ -741,7 +741,7 @@ setup_keymap() {
 	fi
 }
 
-chooseKeymap() {
+choose_keymap() {
 	good_msg "Loading keymaps"
 	if [ -z "${keymap}" ]
 	then
@@ -809,11 +809,11 @@ chooseKeymap() {
 	else
 		bad_msg "Sorry, but keymap ''${keymap}'' is invalid!"
 		unset keymap
-		chooseKeymap
+		choose_keymap
 	fi
 }
 
-startVolumes() {
+start_volumes() {
 	#good_msg 'Checking if volumes need to be started...'
 
 	# Here, we check for /dev/device-mapper, and if it exists, we setup a
@@ -940,7 +940,7 @@ startVolumes() {
 	is_udev && udevadm settle
 }
 
-startiscsi() {
+start_iscsi() {
 	if [ ! -n "${ISCSI_NOIBFT}" ]
 	then
 		good_msg "Activating iSCSI via iBFT"
@@ -999,7 +999,7 @@ startiscsi() {
 # Open a LUKS device
 # It is either the root or a swap, other devices are supported in the scripts provided with sys-fs/cryptsetup-luks
 # $1 - root/swap
-openLUKS() {
+open_luks() {
 	# please use 'tr' and this line, or remove it
 	# eval local TYPE=$(uppercase $1)
 
@@ -1150,17 +1150,17 @@ openLUKS() {
 	rmdir -p ${mntkey} 2>/dev/null >/dev/null
 }
 
-startLUKS() {
+start_luks() {
 	# if key is set but key device isn't, find it
 	[ -n "${CRYPT_ROOT_KEY}" ] && [ -z "${CRYPT_ROOT_KEYDEV}" ] \
 		&& sleep 6 && bootstrapKey "ROOT"
 
 	if [ -n "${CRYPT_ROOT}" ]; then
-		openLUKS "root"
+		open_luks "root"
 		if [ -n "${REAL_ROOT}" ]
 		then
 			# Rescan volumes
-			startVolumes
+			start_volumes
 		else
 			REAL_ROOT="/dev/mapper/root"
 		fi
@@ -1171,7 +1171,7 @@ startLUKS() {
 		&& { [ -z "${CRYPT_ROOT}" ] && sleep 6; bootstrapKey "SWAP"; }
 
 	if [ -n "${CRYPT_SWAP}" ]; then
-		openLUKS "swap"
+		open_luks "swap"
 		if [ -z "${REAL_RESUME}" ]
 		then
 			# Resume from swap as default
