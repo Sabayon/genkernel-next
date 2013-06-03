@@ -341,7 +341,7 @@ append_zfs(){
 	# Copy files to /etc/zfs
 	for i in /etc/zfs/{zdev.conf,zpool.cache}
 	do
-		cp -a "${i}" "${TEMP}/initramfs-zfs-temp/etc/zfs" \
+		cp -a "${i}" "${TEMP}/initramfs-zfs-temp/etc/zfs" 2> /dev/null \
 			|| print_warning 1 "Could not copy file ${i} for ZFS"
 	done
 
