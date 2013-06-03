@@ -359,14 +359,18 @@ else
 	good_msg 'Skipping module load; no modules in the ramdisk!'
 fi
 
+# Give udev time to execute all the rules. This may be beneficial
+# for usb-storage devices.
+is_udev && udevadm settle
+
+# Apply scan delay if specified
+sdelay
+
 # If we're mdev, we better wait for all the modules to be loaded.
 if is_mdev
 then
 	splashcmd init
 fi
-
-# Apply scan delay if specified
-sdelay
 
 cd /
 
