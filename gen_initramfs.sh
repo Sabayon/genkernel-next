@@ -625,24 +625,8 @@ append_modprobed() {
 		rm -r "${TDIR}"
 	fi
 
-	mkdir -p "${TDIR}/etc/module_options/"
-
-	# Load module parameters
-	for dir in $(find "${MODPROBEDIR}"/*)
-	do
-		while read x
-		do
-			case "${x}" in
-				options*)
-					module_name="$(echo "$x" | cut -d ' ' -f 2)"
-					[ "${module_name}" != "$(echo)" ] || continue
-					module_options="$(echo "$x" | cut -d ' ' -f 3-)"
-					[ "${module_options}" != "$(echo)" ] || continue
-					echo "${module_options}" >> "${TDIR}/etc/module_options/${module_name}.conf"
-				;;
-			esac
-		done < "${dir}"
-	done
+	mkdir -p "${TDIR}/etc"
+	cp -r "/etc/modprobe.d" "${TDIR}/etc/modprobe.d"
 
 	cd "${TDIR}"
 	log_future_cpio_content

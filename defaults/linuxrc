@@ -262,13 +262,6 @@ do
 		nounionfs)
 			USE_UNIONFS_NORMAL=0
 			;;
-		*=*)
-			case "${x%%=*}" in
-			*.*)
-				echo "${x#*.}" >> "/etc/module_options/${x%%.*}.conf"
-			;;
-			esac
-		;;
 	esac
 done
 
