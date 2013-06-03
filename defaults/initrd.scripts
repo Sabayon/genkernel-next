@@ -348,7 +348,7 @@ findnfsmount() {
 				if [ $(echo $OPTION | sed -e "s/=/ /g" | cut -d " " -f 1) = 'rootpath' ]
 				then
 					NFSPATH=$(echo $OPTION | sed -e "s/=/ /g" | cut -d " " -f 2)
-		 		fi
+				fi
 			done
 
 			# Setup NFSROOT
