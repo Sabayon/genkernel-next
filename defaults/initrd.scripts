@@ -1378,16 +1378,14 @@ setup_squashfs_aufs() {
 	mount --bind "${CDROOT_PATH}" "${new_cdroot}"
 }
 
-get_mounts_list()
-{
+get_mounts_list() {
 	awk '
 		/^[[:blank:]]*#/ { next }
 		{ print $1 }
 		' ${NEW_ROOT}/etc/initramfs.mounts
 }
 
-get_mount_fstype()
-{
+get_mount_fstype() {
 	[ -e "${NEW_ROOT}"/etc/fstab ] || return 1
 	awk -v fs="$1" '
 		/^[[:blank:]]*#/ { next }
@@ -1395,8 +1393,7 @@ get_mount_fstype()
 		' ${NEW_ROOT}/etc/fstab
 }
 
-get_mount_options()
-{
+get_mount_options() {
 	[ -e "${NEW_ROOT}"/etc/fstab ] || return 1
 	awk -v fs="$1" '
 		/^[[:blank:]]*#/ { next }
@@ -1404,8 +1401,7 @@ get_mount_options()
 		' ${NEW_ROOT}/etc/fstab
 }
 
-get_mount_device()
-{
+get_mount_device() {
 	[ -e "${NEW_ROOT}"/etc/fstab ] || return 1
 	awk -v fs="$1" '
 		/^[[:blank:]]*#/ { next }
@@ -1418,7 +1414,6 @@ get_mount_device()
 # which then rejects the mount.
 # To make like a little easier, busybox mount does not care about leading,
 # trailing or duplicate commas.
-strip_mount_options()
-{
+strip_mount_options() {
 	sed -r 's/(,|^)(no)?auto(,|$)/,/g'
 }
