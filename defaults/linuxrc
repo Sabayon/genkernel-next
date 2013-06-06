@@ -310,6 +310,13 @@ mount_devfs
 # Mount sysfs
 mount_sysfs
 
+# We should ship the initramfs with modules.dep.bb
+# But current busybox depmod has broken -b support
+# so we can't do that at build time, unless we want
+# to chroot into the initramfs root, which is much more
+# fragile. See bug #472312
+busybox_depmod_workaround
+
 # Setup hotplugging for firmware loading
 if is_udev
 then
