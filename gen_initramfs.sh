@@ -869,6 +869,20 @@ create_initramfs() {
 	# keep this at the very end, generates /etc/ld.so.conf* and cache
 	append_data 'ld_so_conf'
 
+	# Finalize cpio by removing duplicate files
+	print_info 1 "        >> Finalizing cpio..."
+	local TDIR="${TEMP}/initramfs-final"
+	mkdir -p "${TDIR}"
+	cd "${TDIR}"
+
+	cpio --quiet -i -F "${CPIO}" 2> /dev/null \
+		|| gen_die "extracting cpio for finalization"
+	find . -print | cpio ${CPIO_ARGS} -F "${CPIO}" 2>/dev/null \
+		|| gen_die "recompressing cpio"
+
+	cd "${TEMP}"
+	rm -r "${TDIR}"
+
 	if isTrue "${INTEGRATED_INITRAMFS}"
 	then
 		# Explicitly do not compress if we are integrating into the kernel.
