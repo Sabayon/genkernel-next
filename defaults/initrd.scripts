@@ -116,12 +116,7 @@ plymouth_newroot() {
 # fragile. See bug #472312
 busybox_depmod_workaround() {
 	local depmod_args
-	if [ -n "${DEBUG}" ]
-	then
-		depmod_args="-v"
-	elif [ -n "${QUIET}" ]; then
-		depmod_args="-q"
-	fi
+	[ -n "${QUIET}" ] && depmod_args="-q"
 	depmod ${depmod_args}
 }
 
