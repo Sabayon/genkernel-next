@@ -109,6 +109,22 @@ plymouth_newroot() {
 	is_plymouth_started && "${PLYMOUTH_BIN}" --newroot="${1}"
 }
 
+call_func_timeout()
+{
+	local func=$1 timeout=$2 pid watcher
+	[ $# -ne 2 ] && gen_die "call_func_timeout() called with $# arguments"
+
+	( ${func} ) & pid=$!
+	( sleep ${timeout} && kill -HUP ${pid} ) 2>/dev/null & watcher=$!
+	if wait ${pid} 2>/dev/null; then
+	    kill -HUP $watcher 2> /dev/null
+	    wait $watcher 2>/dev/null
+	    return 1
+	fi
+
+	return 0
+}
+
 modules_load() {
 	for module in $*
 	do
