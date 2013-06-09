@@ -336,13 +336,17 @@ append_zfs(){
 		rm -r "${TEMP}/initramfs-zfs-temp"
 	fi
 
-	mkdir -p "${TEMP}/initramfs-zfs-temp/etc/zfs/"
+	mkdir -p "${TEMP}/initramfs-zfs-temp/etc/zfs"
 
 	# Copy files to /etc/zfs
-	for i in /etc/zfs/{zdev.conf,zpool.cache}
+	for i in zdev.conf zpool.cache
 	do
-		cp -a "${i}" "${TEMP}/initramfs-zfs-temp/etc/zfs" 2> /dev/null \
-			|| print_warning 1 "Could not copy file ${i} for ZFS"
+		if [ -f /etc/zfs/${i} ]
+		then
+			print_info 1 "        >> Including ${i}"
+			cp -a "/etc/zfs/${i}" "${TEMP}/initramfs-zfs-temp/etc/zfs" 2> /dev/null \
+				|| gen_die "Could not copy file ${i} for ZFS"
+		fi
 	done
 
 	# Copy binaries
