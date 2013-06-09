@@ -299,8 +299,6 @@ then
 			break
 		fi
 	done
-
-	[ "USE_ZFS" = "1" ] && MY_HWOPTS="${MY_HWOPTS} zfs"
 fi
 
 cmdline_hwopts

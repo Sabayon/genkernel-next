@@ -830,9 +830,10 @@ choose_keymap() {
 }
 
 # This helper function is to be called using call_func_timeout.
-# It enables us to wait a reasonable amount of time until /dev/zfs appears.
+# This works around the inability of busybox modprobe to handle complex module dependencies.
+# This also enables us to wait a reasonable amount of time until /dev/zfs appears.
 waitForZFS() {
-	while [ ! -c /dev/zfs ]; do echo >/dev/null; done;
+	while [ ! -c /dev/zfs ]; do modprobe zfs 2> /dev/null; done;
 }
 
 start_volumes() {
