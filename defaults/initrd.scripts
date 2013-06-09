@@ -829,6 +829,12 @@ choose_keymap() {
 	fi
 }
 
+# This helper function is to be called using call_func_timeout.
+# It enables us to wait a reasonable amount of time until /dev/zfs appears.
+waitForZFS() {
+	while [ ! -c /dev/zfs ]; do echo >/dev/null; done;
+}
+
 start_volumes() {
 	#good_msg 'Checking if volumes need to be started...'
 
@@ -914,7 +920,12 @@ start_volumes() {
 
 	if [ "${USE_ZFS}" = '1' ]
 	then
-		if [ -z "${ZFS_POOL}" ]
+
+		# Avoid race involving asynchronous module loading
+		if call_func_timeout waitForZFS 5
+		then
+			bad_msg "Cannot import ZFS pool because /dev/zfs is missing"
+		elif [ -z "${ZFS_POOL}" ]
 		then
 			good_msg "Importing ZFS pools"
 
@@ -945,9 +956,9 @@ start_volumes() {
 
 				if [ "$?" = '0' ]
 				then
-					good_msg "Importing ${ZFS_POOL} succeeded"
+					good_msg "Import of ${ZFS_POOL} succeeded"
 				else
-					bad_msg "Importing ${ZFS_POOL} failed"
+					bad_msg "Import of ${ZFS_POOL} failed"
 				fi
 			fi
 		fi
