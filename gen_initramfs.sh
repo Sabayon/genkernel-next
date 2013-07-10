@@ -95,6 +95,7 @@ append_base_layout() {
 	mknod -m 600 tty0 c 4 0
 	mknod -m 600 tty1 c 4 1
 	mknod -m 600 ttyS0 c 4 64
+	chmod 1777 shm  # bug 476278
 
 	date -u '+%Y%m%d-%H%M%S' > ${TEMP}/initramfs-base-temp/etc/build_date
 	echo "Genkernel $GK_V" > ${TEMP}/initramfs-base-temp/etc/build_id
