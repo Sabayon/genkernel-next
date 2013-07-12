@@ -568,6 +568,7 @@ append_udev() {
 		/etc/udev/udev.conf
 	"
 	udev_maybe_files="
+		/lib/udev/rules.d/40-gentoo.rules
 		/lib/udev/rules.d/99-systemd.rules
 		/etc/modprobe.d/blacklist.conf
 	"
