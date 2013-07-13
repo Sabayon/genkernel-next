@@ -501,11 +501,9 @@ mount_devfs () {
 test_success() {
 	retcode=$?
 	# If last command failed send error message and fall back to a shell
-	if [ "$retcode" != '0' ]
-	then
-		error_string=$1
-		error_string="${error_string:-run command}"
-		bad_msg 'Failed to $1; failing back to the shell...'
+	if [ "$retcode" != '0' ]; then
+		error_string="${1:-run command}"
+		bad_msg 'Failed to ${error_string}; failing back to the shell...'
 		run_shell
 	fi
 }
