@@ -42,8 +42,8 @@ longusage() {
   echo "	--no-mrproper	Do not run make mrproper before compilation"
   echo "	--splash		Install framebuffer splash support into initramfs"
   echo "	--no-splash		Do not install framebuffer splash"
-  echo "	--plymouth		Install plymouth"
-  echo "	--no-plymouth		DO not install plymouth"
+  echo "	--plymouth		Enable plymouth support (forces --udev)"
+  echo "	--no-plymouth		Do not enable plymouth support"
   echo "	--install		Install the kernel after building"
   echo "	--no-install		Do not install the kernel after building"
   echo "	--symlink		Manage symlinks in /boot for installed images"
@@ -431,6 +431,7 @@ parse_cmdline() {
 			;;
 		--plymouth)
 			CMD_PLYMOUTH=1
+			CMD_UDEV=1  # mdev is not really supported
 			PLYMOUTH_THEME='text'
 			print_info 2 "CMD_PLYMOUTH: ${CMD_PLYMOUTH}"
 			;;
