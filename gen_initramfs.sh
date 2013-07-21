@@ -710,6 +710,60 @@ append_modules() {
 	rm -r "${TEMP}/initramfs-modules-${KV}-temp/"
 }
 
+append_drm() {
+	local MOD_EXT=".ko"
+
+	print_info 2 "initramfs: >> Appending drm drivers..."
+	if [ "${INSTALL_MOD_PATH}" != '' ]
+	then
+		cd ${INSTALL_MOD_PATH}
+	else
+		cd /
+	fi
+
+	rm -rf "${TEMP}/initramfs-drm-${KV}-temp/"
+	mkdir -p "${TEMP}/initramfs-drm-${KV}-temp/lib/modules/${KV}"
+
+	local drm_path="./lib/modules/${KV}/kernel/drivers/gpu/drm"
+	local modules
+	if [ -d "${drm_path}" ]
+	then
+		modules=$(strip_mod_paths $(find "${drm_path}" -name "*${MOD_EXT}"))
+	else
+		print_warning 2 "Warning :: no drm modules in drivers/gpu/drm..."
+	fi
+
+	rm -f "${TEMP}/moddeps"
+	gen_deps ${modules}
+	if [ -f "${TEMP}/moddeps" ]
+	then
+		modules=$(cat "${TEMP}/moddeps" | sort | uniq)
+	else
+		print_warning 2 "Warning :: module dependencies not generated..."
+	fi
+
+	local mod i
+	for i in ${modules}
+	do
+		mod=$(find "${drm_path}" -name "${i}${MOD_EXT}" 2>/dev/null| head -n 1)
+		if [ -z "${mod}" ]
+		then
+			print_warning 2 "Warning :: ${i}${MOD_EXT} not found; skipping..."
+			continue
+		fi
+
+		print_info 2 "initramfs: >> Copying ${mod}${MOD_EXT}..."
+		cp -ax --parents "${mod}" "${TEMP}/initramfs-drm-${KV}-temp"
+	done
+
+	cd "${TEMP}/initramfs-drm-${KV}-temp/"
+	log_future_cpio_content
+	find . | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+			|| gen_die "compressing drm cpio"
+	cd "${TEMP}"
+	rm -r "${TEMP}/initramfs-drm-${KV}-temp/"
+}
+
 # check for static linked file with objdump
 is_static() {
 	LANG="C" LC_ALL="C" objdump -T $1 2>&1 | grep "not a dynamic object" > /dev/null
@@ -856,6 +910,7 @@ create_initramfs() {
 	append_data 'splash' "${SPLASH}"
 
 	append_data 'plymouth' "${PLYMOUTH}"
+	isTrue "${PLYMOUTH}" && append_data 'drm'
 
 	if isTrue "${FIRMWARE}" && [ -n "${FIRMWARE_DIR}" ]
 	then
