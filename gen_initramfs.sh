@@ -748,7 +748,7 @@ append_drm() {
 		print_warning 2 "Warning :: module dependencies not generated..."
 	fi
 
-	local mod i fws fw_f
+	local mod i fws fw
 	for i in ${modules}
 	do
 		mod=$(find "${drm_path}" -name "${i}${MOD_EXT}" 2>/dev/null| head -n 1)
@@ -767,7 +767,7 @@ append_drm() {
 			# contain all the firmware files and /lib/firmware is
 			# expected to be more up-to-date.
 			print_info 2 "initramfs: >> Copying firmware ${fw}..."
-			cp -ax --parents "/lib/firmware/${fw_f}" \
+			cp -ax --parents "/lib/firmware/${fw}" \
 				"${TEMP}/initramfs-drm-${KV}-temp"
 		done
 	done
