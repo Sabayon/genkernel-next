@@ -57,6 +57,12 @@ log_future_cpio_content() {
 	fi
 }
 
+get_firmware_files() {
+	local kmod="${1}"
+	modinfo --set-version="${KV}" -F firmware "${kmod}" || \
+		gen_die "cannot execute modinfo for ${kmod}"
+}
+
 append_base_layout() {
 	if [ -d "${TEMP}/initramfs-base-temp" ]
 	then
@@ -742,7 +748,7 @@ append_drm() {
 		print_warning 2 "Warning :: module dependencies not generated..."
 	fi
 
-	local mod i
+	local mod i fws fw_f
 	for i in ${modules}
 	do
 		mod=$(find "${drm_path}" -name "${i}${MOD_EXT}" 2>/dev/null| head -n 1)
@@ -752,8 +758,18 @@ append_drm() {
 			continue
 		fi
 
-		print_info 2 "initramfs: >> Copying ${mod}${MOD_EXT}..."
+		print_info 2 "initramfs: >> Copying ${mod}..."
 		cp -ax --parents "${mod}" "${TEMP}/initramfs-drm-${KV}-temp"
+		fws=( $(get_firmware_files "${mod}") )
+		for fw in "${fws[@]}"
+		do
+			# we must use /lib/firmware because kernel may not
+			# contain all the firmware files and /lib/firmware is
+			# expected to be more up-to-date.
+			print_info 2 "initramfs: >> Copying firmware ${fw}..."
+			cp -ax --parents "/lib/firmware/${fw_f}" \
+				"${TEMP}/initramfs-drm-${KV}-temp"
+		done
 	done
 
 	cd "${TEMP}/initramfs-drm-${KV}-temp/"
