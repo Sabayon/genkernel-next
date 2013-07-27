@@ -109,8 +109,7 @@ plymouth_newroot() {
 	is_plymouth_started && "${PLYMOUTH_BIN}" --newroot="${1}"
 }
 
-call_func_timeout()
-{
+call_func_timeout() {
 	local func=$1 timeout=$2 pid watcher
 	[ $# -ne 2 ] && gen_die "call_func_timeout() called with $# arguments"
 
@@ -174,7 +173,7 @@ modules_scan() {
 	[ -n "${MODS}" ] && [ -z "${QUIET}" ] && echo
 }
 
-uppercase(){
+uppercase() {
 	# needs tr on busybox
 	echo $1 | tr 'a-z' 'A-Z'
 }
@@ -262,7 +261,7 @@ findmediamount() {
 	[ -n "${result}" ] || bad_msg "Media not found" ${CRYPT_SILENT}
 }
 
-devicelist(){
+devicelist() {
 	# Locate the cdrom device with our media on it.
 	# CDROM DEVICES
 	local DEVICES="/dev/cdroms/* /dev/ide/cd/* /dev/sr*"
@@ -284,7 +283,7 @@ devicelist(){
 	echo ${DEVICES}
 }
 
-bootstrapCD() {
+bootstrap_cd() {
 	local DEVICES=
 
 	# The device was specified on the command line, so there's no need
@@ -296,7 +295,7 @@ bootstrapCD() {
 		"REAL_ROOT" "${CDROOT_PATH}" ${DEVICES}
 }
 
-bootstrapKey() {
+bootstrap_key() {
 	# $1 = ROOT/SWAP
 	local KEYDEVS=$(devicelist)
 	eval local keyloc='"${CRYPT_'${1}'_KEY}"'
@@ -637,7 +636,7 @@ crypt_exec() {
 	fi
 }
 
-prompt_user(){
+prompt_user() {
 	# $1 = variable whose value is the path (examples: "REAL_ROOT",
 	#      "LUKS_KEYDEV")
 	# $2 = label
@@ -832,7 +831,7 @@ choose_keymap() {
 # This helper function is to be called using call_func_timeout.
 # This works around the inability of busybox modprobe to handle complex module dependencies.
 # This also enables us to wait a reasonable amount of time until /dev/zfs appears.
-waitForZFS() {
+wait_for_zfs() {
 	while [ ! -c /dev/zfs ]; do modprobe zfs 2> /dev/null; done;
 }
 
@@ -923,7 +922,7 @@ start_volumes() {
 	then
 
 		# Avoid race involving asynchronous module loading
-		if call_func_timeout waitForZFS 5
+		if call_func_timeout wait_for_zfs 5
 		then
 			bad_msg "Cannot import ZFS pool because /dev/zfs is missing"
 		elif [ -z "${ZFS_POOL}" ]
@@ -1108,7 +1107,7 @@ open_luks() {
 							if [ ! -b "${REAL_LUKS_KEYDEV}" ]
 							then
 								eval CRYPT_${TYPE}_KEY=${LUKS_KEY}
-								bootstrapKey ${TYPE}
+								bootstrap_key ${TYPE}
 								eval LUKS_KEYDEV='"${CRYPT_'${TYPE}'_KEYDEV}"'
 								REAL_LUKS_KEYDEV=$(find_real_device "${LUKS_KEYDEV}")
 								if [ ! -b "${REAL_LUKS_KEYDEV}" ]; then
@@ -1181,7 +1180,7 @@ open_luks() {
 start_luks() {
 	# if key is set but key device isn't, find it
 	[ -n "${CRYPT_ROOT_KEY}" ] && [ -z "${CRYPT_ROOT_KEYDEV}" ] \
-		&& sleep 6 && bootstrapKey "ROOT"
+		&& sleep 6 && bootstrap_key "ROOT"
 
 	if [ -n "${CRYPT_ROOT}" ]; then
 		open_luks "root"
@@ -1196,7 +1195,7 @@ start_luks() {
 
 	# same for swap, but no need to sleep if root was unencrypted
 	[ -n "${CRYPT_SWAP_KEY}" ] && [ -z "${CRYPT_SWAP_KEYDEV}" ] \
-		&& { [ -z "${CRYPT_ROOT}" ] && sleep 6; bootstrapKey "SWAP"; }
+		&& { [ -z "${CRYPT_ROOT}" ] && sleep 6; bootstrap_key "SWAP"; }
 
 	if [ -n "${CRYPT_SWAP}" ]; then
 		open_luks "swap"

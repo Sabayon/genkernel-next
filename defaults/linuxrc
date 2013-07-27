@@ -464,7 +464,7 @@ then
 
 	if [ "${REAL_ROOT}" != "/dev/nfs" ] && [ "${LOOPTYPE}" != "sgimips" ]
 	then
-		bootstrapCD
+		bootstrap_cd
 	fi
 
 	if [ "${REAL_ROOT}" = '' ]
@@ -476,7 +476,7 @@ then
 			let COUNTER=${COUNTER}+1
 		done
 		sleep 1
-		bootstrapCD
+		bootstrap_cd
 	fi
 
 	if [ "${REAL_ROOT}" = '' ]
