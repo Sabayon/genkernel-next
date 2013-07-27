@@ -260,15 +260,12 @@ then
 	fi
 fi
 
-# initialize ZFS filesystems
 zfs_init
 
 cmdline_hwopts
 
-# Mount devfs
 mount_devfs
 
-# Mount sysfs
 mount_sysfs
 
 # Setup hotplugging for firmware loading
@@ -347,7 +344,6 @@ setup_btrfsctl
 # Setup md device nodes if they dont exist
 is_mdev && setup_md_device
 
-# Scan volumes
 start_volumes
 
 setup_keymap
