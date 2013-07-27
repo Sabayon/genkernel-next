@@ -90,10 +90,6 @@ do
 		dolvm)
 			USE_LVM_NORMAL=1
 		;;
-		dolvm2)
-			bad_msg 'Using dolvm2 is deprecated, use dolvm, instead.'
-			USE_LVM_NORMAL=1
-		;;
 		domdadm)
 			USE_MDADM=1
 		;;
