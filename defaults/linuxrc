@@ -264,10 +264,7 @@ modules_init
 sdelay
 
 # If we're mdev, we better wait for all the modules to be loaded.
-if is_mdev
-then
-	splashcmd init
-fi
+is_mdev && splashcmd init
 
 cd /
 
