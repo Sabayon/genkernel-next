@@ -104,9 +104,9 @@ do
 			DMRAID_OPTS=${x#*=}
 			USE_DMRAID_NORMAL=1
 		;;
-		domultipath) 
-			good_msg "Booting with multipath activated." 
-			USE_MULTIPATH_NORMAL=1 
+		domultipath)
+			good_msg "Booting with multipath activated."
+			USE_MULTIPATH_NORMAL=1
 		;;
 		dozfs*)
 			USE_ZFS=1
@@ -851,7 +851,7 @@ fi
 if [ -f ${NEW_ROOT}/etc/initramfs.mounts ]; then
 	fslist=$(get_mounts_list)
 else
-	fslist="/usr" 
+	fslist="/usr"
 fi
 
 for fs in $fslist; do
