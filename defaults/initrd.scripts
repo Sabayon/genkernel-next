@@ -1065,6 +1065,10 @@ start_volumes() {
 }
 
 start_iscsi() {
+	if [ ! -e /usr/sbin/iscsistart ]; then
+		return 0  # disabled
+	fi
+
 	if [ ! -n "${ISCSI_NOIBFT}" ]
 	then
 		good_msg "Activating iSCSI via iBFT"
