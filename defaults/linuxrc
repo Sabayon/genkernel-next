@@ -289,12 +289,7 @@ else
 	bad_msg "Cannot find either udev or mdev"
 fi
 
-if is_udev
-then
-	# if udev, we can load the splash earlier
-	# In the plymouth case, udev will load KMS automatically
-	splashcmd init
-fi
+splash_init
 
 # Load modules listed in MY_HWOPTS if /lib/modules exists for the running kernel
 if [ -z "${DO_modules}" ]

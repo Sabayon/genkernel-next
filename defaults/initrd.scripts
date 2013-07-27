@@ -109,6 +109,14 @@ plymouth_newroot() {
 	is_plymouth_started && "${PLYMOUTH_BIN}" --newroot="${1}"
 }
 
+splash_init() {
+	if is_udev; then
+		# if udev, we can load the splash earlier
+		# In the plymouth case, udev will load KMS automatically
+		splashcmd init
+	fi
+}
+
 call_func_timeout() {
 	local func=$1 timeout=$2 pid watcher
 	[ $# -ne 2 ] && gen_die "call_func_timeout() called with $# arguments"
