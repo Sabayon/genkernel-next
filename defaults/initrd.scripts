@@ -836,6 +836,34 @@ wait_for_zfs() {
 	while [ ! -c /dev/zfs ]; do modprobe zfs 2> /dev/null; done;
 }
 
+zfs_init() {
+	# Set variables based on the value of REAL_ROOT
+	case "${REAL_ROOT}" in
+		ZFS=*)
+			ZFS_POOL=${REAL_ROOT#*=}
+			ZFS_POOL=${ZFS_POOL%%/*}
+			USE_ZFS=1
+		;;
+		ZFS)
+			USE_ZFS=1
+		;;
+	esac
+
+	# Verify that it is safe to use ZFS
+	if [ "USE_ZFS" = "1" ]
+	then
+		for i in /sbin/zfs /sbin/zpool
+		do
+			if [ ! -x ${i} ]
+			then
+				USE_ZFS=0
+				bad_msg 'Aborting use of zfs because ${i} not found!'
+				break
+			fi
+		done
+	fi
+}
+
 start_volumes() {
 	#good_msg 'Checking if volumes need to be started...'
 
