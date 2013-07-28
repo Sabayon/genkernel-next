@@ -284,6 +284,10 @@ setup_keymap
 if [ "${CDROOT}" != 1 ]
 then
 	start_luks
+fi
+
+if [ "${CDROOT}" != 1 ]
+then
 	if [ "${NORESUME}" != '1' ] && [ -n "${REAL_RESUME}" ]
 	then
 		case "${REAL_RESUME}" in
