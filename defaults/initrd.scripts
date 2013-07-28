@@ -209,8 +209,13 @@ uppercase() {
 	echo $1 | tr 'a-z' 'A-Z'
 }
 
+is_livecd() {
+	[ "${CDROOT}" = "1" ] && return 0
+	return 1
+}
+
 setup_real_root() {
-	if [ "${CDROOT}" = '0' ]
+	if ! is_livecd
 	then
 		if [ -z "${REAL_ROOT}" -a "${FAKE_ROOT}" != "/dev/ram0" ]
 		then
@@ -435,7 +440,7 @@ findnfsmount() {
 				NFSOPTIONS="${DEFAULT_NFSOPTIONS},${NFSOPTIONS}"
 			fi
 
-			if [ "${CDROOT}" != '0' ]
+			if is_livecd
 			then
 				good_msg "Attempting to mount NFS CD image on ${NFSROOT} with options ${NFSOPTIONS}"
 				mount -t nfs -o ${NFSOPTIONS} ${NFSROOT} ${CDROOT_PATH}
@@ -816,7 +821,7 @@ setup_keymap() {
 
 		[ "${DEVBIND}" = '1' ] && umount /dev
 
-		if [ -e /etc/sysconfig/keyboard -a "${CDROOT}" = '1' ]
+		if [ -e /etc/sysconfig/keyboard ] && is_livecd
 		then
 			mkdir -p ${NEW_ROOT}/etc/sysconfig/
 			cp /etc/sysconfig/keyboard ${NEW_ROOT}/etc/sysconfig/keyboard
@@ -1314,7 +1319,7 @@ sdelay() {
 	then
 		good_msg "Waiting ${SDELAY} seconds..."
 		sleep ${SDELAY}
-	elif [ "${CDROOT}" = '1' ]
+	elif is_livecd
 	then
 		good_msg 'Hint: Use scandelay[=seconds] if your live medium is slowand boot fails'
 	fi
@@ -1332,7 +1337,7 @@ verbose_kmsg() {
 
 
 cdupdate() {
-	if [ "${CDROOT}" = '1' ]
+	if is_livecd
 	then
 		if [ -x /${CDROOT_PATH}/cdupdate.sh ]
 		then

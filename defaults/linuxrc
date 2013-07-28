@@ -281,12 +281,9 @@ start_volumes
 setup_keymap
 
 # Initialize LUKS root device except for livecd's
-if [ "${CDROOT}" != 1 ]
-then
-	start_luks
-fi
+is_livecd || start_luks
 
-if [ "${CDROOT}" != 1 ]
+if ! is_livecd
 then
 	if [ "${NORESUME}" != '1' ] && [ -n "${REAL_RESUME}" ]
 	then
@@ -328,7 +325,7 @@ CHROOT="${NEW_ROOT}"
 # Run debug shell if requested
 rundebugshell "before setting up the root filesystem"
 
-if [ "${CDROOT}" = '1' ]
+if is_livecd
 then
 	good_msg "Making tmpfs for ${NEW_ROOT}"
 	mount -n -t tmpfs tmpfs "${NEW_ROOT}"
@@ -554,7 +551,7 @@ done
 # End determine root device
 
 # If CD root is set determine the looptype to boot
-if [ "${CDROOT}" = '1' ]
+if is_livecd
 then
 	good_msg 'Determining looptype ...'
 	cd "${NEW_ROOT}"
