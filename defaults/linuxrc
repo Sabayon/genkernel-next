@@ -283,41 +283,8 @@ setup_keymap
 # Initialize LUKS root device except for livecd's
 is_livecd || start_luks
 
-if ! is_livecd
-then
-	if [ "${NORESUME}" != '1' ] && [ -n "${REAL_RESUME}" ]
-	then
-		case "${REAL_RESUME}" in
-			LABEL=*|UUID=*)
-
-				RESUME_DEV=""
-				retval=1
-
-				if [ ${retval} -ne 0 ]; then
-					RESUME_DEV=$(findfs "${REAL_RESUME}" 2>/dev/null)
-					retval=$?
-				fi
-
-				if [ ${retval} -ne 0 ]; then
-					RESUME_DEV=$(busybox findfs "${REAL_RESUME}" 2>/dev/null)
-					retval=$?
-				fi
-
-				if [ ${retval} -ne 0 ]; then
-					RESUME_DEV=$(blkid -o device -l -t "${REAL_RESUME}")
-					retval=$?
-				fi
-
-				if [ ${retval} -eq 0 ] && [ -n "${RESUME_DEV}" ]; then
-					good_msg "Detected real_resume=${RESUME_DEV}"
-					REAL_RESUME="${RESUME_DEV}"
-				fi
-				;;
-		esac
-
-		do_resume
-	fi
-fi
+# Initialize resume from hibernation
+is_livecd || resume_init
 
 mkdir -p "${NEW_ROOT}"
 CHROOT="${NEW_ROOT}"

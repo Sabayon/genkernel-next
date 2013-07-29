@@ -1394,6 +1394,45 @@ rundebugshell() {
 	fi
 }
 
+resume_init() {
+	if [ -z "${REAL_RESUME}" ]; then
+		return 0
+	fi
+	if [ "${NORESUME}" = "1" ]; then
+		return 0
+	fi
+
+	case "${REAL_RESUME}" in
+		LABEL=*|UUID=*)
+
+			RESUME_DEV=""
+			retval=1
+
+			if [ ${retval} -ne 0 ]; then
+				RESUME_DEV=$(findfs "${REAL_RESUME}" 2>/dev/null)
+				retval=$?
+			fi
+
+			if [ ${retval} -ne 0 ]; then
+				RESUME_DEV=$(busybox findfs "${REAL_RESUME}" 2>/dev/null)
+				retval=$?
+			fi
+
+			if [ ${retval} -ne 0 ]; then
+				RESUME_DEV=$(blkid -o device -l -t "${REAL_RESUME}")
+				retval=$?
+			fi
+
+			if [ ${retval} -eq 0 ] && [ -n "${RESUME_DEV}" ]; then
+				good_msg "Detected real_resume=${RESUME_DEV}"
+				REAL_RESUME="${RESUME_DEV}"
+			fi
+			;;
+	esac
+
+	do_resume
+}
+
 do_resume() {
 	if [ -d /proc/suspend2 -o -d /sys/power/suspend2 -o -d /sys/power/tuxonice ]; then
 		tuxonice_resume
