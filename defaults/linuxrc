@@ -401,7 +401,7 @@ do
 	done
 
 
-	if [ "${CDROOT}" = 1 -a "${got_good_root}" = '1' -a "${REAL_ROOT}" != "/dev/nfs" ]
+	if is_livecd && [ "${got_good_root}" = '1' -a "${REAL_ROOT}" != "/dev/nfs" ]
 	then
 		# CD already mounted; no further checks necessary
 		break
