@@ -566,15 +566,16 @@ append_udev() {
 		rm -r "${TEMP}/initramfs-udev-temp"
 	fi
 
+	local udev_dir="$(pkg-config --variable udevdir udev)"
 	udev_files="
-		/lib/udev/rules.d/50-udev-default.rules
-		/lib/udev/rules.d/60-persistent-storage.rules
-		/lib/udev/rules.d/80-drivers.rules
+		${udev_dir}/rules.d/50-udev-default.rules
+		${udev_dir}/rules.d/60-persistent-storage.rules
+		${udev_dir}/rules.d/80-drivers.rules
 		/etc/udev/udev.conf
 	"
 	udev_maybe_files="
-		/lib/udev/rules.d/40-gentoo.rules
-		/lib/udev/rules.d/99-systemd.rules
+		${udev_dir}/rules.d/40-gentoo.rules
+		${udev_dir}/rules.d/99-systemd.rules
 		/etc/modprobe.d/blacklist.conf
 	"
 	is_maybe=0
@@ -597,8 +598,8 @@ append_udev() {
 
 	# Copy binaries
 	copy_binaries "${TEMP}/initramfs-udev-temp" \
-		/sbin/udevd /bin/udevadm /lib/udev/scsi_id \
-		/lib/udev/ata_id /lib/udev/mtd_probe
+		/sbin/udevd /bin/udevadm "${udev_dir}/scsi_id" \
+		"${udev_dir}/ata_id" "${udev_dir}/mtd_probe"
 
 	cd "${TEMP}/initramfs-udev-temp/"
 	log_future_cpio_content
