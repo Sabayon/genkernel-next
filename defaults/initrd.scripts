@@ -1646,3 +1646,45 @@ get_mount_device() {
 strip_mount_options() {
 	sed -r 's/(,|^)(no)?auto(,|$)/,/g'
 }
+
+# Read /etc/initramfs.mounts from ${NEW_ROOT} and mount the
+# listed filesystem mountpoints. For instance, /usr, which is
+# required by udev & systemd.
+ensure_initramfs_mounts() {
+	local fslist=
+
+	if [ -f "${NEW_ROOT}/etc/initramfs.mounts" ]; then
+		fslist="$(get_mounts_list)"
+	else
+		fslist="/usr"
+	fi
+
+	local dev= fstype= opts= mnt= cmd=
+	for fs in ${fslist}; do
+		dev=$(get_mount_device "${fs}")
+		[ -z "${dev}" ] && continue
+		# Resolve it like util-linux mount does
+		[ -L "${dev}" ] && dev=$(readlink "${dev}")
+		# In this case, it's probably part of the filesystem
+		# and not a mountpoint
+		[ -z "${dev}" ] && continue
+
+		fstype=$(get_mount_fstype "${fs}")
+		if get_mount_options "${fs}" | fgrep -q bind; then
+			opts="bind"
+			dev="${NEW_ROOT}${dev}"
+		else
+			# ro must be trailing, and the options will always
+			# contain at least 'defaults'
+			opts="$(get_mount_options ${fs} | strip_mount_options)"
+			opts="${opts},ro"
+		fi
+
+		mnt="${NEW_ROOT}${fs}"
+		cmd="mount -t ${fstype} -o ${opts} ${dev} ${mnt}"
+		good_msg "Mounting ${dev} as ${fs}: ${cmd}"
+		if ! ${cmd}; then
+			bad_msg "Unable to mount ${dev} for ${fs}"
+		fi
+	done
+}
