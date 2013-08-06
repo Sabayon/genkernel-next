@@ -1661,6 +1661,13 @@ ensure_initramfs_mounts() {
 
 	local dev= fstype= opts= mnt= cmd=
 	for fs in ${fslist}; do
+
+		mnt="${NEW_ROOT}${fs}"
+		if mountpoint -q "${mnt}"; then
+			good_msg "${fs} already mounted, skipping..."
+			continue
+		fi
+
 		dev=$(get_mount_device "${fs}")
 		[ -z "${dev}" ] && continue
 		# Resolve it like util-linux mount does
@@ -1680,7 +1687,6 @@ ensure_initramfs_mounts() {
 			opts="${opts},ro"
 		fi
 
-		mnt="${NEW_ROOT}${fs}"
 		cmd="mount -t ${fstype} -o ${opts} ${dev} ${mnt}"
 		good_msg "Mounting ${dev} as ${fs}: ${cmd}"
 		if ! ${cmd}; then
