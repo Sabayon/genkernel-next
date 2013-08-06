@@ -214,6 +214,11 @@ is_livecd() {
 	return 1
 }
 
+is_nfs() {
+	[ "${REAL_ROOT}" = "/dev/nfs" ] && return 0
+	return 1
+}
+
 setup_real_root() {
 	if ! is_livecd
 	then
@@ -1582,8 +1587,7 @@ livecd_init() {
 			mknod "${NEW_ROOT}/dev/tty1" c 4 1
 	fi
 
-	if [ "${REAL_ROOT}" != "/dev/nfs" ] && \
-		[ "${LOOPTYPE}" != "sgimips" ]; then
+	if ! is_nfs && [ "${LOOPTYPE}" != "sgimips" ]; then
 		bootstrap_cd
 	fi
 

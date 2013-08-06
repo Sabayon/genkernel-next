@@ -296,7 +296,7 @@ rundebugshell "before setting up the root filesystem"
 is_livecd && livecd_init
 
 # Determine root device
-good_msg 'Determining root device...'
+good_msg "Determining root device..."
 while true
 do
 	while [ "${got_good_root}" != '1' ]
@@ -388,8 +388,8 @@ do
 			prompt_user "REAL_ROOT" "root block device"
 			got_good_root=0
 
-		# Check for a block device or /dev/nfs
-		elif [ -b "${REAL_ROOT}" ] || [ "${REAL_ROOT}" = "/dev/nfs" ]
+		# Check for a block device or NFS
+		elif [ -b "${REAL_ROOT}" ] || is_nfs
 		then
 			got_good_root=1
 
@@ -401,7 +401,7 @@ do
 	done
 
 
-	if is_livecd && [ "${got_good_root}" = '1' -a "${REAL_ROOT}" != "/dev/nfs" ]
+	if [ "${got_good_root}" = "1" ] && is_livecd && ! is_nfs
 	then
 		# CD already mounted; no further checks necessary
 		break
@@ -426,7 +426,7 @@ do
 		fi
 
 		# Try to mount the device as ${NEW_ROOT}
-		if [ "${REAL_ROOT}" = '/dev/nfs' ]; then
+		if is_nfs; then
 			findnfsmount
 		else
 			# mount ro so fsck doesn't barf later
@@ -450,7 +450,7 @@ do
 			ensure_initramfs_mounts
 
 			# NFS does not need further checks here.
-			if [ "${REAL_ROOT}" = "/dev/nfs" ]; then
+			if is_nfs; then
 				break
 			fi
 
@@ -588,8 +588,9 @@ then
 
 	# Unpacking additional packages from NFS mount
 	# This is useful for adding kernel modules to /lib
-	# We do this now, so that additional packages can add whereever they want.
-	if [ "${REAL_ROOT}" = '/dev/nfs' ]
+	# We do this now, so that additional packages can add whereever
+	# they want.
+	if is_nfs
 	then
 		if [ -e "${CDROOT_PATH}/add" ]
 		then
