@@ -131,7 +131,7 @@ append_busybox() {
 
 	# Set up a few default symlinks
 	local default_applets="[ ash sh mount uname ls echo cut cat flock stty"
-	default_applets+=" readlink"
+	default_applets+=" readlink mountpoint"
 	for i in ${BUSYBOX_APPLETS:-${default_applets}}; do
 		rm -f ${TEMP}/initramfs-busybox-temp/bin/$i
 		ln -s busybox ${TEMP}/initramfs-busybox-temp/bin/$i ||
@@ -206,7 +206,6 @@ append_multipath(){
 
 	# Copy files
 	copy_binaries "${TEMP}/initramfs-multipath-temp" \
-		/bin/mountpoint \
 		/sbin/{multipath,kpartx,mpath_prio_*,devmap_name,dmsetup} \
 		/{lib,lib64}/{udev/scsi_id,multipath/*so}
 
