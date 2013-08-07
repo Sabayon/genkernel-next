@@ -276,7 +276,8 @@ append_lvm(){
 	mkdir -p "${TEMP}/initramfs-lvm-temp/etc/lvm/"
 	print_info 1 'LVM: Adding support (copying binaries from system)...'
 
-	udev_files=( $(qlist -e sys-fs/lvm2:0 | grep ^/lib/udev/rules.d) )
+	local udev_dir="$(pkg-config --variable udevdir udev)"
+	udev_files=( $(qlist -e sys-fs/lvm2:0 | grep ^${udev_dir}/rules.d) )
 	for f in "${udev_files[@]}"; do
 		[ -f "${f}" ] || gen_die "append_lvm: not a file: ${f}"
 		mkdir -p "${TEMP}/initramfs-lvm-temp"/$(dirname "${f}") || \
