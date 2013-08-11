@@ -6,11 +6,10 @@
 # Clean input/output
 exec >${CONSOLE} <${CONSOLE} 2>&1
 
-if [ "$$" != '1' ]
-then
-	echo '/linuxrc has to be run as the init process as the one'
-	echo 'with a PID of 1. Try adding init="/linuxrc" to the'
-	echo 'kernel command line or running "exec /linuxrc".'
+if [ "$$" != "1" ]; then
+	echo "/linuxrc has to be run as the init process as the one"
+	echo "with a PID of 1. Try adding init=/linuxrc to the"
+	echo "kernel command line or running "exec /linuxrc"."
 	exit 1
 fi
 
@@ -21,24 +20,22 @@ mount -t tmpfs none /dev/shm 2>&1
 
 /bin/busybox --install -s
 
-if [ "$0" = '/init' ]
-then
-	[ -e /linuxrc ] && rm /linuxrc
+if [ "$0" = "/init" ]; then
+	rm -f /linuxrc
 fi
 
 CMDLINE=$(cat /proc/cmdline)
-FAKE_ROOT=''
-FAKE_INIT=''
-REAL_INIT='/sbin/init'
-FAKE_ROOTFLAGS=''
-INIT_OPTS=''
-ROOTFSTYPE='auto'
+FAKE_ROOT=""
+FAKE_INIT=""
+REAL_INIT="/sbin/init"
+FAKE_ROOTFLAGS=""
+INIT_OPTS=""
+ROOTFSTYPE="auto"
 CRYPT_SILENT=0
-QUIET=''
+QUIET=""
 
 mkdir -p /etc/cmdline /etc/modprobe.d
-for x in ${CMDLINE}
-do
+for x in ${CMDLINE}; do
 	case "${x}" in
 		real_root=*)
 			REAL_ROOT=${x#*=}
@@ -103,8 +100,7 @@ do
 		dozfs*)
 			USE_ZFS=1
 
-			if [ "${x#*=}" = 'force' ]
-			then
+			if [ "${x#*=}" = "force" ]; then
 				ZPOOL_FORCE=-f
 			fi
 		;;
@@ -112,7 +108,7 @@ do
 			QUIET=1
 		;;
 		debug)
-			DEBUG='yes'
+			DEBUG="yes"
 		;;
 		scandelay=*)
 			SDELAY=${x#*=}
@@ -122,14 +118,14 @@ do
 		;;
 		doload=*)
 			MDOLIST=${x#*=}
-			MDOLIST=$(echo ${MDOLIST} | sed -e 's/,/ /g')
+			MDOLIST=$(echo ${MDOLIST} | sed -e "s/,/ /g")
 		;;
 		nodetect)
 			NODETECT=1
 		;;
 		noload=*)
 			MLIST=${x#*=}
-			MLIST="$(echo ${MLIST} | sed -e 's/,/ /g')"
+			MLIST="$(echo ${MLIST} | sed -e "s/,/ /g")"
 			export MLIST
 		;;
 		CONSOLE=*|console=*)
@@ -144,7 +140,7 @@ do
 		;;
 		lvmraid=*)
 			RAID_DEVICES="${x#*=}"
-			RAID_DEVICES="$(echo ${RAID_DEVICES} | sed -e 's/,/ /g')"
+			RAID_DEVICES="$(echo ${RAID_DEVICES} | sed -e "s/,/ /g")"
 			USE_LVM_NORMAL=1
 		;;
 		part=*)
@@ -311,7 +307,7 @@ splashcmd hasroot "${NEW_ROOT}"
 # Execute script on the cdrom just before boot to update things if necessary
 cdupdate
 
-if [ "${SUBDIR}" != '' ] && [ -e "${CHROOT}/${SUBDIR}" ]; then
+if [ "${SUBDIR}" != "" ] && [ -e "${CHROOT}/${SUBDIR}" ]; then
 	good_msg "Entering ${SUBDIR} to boot"
 	CHROOT="${CHROOT}/${SUBDIR}"
 fi
