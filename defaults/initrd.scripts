@@ -225,20 +225,14 @@ is_aufs() {
 }
 
 setup_real_root() {
-	if ! is_livecd
-	then
-		if [ -z "${REAL_ROOT}" -a "${FAKE_ROOT}" != "/dev/ram0" ]
-		then
-			REAL_ROOT="${FAKE_ROOT}"
-		fi
-		if [ -z "${REAL_INIT}" -a "${FAKE_INIT}" != "/linuxrc" ]
-		then
-			REAL_INIT="${FAKE_INIT}"
-		fi
-		if [ -z "${REAL_ROOTFLAGS}" ]
-		then
-			REAL_ROOTFLAGS="${FAKE_ROOTFLAGS}"
-		fi
+	if [ -z "${REAL_ROOT}" -a "${FAKE_ROOT}" != "/dev/ram0" ]; then
+		REAL_ROOT="${FAKE_ROOT}"
+	fi
+	if [ -z "${REAL_INIT}" -a "${FAKE_INIT}" != "/linuxrc" ]; then
+		REAL_INIT="${FAKE_INIT}"
+	fi
+	if [ -z "${REAL_ROOTFLAGS}" ]; then
+		REAL_ROOTFLAGS="${FAKE_ROOTFLAGS}"
 	fi
 }
 
