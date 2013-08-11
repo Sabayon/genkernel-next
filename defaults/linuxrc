@@ -310,8 +310,7 @@ splashcmd hasroot "${NEW_ROOT}"
 # Execute script on the cdrom just before boot to update things if necessary
 cdupdate
 
-if [ "${SUBDIR}" != '' -a -e "${CHROOT}/${SUBDIR}" ]
-then
+if [ "${SUBDIR}" != '' ] && [ -e "${CHROOT}/${SUBDIR}" ]; then
 	good_msg "Entering ${SUBDIR} to boot"
 	CHROOT="${CHROOT}/${SUBDIR}"
 fi
@@ -326,7 +325,8 @@ cd "${CHROOT}"
 mkdir -p "${CHROOT}/proc" "${CHROOT}/sys" "${CHROOT}/run"
 
 # If devtmpfs is mounted, try move it to the new root
-# If that fails, try to unmount all possible mounts of devtmpfs as stuff breaks otherwise
+# If that fails, try to unmount all possible mounts of devtmpfs as
+# stuff breaks otherwise
 for fs in /run /dev /sys /proc
 do
 	if grep -qs "$fs" /proc/mounts
@@ -350,7 +350,8 @@ fi
 # Run debug shell if requested
 rundebugshell "before entering switch_root"
 
-exec /sbin/switch_root -c "/dev/console" "${CHROOT}" "${REAL_INIT:-/sbin/init}" "${INIT_OPTS}"
+exec /sbin/switch_root -c "/dev/console" "${CHROOT}" \
+	"${REAL_INIT:-/sbin/init}" "${INIT_OPTS}"
 
 # If we get here, something bad has happened
 splashcmd verbose
