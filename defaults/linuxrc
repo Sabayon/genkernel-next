@@ -326,10 +326,7 @@ cd "${CHROOT}"
 
 move_mounts_to_chroot
 
-if [ ! -e "${CHROOT}/dev/console" ] || [ ! -e "${CHROOT}/dev/null" ]
-then
-	bad_msg "ERROR: your real /dev is missing console and null"
-elif [ -e /etc/initrd.splash -a ! -e "${CHROOT}/dev/tty1" ]
+if [ -e /etc/initrd.splash -a ! -e "${CHROOT}/dev/tty1" ]
 then
 	bad_msg "ERROR: your real /dev is missing tty1, required for splash"
 fi
