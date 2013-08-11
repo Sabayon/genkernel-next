@@ -323,22 +323,8 @@ devmgr_terminate
 good_msg "Booting (initramfs)"
 
 cd "${CHROOT}"
-mkdir -p "${CHROOT}/proc" "${CHROOT}/sys" "${CHROOT}/run"
 
-# If devtmpfs is mounted, try move it to the new root
-# If that fails, try to unmount all possible mounts of devtmpfs as
-# stuff breaks otherwise
-for fs in /run /dev /sys /proc
-do
-	if grep -qs "$fs" /proc/mounts
-	then
-		if ! mount --move $fs "${CHROOT}"$fs
-		then
-			umount $fs || \
-			bad_msg "Failed to move and unmount the ramdisk $fs!"
-		fi
-	fi
-done
+move_mounts_to_chroot
 
 if [ ! -e "${CHROOT}/dev/console" ] || [ ! -e "${CHROOT}/dev/null" ]
 then
