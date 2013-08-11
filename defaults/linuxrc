@@ -29,6 +29,7 @@ fi
 CMDLINE=$(cat /proc/cmdline)
 FAKE_ROOT=''
 FAKE_INIT=''
+REAL_INIT='/sbin/init'
 FAKE_ROOTFLAGS=''
 INIT_OPTS=''
 ROOTFSTYPE='auto'
@@ -351,12 +352,12 @@ fi
 rundebugshell "before entering switch_root"
 
 exec /sbin/switch_root -c "/dev/console" "${CHROOT}" \
-	"${REAL_INIT:-/sbin/init}" "${INIT_OPTS}"
+	"${REAL_INIT}" "${INIT_OPTS}"
 
 # If we get here, something bad has happened
 splashcmd verbose
 
-bad_msg "A fatal error has occured since ${REAL_INIT:-/sbin/init} did not"
+bad_msg "A fatal error has occured since ${REAL_INIT} did not"
 bad_msg "boot correctly. Trying to open a shell..."
 
 exec /bin/bash

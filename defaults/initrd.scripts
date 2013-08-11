@@ -2096,7 +2096,7 @@ rootdev_init() {
 					_msg="${_msg}, init will likely fail..."
 					bad_msg "${_msg}"
 				fi
-				if [ ! -x "${NEW_ROOT}${REAL_INIT:-/sbin/init}" ]; then
+				if [ ! -x "${NEW_ROOT}${REAL_INIT}" ]; then
 					_msg="The filesystem ${REAL_ROOT},"
 					_msg="${_msg} mounted at ${NEW_ROOT}"
 					_msg="${_msg} does not contain a valid"
