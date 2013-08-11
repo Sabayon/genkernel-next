@@ -219,6 +219,11 @@ is_nfs() {
 	return 1
 }
 
+is_aufs() {
+	[ "${USE_AUFS}" = "1" ] && return 0
+	return 1
+}
+
 setup_real_root() {
 	if ! is_livecd
 	then
@@ -1609,6 +1614,227 @@ livecd_init() {
 		bad_msg 'Could not find CD to boot, something else needed!'
 		CDROOT=0
 	fi
+}
+
+livecd_mount() {
+	# Let Init scripts know that we booted from CD
+	export CDBOOT
+	CDBOOT=1
+
+	good_msg 'Determining looptype ...'
+	cd "${NEW_ROOT}"
+
+	# Find loop and looptype
+	[ -z "${LOOP}" ] && find_loop
+	[ -z "${LOOPTYPE}" ] && find_looptype
+
+	cache_cd_contents
+
+	# If encrypted, find key and mount, otherwise mount as usual
+	if [ -n "${CRYPT_ROOT}" ]
+	then
+		CRYPT_ROOT_KEY="$(head -n 1 "${CDROOT_PATH}"/${CDROOT_MARKER})"
+		CRYPT_ROOT='/dev/loop0'
+		good_msg 'You booted an encrypted livecd' "${CRYPT_SILENT}"
+
+		losetup /dev/loop0 "${CDROOT_PATH}/${LOOPEXT}${LOOP}"
+		test_success 'Preparing loop filesystem'
+
+		start_luks
+
+		case ${LOOPTYPE} in
+			normal)
+				MOUNTTYPE="ext2"
+				;;
+			*)
+				MOUNTTYPE="${LOOPTYPE}"
+				;;
+		esac
+		mount -t "${MOUNTTYPE}" -o ro /dev/mapper/root \
+			"${NEW_ROOT}/mnt/livecd"
+		test_success 'Mount filesystem'
+		FS_LOCATION='mnt/livecd'
+	else
+		# Setup the loopback mounts, if unencrypted
+		if [ "${LOOPTYPE}" = 'normal' ]; then
+			_livecd_mount_normal
+			FS_LOCATION='mnt/livecd'
+		elif [ "${LOOPTYPE}" = 'squashfs' ]; then
+			_livecd_mount_squashfs
+			FS_LOCATION='mnt/livecd'
+		elif [ "${LOOPTYPE}" = 'gcloop' ]; then
+			_livecd_mount_gcloop
+			FS_LOCATION='mnt/livecd'
+		elif [ "${LOOPTYPE}" = 'zisofs' ]; then
+			FS_LOCATION="${CDROOT_PATH/\/}/${LOOPEXT}${LOOP}"
+		elif [ "${LOOPTYPE}" = 'noloop' ]; then
+			FS_LOCATION="${CDROOT_PATH/\/}"
+		elif [ "${LOOPTYPE}" = 'sgimips' ]; then
+			_livecd_mount_sgimips
+			FS_LOCATION='mnt/livecd'
+		fi
+	fi
+
+	is_nfs && _livecd_mount_unpack_nfs
+
+	# Manually copy livecd content to tmpfs if aufs is disabled
+	is_aufs || _livecd_mount_copy_content
+}
+
+# Unpack additional packages from NFS mount
+# This is useful for adding kernel modules to /lib
+# We do this now, so that additional packages can add whereever
+# they want.
+_livecd_mount_unpack_nfs() {
+	if [ -e "${CDROOT_PATH}/add" ]; then
+		for targz in $(ls ${CDROOT_PATH}/add/*.tar.gz); do
+			tarname=$(basename ${targz})
+			good_msg "Adding additional package ${tarname}"
+			(cd ${NEW_ROOT} ; /bin/tar -xzf ${targz})
+		done
+	fi
+}
+
+_livecd_mount_sgimips() {
+	# getdvhoff finds the starting offset (in bytes) of the squashfs
+	# partition on the cdrom and returns this offset for losetup
+	#
+	# All currently supported SGI Systems use SCSI CD-ROMs, so
+	# so we know that the CD-ROM is usually going to be /dev/sr0.
+	#
+	# We use the value given to losetup to set /dev/loop0 to point
+	# to the liveCD root partition, and then mount /dev/loop0 as
+	# the LiveCD rootfs
+	good_msg 'Locating the SGI LiveCD Root Partition'
+	echo ' ' | \
+		losetup -o $(getdvhoff "${NEW_ROOT}${REAL_ROOT}" 0) \
+			"${NEW_ROOT}${CDROOT_DEV}" \
+			"${NEW_ROOT}${REAL_ROOT}"
+	test_success 'losetup /dev/sr0 /dev/loop0'
+
+	good_msg 'Mounting the Root Partition'
+	mount -t squashfs -o ro "${NEW_ROOT}${CDROOT_DEV}" \
+		"${NEW_ROOT}/mnt/livecd"
+	test_success 'mount /dev/loop0 /'
+}
+
+_livecd_mount_gcloop() {
+	good_msg 'Mounting gcloop filesystem'
+	echo ' ' | losetup -E 19 -e ucl-0 -p0 \
+		"${NEW_ROOT}/dev/loop0" \
+		"${CDROOT_PATH}/${LOOPEXT}${LOOP}"
+	test_success 'losetup the loop device'
+
+	mount -t ext2 -o ro "${NEW_ROOT}/dev/loop0" "${NEW_ROOT}/mnt/livecd"
+	test_success 'Mount the losetup loop device'
+}
+
+_livecd_mount_normal() {
+	good_msg 'Mounting loop filesystem'
+	mount -t ext2 -o loop,ro \
+		"${CDROOT_PATH}/${LOOPEXT}${LOOP}" \
+		"${NEW_ROOT}/mnt/livecd"
+	test_success 'Mount filesystem'
+}
+
+_livecd_mount_squashfs() {
+	# if AUFS, redirect to the squashfs+aufs setup function
+	if is_aufs; then
+		good_msg 'Mounting squashfs & aufs filesystems'
+		setup_squashfs_aufs
+		test_success 'Mount filesystem'
+		return  # preserve old behaviour
+	fi
+
+	good_msg 'Mounting squashfs filesystem'
+	local cached_squashfs_path="${NEW_ROOT}/mnt/${LOOP}"
+	local squashfs_path="${CDROOT_PATH}/${LOOPEXT}${LOOP}"
+
+	# Upgrade to cached version if possible
+	if [ -n "${DO_cache}" ] && [ -f "${cached_squashfs_path}" ]; then
+		squashfs_path="${cached_squashfs_path}"
+	fi
+
+	mount -t squashfs -o loop,ro "${squashfs_path}" \
+		"${NEW_ROOT}/mnt/livecd" || {
+		bad_msg "squashfs filesystem could not be mounted."
+		do_rundebugshell
+	}
+}
+
+# Manually copy livecd read-only content into the final livecd root
+# filesystem directory, which has been mounted as tmpfs.
+_livecd_mount_copy_content() {
+	local fs_loc="${NEW_ROOT}/${FS_LOCATION}"
+
+	good_msg "Copying read-write image contents to tmpfs"
+	# Copy over stuff that should be writable
+	(
+		cd "${fs_loc}" && cp -a ${ROOT_TREES} "${NEW_ROOT}"
+	) || {
+		bad_msg "Copy failed, dropping into a shell."
+		do_rundebugshell
+	}
+
+	# Now we do the links.
+	for x in ${ROOT_LINKS}; do
+
+		if [ -L "${fs_loc}/${x}" ]; then
+			ln -s "$(readlink ${fs_loc}/${x})" "${x}" 2>/dev/null
+			continue
+		fi
+
+		# List all subdirectories of x
+		find "${fs_loc}/${x}" -type d 2>/dev/null | \
+			while read directory; do
+
+			# Strip the prefix of the FS_LOCATION
+			directory="${directory#${fs_loc}/}"
+
+			# Skip this directory if we already linked a parent
+			# directory
+			if [ "${current_parent}" != "" ]; then
+				var=$(echo "${directory}" | \
+					grep "^${current_parent}")
+				if [ "${var}" != "" ]; then
+					continue
+				fi
+			fi
+
+			local root_d="${NEW_ROOT}/${directory}"
+			local fsloc_d="${FS_LOCATION}/${directory}"
+
+			# Test if the directory exists already
+			if [ ! -e "/${root_d}" ]; then
+				# It does not exist, make a link to the livecd
+				ln -s "/${FS_LOCATION}/${directory}" \
+					"${directory}" 2>/dev/null
+				current_parent="${directory}"
+				continue
+			fi
+
+			# It does exist, link all the individual files
+			local fs_d="/${fs_loc}/${directory}"
+
+			for file in $(ls "${fs_d}"); do
+				[ -d "${fs_d}/${file}" ] && continue
+				[ -e "${root_d}/${file}" ] && continue
+
+				ln -s "/${fsloc_d}/${file}" \
+					"${directory}/${file}" 2> /dev/null
+			done
+
+		done
+
+	done
+
+	mkdir initramfs proc tmp sys run 2>/dev/null
+	chmod 1777 tmp
+
+	# have handy /mnt/cdrom (CDROOT_PATH) as well
+	_new_cdroot="${NEW_ROOT}${CDROOT_PATH}"
+	[ ! -d "${_new_cdroot}" ] && mkdir -p "${_new_cdroot}"
+	mount --bind "${CDROOT_PATH}" "${_new_cdroot}"
 }
 
 get_mounts_list() {
