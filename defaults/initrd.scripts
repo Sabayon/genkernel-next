@@ -553,6 +553,15 @@ devmgr_init() {
 	fi
 }
 
+# Terminate the device manager, this happens right before pivot_root
+devmgr_terminate() {
+	if is_udev; then
+		udevadm settle
+		udevadm control --exit || bad_msg "Unable to terminate udevd"
+	fi
+	# mdev doesn't require anything, it seems
+}
+
 mount_devfs () {
 	# Use devtmpfs if enabled in kernel,
 	# else tmpfs. Always run mdev just in case
