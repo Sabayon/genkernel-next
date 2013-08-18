@@ -472,33 +472,37 @@ findnfsmount() {
 }
 
 find_real_device() {
-	local DEVICE="${1}"
-	case "${DEVICE}" in
-		UUID\=*|LABEL\=*)
+	local device="${1}"
+	local out=
+	case "${device}" in
+		UUID=*|LABEL=*)
 			local REAL_DEVICE=""
 			local retval=1
 
 			if [ "${retval}" -ne 0 ]; then
-				REAL_DEVICE=$(findfs "${DEVICE}" 2>/dev/null)
+				REAL_DEVICE=$(findfs "${device}" 2>/dev/null)
 				retval=$?
 			fi
 
 			if [ "$retval" -ne 0 ]; then
-				REAL_DEVICE=$(busybox findfs "${DEVICE}" 2>/dev/null)
+				REAL_DEVICE=$(busybox findfs "${device}" 2>/dev/null)
 				retval=$?
 			fi
 
 			if [ "${retval}" -ne 0 ]; then
-				REAL_DEVICE=$(blkid -o device -l -t "${DEVICE}")
+				REAL_DEVICE=$(blkid -o device -l -t "${device}")
 				retval=$?
 			fi
 
 			if [ "${retval}" -eq 0 ] && [ -n "${REAL_DEVICE}" ]; then
-				DEVICE="${REAL_DEVICE}"
+				out="${REAL_DEVICE}"
 			fi
 		;;
+		*)
+			out="${device}"
+		;;
 	esac
-	echo -n "${DEVICE}"
+	echo -n "${out}"
 }
 
 get_device_fstype() {
@@ -1194,10 +1198,11 @@ open_luks() {
 			prompt_user "LUKS_KEYDEV" "${LUKS_NAME} key device"
 			KEYDEV_ERROR=0
 		else
-			LUKS_DEVICE=$(find_real_device "${LUKS_DEVICE}")
+			local luks_dev=$(find_real_device "${LUKS_DEVICE}")
+			[ -n "${luks_dev}" ] && LUKS_DEVICE="${luks_dev}"  # otherwise hope...
 
-			setup_md_device ${LUKS_DEVICE}
-			/sbin/cryptsetup isLuks ${LUKS_DEVICE}
+			setup_md_device "${LUKS_DEVICE}"
+			/sbin/cryptsetup isLuks "${LUKS_DEVICE}"
 			if [ $? -ne 0 ]
 			then
 				bad_msg "The LUKS device ${LUKS_DEVICE} does not contain a LUKS header" ${CRYPT_SILENT}
@@ -1217,7 +1222,7 @@ open_luks() {
 					if [ ! -e "${mntkey}${LUKS_KEY}" ]
 					then
 						REAL_LUKS_KEYDEV=$(find_real_device "${LUKS_KEYDEV}")
-						if [ -b "${REAL_LUKS_KEYDEV}" ]
+						if [ -b "${REAL_LUKS_KEYDEV}" ] && [ -n "${REAL_LUKS_KEYDEV}" ]
 						then good_msg "Using key device ${REAL_LUKS_KEYDEV}." ${CRYPT_SILENT}
 						else
 							good_msg "Please insert removable device ${LUKS_KEYDEV} for ${LUKS_NAME}" ${CRYPT_SILENT}
@@ -1228,7 +1233,7 @@ open_luks() {
 								count=$((count-1))
 								sleep 1
 								REAL_LUKS_KEYDEV=$(find_real_device "${LUKS_KEYDEV}")
-								if [ -b "${REAL_LUKS_KEYDEV}" ]
+								if [ -b "${REAL_LUKS_KEYDEV}" ] && [ -n "${REAL_LUKS_KEYDEV}" ]
 								then
 									good_msg "Removable device ${REAL_LUKS_KEYDEV} detected." ${CRYPT_SILENT}
 									break
