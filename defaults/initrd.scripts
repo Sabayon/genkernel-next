@@ -1926,7 +1926,7 @@ fstype_init() {
 		# start BTRFS volume detection, if available
 		[ -x /sbin/btrfs ] && /sbin/btrfs device scan
 	elif [ -z "${fstype}" ]; then
-		warn_msg "Unable to detect the filesystem type of ${REAL_ROOT}"
+		warn_msg "Unable to detect the filesystem type (empty variable)"
 	fi
 }
 
