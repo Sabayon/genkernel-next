@@ -501,6 +501,17 @@ find_real_device() {
 	echo -n "${DEVICE}"
 }
 
+get_device_fstype() {
+	local device=$(find_real_device "${1}")
+	if [ -n "${device}" ]; then
+		blkid -o value -s TYPE "${device}"
+		return ${?}  # readability
+	else
+		echo "Cannot resolve device: ${1}" >&2
+		return 1
+	fi
+}
+
 check_loop() {
 	if [ "${LOOP}" = '' -o ! -e "${CDROOT_PATH}/${LOOP}" ]
 	then
