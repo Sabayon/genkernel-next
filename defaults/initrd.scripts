@@ -1952,6 +1952,8 @@ rootdev_init() {
 						continue
 					fi
 					;;
+				# move this cruft into a separate function? do we really need
+				# the crazy root=ZFS= thing? can't we just detect the fstype?
 				ZFS*)
 					if [ "${USE_ZFS}" = '0' ]; then
 						prompt_user "REAL_ROOT" "root block device"
@@ -2038,6 +2040,7 @@ rootdev_init() {
 
 		good_msg "Mounting ${REAL_ROOT} as root..."
 
+		# TODO: determine if it's possible to move this crufty thing into fstype_init
 		if [ "${ROOTFSTYPE}" = 'zfs' ]
 		then
 			if [ "$(zfs get -H -o value mountpoint ${REAL_ROOT})" = 'legacy' ]
