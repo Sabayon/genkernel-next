@@ -1161,6 +1161,9 @@ start_iscsi() {
 # It is either the root or a swap, other devices are supported in the scripts provided with sys-fs/cryptsetup-luks
 # $1 - root/swap
 open_luks() {
+	# TODO(lxnay): what has been seen, cannot be unseen.
+	# TODO(lxnay): there is so much wrong in this function...
+
 	# please use 'tr' and this line, or remove it
 	# eval local TYPE=$(uppercase $1)
 
@@ -1328,6 +1331,7 @@ start_luks() {
 		fi
 	fi
 
+	# TODO(lxnay): this sleep 6 thing is hurting my eyes sooooo much.
 	# same for swap, but no need to sleep if root was unencrypted
 	[ -n "${CRYPT_SWAP_KEY}" ] && [ -z "${CRYPT_SWAP_KEYDEV}" ] \
 		&& { [ -z "${CRYPT_ROOT}" ] && sleep 6; bootstrap_key "SWAP"; }
@@ -1363,7 +1367,6 @@ verbose_kmsg() {
 	# if QUIET is set make the kernel less chatty
 	[ -n "$QUIET" ] && echo '6' > /proc/sys/kernel/printk
 }
-
 
 cdupdate() {
 	if is_livecd
@@ -1977,7 +1980,7 @@ rootdev_init() {
 
 		good_msg "Mounting ${REAL_ROOT} as root..."
 
-		# TODO: determine if it's possible to move this crufty thing into fstype_init
+		# TODO(lxnay): determine if it's possible to move this crufty thing into fstype_init
 		if [ "${ROOTFSTYPE}" = 'zfs' ]
 		then
 			if [ "$(zfs get -H -o value mountpoint ${REAL_ROOT})" = 'legacy' ]
