@@ -184,9 +184,7 @@ append_blkid(){
 	cd ${TEMP}
 	mkdir -p "${TEMP}/initramfs-blkid-temp/"
 
-	if [[ "${DISKLABEL}" = "1" ]]; then
-		copy_binaries "${TEMP}"/initramfs-blkid-temp/ /sbin/blkid
-	fi
+	copy_binaries "${TEMP}"/initramfs-blkid-temp/ /sbin/blkid
 
 	cd "${TEMP}/initramfs-blkid-temp/"
 	log_future_cpio_content
