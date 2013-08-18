@@ -295,9 +295,6 @@ INITIALIZATION
 *--genzimage*::
 	Make and install kernelz image from 'arch/powerpc/boot/zImage.initrd'.
 
-*--*[*no-*]*disklabel*::
-    Includes or excludes disk label and uuid support in your initrd.
-
 *--*[*no-*]*luks*::
 	Includes or excludes Luks support from static binaries if they exist on
 	the system.

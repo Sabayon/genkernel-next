@@ -939,7 +939,7 @@ create_initramfs() {
 
 	append_data 'btrfs' "${BTRFS}"
 
-	append_data 'blkid' "${DISKLABEL}"
+	append_data 'blkid'
 
 	append_data 'splash' "${SPLASH}"
 
