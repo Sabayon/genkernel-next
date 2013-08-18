@@ -1435,15 +1435,7 @@ resume_init() {
 		bad_msg "Something bad may happen, crossing fingers"
 	fi
 
-	do_resume
-}
-
-do_resume() {
-	if [ -d /proc/suspend2 -o -d /sys/power/suspend2 -o -d /sys/power/tuxonice ]; then
-		tuxonice_resume
-	else
-		swsusp_resume
-	fi
+	swsusp_resume
 }
 
 swsusp_resume() {
@@ -1451,61 +1443,6 @@ swsusp_resume() {
 	local device=$(ls -lL "${REAL_RESUME}" | sed 's/\  */ /g' | cut -d \  -f 5-6 | sed 's/,\ */:/')
 	[ -f /sys/power/resume -a -n "${device}" ] && \
 		echo "${device}" > /sys/power/resume
-}
-
-tuxonice_resume() {
-	local splash_theme
-	if grep "splash=" /proc/cmdline > /dev/null 2>&1; then
-		splash_theme=$(cat /proc/cmdline | sed 's/.*splash=/splash=/' | sed 's/ .*//' | sed 's/.*theme://' | sed 's/,.*//')
-	fi
-
-	local tuxonice_userui_program="/sys/power/tuxonice/user_interface/program"
-	local tuxonice_do_resume="/sys/power/tuxonice/do_resume"
-	local tuxonice_resumedev="/sys/power/tuxonice/resume"
-	local tuxonice_replace_swsusp="/sys/power/tuxonice/replace_swsusp"
-
-	#
-	# Backward compatibility
-	#
-	if [ -e /sys/power/suspend2 ]; then
-		tuxonice_userui_program="/sys/power/suspend2/user_interface/program"
-		tuxonice_do_resume="/sys/power/suspend2/do_resume"
-		tuxonice_resumedev="/sys/power/suspend2/resume"
-		tuxonice_replace_swsusp="/sys/power/suspend2/replace_swsusp"
-	elif [ -e /proc/suspend2 ]; then
-		tuxonice_userui_program="/proc/suspend2/userui_program"
-		tuxonice_do_resume="/proc/suspend2/do_resume"
-		tuxonice_resumedev="/proc/suspend2/resume"
-		tuxonice_replace_swsusp="/proc/suspend2/replace_swsusp"
-	fi
-
-	# if 'use_swsusp' is given, use swsusp instead
-	if grep "use_swsusp" /proc/cmdline > /dev/null 2>&1; then
-		echo 0 > ${tuxonice_replace_swsusp}
-		swsusp_resume
-		return
-	fi
-
-	modules_scan tuxonice
-
-	# we both configure tuxonice and activate resuming,
-	# however the kernel will resume only if an image is found
-
-	if ! grep suspend_noui /proc/cmdline > /dev/null 2>&1; then
-		which suspend2ui_text > /dev/null 2>&1 && which suspend2ui_text > "${tuxonice_userui_program}"
-		which tuxoniceui_text > /dev/null 2>&1 && which tuxoniceui_text > "${tuxonice_userui_program}"
-
-		if [ -n "${splash_theme}" ]; then
-			ln -s /etc/splash/${splash_theme} /etc/splash/suspend2
-			ln -s /etc/splash/${splash_theme} /etc/splash/tuxonice
-
-			which suspend2ui_fbsplash > /dev/null 2>&1 && which suspend2ui_fbsplash > "${tuxonice_userui_program}"
-			which tuxoniceui_fbsplash > /dev/null 2>&1 && which tuxoniceui_fbsplash > "${tuxonice_userui_program}"
-		fi
-
-	fi
-	echo "${REAL_RESUME}" > "${tuxonice_resumedev}"
-	echo > "${tuxonice_do_resume}"
 }
 
 find_loop() {
