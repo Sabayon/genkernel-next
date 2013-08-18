@@ -274,6 +274,9 @@ INITIALIZATION
 *--*[*no-*]*e2fsprogs*::
     Includes or excludes e2fsprogs.
 
+*--*[*no-*]*btrfs*::
+    Includes or excludes btrfs RAID support.
+
 *--*[*no-*]*zfs*::
     Includes or excludes ZFS support.
 
