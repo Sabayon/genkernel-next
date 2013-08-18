@@ -1936,28 +1936,12 @@ rootdev_init() {
 			case "${REAL_ROOT}" in
 				LABEL=*|UUID=*)
 
-					ROOT_DEV=""
-					retval=1
-
-					if [ ${retval} -ne 0 ]; then
-						ROOT_DEV=$(findfs "${REAL_ROOT}" 2>/dev/null)
-						retval=$?
-					fi
-
-					if [ ${retval} -ne 0 ]; then
-						ROOT_DEV=$(busybox findfs "${REAL_ROOT}" 2>/dev/null)
-						retval=$?
-					fi
-
-					if [ ${retval} -ne 0 ]; then
-						ROOT_DEV=$(blkid -o device -l -t "${REAL_ROOT}")
-						retval=$?
-					fi
-
-					if [ ${retval} -eq 0 ] && [ -n "${ROOT_DEV}" ]; then
-						good_msg "Detected real_root=${ROOT_DEV}"
-						REAL_ROOT="${ROOT_DEV}"
+					local root_dev=$(find_real_device "${REAL_ROOT}")
+					if [ -n "${root_dev}" ]; then
+						REAL_ROOT="${root_dev}"
+						good_msg "Detected root: ${REAL_ROOT}"
 					else
+						bad_msg "Unable to resolve root: ${REAL_ROOT}"
 						prompt_user "REAL_ROOT" "root block device"
 						got_good_root=0
 						continue
