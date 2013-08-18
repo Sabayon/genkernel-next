@@ -372,7 +372,7 @@ append_btrfs() {
 	fi
 
 	# Copy binaries
-	copy_binaries "${TEMP}/initramfs-btrfs-temp" /sbin/{btrfs,btrfsctl}
+	copy_binaries "${TEMP}/initramfs-btrfs-temp" /sbin/btrfs
 
 	cd "${TEMP}/initramfs-btrfs-temp/"
 	log_future_cpio_content

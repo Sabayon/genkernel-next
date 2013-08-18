@@ -1380,7 +1380,7 @@ cdupdate() {
 
 setup_btrfsctl() {
 	# start BTRFS volume detection, if available
-	[ -x /sbin/btrfsctl ] && /sbin/btrfsctl -a
+	[ -x /sbin/btrfs ] && /sbin/btrfs device scan
 }
 
 setup_md_device() {
