@@ -1383,11 +1383,6 @@ cdupdate() {
 	fi
 }
 
-setup_btrfsctl() {
-	# start BTRFS volume detection, if available
-	[ -x /sbin/btrfs ] && /sbin/btrfs device scan
-}
-
 setup_md_device() {
 	local device
 
@@ -1925,6 +1920,16 @@ ensure_initramfs_mounts() {
 	done
 }
 
+fstype_init() {
+	local fstype="${1}"
+	if [ "${fstype}" = "btrfs" ]; then
+		# start BTRFS volume detection, if available
+		[ -x /sbin/btrfs ] && /sbin/btrfs device scan
+	elif [ -z "${fstype}" ]; then
+		warn_msg "Unable to detect the filesystem type of ${REAL_ROOT}"
+	fi
+}
+
 rootdev_init() {
 	good_msg "Initializing root device..."
 
@@ -2027,7 +2032,11 @@ rootdev_init() {
 			break
 		fi
 
-		good_msg "Mounting $REAL_ROOT as root..."
+		local fstype=$(get_device_fstype "${REAL_ROOT}")
+		good_msg "Initializing ${REAL_ROOT} if needed, detected fstype: ${fstype}"
+		fstype_init "${fstype}"
+
+		good_msg "Mounting ${REAL_ROOT} as root..."
 
 		if [ "${ROOTFSTYPE}" = 'zfs' ]
 		then
