@@ -1431,33 +1431,14 @@ resume_init() {
 		return 0
 	fi
 
-	case "${REAL_RESUME}" in
-		LABEL=*|UUID=*)
-
-			RESUME_DEV=""
-			retval=1
-
-			if [ ${retval} -ne 0 ]; then
-				RESUME_DEV=$(findfs "${REAL_RESUME}" 2>/dev/null)
-				retval=$?
-			fi
-
-			if [ ${retval} -ne 0 ]; then
-				RESUME_DEV=$(busybox findfs "${REAL_RESUME}" 2>/dev/null)
-				retval=$?
-			fi
-
-			if [ ${retval} -ne 0 ]; then
-				RESUME_DEV=$(blkid -o device -l -t "${REAL_RESUME}")
-				retval=$?
-			fi
-
-			if [ ${retval} -eq 0 ] && [ -n "${RESUME_DEV}" ]; then
-				good_msg "Detected real_resume=${RESUME_DEV}"
-				REAL_RESUME="${RESUME_DEV}"
-			fi
-			;;
-	esac
+	local resume_dev=$(find_real_device "${REAL_RESUME}")
+	if [ -n "${resume_dev}" ]; then
+		REAL_RESUME="${resume_dev}"
+		good_msg "Detected real_resume=${resume_dev}"
+	else
+		bad_msg "Cannot resolve real_resume=${REAL_RESUME}"
+		bad_msg "Something bad may happen, crossing fingers"
+	fi
 
 	do_resume
 }
