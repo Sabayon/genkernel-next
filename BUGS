@@ -1,9 +1,0 @@
-# $Id$
-
-This file lists out some known bugs which need to be resolved.  Do not file bug
-reports against these bugs, as the genkernel team is aware of them and has yet
-to implement a solution.
-
-- busybox linked statically against glibc fails DNS resolution without the
-  /lib/libnss_{files,dns}.so libraries
-- 
