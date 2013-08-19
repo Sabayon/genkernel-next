@@ -9,7 +9,7 @@
 # - This file should not override previously defined variables, as their values may
 #   originate from user changes to /etc/genkernel.conf .
 
-BUSYBOX_VER="${BUSYBOX_VER:-VERSION_BUSYBOX}"
+BUSYBOX_VER="${BUSYBOX_VER:-1.20.2}"
 BUSYBOX_SRCTAR="${BUSYBOX_SRCTAR:-${DISTDIR}/busybox-${BUSYBOX_VER}.tar.bz2}"
 BUSYBOX_DIR="${BUSYBOX_DIR:-busybox-${BUSYBOX_VER}}"
 BUSYBOX_BINCACHE="${BUSYBOX_BINCACHE:-%%CACHE%%/busybox-${BUSYBOX_VER}-%%ARCH%%.tar.bz2}"
