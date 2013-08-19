@@ -102,6 +102,8 @@ longusage() {
   echo "	--no-e2fsprogs		Exclude e2fsprogs"
   echo "	--zfs			Include ZFS support"
   echo "	--no-zfs		Exclude ZFS support"
+  echo "	--btrfs			Include BTRFS support"
+  echo "	--no-btrfs		Exclude BTRFS support"
   echo "	--multipath		Include Multipath support"
   echo "	--no-multipath	Exclude Multipath support"
   echo "	--iscsi			Include iSCSI support"
@@ -313,6 +315,10 @@ parse_cmdline() {
 		--zfs|--no-zfs)
 			CMD_ZFS=`parse_optbool "$*"`
 			print_info 2 "CMD_ZFS: ${CMD_ZFS}"
+			;;
+		--btrfs|--no-btrfs)
+			CMD_BTRFS=`parse_optbool "$*"`
+			print_info 2 "CMD_BTRFS: ${CMD_BTRFS}"
 			;;
 		--virtio)
 			CMD_VIRTIO=`parse_optbool "$*"`
