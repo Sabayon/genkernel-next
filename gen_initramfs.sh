@@ -843,6 +843,15 @@ append_auxilary() {
         cp "${GK_SHARE}/defaults/initrd.scripts" "${TEMP}/initramfs-aux-temp/etc/initrd.scripts"
     fi
 
+    if [ -d "${GK_SHARE}/arch/${ARCH}/initrd.d" ]
+    then
+        cp -r "${GK_SHARE}/arch/${ARCH}/initrd.d" \
+            "${TEMP}/initramfs-aux-temp/etc/"
+    else
+        cp -r "${GK_SHARE}/defaults/initrd.d" \
+            "${TEMP}/initramfs-aux-temp/etc/"
+    fi
+
     if [ -f "${GK_SHARE}/arch/${ARCH}/initrd.defaults" ]
     then
         cp "${GK_SHARE}/arch/${ARCH}/initrd.defaults" "${TEMP}/initramfs-aux-temp/etc/initrd.defaults"
@@ -879,6 +888,7 @@ append_auxilary() {
     chmod +x "${TEMP}/initramfs-aux-temp/init"
     chmod +x "${TEMP}/initramfs-aux-temp/etc/initrd.scripts"
     chmod +x "${TEMP}/initramfs-aux-temp/etc/initrd.defaults"
+    chmod +x "${TEMP}/initramfs-aux-temp/etc/initrd.d/"*
 
     if isTrue ${NETBOOT}
     then
