@@ -154,8 +154,8 @@ KERNEL COMPILATION
     kernel and modules have been compiled.
 
 *--*[*no-*]*static*::
-	Builds, or does not build a monolithic kernel without any modules on any
-	initial ramdisks.
+    Builds, or does not build a monolithic kernel without any modules on any
+    initial ramdisks.
 
 
 KERNEL LOCATIONS
@@ -256,8 +256,8 @@ INITIALIZATION
         the system.
 
 *--*[*no-*]*lvm*::
-	Adds or skips in LVM support from static binaries if they exist on the
-	system,  or compile static LVM binaries if static ones do not exist.
+    Adds or skips in LVM support from static binaries if they exist on the
+    system,  or compile static LVM binaries if static ones do not exist.
 
 *--*[*no-*]*mdadm*::
     Includes or excludes mdadm/mdmon support.
@@ -296,15 +296,15 @@ INITIALIZATION
     Specifies a user created busybox config.
 
 *--genzimage*::
-	Make and install kernelz image from 'arch/powerpc/boot/zImage.initrd'.
+    Make and install kernelz image from 'arch/powerpc/boot/zImage.initrd'.
 
 *--*[*no-*]*luks*::
-	Includes or excludes Luks support from static binaries if they exist on
-	the system.
+    Includes or excludes Luks support from static binaries if they exist on
+    the system.
 
 *--*[*no-*]*gpg*::
-	Includes or excludes support for GnuPG 1.x, the portable standalone branch
-	of GnuPG. A key can be made from
+    Includes or excludes support for GnuPG 1.x, the portable standalone branch
+    of GnuPG. A key can be made from
     `gpg --symmetric -o /path/to/LUKS-key.gpg /path/to/LUKS-key` .
     After that, re-point the *root_key* argument to the new .gpg file.
 
@@ -331,7 +331,7 @@ INTERNALS
     Sets genkernel's temporary working directory to <dir>.
 
 *--*[*no-*]*postclear*::
-	Clears or skips clearing all tmp files and caches after genkernel has run.
+    Clears or skips clearing all tmp files and caches after genkernel has run.
 
 
 OUTPUT SETTINGS
@@ -372,16 +372,16 @@ OUTPUT SETTINGS
     For multiple files, separate the filenames with a comma.
 
 *--*[*no-*]*integrated-initramfs*::
-	Builds or does not build the generated initramfs into the kernel instead
-	of keeping it as a separate file.
+    Builds or does not build the generated initramfs into the kernel instead
+    of keeping it as a separate file.
 
 *--*[*no-*]*compress-initramfs*, *--*[*no-*]*compress-initrd*::
-	Compresses or does not compress the generated initramfs.
+    Compresses or does not compress the generated initramfs.
 
 *--compress-initramfs-type*=<arg>::
-	Compression type for initramfs (best, xz, lzma, bzip2, gzip, lzop).
-	"Best" causes selection of the best available algorithm that is selected
-	in your kernel configuration.
+    Compression type for initramfs (best, xz, lzma, bzip2, gzip, lzop).
+    "Best" causes selection of the best available algorithm that is selected
+    in your kernel configuration.
 
 
 RAMDISK OPTIONS
@@ -526,8 +526,8 @@ which the ramdisk scripts would recognize.
 
 *part*[=<0,1>]::
 *partitionable*::
-	Enable/Disable partitionable RAIDs (metadata 0.x) during auto-run.
-	Standalone *part* and *partitionable* keywords for kernel compatability.
+    Enable/Disable partitionable RAIDs (metadata 0.x) during auto-run.
+    Standalone *part* and *partitionable* keywords for kernel compatability.
 
 *iscsi_initiatorname*=<...>::
 *iscsi_target*=<...>::

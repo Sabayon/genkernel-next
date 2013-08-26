@@ -7,10 +7,10 @@
 exec >${CONSOLE} <${CONSOLE} 2>&1
 
 if [ "$$" != "1" ]; then
-	echo "/linuxrc has to be run as the init process as the one"
-	echo "with a PID of 1. Try adding init=/linuxrc to the"
-	echo "kernel command line or running "exec /linuxrc"."
-	exit 1
+    echo "/linuxrc has to be run as the init process as the one"
+    echo "with a PID of 1. Try adding init=/linuxrc to the"
+    echo "kernel command line or running "exec /linuxrc"."
+    exit 1
 fi
 
 mount -t proc -o noexec,nosuid,nodev proc /proc >/dev/null 2>&1
@@ -21,7 +21,7 @@ mount -t tmpfs none /dev/shm 2>&1
 /bin/busybox --install -s
 
 if [ "$0" = "/init" ]; then
-	rm -f /linuxrc
+    rm -f /linuxrc
 fi
 
 CMDLINE=$(cat /proc/cmdline)
@@ -36,207 +36,207 @@ QUIET=""
 
 mkdir -p /etc/cmdline /etc/modprobe.d
 for x in ${CMDLINE}; do
-	case "${x}" in
-		real_root=*)
-			REAL_ROOT=${x#*=}
-		;;
-		root=*)
-			FAKE_ROOT=${x#*=}
-		;;
-		subdir=*)
-			SUBDIR=${x#*=}
-		;;
-		real_init=*)
-			REAL_INIT=${x#*=}
-		;;
-		init=*)
-			FAKE_INIT=${x#*=}
-		;;
-		init_opts=*)
-			INIT_OPTS=${x#*=}
-		;;
-		cdroot)
-			CDROOT=1
-		;;
-		cdroot=*)
-			CDROOT=1
-			CDROOT_DEV=${x#*=}
-		;;
-		cdroot_type=*)
-			CDROOT_TYPE=${x#*=}
-		;;
-		cdroot_marker=*)
-			CDROOT_MARKER=${x#*=}
-		;;
-		loop=*)
-			LOOP=${x#*=}
-		;;
-		looptype=*)
-			LOOPTYPE=${x#*=}
-		;;
-		isoboot=*)
-			ISOBOOT=${x#*=}
-		;;
-		domdev)
-			USE_MDEV=1
-		;;
-		dolvm)
-			USE_LVM_NORMAL=1
-		;;
-		domdadm)
-			USE_MDADM=1
-		;;
-		dodmraid)
-			USE_DMRAID_NORMAL=1
-		;;
-		dodmraid=*)
-			DMRAID_OPTS=${x#*=}
-			USE_DMRAID_NORMAL=1
-		;;
-		domultipath)
-			good_msg "Booting with multipath activated."
-			USE_MULTIPATH_NORMAL=1
-		;;
-		dozfs*)
-			USE_ZFS=1
+    case "${x}" in
+        real_root=*)
+            REAL_ROOT=${x#*=}
+        ;;
+        root=*)
+            FAKE_ROOT=${x#*=}
+        ;;
+        subdir=*)
+            SUBDIR=${x#*=}
+        ;;
+        real_init=*)
+            REAL_INIT=${x#*=}
+        ;;
+        init=*)
+            FAKE_INIT=${x#*=}
+        ;;
+        init_opts=*)
+            INIT_OPTS=${x#*=}
+        ;;
+        cdroot)
+            CDROOT=1
+        ;;
+        cdroot=*)
+            CDROOT=1
+            CDROOT_DEV=${x#*=}
+        ;;
+        cdroot_type=*)
+            CDROOT_TYPE=${x#*=}
+        ;;
+        cdroot_marker=*)
+            CDROOT_MARKER=${x#*=}
+        ;;
+        loop=*)
+            LOOP=${x#*=}
+        ;;
+        looptype=*)
+            LOOPTYPE=${x#*=}
+        ;;
+        isoboot=*)
+            ISOBOOT=${x#*=}
+        ;;
+        domdev)
+            USE_MDEV=1
+        ;;
+        dolvm)
+            USE_LVM_NORMAL=1
+        ;;
+        domdadm)
+            USE_MDADM=1
+        ;;
+        dodmraid)
+            USE_DMRAID_NORMAL=1
+        ;;
+        dodmraid=*)
+            DMRAID_OPTS=${x#*=}
+            USE_DMRAID_NORMAL=1
+        ;;
+        domultipath)
+            good_msg "Booting with multipath activated."
+            USE_MULTIPATH_NORMAL=1
+        ;;
+        dozfs*)
+            USE_ZFS=1
 
-			if [ "${x#*=}" = "force" ]; then
-				ZPOOL_FORCE=-f
-			fi
-		;;
-		quiet)
-			QUIET=1
-		;;
-		debug)
-			DEBUG="yes"
-		;;
-		scandelay=*)
-			SDELAY=${x#*=}
-		;;
-		scandelay)
-			SDELAY=3
-		;;
-		doload=*)
-			MDOLIST=${x#*=}
-			MDOLIST=$(echo ${MDOLIST} | sed -e "s/,/ /g")
-		;;
-		nodetect)
-			NODETECT=1
-		;;
-		noload=*)
-			MLIST=${x#*=}
-			MLIST="$(echo ${MLIST} | sed -e "s/,/ /g")"
-			export MLIST
-		;;
-		CONSOLE=*|console=*)
-			CONSOLE=${x#*=}
-			CONSOLE=$(basename ${CONSOLE})
-		;;
-		splash)
-			PLYMOUTH=1
-		;;
-		splash=*)
-			FBSPLASH=1
-		;;
-		lvmraid=*)
-			RAID_DEVICES="${x#*=}"
-			RAID_DEVICES="$(echo ${RAID_DEVICES} | sed -e "s/,/ /g")"
-			USE_LVM_NORMAL=1
-		;;
-		part=*)
-			MDPART=${x#*=}
-		;;
-		part|partitionable)
-			MDPART=1
-		;;
-		ip=*)
-			IP=${x#*=}
-		;;
-		nfsroot=*)
-			NFSROOT=${x#*=}
-		;;
+            if [ "${x#*=}" = "force" ]; then
+                ZPOOL_FORCE=-f
+            fi
+        ;;
+        quiet)
+            QUIET=1
+        ;;
+        debug)
+            DEBUG="yes"
+        ;;
+        scandelay=*)
+            SDELAY=${x#*=}
+        ;;
+        scandelay)
+            SDELAY=3
+        ;;
+        doload=*)
+            MDOLIST=${x#*=}
+            MDOLIST=$(echo ${MDOLIST} | sed -e "s/,/ /g")
+        ;;
+        nodetect)
+            NODETECT=1
+        ;;
+        noload=*)
+            MLIST=${x#*=}
+            MLIST="$(echo ${MLIST} | sed -e "s/,/ /g")"
+            export MLIST
+        ;;
+        CONSOLE=*|console=*)
+            CONSOLE=${x#*=}
+            CONSOLE=$(basename ${CONSOLE})
+        ;;
+        splash)
+            PLYMOUTH=1
+        ;;
+        splash=*)
+            FBSPLASH=1
+        ;;
+        lvmraid=*)
+            RAID_DEVICES="${x#*=}"
+            RAID_DEVICES="$(echo ${RAID_DEVICES} | sed -e "s/,/ /g")"
+            USE_LVM_NORMAL=1
+        ;;
+        part=*)
+            MDPART=${x#*=}
+        ;;
+        part|partitionable)
+            MDPART=1
+        ;;
+        ip=*)
+            IP=${x#*=}
+        ;;
+        nfsroot=*)
+            NFSROOT=${x#*=}
+        ;;
 
-		iscsi_initiatorname=*)
-			ISCSI_INITIATORNAME=${x#*=}
-		;;
-		iscsi_target=*)
-			ISCSI_TARGET=${x#*=}
-		;;
-		iscsi_tgpt=*)
-			ISCSI_TGPT=${x#*=}
-		;;
-		iscsi_address=*)
-			ISCSI_ADDRESS=${x#*=}
-		;;
-		iscsi_port=*)
-			ISCSI_PORT=${x#*=}
-		;;
-		iscsi_username=*)
-			ISCSI_USERNAME=${x#*=}
-		;;
-		iscsi_password=*)
-			ISCSI_PASSWORD=${x#*=}
-		;;
-		iscsi_username_in=*)
-			ISCSI_USERNAME_IN=${x#*=}
-		;;
-		iscsi_password_in=*)
-			ISCSI_PASSWORD_IN=${x#*=}
-		;;
-		iscsi_debug=*)
-			ISCSI_DEBUG=${x#*=}
-		;;
-		iscsi_noibft)
-			ISCSI_NOIBFT=1
-		;;
+        iscsi_initiatorname=*)
+            ISCSI_INITIATORNAME=${x#*=}
+        ;;
+        iscsi_target=*)
+            ISCSI_TARGET=${x#*=}
+        ;;
+        iscsi_tgpt=*)
+            ISCSI_TGPT=${x#*=}
+        ;;
+        iscsi_address=*)
+            ISCSI_ADDRESS=${x#*=}
+        ;;
+        iscsi_port=*)
+            ISCSI_PORT=${x#*=}
+        ;;
+        iscsi_username=*)
+            ISCSI_USERNAME=${x#*=}
+        ;;
+        iscsi_password=*)
+            ISCSI_PASSWORD=${x#*=}
+        ;;
+        iscsi_username_in=*)
+            ISCSI_USERNAME_IN=${x#*=}
+        ;;
+        iscsi_password_in=*)
+            ISCSI_PASSWORD_IN=${x#*=}
+        ;;
+        iscsi_debug=*)
+            ISCSI_DEBUG=${x#*=}
+        ;;
+        iscsi_noibft)
+            ISCSI_NOIBFT=1
+        ;;
 
-		crypt_root=*)
-			CRYPT_ROOT=${x#*=}
-		;;
-		crypt_swap=*)
-			CRYPT_SWAP=${x#*=}
-		;;
-		root_key=*)
-			CRYPT_ROOT_KEY=${x#*=}
-		;;
-		root_keydev=*)
-			CRYPT_ROOT_KEYDEV=${x#*=}
-		;;
-		root_trim=*)
-			CRYPT_ROOT_TRIM=${x#*=}
-		;;
+        crypt_root=*)
+            CRYPT_ROOT=${x#*=}
+        ;;
+        crypt_swap=*)
+            CRYPT_SWAP=${x#*=}
+        ;;
+        root_key=*)
+            CRYPT_ROOT_KEY=${x#*=}
+        ;;
+        root_keydev=*)
+            CRYPT_ROOT_KEYDEV=${x#*=}
+        ;;
+        root_trim=*)
+            CRYPT_ROOT_TRIM=${x#*=}
+        ;;
 
-		swap_key=*)
-			CRYPT_SWAP_KEY=${x#*=}
-		;;
-		swap_keydev=*)
-			CRYPT_SWAP_KEYDEV=${x#*=}
-		;;
-		real_resume=*|resume=*)
-			REAL_RESUME=${x#*=}
-		;;
-		noresume)
-			NORESUME=1
-		;;
-		crypt_silent)
-			CRYPT_SILENT=1
-		;;
-		real_rootflags=*)
-			REAL_ROOTFLAGS=${x#*=}
-		;;
-		rootflags=*)
-			FAKE_ROOTFLAGS=${x#*=}
-		;;
-		rootfstype=*)
-			ROOTFSTYPE=${x#*=}
-		;;
-		keymap=*)
-			keymap=${x#*=}
-		;;
-		aufs)
-			USE_AUFS=1
-		;;
-	esac
+        swap_key=*)
+            CRYPT_SWAP_KEY=${x#*=}
+        ;;
+        swap_keydev=*)
+            CRYPT_SWAP_KEYDEV=${x#*=}
+        ;;
+        real_resume=*|resume=*)
+            REAL_RESUME=${x#*=}
+        ;;
+        noresume)
+            NORESUME=1
+        ;;
+        crypt_silent)
+            CRYPT_SILENT=1
+        ;;
+        real_rootflags=*)
+            REAL_ROOTFLAGS=${x#*=}
+        ;;
+        rootflags=*)
+            FAKE_ROOTFLAGS=${x#*=}
+        ;;
+        rootfstype=*)
+            ROOTFSTYPE=${x#*=}
+        ;;
+        keymap=*)
+            keymap=${x#*=}
+        ;;
+        aufs)
+            USE_AUFS=1
+        ;;
+    esac
 done
 
 quiet_kmsg
@@ -305,8 +305,8 @@ splashcmd hasroot "${NEW_ROOT}"
 cdupdate
 
 if [ "${SUBDIR}" != "" ] && [ -e "${CHROOT}/${SUBDIR}" ]; then
-	good_msg "Entering ${SUBDIR} to boot"
-	CHROOT="${CHROOT}/${SUBDIR}"
+    good_msg "Entering ${SUBDIR} to boot"
+    CHROOT="${CHROOT}/${SUBDIR}"
 fi
 
 verbose_kmsg
@@ -323,7 +323,7 @@ move_mounts_to_chroot
 rundebugshell "before entering switch_root"
 
 exec /sbin/switch_root -c "/dev/console" "${CHROOT}" \
-	"${REAL_INIT}" "${INIT_OPTS}"
+    "${REAL_INIT}" "${INIT_OPTS}"
 
 # If we get here, something bad has happened
 splashcmd verbose

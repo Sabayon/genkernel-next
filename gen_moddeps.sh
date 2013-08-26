@@ -3,17 +3,17 @@
 
 modules_kext()
 {
-	KEXT=".ko"
-	echo ${KEXT}
+    KEXT=".ko"
+    echo ${KEXT}
 }
 
 modules_dep_list()
 {
-	KEXT=$(modules_kext)
-	if [ -f ${INSTALL_MOD_PATH}/lib/modules/${KV}/modules.dep ]
-	then
-		cat ${INSTALL_MOD_PATH}/lib/modules/${KV}/modules.dep | grep ${1}${KEXT}\: | cut -d\:  -f2
-	fi
+    KEXT=$(modules_kext)
+    if [ -f ${INSTALL_MOD_PATH}/lib/modules/${KV}/modules.dep ]
+    then
+        cat ${INSTALL_MOD_PATH}/lib/modules/${KV}/modules.dep | grep ${1}${KEXT}\: | cut -d\:  -f2
+    fi
 }
 
 # Pass module deps list
@@ -34,42 +34,42 @@ strip_mod_paths()
 
 gen_deps()
 {
-	local modlist
-	local deps
+    local modlist
+    local deps
 
-	for x in ${*}
-	do
-		echo ${x} >> ${TEMP}/moddeps
-		modlist=`modules_dep_list ${x}`
-		if [ "${modlist}" != "" -a "${modlist}" != " " ]
-		then
-			deps=`strip_mod_paths ${modlist}`
-		else
-			deps=""
-		fi
-		for y in ${deps}
-		do
-			echo ${y} >> ${TEMP}/moddeps
-		done
-	done
+    for x in ${*}
+    do
+        echo ${x} >> ${TEMP}/moddeps
+        modlist=`modules_dep_list ${x}`
+        if [ "${modlist}" != "" -a "${modlist}" != " " ]
+        then
+            deps=`strip_mod_paths ${modlist}`
+        else
+            deps=""
+        fi
+        for y in ${deps}
+        do
+            echo ${y} >> ${TEMP}/moddeps
+        done
+    done
 }
 
 gen_dep_list()
 {
-	if [ "${ALLRAMDISKMODULES}" = "1" ]; then
-		strip_mod_paths $(find "${INSTALL_MOD_PATH}/lib/modules/${KV}" -name "*$(modules_kext)") | sort
-	else
-		local group_modules
-		rm -f ${TEMP}/moddeps > /dev/null
+    if [ "${ALLRAMDISKMODULES}" = "1" ]; then
+        strip_mod_paths $(find "${INSTALL_MOD_PATH}/lib/modules/${KV}" -name "*$(modules_kext)") | sort
+    else
+        local group_modules
+        rm -f ${TEMP}/moddeps > /dev/null
 
-		for group_modules in ${!MODULES_*}; do
-			gen_deps ${!group_modules}
-		done
+        for group_modules in ${!MODULES_*}; do
+            gen_deps ${!group_modules}
+        done
 
-		# Only list each module once
-		if [ -f ${TEMP}/moddeps ]
-		then
-		    cat ${TEMP}/moddeps | sort | uniq
-		fi
-	fi
+        # Only list each module once
+        if [ -f ${TEMP}/moddeps ]
+        then
+            cat ${TEMP}/moddeps | sort | uniq
+        fi
+    fi
 }

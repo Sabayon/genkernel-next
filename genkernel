@@ -16,11 +16,11 @@ small_die() {
 }
 
 parse_opt() {
-	case "$1" in
-		*\=*)
-			echo "$1" | cut -f2- -d=
-		;;
-	esac
+    case "$1" in
+        *\=*)
+            echo "$1" | cut -f2- -d=
+        ;;
+    esac
 }
 
 # We don't know where our config is, so we check for it, and default to using
@@ -28,8 +28,8 @@ parse_opt() {
 
 # NOTE: We are look for --config=... in a way that doesn't modify $@ since we access that again, later
 for (( i=1; i<=$# ; i=i+1 )); do
-	eval arg="\$$i"
-	[[ "${arg}" = --config=* ]] && CMD_GK_CONFIG=`parse_opt "${arg}"`
+    eval arg="\$$i"
+    [[ "${arg}" = --config=* ]] && CMD_GK_CONFIG=`parse_opt "${arg}"`
 done
 
 # Pull in our configuration
@@ -52,27 +52,27 @@ source ${GK_SHARE}/gen_bootloader.sh || gen_die "Could not read ${GK_SHARE}/gen_
 TEMP=${TMPDIR}/$RANDOM.$RANDOM.$RANDOM.$$
 
 trap_cleanup(){
-	# Call exit code of 1 for failure
-	cleanup
-	exit 1
+    # Call exit code of 1 for failure
+    cleanup
+    exit 1
 }
 
 cleanup(){
     if [ -n "$TEMP" -a -d "$TEMP" ]; then
-	rm -rf "$TEMP"
+    rm -rf "$TEMP"
     fi
 
     if isTrue ${POSTCLEAR}
     then
-	    echo
-	    print_info 1 'RUNNING FINAL CACHE/TMP CLEANUP'
-	    print_info 1 "CACHE_DIR: ${CACHE_DIR}"
-	    CLEAR_CACHE_DIR='yes'
-	    setup_cache_dir
-	    echo
-	    print_info 1 "TMPDIR: ${TMPDIR}"
-	    clear_tmpdir
-	    fi
+        echo
+        print_info 1 'RUNNING FINAL CACHE/TMP CLEANUP'
+        print_info 1 "CACHE_DIR: ${CACHE_DIR}"
+        CLEAR_CACHE_DIR='yes'
+        setup_cache_dir
+        echo
+        print_info 1 "TMPDIR: ${TMPDIR}"
+        clear_tmpdir
+        fi
 }
 
 trap trap_cleanup SIGHUP SIGQUIT SIGINT SIGTERM SIGKILL
@@ -84,15 +84,15 @@ BUILD_MODULES=0
 Options=$* # Save for later
 while [ $# -gt 0 ]
 do
-	Option=$1; shift
-	parse_cmdline $Option
+    Option=$1; shift
+    parse_cmdline $Option
 done
 
 # Check if no action is specified...
 if [ "${BUILD_KERNEL}" = '0' -a "${BUILD_RAMDISK}" = '0' ]
 then
-	usage
-	exit 1
+    usage
+    exit 1
 fi
 
 clear_log
@@ -114,10 +114,10 @@ echo
 
 # Merge modules_load from config
 for group_modules in ${!AMODULES_*}; do
-	group="$(echo $group_modules | cut -d_ -f2)"
-	eval cmodules="\$$group_modules"
-	eval MODULES_${group}=\"\${MODULES_${group}} ${cmodules}\"
-	print_info 1 "<config> Merged AMODULES_${group}:'${cmodules}' into MODULES_${group}"
+    group="$(echo $group_modules | cut -d_ -f2)"
+    eval cmodules="\$$group_modules"
+    eval MODULES_${group}=\"\${MODULES_${group}} ${cmodules}\"
+    print_info 1 "<config> Merged AMODULES_${group}:'${cmodules}' into MODULES_${group}"
 done
 
 
@@ -143,65 +143,65 @@ print_info 1 ".. with config file ${KERNEL_CONFIG}"
 # Check BOOTDIR is mounted
 if ! isTrue ${CMD_INSTALL}
 then
-	isTrue ${MOUNTBOOT} && print_info 2 'Skipping automatic mount of boot'
+    isTrue ${MOUNTBOOT} && print_info 2 'Skipping automatic mount of boot'
 else
-	[[ -d ${BOOTDIR} ]] || gen_die "${BOOTDIR} is not a directory"
-	
-	if ! egrep -q "[[:space:]]${BOOTDIR}[[:space:]]" /proc/mounts
-	then
-		if egrep -q "^[^#].+[[:space:]]${BOOTDIR}[[:space:]]" /etc/fstab
-		then
-			if isTrue ${MOUNTBOOT}
-			then
-				if ! mount ${BOOTDIR}
-				then
-					print_warning 1 "${BOLD}WARNING${NORMAL}: Failed to mount ${BOOTDIR}!"
-					echo
-				else
-					print_info 1 "mount: ${BOOTDIR} mounted successfully!"
-				fi
-			else
-				print_warning 1 "${BOLD}WARNING${NORMAL}: No mounted ${BOOTDIR} partition detected!"
-				print_warning 1 "         Run ``mount ${BOOTDIR}`` to mount it!"
-				echo
-			fi
-		fi
-	elif isBootRO
-	then
-		if isTrue ${MOUNTBOOT}
-		then
-			if ! mount -o remount,rw ${BOOTDIR}
-			then
-				print_warning 1 "${BOLD}WARNING${NORMAL}: Failed to remount ${BOOTDIR} RW!"
-				echo
-			else
-				print_info 1 "mount: ${BOOTDIR} remounted read/write successfully!"
-				BOOTRW=1
-			fi
-		fi
-	fi
+    [[ -d ${BOOTDIR} ]] || gen_die "${BOOTDIR} is not a directory"
+    
+    if ! egrep -q "[[:space:]]${BOOTDIR}[[:space:]]" /proc/mounts
+    then
+        if egrep -q "^[^#].+[[:space:]]${BOOTDIR}[[:space:]]" /etc/fstab
+        then
+            if isTrue ${MOUNTBOOT}
+            then
+                if ! mount ${BOOTDIR}
+                then
+                    print_warning 1 "${BOLD}WARNING${NORMAL}: Failed to mount ${BOOTDIR}!"
+                    echo
+                else
+                    print_info 1 "mount: ${BOOTDIR} mounted successfully!"
+                fi
+            else
+                print_warning 1 "${BOLD}WARNING${NORMAL}: No mounted ${BOOTDIR} partition detected!"
+                print_warning 1 "         Run ``mount ${BOOTDIR}`` to mount it!"
+                echo
+            fi
+        fi
+    elif isBootRO
+    then
+        if isTrue ${MOUNTBOOT}
+        then
+            if ! mount -o remount,rw ${BOOTDIR}
+            then
+                print_warning 1 "${BOLD}WARNING${NORMAL}: Failed to remount ${BOOTDIR} RW!"
+                echo
+            else
+                print_info 1 "mount: ${BOOTDIR} remounted read/write successfully!"
+                BOOTRW=1
+            fi
+        fi
+    fi
 fi
 
 ## Check whether another Genkernel is running
 #GENPIDS="`ps -C genkernel --no-headers -o pid | wc -l`"
 #if [ "${GENPIDS}" -gt '3' ]
 #then
-#	[ "${GENPIDS}" -gt '4' ] && EX='s'
-#	print_warning 1 "${BOLD}WARNING${NORMAL}: Another Genkernel instance is running under"
-#	print_warning 1 "         process ID${EX} " 0
-#	GENPIDS=`ps -C genkernel --no-headers -o pid`
-#	echo -n "${GENPIDS}" | sed -e "s/$$//; s/ /, /g"
-#	echo 'halting...'
-#	echo
-#	print_warning 1 'Running multiple genkernels on the same source tree will cause data loss!'
-#	print_info 1 "Press ^C to halt; ^D to continue [ ${BOLD}if${NORMAL} you know what you're doing! ]"
-#	echo
-#	CTEMP="${TEMP}"
-#	TEMP=${TMPDIR-/tmp}
-#	TEMP=${TEMP}/genkernel.$RANDOM.$RANDOM.$RANDOM.$$
-#	print_info 1 'thread: Running multiple genkernels may cause problems!'
-#	print_info 1 "thread: Temporary files reallocated to ${TEMP}..."
-#	echo
+#   [ "${GENPIDS}" -gt '4' ] && EX='s'
+#   print_warning 1 "${BOLD}WARNING${NORMAL}: Another Genkernel instance is running under"
+#   print_warning 1 "         process ID${EX} " 0
+#   GENPIDS=`ps -C genkernel --no-headers -o pid`
+#   echo -n "${GENPIDS}" | sed -e "s/$$//; s/ /, /g"
+#   echo 'halting...'
+#   echo
+#   print_warning 1 'Running multiple genkernels on the same source tree will cause data loss!'
+#   print_info 1 "Press ^C to halt; ^D to continue [ ${BOLD}if${NORMAL} you know what you're doing! ]"
+#   echo
+#   CTEMP="${TEMP}"
+#   TEMP=${TMPDIR-/tmp}
+#   TEMP=${TEMP}/genkernel.$RANDOM.$RANDOM.$RANDOM.$$
+#   print_info 1 'thread: Running multiple genkernels may cause problems!'
+#   print_info 1 "thread: Temporary files reallocated to ${TEMP}..."
+#   echo
 #fi
 
 KERNCACHE_IS_VALID=0
@@ -212,101 +212,101 @@ fi
 
 if [ ${BUILD_KERNEL} = '1' -a "${KERNCACHE_IS_VALID}" = '0' ]
 then
-	# Configure kernel
-	config_kernel
-	
-	# Make prepare
-	if [ "${ARCH_HAVENOPREPARE}" = '' ]
-	then
-		compile_generic prepare kernel
-	fi
-	
-	# KV may have changed due to the configuration
-	get_KV
+    # Configure kernel
+    config_kernel
+    
+    # Make prepare
+    if [ "${ARCH_HAVENOPREPARE}" = '' ]
+    then
+        compile_generic prepare kernel
+    fi
+    
+    # KV may have changed due to the configuration
+    get_KV
 
-	compile_kernel
+    compile_kernel
 
-	# Compile modules
-	if [ "${BUILD_MODULES}" = '1' -a "${BUILD_STATIC}" = '0' ]
-	then
-		compile_modules
-	fi
+    # Compile modules
+    if [ "${BUILD_MODULES}" = '1' -a "${BUILD_STATIC}" = '0' ]
+    then
+        compile_modules
+    fi
 
-	if [ "${SAVE_CONFIG}" = '1' ]
-	then
-		print_info 1 "Copying config for successful build to /etc/kernels/kernel-config-${ARCH}-${KV}"
-		[ ! -e '/etc/kernels' ] && mkdir -p /etc/kernels
-		cp "${KERNEL_OUTPUTDIR}/.config" "/etc/kernels/kernel-config-${ARCH}-${KV}" || \
-			print_warning "Unable to copy the kernel configuration file."
-			# Just a warning because ordinary users are not allowed to write in /etc
-	fi
+    if [ "${SAVE_CONFIG}" = '1' ]
+    then
+        print_info 1 "Copying config for successful build to /etc/kernels/kernel-config-${ARCH}-${KV}"
+        [ ! -e '/etc/kernels' ] && mkdir -p /etc/kernels
+        cp "${KERNEL_OUTPUTDIR}/.config" "/etc/kernels/kernel-config-${ARCH}-${KV}" || \
+            print_warning "Unable to copy the kernel configuration file."
+            # Just a warning because ordinary users are not allowed to write in /etc
+    fi
 fi
 
 if isTrue "${CMD_INSTALL}"
 then
-	if [ "${KERNCACHE}" != "" -a "${KERNCACHE_IS_VALID}" != "0" ] 
-	then
-		gen_kerncache_extract_kernel
-	fi
+    if [ "${KERNCACHE}" != "" -a "${KERNCACHE_IS_VALID}" != "0" ] 
+    then
+        gen_kerncache_extract_kernel
+    fi
 fi
 
 if [ "${KERNCACHE}" != "" -a "${KERNCACHE_IS_VALID}" != "0" ] 
 then
-	[ "${BUILD_STATIC}" = '0' ] && gen_kerncache_extract_modules
-	gen_kerncache_extract_config
+    [ "${BUILD_STATIC}" = '0' ] && gen_kerncache_extract_modules
+    gen_kerncache_extract_config
 fi
 
 # Run callback
 if [ "${CMD_CALLBACK}" != "" ]
 then
-	print_info 1 "" 1 0
-	print_info 1 "Preparing to run callback: \"${CMD_CALLBACK}\"" 0
+    print_info 1 "" 1 0
+    print_info 1 "Preparing to run callback: \"${CMD_CALLBACK}\"" 0
 
-	CALLBACK_ESCAPE=0
-	CALLBACK_COUNT=0
+    CALLBACK_ESCAPE=0
+    CALLBACK_COUNT=0
 
-	trap "CALLBACK_ESCAPE=1" TERM KILL INT QUIT ABRT
-	while [[ "${CALLBACK_ESCAPE}" = '0' && ${CALLBACK_COUNT} -lt 5 ]]
-	do
-		sleep 1; echo -n '.';
-		let CALLBACK_COUNT=${CALLBACK_COUNT}+1
-	done
+    trap "CALLBACK_ESCAPE=1" TERM KILL INT QUIT ABRT
+    while [[ "${CALLBACK_ESCAPE}" = '0' && ${CALLBACK_COUNT} -lt 5 ]]
+    do
+        sleep 1; echo -n '.';
+        let CALLBACK_COUNT=${CALLBACK_COUNT}+1
+    done
 
-	if [ "${CALLBACK_ESCAPE}" = '0' ]
-	then
-		echo
-		echo
-		eval ${CMD_CALLBACK} | tee -a ${LOGFILE}
-		CMD_STATUS="${PIPESTATUS[0]}"
-		echo
-		print_info 1 "<<< Callback exit status: ${CMD_STATUS}"
-		[ "${CMD_STATUS}" != '0' ] && gen_die '--callback failed!'
-	else
-		echo
-		print_info 1 ">>> Callback cancelled..."
-	fi
-	trap - TERM KILL INT QUIT ABRT
-	print_info 1 "" 1 0
+    if [ "${CALLBACK_ESCAPE}" = '0' ]
+    then
+        echo
+        echo
+        eval ${CMD_CALLBACK} | tee -a ${LOGFILE}
+        CMD_STATUS="${PIPESTATUS[0]}"
+        echo
+        print_info 1 "<<< Callback exit status: ${CMD_STATUS}"
+        [ "${CMD_STATUS}" != '0' ] && gen_die '--callback failed!'
+    else
+        echo
+        print_info 1 ">>> Callback cancelled..."
+    fi
+    trap - TERM KILL INT QUIT ABRT
+    print_info 1 "" 1 0
 fi
 
 if [ "${BUILD_RAMDISK}" = '1' ]
 then
-	if [ "${BUSYBOX}" = '1' ]
-	then
-		# Compile Busybox
-		compile_busybox
-	fi
+    if [ "${BUSYBOX}" = '1' ]
+    then
+        # Compile Busybox
+        compile_busybox
+    fi
 
-	# Compile initramfs
-	create_initramfs
+    # Compile initramfs
+    create_initramfs
 else
-	print_info 1 'initrd: Not building since only the kernel was requested...'
+    print_info 1 'initrd: Not building since only the kernel was requested...'
 fi
 
 if isTrue "${INTEGRATED_INITRAMFS}" #|| [ "${BUILD_KERNEL}" = '1' -a "${KERNCACHE_IS_VALID}" == "0" ]
 then
-	# We build the kernel a second time to include the initramfs
-	compile_kernel
+    # We build the kernel a second time to include the initramfs
+    compile_kernel
 fi
 
 [ "${KERNCACHE}" != "" ] && gen_kerncache
@@ -318,58 +318,58 @@ fi
 
 if [ "${BUILD_KERNEL}" = '1' ]
 then
-	if isTrue "${CMD_INSTALL}"
-	then
-		set_bootloader
-	fi
-	print_info 1 ''
-	print_info 1 "Kernel compiled successfully!"
-	print_info 1 ''
-	print_info 1 'Required Kernel Parameters:'
-	print_info 1 '    root=/dev/$ROOT'
-	if [ "${BUILD_RAMDISK}" = '0' ]
-	then
-		print_info 1 '    [ And "vga=0x317 splash=verbose" if you use a framebuffer ]'
-		print_info 1 ''
-		print_info 1 '    Where $ROOT is the device node for your root partition as the'
-		print_info 1 '    one specified in /etc/fstab'
-	else
-		print_info 1 ''
-		print_info 1 '    Where $ROOT is the device node for your root partition as the'
-		print_info 1 '    one specified in /etc/fstab'
-		print_info 1 ''
-		print_info 1 "If you require Genkernel's hardware detection features; you MUST"
-		print_info 1 'tell your bootloader to use the provided INITRAMFS file.'
-	fi
+    if isTrue "${CMD_INSTALL}"
+    then
+        set_bootloader
+    fi
+    print_info 1 ''
+    print_info 1 "Kernel compiled successfully!"
+    print_info 1 ''
+    print_info 1 'Required Kernel Parameters:'
+    print_info 1 '    root=/dev/$ROOT'
+    if [ "${BUILD_RAMDISK}" = '0' ]
+    then
+        print_info 1 '    [ And "vga=0x317 splash=verbose" if you use a framebuffer ]'
+        print_info 1 ''
+        print_info 1 '    Where $ROOT is the device node for your root partition as the'
+        print_info 1 '    one specified in /etc/fstab'
+    else
+        print_info 1 ''
+        print_info 1 '    Where $ROOT is the device node for your root partition as the'
+        print_info 1 '    one specified in /etc/fstab'
+        print_info 1 ''
+        print_info 1 "If you require Genkernel's hardware detection features; you MUST"
+        print_info 1 'tell your bootloader to use the provided INITRAMFS file.'
+    fi
 fi
 
 if [ "${BUILD_RAMDISK}" = '1' ]
 then
-	echo
-	print_warning 1 'WARNING... WARNING... WARNING...'
-	print_warning 1 'Additional kernel cmdline arguments that *may* be required to boot properly...'
-	[ "${SPLASH}" = '1' ] && print_warning 1 "add \"vga=791 splash=silent,theme:${SPLASH_THEME} console=tty1 quiet\" if you use a splash framebuffer ]"
-	[ "${LVM}" = '1' ] && print_warning 1 'add "dolvm" for lvm support'
-	[ "${DMRAID}" = '1' ] && print_warning 1 'add "dodmraid" for dmraid support'
-	[ "${MDADM}" = '1' ] && print_warning 1 'add "domdadm" for RAID support'
-	[ "${DMRAID}" = '1' ] && print_warning 1 '	or "dodmraid=<additional options>"'
-	[ "${ZFS}" = '1' ] && print_warning 1 'add "dozfs" for ZFS volume management support'
-	[ "${ZFS}" = '1' ] && print_warning 1 '	and either "root=ZFS" to use bootfs autodetection or "root=ZFS=<dataset>" to force booting from a specific dataset'
-	[ "${ISCSI}" = '1' ] && print_warning 1 'add at least "iscsi_initiatorname=<initiator name> iscsi_target=<target name> and iscsi_address=<target ip>" for iscsi support'
+    echo
+    print_warning 1 'WARNING... WARNING... WARNING...'
+    print_warning 1 'Additional kernel cmdline arguments that *may* be required to boot properly...'
+    [ "${SPLASH}" = '1' ] && print_warning 1 "add \"vga=791 splash=silent,theme:${SPLASH_THEME} console=tty1 quiet\" if you use a splash framebuffer ]"
+    [ "${LVM}" = '1' ] && print_warning 1 'add "dolvm" for lvm support'
+    [ "${DMRAID}" = '1' ] && print_warning 1 'add "dodmraid" for dmraid support'
+    [ "${MDADM}" = '1' ] && print_warning 1 'add "domdadm" for RAID support'
+    [ "${DMRAID}" = '1' ] && print_warning 1 '  or "dodmraid=<additional options>"'
+    [ "${ZFS}" = '1' ] && print_warning 1 'add "dozfs" for ZFS volume management support'
+    [ "${ZFS}" = '1' ] && print_warning 1 ' and either "root=ZFS" to use bootfs autodetection or "root=ZFS=<dataset>" to force booting from a specific dataset'
+    [ "${ISCSI}" = '1' ] && print_warning 1 'add at least "iscsi_initiatorname=<initiator name> iscsi_target=<target name> and iscsi_address=<target ip>" for iscsi support'
 
-	if [[ "$(file --brief --mime-type "${KERNEL_CONFIG}")" == application/x-gzip ]]; then
-		# Support --kernel-config=/proc/config.gz, mainly
-		CONFGREP=zgrep
-	else
-		CONFGREP=grep
-	fi
+    if [[ "$(file --brief --mime-type "${KERNEL_CONFIG}")" == application/x-gzip ]]; then
+        # Support --kernel-config=/proc/config.gz, mainly
+        CONFGREP=zgrep
+    else
+        CONFGREP=grep
+    fi
 
-	if [ `${CONFGREP} 'CONFIG_EXT[0-9]_FS=' "${KERNEL_CONFIG}" | wc -l` -ge 2 ]; then
-		print_warning 1 'With support for several ext* filesystems available, it may be needed to'
-		print_warning 1 'add "rootfstype=ext3" or "rootfstype=ext4" to the list of boot parameters.'
-	fi
+    if [ `${CONFGREP} 'CONFIG_EXT[0-9]_FS=' "${KERNEL_CONFIG}" | wc -l` -ge 2 ]; then
+        print_warning 1 'With support for several ext* filesystems available, it may be needed to'
+        print_warning 1 'add "rootfstype=ext3" or "rootfstype=ext4" to the list of boot parameters.'
+    fi
 
-	unset CONFGREP
+    unset CONFGREP
 fi
 
 [ "${BOOTRW}" != '' ] && mount -o remount,ro ${BOOTDIR}
