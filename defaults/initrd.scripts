@@ -979,126 +979,103 @@ zfs_init() {
 }
 
 start_volumes() {
-    #good_msg 'Checking if volumes need to be started...'
-
     # Here, we check for /dev/device-mapper, and if it exists, we setup a
     # a symlink, which should hopefully fix bug #142775 and bug #147015
-    if [ -e /dev/device-mapper ] && [ ! -e /dev/mapper/control ]
-    then
+    if [ -e /dev/device-mapper ] && [ ! -e /dev/mapper/control ]; then
         mkdir -p /dev/mapper
         ln -sf /dev/device-mapper /dev/mapper/control
     fi
 
-    if [ "${USE_MDADM}" = '1' ]
-    then
-        if [ -e '/sbin/mdadm' ]
-        then
+    if [ "${USE_MDADM}" = "1" ]; then
+        if [ -e "/sbin/mdadm" ]; then
             /sbin/mdadm --assemble --scan
         else
             bad_msg "mdadm not found: skipping mdadm raid assembly!"
         fi
     fi
 
-    if [ "${USE_MULTIPATH_NORMAL}" = '1' ]
-    then
+    if [ "${USE_MULTIPATH_NORMAL}" = "1" ]; then
         good_msg "Scanning for multipath devices"
         /sbin/multipath -v 0
+        # TODO(lxnay): horrible sleep!
         sleep 2
         good_msg "Activating multipath devices"
         /sbin/dmsetup ls --target multipath --exec "/sbin/kpartx -a -v"
-        #for MULTIPATH_VOLUMES in /dev/mapper/*; do kpartx -a $MULTIPATH_VOLUMES; done
     fi
 
-    if [ "${USE_DMRAID_NORMAL}" = '1' ]
-    then
-        if [ -e '/sbin/dmraid' ]
-        then
+    if [ "${USE_DMRAID_NORMAL}" = "1" ]; then
+        if [ -e "/sbin/dmraid" ]; then
             good_msg "Activating Device-Mapper RAID(s)"
-            if [ '${DMRAID_OPTS}' = '' ]
-            then
-                /sbin/dmraid -ay
-            else
-                /sbin/dmraid -ay ${DMRAID_OPTS}
-            fi
+            /sbin/dmraid -ay ${DMRAID_OPTS}
+        else
+            bad_msg "/sbin/dmraid not found"
         fi
     fi
 
-    if [ "${USE_LVM_NORMAL}" = '1' ]
-    then
-        if [ -e '/sbin/lvm' ]
-        then
-
-            if is_mdev
-            then
-                for dev in ${RAID_DEVICES}
-                do
+    if [ "${USE_LVM_NORMAL}" = "1" ]; then
+       if [ -e "/sbin/lvm" ]; then
+            if is_mdev; then
+                for dev in ${RAID_DEVICES}; do
                     setup_md_device "${dev}"
                 done
             fi
 
             # This is needed for /sbin/lvm to accept the following logic
-            lvm_commands="#! /sbin/lvm"
+            local cmds="#! /sbin/lvm"
 
             # If there is a cahe, update it. Unbreak at least dmcrypt
-            [ -d /etc/lvm/cache ] && lvm_commands="${lvm_commands} \nvgscan"
+            [ -d /etc/lvm/cache ] && cmds="${cmds} \nvgscan"
 
             # To activate volumegroups on all devices in the cache
-            lvm_commands="${lvm_commands} \nvgchange -ay --sysinit"
-            if is_mdev
-            then
+            cmds="${cmds} \nvgchange -ay --sysinit"
+            if is_mdev; then
                 # To create symlinks so users can use
                 # real_root=/dev/vg/root
                 # This needs to run after vgchange, using
                 # vgchange --mknodes is too early.
-                lvm_commands="${lvm_commands} \nvgmknodes --ignorelockingfailure"
+                cmds+="${cmds} \nvgmknodes --ignorelockingfailure"
             fi
 
-            # And finally execute it all (/proc/... needed if lvm is compiled without readline)
+            # And finally execute it all (/proc/... needed if lvm
+            # is compiled without readline)
             good_msg "Scanning for and activating Volume Groups"
-            printf "%b\n" "${lvm_commands}" | /sbin/lvm /proc/self/fd/0
+            printf "%b\n" "${cmds}" | /sbin/lvm /proc/self/fd/0
+
         else
-            bad_msg "vgscan or vgchange not found: skipping LVM volume group activation!"
+            bad_msg "/sbin/lvm not found: skipping LVM activation"
         fi
     fi
 
-    if [ "${USE_ZFS}" = '1' ]
-    then
-
+    if [ "${USE_ZFS}" = "1" ]; then
         # Avoid race involving asynchronous module loading
-        if call_func_timeout wait_for_zfs 5
-        then
+        if call_func_timeout wait_for_zfs 5; then
             bad_msg "Cannot import ZFS pool because /dev/zfs is missing"
-        elif [ -z "${ZFS_POOL}" ]
-        then
+
+        elif [ -z "${ZFS_POOL}" ]; then
             good_msg "Importing ZFS pools"
 
             /sbin/zpool import -N -a ${ZPOOL_FORCE}
-
-            if [ "$?" = '0' ]
-            then
+            if [ "${?}" = "0" ]; then
                 good_msg "Importing ZFS pools succeeded"
             else
                 bad_msg "Imported ZFS pools failed"
             fi
-        else
 
-            if [ "$(zpool list -H -o name ${ZFS_POOL} 2>&1)" = "$ZFS_POOL" ]
-            then
+        else
+            local pools=$(zpool list -H -o name ${ZFS_POOL} 2>&1)
+            if [ "${pools}" = "${ZFS_POOL}" ]; then
                 good_msg "ZFS pool ${ZFS_POOL} already imported."
 
-                if [ -n "${CRYPT_ROOT}" -o -n "${CRYPT_SWAP}" ]
-                then
+                if [ -n "${CRYPT_ROOT}" ] || [ -n "${CRYPT_SWAP}" ]; then
                     good_msg "LUKS detected. Reimporting ${ZFS_POOL}"
                     /sbin/zpool export -f "${ZFS_POOL}"
                     /sbin/zpool import -N ${ZPOOL_FORCE} "${ZFS_POOL}"
                 fi
             else
                 good_msg "Importing ZFS pool ${ZFS_POOL}"
-
                 /sbin/zpool import -N ${ZPOOL_FORCE} "${ZFS_POOL}"
 
-                if [ "$?" = '0' ]
-                then
+                if [ "${?}" = "0" ]; then
                     good_msg "Import of ${ZFS_POOL} succeeded"
                 else
                     bad_msg "Import of ${ZFS_POOL} failed"
@@ -1121,8 +1098,7 @@ start_iscsi() {
         iscsistart -b
     fi
 
-    if [ -n "${ISCSI_INITIATORNAME}" ] && [ -n "${ISCSI_TARGET}" ] && [ -n "${ISCSI_ADDRESS}" ]
-    then
+    if [ -n "${ISCSI_INITIATORNAME}" ] && [ -n "${ISCSI_TARGET}" ] && [ -n "${ISCSI_ADDRESS}" ]; then
         good_msg "Activating iSCSI via cmdline"
 
         if [ "${ISCSI_TGPT}" ]
