@@ -334,9 +334,13 @@ devicelist() {
     DEVICES="$DEVICES /dev/iseries/vcd*"
     # builtin mmc/sd card reader devices
     DEVICES="$DEVICES /dev/mmcblk* /dev/mmcblk*/*"
+
     # fallback scanning, this might scan something twice, but it's better than
     # failing to boot.
-    [ -e /proc/partitions ] && DEVICES="${DEVICES} $(awk '/([0-9]+[[:space:]]+)/{print "/dev/" $4}' /proc/partitions)"
+    local parts=$(awk '/([0-9]+[[:space:]]+)/{print "/dev/" $4}' \
+        /proc/partitions)
+    [ -e /proc/partitions ] && DEVICES="${DEVICES} ${parts}"
+
     echo ${DEVICES}
 }
 
