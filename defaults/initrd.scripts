@@ -528,11 +528,11 @@ get_device_fstype() {
 }
 
 check_loop() {
-    if [ "${LOOP}" = '' -o ! -e "${CDROOT_PATH}/${LOOP}" ]
-    then
+    if [ "${LOOP}" = "" -o ! -e "${CDROOT_PATH}/${LOOP}" ]; then
         bad_msg "Invalid loop location: ${LOOP}"
-        bad_msg 'Please export LOOP with a valid location, or reboot and pass a proper loop=...'
-        bad_msg 'kernel command line!'
+        bad_msg "Please export LOOP with a valid location"
+        bad_msg "or reboot and pass a proper loop=..."
+        bad_msg "kernel command line"
         run_shell
     fi
 }
