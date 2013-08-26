@@ -528,7 +528,7 @@ get_device_fstype() {
 }
 
 check_loop() {
-    if [ "${LOOP}" = "" -o ! -e "${CDROOT_PATH}/${LOOP}" ]; then
+    if [ -z "${LOOP}" ] || [ ! -e "${CDROOT_PATH}/${LOOP}" ]; then
         bad_msg "Invalid loop location: ${LOOP}"
         bad_msg "Please export LOOP with a valid location"
         bad_msg "or reboot and pass a proper loop=..."
