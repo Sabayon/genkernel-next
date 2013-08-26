@@ -1,9 +1,13 @@
 #!/bin/sh
 
+. /etc/initrd.d/00-common.sh
+. /etc/initrd.d/00-devmgr.sh
+
 splash() {
     return 0
 }
 
+# this redefines splash()
 [ -e "${INITRD_SPLASH}" ] && . "${INITRD_SPLASH}"
 
 is_fbsplash() {
@@ -29,6 +33,14 @@ is_plymouth_started() {
     return 1
 }
 
+splash_init() {
+    if is_udev; then
+        # if udev, we can load the splash earlier
+        # In the plymouth case, udev will load KMS automatically
+        splashcmd init
+    fi
+}
+
 splashcmd() {
     # plymouth support
     local cmd="${1}"
@@ -37,32 +49,32 @@ splashcmd() {
     case "${cmd}" in
         init)
         is_fbsplash && splash init
-        is_plymouth && plymouth_init
+        is_plymouth && _plymouth_init
         ;;
 
         verbose)
         is_fbsplash && splash verbose
-        plymouth_hide
+        _plymouth_hide
         ;;
 
         quiet)
         # no fbsplash support
-        plymouth_show
+        _plymouth_show
         ;;
 
         set_msg)
         is_fbsplash && splash set_msg "${1}"
-        plymouth_message "${1}"
+        _plymouth_message "${1}"
         ;;
 
         hasroot)
         # no fbsplash support
-        plymouth_newroot "${1}"
+        _plymouth_newroot "${1}"
         ;;
     esac
 }
 
-plymouth_init() {
+_plymouth_init() {
     good_msg "Enabling Plymouth"
     mkdir -p /run/plymouth || return 1
 
@@ -83,34 +95,25 @@ plymouth_init() {
     consoledev=${consoledev:-tty0}
     "${PLYMOUTHD_BIN}" --attach-to-session --pid-file /run/plymouth/pid \
         || {
-        bad_msg "Plymouth load error";
-        PLYMOUTH_FAILURE=1
+        PLYMOUTH_FAILURE=1;
         return 1;
     }
-    plymouth_show
+    _plymouth_show
     good_msg "Plymouth enabled"
 }
 
-plymouth_hide() {
+_plymouth_hide() {
     is_plymouth_started && "${PLYMOUTH_BIN}" --hide-splash
 }
 
-plymouth_show() {
+_plymouth_show() {
     is_plymouth_started && "${PLYMOUTH_BIN}" --show-splash
 }
 
-plymouth_message() {
+_plymouth_message() {
     is_plymouth_started && "${PLYMOUTH_BIN}" --update="${1}"
 }
 
-plymouth_newroot() {
+_plymouth_newroot() {
     is_plymouth_started && "${PLYMOUTH_BIN}" --newroot="${1}"
-}
-
-splash_init() {
-    if is_udev; then
-        # if udev, we can load the splash earlier
-        # In the plymouth case, udev will load KMS automatically
-        splashcmd init
-    fi
 }

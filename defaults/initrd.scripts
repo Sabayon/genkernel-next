@@ -2,6 +2,8 @@
 
 . /etc/initrd.defaults
 . /etc/initrd.d/00-splash.sh
+. /etc/initrd.d/00-devmgr.sh
+. /etc/initrd.d/00-common.sh
 
 
 call_func_timeout() {
@@ -93,22 +95,7 @@ modules_init() {
 
 uppercase() {
     # needs tr on busybox
-    echo $1 | tr 'a-z' 'A-Z'
-}
-
-is_livecd() {
-    [ "${CDROOT}" = "1" ] && return 0
-    return 1
-}
-
-is_nfs() {
-    [ "${REAL_ROOT}" = "/dev/nfs" ] && return 0
-    return 1
-}
-
-is_aufs() {
-    [ "${USE_AUFS}" = "1" ] && return 0
-    return 1
+    echo ${1} | tr 'a-z' 'A-Z'
 }
 
 setup_real_root() {
@@ -433,48 +420,6 @@ fs_type_in_use() {
     cut -d " " -f 3 < /proc/mounts | fgrep -q "${fs_type}"
 }
 
-is_udev() {
-    [ -x "${UDEVD}" ] && [ -z "${USE_MDEV}" ] && return 0
-    return 1
-}
-
-is_mdev() {
-    if [ ! -x "${UDEVD}" ] || [ -n "${USE_MDEV}" ]
-    then
-        return 0
-    fi
-    return 1
-}
-
-devmgr_init() {
-    if is_udev; then
-        good_msg 'Activating udev'
-        echo "${UDEVD}" > /proc/sys/kernel/hotplug
-        echo "" > /sys/kernel/uevent_helper
-        "${UDEVD}" --daemon --resolve-names=never && \
-            udevadm trigger --action=add && \
-            udevadm settle || bad_msg "udevd failed to run"
-    elif is_mdev; then
-        good_msg 'Activating mdev'
-        # Serialize hotplug events
-        touch /dev/mdev.seq
-        echo "${MDEVD}" > /proc/sys/kernel/hotplug
-        # Ensure that device nodes are properly configured
-        "${MDEVD}" -s || bad_msg "mdev -s failed"
-    else
-        bad_msg "Cannot find either udev or mdev"
-    fi
-}
-
-# Terminate the device manager, this happens right before pivot_root
-devmgr_terminate() {
-    if is_udev; then
-        udevadm settle
-        udevadm control --exit || bad_msg "Unable to terminate udevd"
-    fi
-    # mdev doesn't require anything, it seems
-}
-
 mount_devfs () {
     # Use devtmpfs if enabled in kernel,
     # else tmpfs. Always run mdev just in case
@@ -510,34 +455,6 @@ test_success() {
     fi
 }
 
-
-# msg functions arguments
-# $1 string
-# $2 hide flag
-
-good_msg() {
-    [ -n "${QUIET}" ] && [ -z "${DEBUG}" ] && return 0
-
-    msg_string=$1
-    msg_string="${msg_string:-...}"
-    [ "$2" != 1 ] && echo -e "${GOOD}>>${NORMAL}${BOLD} ${msg_string} ${NORMAL}"
-}
-
-bad_msg() {
-    msg_string=$1
-    msg_string="${msg_string:-...}"
-    if [ "$2" != 1 ]
-    then
-        splashcmd verbose
-        echo -e "${BAD}!!${NORMAL}${BOLD} ${msg_string} ${NORMAL}"
-    fi
-}
-
-warn_msg() {
-    msg_string=$1
-    msg_string="${msg_string:-...}"
-    [ "$2" != 1 ] && echo -e "${WARN}**${NORMAL}${BOLD} ${msg_string} ${NORMAL}"
-}
 
 # Courtesy of dracut. Licensed under GPL-2.
 # Taken from: dracut/modules.d/90crypt/crypt-lib.sh
