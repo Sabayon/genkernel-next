@@ -401,7 +401,7 @@ mount_sysfs() {
     [ ${ret} -eq 0 ] || bad_msg "Failed to mount /sys!"
 }
 
-findnfsmount() {
+find_nfs() {
     if [ -z "${IP}" ]; then
         # IP is not set, return straight away
         return 1
@@ -2006,7 +2006,7 @@ rootdev_init() {
 
         # Try to mount the device as ${NEW_ROOT}
         if is_nfs; then
-            findnfsmount
+            find_nfs  # sets ${?} checked below
         else
             # mount ro so fsck doesn't barf later
             if [ "${REAL_ROOTFLAGS}" = '' ]; then
