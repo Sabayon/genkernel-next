@@ -543,7 +543,7 @@ run_shell() {
 
 fs_type_in_use() {
     fs_type=$1
-    cut -d ' ' -f 3 < /proc/mounts | fgrep -q "${fs_type}"
+    cut -d " " -f 3 < /proc/mounts | fgrep -q "${fs_type}"
 }
 
 is_udev() {
