@@ -402,75 +402,80 @@ mount_sysfs() {
 }
 
 findnfsmount() {
-    if [ "${IP}" != '' ] || busybox udhcpc -n -T 15 -q
-    then
-        [ -e /rootpath ] && NFSROOT=$(cat /rootpath)
+    if [ -z "${IP}" ]; then
+        # IP is not set, return straight away
+        return 0
+    fi
 
-        if [ "${NFSROOT}" = '' ]
-        then
-            # Obtain NFSIP
-            OPTIONS=$(busybox dmesg | grep rootserver | sed -e "s/,/ /g")
-            for OPTION in $OPTIONS
-            do
-                if [ $(echo $OPTION | sed -e "s/=/ /g" | cut -d " " -f 1) = 'rootserver' ]
-                then
-                    NFSIP=$(echo $OPTION | sed -e "s/=/ /g" | cut -d " " -f 2)
-                fi
-            done
-            # Obtain NFSPATH
-            OPTIONS=$(busybox dmesg | grep rootpath | sed -e "s/,/ /g")
-            for OPTION in $OPTIONS
-            do
-                if [ $(echo $OPTION | sed -e "s/=/ /g" | cut -d " " -f 1) = 'rootpath' ]
-                then
-                    NFSPATH=$(echo $OPTION | sed -e "s/=/ /g" | cut -d " " -f 2)
-                fi
-            done
+    if ! busybox udhcpc -n -T 15 -q; then
+        bad_msg "udhcpc returned error, skipping nfs setup..."
+        return 0
+    fi
 
-            # Setup NFSROOT
-            if [ "${NFSIP}" != '' ] && [ "$NFSPATH" != '' ]
-            then
-                NFSROOT="${NFSIP}:${NFSPATH}"
-            else
-                bad_msg "The DHCP Server did not send a valid root-path."
-                bad_msg "Please check your DHCP setup, or provide a nfsroot=<...> parameter."
+    local options=
+
+    [ -e /rootpath ] && NFSROOT=$(cat /rootpath)
+    if [ "${NFSROOT}" = "" ]; then
+        # Obtain NFSIP
+        # TODO: this is bogus, because dmesg is a circular buffer...
+        # TODO: provide dmesg as symlink (see gen_initramfs.sh)
+        options=$(busybox dmesg | grep rootserver | sed -e "s/,/ /g")
+
+        local opt= optn=
+
+        for opt in ${options}; do
+            optn=$(echo $opt | sed -e "s/=/ /g" | cut -d " " -f 1)
+            if [ "${optn}" = "rootserver" ]; then
+                NFSIP=$(echo $opt | sed -e "s/=/ /g" | cut -d " " -f 2)
             fi
+        done
+
+        # Obtain NFSPATH
+        # TODO: this is bogus, because dmesg is a circular buffer...
+        # TODO: provide dmesg as symlink (see gen_initramfs.sh)
+        options=$(busybox dmesg | grep rootpath | sed -e "s/,/ /g")
+
+        for opt in ${options}; do
+            optn=$(echo $opt | sed -e "s/=/ /g" | cut -d " " -f 1)
+            if [ "${optn}" = "rootpath" ]; then
+                NFSPATH=$(echo $opt | sed -e "s/=/ /g" | cut -d " " -f 2)
+            fi
+        done
+
+        # Setup NFSROOT
+        if [ "${NFSIP}" != "" ] && [ "$NFSPATH" != "" ]; then
+            NFSROOT="${NFSIP}:${NFSPATH}"
+        else
+            bad_msg "The DHCP Server did not send a valid root-path."
+            bad_msg "Please check your DHCP setup, or set nfsroot=<...>"
+        fi
+    fi
+
+    if [ "${NFSROOT}" != "" ]; then
+        NFSOPTIONS=${NFSROOT#*,}
+        NFSROOT=${NFSROOT%%,*}
+        if [ "${NFSOPTIONS}" = "${NFSROOT}" ]; then
+            NFSOPTIONS="${DEFAULT_NFSOPTIONS}"
+        else
+            NFSOPTIONS="${DEFAULT_NFSOPTIONS},${NFSOPTIONS}"
         fi
 
-        if [ "${NFSROOT}" != '' ]
-        then
-            NFSOPTIONS=${NFSROOT#*,}
-            NFSROOT=${NFSROOT%%,*}
-            if [ "${NFSOPTIONS}" = "${NFSROOT}" ]
-            then
-                NFSOPTIONS=$DEFAULT_NFSOPTIONS
-            else
-                NFSOPTIONS="${DEFAULT_NFSOPTIONS},${NFSOPTIONS}"
-            fi
+        local path=
+        # override path if on livecd
+        if is_livecd; then
+            path="${CDROOT_PATH}"
+            good_msg "Attempting to mount NFS CD image on ${NFSROOT}."
+        else
+            path="${NEW_ROOT}"
+            good_msg "Attempting to mount NFS root on ${NFSROOT}."
+        fi
 
-            if is_livecd
-            then
-                good_msg "Attempting to mount NFS CD image on ${NFSROOT} with options ${NFSOPTIONS}"
-                mount -t nfs -o ${NFSOPTIONS} ${NFSROOT} ${CDROOT_PATH}
-                if [ "$?" = '0' ]
-                then
-                    REAL_ROOT="/dev/nfs"
-                else
-                    bad_msg "NFS Mounting failed. Is the path corrent ?"
-                fi
-            else
-                good_msg "Attempting to mount NFS root on ${NFSROOT} with options ${NFSOPTIONS}"
-                mount -t nfs -o ${NFSOPTIONS} ${NFSROOT} ${NEW_ROOT}
-                if [ "$?" = '0' ]
-                then
-                    REAL_ROOT="/dev/nfs"
-                else
-                    bad_msg "NFS Mounting failed. Is the path correct ?"
-                fi
-                # FIXME: Need to start portmap and the other rpc daemons in
-                # order to remount rw.
-            fi
-
+        good_msg "NFS options: ${NFSOPTIONS}"
+        mount -t nfs -o ${NFSOPTIONS} "${NFSROOT}" "${path}"
+        if [ "${?}" = "0" ]; then
+            REAL_ROOT="/dev/nfs"
+        else
+            bad_msg "NFS Mounting failed. Is the path corrent ?"
         fi
     fi
 }
