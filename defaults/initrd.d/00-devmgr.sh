@@ -42,3 +42,31 @@ devmgr_terminate() {
     fi
     # mdev doesn't require anything, it seems
 }
+
+_fs_type_in_use() {
+    local fs_type=${1}
+    cut -d " " -f 3 < /proc/mounts | fgrep -q "${fs_type}"
+}
+
+mount_devfs() {
+    # Use devtmpfs if enabled in kernel,
+    # else tmpfs. Always run mdev just in case
+    local devfs=tmpfs
+    if grep -qs devtmpfs /proc/filesystems ; then
+        devfs=devtmpfs
+    fi
+
+    # Options copied from /etc/init.d/udev-mount
+    # should probably be kept in sync
+    if ! _fs_type_in_use devtmpfs; then
+        mount -t "${devfs}" -o "exec,nosuid,mode=0755,size=10M" \
+            udev /dev || bad_msg "Failed to mount /dev as ${devfs}"
+    fi
+
+    # http://git.busybox.net/busybox/plain/docs/mdev.txt
+    if ! _fs_type_in_use devpts; then
+        mkdir -m 0755 /dev/pts
+        mount -t devpts -o gid=5,mode=0620 devpts /dev/pts \
+            || bad_msg "Failed to mount /dev/pts"
+    fi
+}
