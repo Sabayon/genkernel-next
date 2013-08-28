@@ -1607,45 +1607,47 @@ rootdev_init() {
         good_msg "Mounting ${REAL_ROOT} as root..."
 
         # Try to mount the device as ${NEW_ROOT}
+        local out=1
         if is_nfs; then
-            find_nfs  # sets ${?} checked below
+            find_nfs && out=0
         else
-            _rootdev_mount  # sets ${?} checked below
+            _rootdev_mount && out=0
         fi
 
-        # If mount is successful break out of the loop
-        # else not a good root and start over.
-        if [ "${?}" = "0" ]; then
-            # now that the root filesystem is mounted, before
-            # checking the validity of ${NEW_ROOT} and ${REAL_INIT},
-            # ensure that ${NEW_ROOT}/etc/initramfs.mounts entries
-            # are mounted.
-            ensure_initramfs_mounts
-
-            # NFS does not need further checks here.
-            if is_nfs; then
-                break
-            fi
-
-            if [ ! -d "${NEW_ROOT}/dev" ]; then
-                _msg="The filesystem ${REAL_ROOT},"
-                _msg="${_msg} mounted at ${NEW_ROOT}"
-                _msg="${_msg} does not contain /dev"
-                _msg="${_msg}, init will likely fail..."
-                bad_msg "${_msg}"
-            fi
-            if [ ! -x "${NEW_ROOT}${REAL_INIT}" ]; then
-                _msg="The filesystem ${REAL_ROOT},"
-                _msg="${_msg} mounted at ${NEW_ROOT}"
-                _msg="${_msg} does not contain a valid"
-                _msg="${_msg} init=${REAL_INIT}"
-                bad_msg "${_msg}"
-            fi
-            break
-        else
+        if [ "${out}" != "0" ]; then
             bad_msg "Could not mount specified ROOT, try again"
-            REAL_ROOT=''
+            prompt_user "REAL_ROOT" "root block device"
+            continue
         fi
+
+        # now that the root filesystem is mounted, before
+        # checking the validity of ${NEW_ROOT} and ${REAL_INIT},
+        # ensure that ${NEW_ROOT}/etc/initramfs.mounts entries
+        # are mounted.
+        ensure_initramfs_mounts
+
+        # NFS does not need further checks here.
+        is_nfs && break
+
+        if [ ! -d "${NEW_ROOT}/dev" ]; then
+            _msg="The filesystem ${REAL_ROOT},"
+            _msg="${_msg} mounted at ${NEW_ROOT}"
+            _msg="${_msg} does not contain /dev"
+            _msg="${_msg}, init will likely fail..."
+            bad_msg "${_msg}"
+            prompt_user "REAL_ROOT" "root block device"
+            continue
+        fi
+        if [ ! -x "${NEW_ROOT}${REAL_INIT}" ]; then
+            _msg="The filesystem ${REAL_ROOT},"
+            _msg="${_msg} mounted at ${NEW_ROOT}"
+            _msg="${_msg} does not contain a valid"
+            _msg="${_msg} init=${REAL_INIT}"
+            bad_msg "${_msg}"
+            prompt_user "REAL_ROOT" "root block device"
+            continue
+        fi
+        break
     done
 }
 
