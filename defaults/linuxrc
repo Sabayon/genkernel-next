@@ -97,10 +97,9 @@ for x in ${CMDLINE}; do
             good_msg "Booting with multipath activated."
             USE_MULTIPATH_NORMAL=1
         ;;
-        dozfs*)
-            USE_ZFS=1
-
-            if [ "${x#*=}" = "force" ]; then
+        dozfs=*)
+            ZFS_OPTS=${x#*=}
+            if [ "${ZFS_OPTS}" = "force" ]; then
                 ZPOOL_FORCE=-f
             fi
         ;;
@@ -241,9 +240,7 @@ done
 
 quiet_kmsg
 
-is_livecd || setup_real_root
-
-zfs_init
+is_livecd || real_root_init
 
 cmdline_hwopts
 

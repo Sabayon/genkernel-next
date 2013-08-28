@@ -1,10 +1,43 @@
 #!/bin/sh
 
 . /etc/initrd.d/00-common.sh
+. /etc/initrd.d/00-fsdev.sh
 
-is_zfs() {
+_is_zfs() {
+    # Note: this only works after zfs_real_root_init
+    #       (thus, only after real_root_init)
     [ "${USE_ZFS}" = "1" ] && return 0
     return 1
+}
+
+is_zfs_fstype() {
+    local fstype="${1}"
+    [ "${fstype}" = "zfs_member" ] && return 0
+    return 1
+}
+
+zfs_real_root_init() {
+    case "${REAL_ROOT}" in
+        ZFS=*)
+            ZFS_POOL=${REAL_ROOT#*=}
+            ZFS_POOL=${ZFS_POOL%%/*}
+            USE_ZFS=1
+        ;;
+        ZFS)
+            USE_ZFS=1
+        ;;
+    esac
+
+    # Verify that zfs support has been compiled in
+    if [ "USE_ZFS" = "1" ]; then
+        for i in /sbin/zfs /sbin/zpool; do
+            if [ ! -x "${i}" ]; then
+                USE_ZFS=0
+                bad_msg 'Aborting use of zfs because ${i} not found!'
+                break
+            fi
+        done
+    fi
 }
 
 # This helper function is to be called using _call_func_timeout.  This
@@ -29,35 +62,10 @@ _call_func_timeout() {
     return 0
 }
 
-zfs_init() {
-    # Set variables based on the value of REAL_ROOT
-    case "${REAL_ROOT}" in
-        ZFS=*)
-            ZFS_POOL=${REAL_ROOT#*=}
-            ZFS_POOL=${ZFS_POOL%%/*}
-            USE_ZFS=1
-        ;;
-        ZFS)
-            USE_ZFS=1
-        ;;
-    esac
-
-    # Verify that it is safe to use ZFS
-    if [ "USE_ZFS" = "1" ]
-    then
-        for i in /sbin/zfs /sbin/zpool
-        do
-            if [ ! -x ${i} ]
-            then
-                USE_ZFS=0
-                bad_msg 'Aborting use of zfs because ${i} not found!'
-                break
-            fi
-        done
-    fi
-}
-
 zfs_start_volumes() {
+    # is ZFS enabled?
+    _is_zfs || return 0
+
     # Avoid race involving asynchronous module loading
     if _call_func_timeout wait_for_zfs 5; then
         bad_msg "Cannot import ZFS pool because /dev/zfs is missing"
@@ -65,7 +73,7 @@ zfs_start_volumes() {
     elif [ -z "${ZFS_POOL}" ]; then
         good_msg "Importing ZFS pools"
 
-        /sbin/zpool import -N -a ${ZPOOL_FORCE}
+        zpool import -N -a ${ZPOOL_FORCE}
         if [ "${?}" = "0" ]; then
             good_msg "Importing ZFS pools succeeded"
         else
@@ -79,12 +87,12 @@ zfs_start_volumes() {
 
             if [ -n "${CRYPT_ROOT}" ] || [ -n "${CRYPT_SWAP}" ]; then
                 good_msg "LUKS detected. Reimporting ${ZFS_POOL}"
-                /sbin/zpool export -f "${ZFS_POOL}"
-                /sbin/zpool import -N ${ZPOOL_FORCE} "${ZFS_POOL}"
+                zpool export -f "${ZFS_POOL}"
+                zpool import -N ${ZPOOL_FORCE} "${ZFS_POOL}"
             fi
         else
             good_msg "Importing ZFS pool ${ZFS_POOL}"
-            /sbin/zpool import -N ${ZPOOL_FORCE} "${ZFS_POOL}"
+            zpool import -N ${ZPOOL_FORCE} "${ZFS_POOL}"
 
             if [ "${?}" = "0" ]; then
                 good_msg "Import of ${ZFS_POOL} succeeded"
@@ -93,4 +101,44 @@ zfs_start_volumes() {
             fi
         fi
     fi
+}
+
+# Initialize the zfs root filesystem device and
+# tweak ${REAL_ROOT}. In addition, set ${ZFS_POOL}
+# for later use.
+# Return 0 if initialization is successful.
+zfs_rootdev_init() {
+    local root_dev="${REAL_ROOT#*=}"
+    ZFS_POOL="${root_dev%%/*}"
+
+    if [ "${root_dev}" != "ZFS" ]; then
+        local ztype=$(zfs get type -o value -H "${root_dev}")
+        if [ "${ztype}" = "filesystem" ]; then
+            REAL_ROOT="${root_dev}"
+            good_msg "Detected zfs root: ${REAL_ROOT}"
+            return 0
+        else
+            bad_msg "${root_dev} is not a zfs filesystem"
+            return 1
+        fi
+    fi
+
+    local bootfs=$(zpool list -H -o bootfs)
+    [ "${bootfs}" = "-" ] && return 1
+
+    for i in ${bootfs}; do
+        if zfs get type "${i}" > /dev/null; then
+            REAL_ROOT="${i}"
+            good_msg "Detected zfs bootfs root: ${REAL_ROOT}"
+            return 0
+        fi
+    done
+    return 1
+}
+
+zfs_get_real_root_mount_flags() {
+    local flags=rw,zfsutil
+    local zmtype=$(zfs get -H -o value mountpoint "${REAL_ROOT}")
+    [ "${zmtype}" = "legacy" ] && flags=rw
+    echo "${flags}"
 }

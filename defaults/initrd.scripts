@@ -3,6 +3,7 @@
 . /etc/initrd.defaults
 . /etc/initrd.d/00-splash.sh
 . /etc/initrd.d/00-common.sh
+. /etc/initrd.d/00-fsdev.sh
 . /etc/initrd.d/00-devmgr.sh
 . /etc/initrd.d/00-zfs.sh
 
@@ -84,16 +85,19 @@ uppercase() {
     echo ${1} | tr 'a-z' 'A-Z'
 }
 
-setup_real_root() {
-    if [ -z "${REAL_ROOT}" -a "${FAKE_ROOT}" != "/dev/ram0" ]; then
+real_root_init() {
+    if [ -z "${REAL_ROOT}" ] && [ "${FAKE_ROOT}" != "/dev/ram0" ]; then
         REAL_ROOT="${FAKE_ROOT}"
     fi
-    if [ -z "${REAL_INIT}" -a "${FAKE_INIT}" != "/linuxrc" ]; then
+    if [ -z "${REAL_INIT}" ] && [ "${FAKE_INIT}" != "/linuxrc" ]; then
         REAL_INIT="${FAKE_INIT}"
     fi
     if [ -z "${REAL_ROOTFLAGS}" ]; then
         REAL_ROOTFLAGS="${FAKE_ROOTFLAGS}"
     fi
+
+    # let zfs code setup its parameters
+    zfs_real_root_init
 }
 
 findmediamount() {
@@ -338,51 +342,6 @@ find_nfs() {
         return 0
     else
         bad_msg "NFS Mounting failed. Is the path corrent ?"
-        return 1
-    fi
-}
-
-find_real_device() {
-    local device="${1}"
-    local out=
-    case "${device}" in
-        UUID=*|LABEL=*)
-            local REAL_DEVICE=""
-            local retval=1
-
-            if [ "${retval}" -ne 0 ]; then
-                REAL_DEVICE=$(findfs "${device}" 2>/dev/null)
-                retval=$?
-            fi
-
-            if [ "$retval" -ne 0 ]; then
-                REAL_DEVICE=$(busybox findfs "${device}" 2>/dev/null)
-                retval=$?
-            fi
-
-            if [ "${retval}" -ne 0 ]; then
-                REAL_DEVICE=$(blkid -o device -l -t "${device}")
-                retval=$?
-            fi
-
-            if [ "${retval}" -eq 0 ] && [ -n "${REAL_DEVICE}" ]; then
-                out="${REAL_DEVICE}"
-            fi
-        ;;
-        *)
-            out="${device}"
-        ;;
-    esac
-    echo -n "${out}"
-}
-
-get_device_fstype() {
-    local device=$(find_real_device "${1}")
-    if [ -n "${device}" ]; then
-        blkid -o value -s TYPE "${device}"
-        return ${?}  # readability
-    else
-        echo "Cannot resolve device: ${1}" >&2
         return 1
     fi
 }
@@ -772,7 +731,8 @@ start_volumes() {
         fi
     fi
 
-    is_zfs && zfs_start_volumes
+    # If zfs is enabled, this will initialize the volumes
+    zfs_start_volumes
 
     is_udev && udevadm settle
 }
@@ -1549,97 +1509,92 @@ fstype_init() {
     fi
 }
 
+_rootdev_detect() {
+    local got_good_root=0
+    while [ "${got_good_root}" != "1" ]; do
+
+        case "${REAL_ROOT}" in
+            LABEL=*|UUID=*)
+                local root_dev=$(find_real_device "${REAL_ROOT}")
+                if [ -n "${root_dev}" ]; then
+                    REAL_ROOT="${root_dev}"
+                    good_msg "Detected root: ${REAL_ROOT}"
+                else
+                    bad_msg "Unable to resolve root: ${REAL_ROOT}"
+
+                    got_good_root=0
+                    prompt_user "REAL_ROOT" "root block device"
+                    continue
+                fi
+                ;;
+
+            ZFS*)
+                # zfs_rootdev_init will tweak ${REAL_ROOT}
+                zfs_rootdev_init
+                if [ "${?}" = "0" ]; then
+                    got_good_root=1
+                else
+                    got_good_root=0
+                    prompt_user "REAL_ROOT" "root block device"
+                    continue
+                fi
+                ;;
+        esac
+
+        if [ -z "${REAL_ROOT}" ]; then
+            # No REAL_ROOT determined/specified.
+            # Prompt user for root block device.
+            prompt_user "REAL_ROOT" "root block device"
+            got_good_root=0
+
+        # Check for a block device or NFS
+        elif [ -b "${REAL_ROOT}" ] || is_nfs; then
+            got_good_root=1
+        else
+            bad_msg "${REAL_ROOT} is an invalid root device..."
+            REAL_ROOT=""
+            got_good_root=0
+        fi
+    done
+
+    return 0
+}
+
+_rootdev_mount() {
+    local mount_opts=ro
+    local mount_fstype="${ROOTFSTYPE}"
+    local fstype=$(get_device_fstype "${REAL_ROOT}")
+    if is_zfs_fstype "${fstype}"; then
+        mount_fstype=zfs
+        mount_opts=$(zfs_get_real_root_mount_flags)
+    fi
+
+    good_msg "Detected fstype: ${fstype}"
+    good_msg "Using mount fstype: ${mount_fstype}"
+    fstype_init "${fstype}"
+
+    local mopts="${mount_opts}"
+    [ -n "${REAL_ROOTFLAGS}" ] && \
+        mopts="${mopts},${REAL_ROOTFLAGS}"
+    good_msg "Using mount opts: -o ${mopts}"
+
+    mount -t "${mount_fstype}" -o "${mopts}" \
+        "${REAL_ROOT}" "${NEW_ROOT}" || return 1
+    return 0
+}
+
 rootdev_init() {
     good_msg "Initializing root device..."
 
-    while true
-    do
-        local got_good_root=
-        while [ "${got_good_root}" != "1" ]; do
+    while true; do
 
-            case "${REAL_ROOT}" in
-                LABEL=*|UUID=*)
+        if ! _rootdev_detect; then
+            bad_msg "Could not mount specified ROOT, try again"
+            prompt_user "REAL_ROOT" "root block device"
+            continue
+        fi
 
-                    local root_dev=$(find_real_device "${REAL_ROOT}")
-                    if [ -n "${root_dev}" ]; then
-                        REAL_ROOT="${root_dev}"
-                        good_msg "Detected root: ${REAL_ROOT}"
-                    else
-                        bad_msg "Unable to resolve root: ${REAL_ROOT}"
-                        prompt_user "REAL_ROOT" "root block device"
-                        got_good_root=0
-                        continue
-                    fi
-                    ;;
-
-                # move this cruft into a separate function? do we really need
-                # the crazy root=ZFS= thing? can't we just detect the fstype?
-                ZFS*)
-                    if [ "${USE_ZFS}" = "0" ]; then
-                        prompt_user "REAL_ROOT" "root block device"
-                        continue
-                    fi
-
-                    ROOT_DEV="${REAL_ROOT#*=}"
-                    if [ "${ROOT_DEV}" != "ZFS" ]; then
-                        local ztype=$(zfs get type -o value -H "${ROOT_DEV}")
-                        if [ "${ztype}" = "filesystem" ]; then
-                            got_good_root=1;
-                            REAL_ROOT=${ROOT_DEV}
-                            ROOTFSTYPE=zfs
-                        else
-                            bad_msg "${ROOT_DEV} is not a filesystem"
-                            prompt_user "REAL_ROOT" "root block device"
-                            got_good_root=0
-                            continue
-                        fi
-                    else
-                        BOOTFS=$(/sbin/zpool list -H -o bootfs)
-                        if [ "${BOOTFS}" != "-" ]; then
-
-                            for i in ${BOOTFS}; do
-                                zfs get type ${i} > /dev/null
-                                retval=$?
-
-                                if [ ${retval} -eq 0 ]; then
-                                    got_good_root=1
-                                    REAL_ROOT=${i}
-                                    ROOTFSTYPE=zfs
-                                    break
-                                fi
-                            done
-                        else
-                            got_good_root=0
-                        fi
-
-                    fi
-
-                    if [ ${got_good_root} -ne 1 ]; then
-                        prompt_user "REAL_ROOT" "root block device"
-                        got_good_root=0
-                    fi
-                    continue
-                    ;;
-            esac
-
-            if [ -z "${REAL_ROOT}" ]; then
-                # No REAL_ROOT determined/specified.
-                # Prompt user for root block device.
-                prompt_user "REAL_ROOT" "root block device"
-                got_good_root=0
-
-            # Check for a block device or NFS
-            elif [ -b "${REAL_ROOT}" ] || is_nfs; then
-                got_good_root=1
-            else
-                bad_msg "${REAL_ROOT} is an invalid root device..."
-                REAL_ROOT=""
-                got_good_root=0
-            fi
-        done
-
-
-        if [ "${got_good_root}" = "1" ] && is_livecd && ! is_nfs; then
+        if is_livecd && ! is_nfs; then
             # CD already mounted; no further checks necessary
             break
         fi
@@ -1649,37 +1604,13 @@ rootdev_init() {
             break
         fi
 
-        local fstype=$(get_device_fstype "${REAL_ROOT}")
-        good_msg "Initializing ${REAL_ROOT} if needed"
-        good_msg "Detected fstype: ${fstype}"
-        fstype_init "${fstype}"
-
         good_msg "Mounting ${REAL_ROOT} as root..."
-        local mount_state=ro
-
-        # TODO(lxnay): determine if it's possible to move this
-        #              crufty thing into fstype_init
-        if [ "${ROOTFSTYPE}" = "zfs" ]; then
-            local zmtype=$(zfs get -H -o value mountpoint "${REAL_ROOT}")
-            if [ "${zmtype}" = "legacy" ]; then
-                mount_state=rw
-            else
-                mount_state=rw,zfsutil
-            fi
-        fi
 
         # Try to mount the device as ${NEW_ROOT}
         if is_nfs; then
             find_nfs  # sets ${?} checked below
         else
-            # mount ro so fsck doesn't barf later
-            local mopts="${mount_state}"
-            [ -n "${REAL_ROOTFLAGS}" ] && \
-                mopts="${mopts},${REAL_ROOTFLAGS}"
-
-            good_msg "Using mount -t ${ROOTFSTYPE} -o ${mopts}"
-            mount -t "${ROOTFSTYPE}" -o "${mopts}" \
-                "${REAL_ROOT}" "${NEW_ROOT}"
+            _rootdev_mount  # sets ${?} checked below
         fi
 
         # If mount is successful break out of the loop
@@ -1713,7 +1644,6 @@ rootdev_init() {
             break
         else
             bad_msg "Could not mount specified ROOT, try again"
-            got_good_root=0
             REAL_ROOT=''
         fi
     done
