@@ -1082,7 +1082,8 @@ resume_init() {
 
 swsusp_resume() {
     # determine swap resume partition
-    local device=$(ls -lL "${REAL_RESUME}" | sed 's/\  */ /g' | cut -d \  -f 5-6 | sed 's/,\ */:/')
+    local device=$(ls -lL "${REAL_RESUME}" | sed 's/\  */ /g' | \
+        cut -d \  -f 5-6 | sed 's/,\ */:/')
     [ -f /sys/power/resume -a -n "${device}" ] && \
         echo "${device}" > /sys/power/resume
 }
