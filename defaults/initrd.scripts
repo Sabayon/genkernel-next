@@ -1126,7 +1126,9 @@ setup_squashfs_aufs() {
     [ ! -d "${NEW_ROOT}${overlay}" ] && mkdir -p "${NEW_ROOT}${overlay}"
     [ ! -d "${NEW_ROOT}${static}" ] && mkdir -p "${NEW_ROOT}${static}"
     echo "aufs / aufs defaults 0 0" > "${NEW_ROOT}"/etc/fstab
-    for i in "${overlay}" "${static}"; do mount --move "${i}" "${NEW_ROOT}${i}"; done
+    for i in "${overlay}" "${static}"; do
+        mount --move "${i}" "${NEW_ROOT}${i}"
+    done
 
     # have handy /mnt/cdrom (CDROOT_PATH) as well
     local new_cdroot="${NEW_ROOT}${CDROOT_PATH}"
