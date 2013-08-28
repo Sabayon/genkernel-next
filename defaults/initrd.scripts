@@ -1442,11 +1442,11 @@ get_mount_device() {
         ' ${NEW_ROOT}/etc/fstab
 }
 
-# If the kernel is handed a mount option is does not recognize, it WILL fail to
-# mount. util-linux handles auto/noauto, but busybox passes it straight to the kernel
-# which then rejects the mount.
-# To make like a little easier, busybox mount does not care about leading,
-# trailing or duplicate commas.
+# If the kernel is handed a mount option is does not recognize, it
+# WILL fail to mount. util-linux handles auto/noauto, but busybox
+# passes it straight to the kernel which then rejects the mount.  To
+# make like a little easier, busybox mount does not care about
+# leading, trailing or duplicate commas.
 strip_mount_options() {
     sed -r 's/(,|^)(no)?auto(,|$)/,/g'
 }
