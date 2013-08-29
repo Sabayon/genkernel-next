@@ -40,3 +40,13 @@ bad_msg() {
         echo -e "${BAD}!!${NORMAL}${BOLD} ${msg_string} ${NORMAL}"
     fi
 }
+
+quiet_kmsg() {
+    # if QUIET is set make the kernel less chatty
+    [ -n "$QUIET" ] && echo '0' > /proc/sys/kernel/printk
+}
+
+verbose_kmsg() {
+    # if QUIET is set make the kernel less chatty
+    [ -n "$QUIET" ] && echo '6' > /proc/sys/kernel/printk
+}
