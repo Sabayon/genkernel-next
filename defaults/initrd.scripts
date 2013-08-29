@@ -9,11 +9,6 @@
 . /etc/initrd.d/00-modules.sh
 
 
-uppercase() {
-    # needs tr on busybox
-    echo ${1} | tr 'a-z' 'A-Z'
-}
-
 real_root_init() {
     if [ -z "${REAL_ROOT}" ] && [ "${FAKE_ROOT}" != "/dev/ram0" ]; then
         REAL_ROOT="${FAKE_ROOT}"
@@ -715,9 +710,6 @@ start_iscsi() {
 open_luks() {
     # TODO(lxnay): what has been seen, cannot be unseen.
     # TODO(lxnay): there is so much wrong in this function...
-
-    # please use 'tr' and this line, or remove it
-    # eval local TYPE=$(uppercase $1)
 
     case $1 in
         root)
