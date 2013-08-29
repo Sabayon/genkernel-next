@@ -94,30 +94,30 @@ media_find() {
     [ -n "${result}" ] || bad_msg "Media not found" ${CRYPT_SILENT}
 }
 
-devicelist() {
+device_list() {
     # Locate the cdrom device with our media on it.
-    # CDROM DEVICES
-    local DEVICES="/dev/cdroms/* /dev/ide/cd/* /dev/sr*"
+    # CDROM devices
+    local devices="/dev/cdroms/* /dev/ide/cd/* /dev/sr*"
     # USB Keychain/Storage
-    DEVICES="$DEVICES /dev/sd*"
+    devices="${devices} /dev/sd*"
     # IDE devices
-    DEVICES="$DEVICES /dev/hd*"
+    devices="${devices} /dev/hd*"
     # virtio devices
-    DEVICES="$DEVICES /dev/vd*"
+    devices="${devices} /dev/vd*"
     # USB using the USB Block Driver
-    DEVICES="$DEVICES /dev/ubd* /dev/ubd/*"
+    devices="${devices} /dev/ubd* /dev/ubd/*"
     # iSeries devices
-    DEVICES="$DEVICES /dev/iseries/vcd*"
+    devices="${devices} /dev/iseries/vcd*"
     # builtin mmc/sd card reader devices
-    DEVICES="$DEVICES /dev/mmcblk* /dev/mmcblk*/*"
+    devices="${devices} /dev/mmcblk* /dev/mmcblk*/*"
 
     # fallback scanning, this might scan something twice, but it's better than
     # failing to boot.
     local parts=$(awk '/([0-9]+[[:space:]]+)/{print "/dev/" $4}' \
         /proc/partitions)
-    [ -e /proc/partitions ] && DEVICES="${DEVICES} ${parts}"
+    [ -e /proc/partitions ] && devices="${devices} ${parts}"
 
-    echo ${DEVICES}
+    echo ${devices}
 }
 
 bootstrap_cd() {
@@ -126,7 +126,7 @@ bootstrap_cd() {
     # The device was specified on the command line, so there's no need
     # to scan a bunch of extra devices
     [ -n "${CDROOT_DEV}" ] && DEVICES="${CDROOT_DEV}"
-    [ -z "${CDROOT_DEV}" ] && DEVICES=$(devicelist)
+    [ -z "${CDROOT_DEV}" ] && DEVICES=$(device_list)
 
     media_find "cdrom" "${SUBDIR}/${CDROOT_MARKER}" \
         "REAL_ROOT" "${CDROOT_PATH}" ${DEVICES}
@@ -134,7 +134,7 @@ bootstrap_cd() {
 
 bootstrap_key() {
     # $1 = ROOT/SWAP
-    local KEYDEVS=$(devicelist)
+    local KEYDEVS=$(device_list)
     eval local keyloc='"${CRYPT_'${1}'_KEY}"'
 
     media_find "key" "${keyloc}" "CRYPT_${1}_KEYDEV" "/mnt/key" ${KEYDEVS}
