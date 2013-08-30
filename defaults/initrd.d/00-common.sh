@@ -41,6 +41,16 @@ verbose_kmsg() {
     [ -n "$QUIET" ] && echo '6' > /proc/sys/kernel/printk
 }
 
+test_success() {
+    local ret=${?}
+    local error_string="${1:-run command}"
+
+    if [ "${ret}" != "0" ]; then
+        bad_msg "Failed to ${1}; failing back to the shell..."
+        run_shell
+    fi
+}
+
 run_shell() {
     /bin/ash
 }
