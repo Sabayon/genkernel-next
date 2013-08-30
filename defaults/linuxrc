@@ -298,8 +298,9 @@ ensure_initramfs_mounts
 
 splashcmd hasroot "${NEW_ROOT}"
 
-# Execute script on the cdrom just before boot to update things if necessary
-cdupdate
+# Execute script on the cdrom just before boot to update
+# things if necessary
+is_livecd && cd_update
 
 if [ "${SUBDIR}" != "" ] && [ -e "${CHROOT}/${SUBDIR}" ]; then
     good_msg "Entering ${SUBDIR} to boot"

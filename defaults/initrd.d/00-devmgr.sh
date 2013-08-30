@@ -70,3 +70,29 @@ mount_devfs() {
             || bad_msg "Failed to mount /dev/pts"
     fi
 }
+
+device_list() {
+    # Locate the cdrom device with our media on it.
+    # CDROM devices
+    local devices="/dev/cdroms/* /dev/ide/cd/* /dev/sr*"
+    # USB Keychain/Storage
+    devices="${devices} /dev/sd*"
+    # IDE devices
+    devices="${devices} /dev/hd*"
+    # virtio devices
+    devices="${devices} /dev/vd*"
+    # USB using the USB Block Driver
+    devices="${devices} /dev/ubd* /dev/ubd/*"
+    # iSeries devices
+    devices="${devices} /dev/iseries/vcd*"
+    # builtin mmc/sd card reader devices
+    devices="${devices} /dev/mmcblk* /dev/mmcblk*/*"
+
+    # fallback scanning, this might scan something twice, but it's better than
+    # failing to boot.
+    local parts=$(awk '/([0-9]+[[:space:]]+)/{print "/dev/" $4}' \
+        /proc/partitions)
+    [ -e /proc/partitions ] && devices="${devices} ${parts}"
+
+    echo ${devices}
+}

@@ -1,17 +1,7 @@
 #!/bin/sh
 
-is_livecd() {
-    [ "${CDROOT}" = "1" ] && return 0
-    return 1
-}
-
 is_nfs() {
     [ "${REAL_ROOT}" = "/dev/nfs" ] && return 0
-    return 1
-}
-
-is_aufs() {
-    [ "${USE_AUFS}" = "1" ] && return 0
     return 1
 }
 
@@ -49,4 +39,23 @@ quiet_kmsg() {
 verbose_kmsg() {
     # if QUIET is set make the kernel less chatty
     [ -n "$QUIET" ] && echo '6' > /proc/sys/kernel/printk
+}
+
+run_shell() {
+    /bin/ash
+}
+
+do_rundebugshell() {
+    # TODO(lxnay): fix circular dep with 00-splash.sh
+    splashcmd verbose
+    good_msg 'Type "exit" to continue with normal bootup.'
+    [ -x /bin/sh ] && /bin/sh || /bin/ash
+}
+
+rundebugshell() {
+    if [ -n "${DEBUG}" ]; then
+        good_msg "Starting debug shell as requested."
+        good_msg "Stopping by: ${1}"
+        do_rundebugshell
+    fi
 }
