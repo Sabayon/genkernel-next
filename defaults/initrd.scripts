@@ -33,12 +33,6 @@ bootstrap_key() {
     media_find "key" "${keyloc}" "CRYPT_${1}_KEYDEV" "/mnt/key" ${KEYDEVS}
 }
 
-mount_sysfs() {
-    mount -t sysfs sysfs /sys -o noexec,nosuid,nodev >/dev/null 2>&1
-    ret=$?
-    [ ${ret} -eq 0 ] || bad_msg "Failed to mount /sys!"
-}
-
 find_nfs() {
     if [ -z "${IP}" ]; then
         # IP is not set, return straight away

@@ -2,6 +2,12 @@
 
 . /etc/initrd.d/00-common.sh
 
+mount_sysfs() {
+    mount -t sysfs sysfs /sys -o noexec,nosuid,nodev \
+        >/dev/null 2>&1 && return 0
+    bad_msg "Failed to mount /sys!"
+}
+
 find_real_device() {
     local device="${1}"
     local out=
