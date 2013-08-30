@@ -140,45 +140,6 @@ crypt_exec() {
     fi
 }
 
-prompt_user() {
-    # $1 = variable whose value is the path (examples: "REAL_ROOT",
-    #      "LUKS_KEYDEV")
-    # $2 = label
-    # $3 = optional explanations for failure
-
-    eval local oldvalue='$'${1}
-
-    [ $# != 2 -a $# != 3 ] && \
-        bad_msg "Bad invocation of function prompt_user."
-        bad_msg "Please file a bug report with this message" && exit 1
-    [ -n "${3}" ] && local explnt=" or : ${3}" || local explnt="."
-
-    splashcmd verbose
-    bad_msg "Could not find the ${2} in ${oldvalue}${explnt}"
-    bad_msg "Please specify another value or:"
-    bad_msg "- press Enter for the same"
-    bad_msg '- type "shell" for a shell'
-    bad_msg '- type "q" to skip...'
-    echo -n "${2}(${oldvalue}) :: "
-    read ${1}
-    case $(eval echo '$'${1}) in
-        'q')
-            eval ${1}'='${oldvalue}
-            warn_msg "Skipping step, this will likely cause a boot failure."
-            break
-            ;;
-        'shell')
-            eval ${1}'='${oldvalue}
-            warn_msg "To leave and try again just press <Ctrl>+D"
-            run_shell
-            ;;
-        '')
-            eval ${1}'='${oldvalue}
-            ;;
-    esac
-    splashcmd quiet
-}
-
 cmdline_hwopts() {
     # Scan CMDLINE for any "doscsi" or "noscsi"-type arguments
     local FOUND
