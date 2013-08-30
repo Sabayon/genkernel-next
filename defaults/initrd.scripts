@@ -584,18 +584,6 @@ start_luks() {
     fi
 }
 
-sdelay() {
-    # Sleep a specific number of seconds if SDELAY is set
-    if [ -n "${SDELAY}" ]
-    then
-        good_msg "Waiting ${SDELAY} seconds..."
-        sleep ${SDELAY}
-    elif is_livecd
-    then
-        good_msg 'Hint: Use scandelay[=seconds] if your live medium is slowand boot fails'
-    fi
-}
-
 setup_md_device() {
     local device
 

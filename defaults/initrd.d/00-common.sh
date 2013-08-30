@@ -51,6 +51,18 @@ test_success() {
     fi
 }
 
+sdelay() {
+    if [ -n "${SDELAY}" ]; then
+        good_msg "Waiting ${SDELAY} seconds..."
+        sleep ${SDELAY}
+
+    elif is_livecd; then
+        local msg="Hint: Use scandelay[=seconds] if"
+        msg="${msg} your live medium is slowand boot fails"
+        good_msg "${msg}"
+    fi
+}
+
 run_shell() {
     /bin/ash
 }
