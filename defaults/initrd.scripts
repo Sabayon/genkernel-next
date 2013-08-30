@@ -128,49 +128,6 @@ crypt_exec() {
     fi
 }
 
-cmdline_hwopts() {
-    # Scan CMDLINE for any "doscsi" or "noscsi"-type arguments
-    local FOUND
-    local TMP_HWOPTS
-
-    for x in $HWOPTS
-    do
-        for y in $CMDLINE
-        do
-            if [ "${y}" = "do${x}" ]
-            then
-                MY_HWOPTS="${MY_HWOPTS} $x"
-            elif [ "${y}" = "no${x}" ]
-            then
-                MY_HWOPTS="$(echo ${MY_HWOPTS} | sed -e \"s/${x}//g\" -)"
-            fi
-            if [ "$(echo ${y} | cut -b -7)" = "keymap=" ]
-            then
-                MY_HWOPTS="${MY_HWOPTS} keymap"
-            fi
-        done
-    done
-
-    # Shouldnt need to sort this as the following loop should figure out the
-    # duplicates and strip them out
-    #MY_HWOPTS=$(echo ${MY_HWOPTS}|  sort)
-    for x in ${MY_HWOPTS}
-    do
-        FOUND=0
-        for y in ${TMP_HWOPTS}
-        do
-            if [ "${y}" = "${x}" ]
-            then
-                continue 2
-            fi
-        done
-        TMP_HWOPTS="${TMP_HWOPTS} ${x}"
-        eval DO_$(echo ${x} | sed 's/-//')=1
-    done
-
-    MY_HWOPTS=${TMP_HWOPTS}
-}
-
 setup_keymap() {
     if [ "${DO_keymap}" ]
     then

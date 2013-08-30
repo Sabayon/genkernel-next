@@ -71,3 +71,32 @@ modules_init() {
     is_udev && udevadm settle
 }
 
+cmdline_hwopts() {
+    # Scan CMDLINE for any "doscsi" or "noscsi"-type arguments
+    for x in ${HWOPTS}; do
+        for y in ${CMDLINE}; do
+            if [ "${y}" = "do${x}" ]; then
+                MY_HWOPTS="${MY_HWOPTS} $x"
+            elif [ "${y}" = "no${x}" ]; then
+                MY_HWOPTS="$(echo ${MY_HWOPTS} | sed -e \"s/${x}//g\" -)"
+            fi
+            if [ "$(echo ${y} | cut -b -7)" = "keymap=" ]; then
+                MY_HWOPTS="${MY_HWOPTS} keymap"
+            fi
+        done
+    done
+
+    local tmp_hwopts
+    for x in ${MY_HWOPTS}; do
+        local found=0
+        for y in ${tmp_hwopts}; do
+            if [ "${y}" = "${x}" ]; then
+                continue 2
+            fi
+        done
+        tmp_hwopts="${tmp_hwopts} ${x}"
+        eval DO_$(echo ${x} | sed 's/-//')=1
+    done
+
+    MY_HWOPTS="${tmp_hwopts}"
+}
