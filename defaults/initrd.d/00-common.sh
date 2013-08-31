@@ -5,6 +5,11 @@ is_nfs() {
     return 1
 }
 
+is_livecd() {
+    [ "${CDROOT}" = "1" ] && return 0
+    return 1
+}
+
 good_msg() {
     [ -n "${QUIET}" ] && [ -z "${DEBUG}" ] && return 0
 

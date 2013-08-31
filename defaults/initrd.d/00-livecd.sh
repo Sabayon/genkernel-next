@@ -268,11 +268,6 @@ _livecd_mount_copy_content() {
     mount --bind "${CDROOT_PATH}" "${new_cdroot}"
 }
 
-is_livecd() {
-    [ "${CDROOT}" = "1" ] && return 0
-    return 1
-}
-
 media_find() {
     # $1 = mount dir name / media name
     # $2 = recognition file
