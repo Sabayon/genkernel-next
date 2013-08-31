@@ -19,8 +19,7 @@ find_nfs() {
     if [ -z "${NFSROOT}" ]; then
         # Obtain NFSIP
         # TODO: this is bogus, because dmesg is a circular buffer...
-        # TODO: provide dmesg as symlink (see gen_initramfs.sh)
-        options=$(busybox dmesg | grep rootserver | sed -e "s/,/ /g")
+        options=$(dmesg | grep rootserver | sed -e "s/,/ /g")
 
         local opt= optn=
 
@@ -33,8 +32,7 @@ find_nfs() {
 
         # Obtain NFSPATH
         # TODO: this is bogus, because dmesg is a circular buffer...
-        # TODO: provide dmesg as symlink (see gen_initramfs.sh)
-        options=$(busybox dmesg | grep rootpath | sed -e "s/,/ /g")
+        options=$(dmesg | grep rootpath | sed -e "s/,/ /g")
 
         for opt in ${options}; do
             optn=$(echo $opt | sed -e "s/=/ /g" | cut -d " " -f 1)
