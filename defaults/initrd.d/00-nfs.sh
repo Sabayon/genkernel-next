@@ -8,7 +8,7 @@ find_nfs() {
         return 1
     fi
 
-    if ! busybox udhcpc -n -T 15 -q; then
+    if ! udhcpc -n -T 15 -q; then
         bad_msg "udhcpc returned error, skipping nfs setup..."
         return 1
     fi
