@@ -22,9 +22,6 @@ real_root_init() {
     if [ -z "${REAL_ROOTFLAGS}" ]; then
         REAL_ROOTFLAGS="${FAKE_ROOTFLAGS}"
     fi
-
-    # let zfs code setup its parameters
-    zfs_real_root_init
 }
 
 bootstrap_key() {

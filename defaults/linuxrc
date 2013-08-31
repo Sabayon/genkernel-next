@@ -240,7 +240,9 @@ done
 
 quiet_kmsg
 
-is_livecd || real_root_init
+is_livecd || {
+    real_root_init && zfs_real_root_init;
+}
 
 cmdline_hwopts
 
