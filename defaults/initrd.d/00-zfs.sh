@@ -2,6 +2,7 @@
 
 . /etc/initrd.d/00-common.sh
 . /etc/initrd.d/00-fsdev.sh
+. /etc/initrd.d/00-devmgr.sh
 
 _is_zfs() {
     # Note: this only works after zfs_real_root_init
@@ -101,6 +102,8 @@ zfs_start_volumes() {
             fi
         fi
     fi
+
+    is_udev && udevadm settle
 }
 
 # Initialize the zfs root filesystem device and

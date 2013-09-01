@@ -114,9 +114,6 @@ start_volumes() {
         fi
     fi
 
-    # If zfs is enabled, this will initialize the volumes
-    zfs_start_volumes
-
     is_udev && udevadm settle
 }
 

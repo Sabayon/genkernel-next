@@ -270,6 +270,7 @@ start_iscsi
 is_mdev && setup_md_device
 
 start_volumes
+zfs_start_volumes
 
 setup_keymap
 
