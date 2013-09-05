@@ -347,7 +347,6 @@ livecd_mount() {
         losetup /dev/loop0 "${CDROOT_PATH}/${LOOPEXT}${LOOP}"
         test_success "Preparing loop filesystem"
 
-        # TODO(lxnay): start_luks is still in livecd.scripts
         start_luks
 
         case ${LOOPTYPE} in
