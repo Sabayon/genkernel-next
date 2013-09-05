@@ -267,7 +267,7 @@ cd /
 start_iscsi
 
 # Setup md device nodes if they dont exist
-is_mdev && setup_md_device
+setup_md_device
 
 start_volumes
 zfs_start_volumes

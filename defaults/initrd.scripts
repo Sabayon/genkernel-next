@@ -46,77 +46,6 @@ crypt_exec() {
     fi
 }
 
-start_volumes() {
-    # Here, we check for /dev/device-mapper, and if it exists, we setup a
-    # a symlink, which should hopefully fix bug #142775 and bug #147015
-    if [ -e /dev/device-mapper ] && [ ! -e /dev/mapper/control ]; then
-        mkdir -p /dev/mapper
-        ln -sf /dev/device-mapper /dev/mapper/control
-    fi
-
-    if [ "${USE_MDADM}" = "1" ]; then
-        if [ -e "/sbin/mdadm" ]; then
-            /sbin/mdadm --assemble --scan
-        else
-            bad_msg "mdadm not found: skipping mdadm raid assembly!"
-        fi
-    fi
-
-    if [ "${USE_MULTIPATH_NORMAL}" = "1" ]; then
-        good_msg "Scanning for multipath devices"
-        /sbin/multipath -v 0
-        # TODO(lxnay): horrible sleep!
-        sleep 2
-        good_msg "Activating multipath devices"
-        /sbin/dmsetup ls --target multipath --exec "/sbin/kpartx -a -v"
-    fi
-
-    if [ "${USE_DMRAID_NORMAL}" = "1" ]; then
-        if [ -e "/sbin/dmraid" ]; then
-            good_msg "Activating Device-Mapper RAID(s)"
-            /sbin/dmraid -ay ${DMRAID_OPTS}
-        else
-            bad_msg "/sbin/dmraid not found"
-        fi
-    fi
-
-    if [ "${USE_LVM_NORMAL}" = "1" ]; then
-       if [ -e "/sbin/lvm" ]; then
-            if is_mdev; then
-                for dev in ${RAID_DEVICES}; do
-                    setup_md_device "${dev}"
-                done
-            fi
-
-            # This is needed for /sbin/lvm to accept the following logic
-            local cmds="#! /sbin/lvm"
-
-            # If there is a cahe, update it. Unbreak at least dmcrypt
-            [ -d /etc/lvm/cache ] && cmds="${cmds} \nvgscan"
-
-            # To activate volumegroups on all devices in the cache
-            cmds="${cmds} \nvgchange -ay --sysinit"
-            if is_mdev; then
-                # To create symlinks so users can use
-                # real_root=/dev/vg/root
-                # This needs to run after vgchange, using
-                # vgchange --mknodes is too early.
-                cmds+="${cmds} \nvgmknodes --ignorelockingfailure"
-            fi
-
-            # And finally execute it all (/proc/... needed if lvm
-            # is compiled without readline)
-            good_msg "Scanning for and activating Volume Groups"
-            printf "%b\n" "${cmds}" | /sbin/lvm /proc/self/fd/0
-
-        else
-            bad_msg "/sbin/lvm not found: skipping LVM activation"
-        fi
-    fi
-
-    is_udev && udevadm settle
-}
-
 start_iscsi() {
     if [ ! -e /usr/sbin/iscsistart ]; then
         return 0  # disabled
@@ -359,25 +288,6 @@ start_luks() {
             # Resume from swap as default
             REAL_RESUME="/dev/mapper/swap"
         fi
-    fi
-}
-
-setup_md_device() {
-    local device
-
-    [ -z "$1" ] && device="${REAL_ROOT}" || device="$1"
-    [ -z "${device}" ] && return # LiveCD
-
-    if [ $(echo ${device}|sed -e 's#\(luks:\)\?\(/dev/md\)[[:digit:]]\+#\2#') = "/dev/md" ]
-    then
-        good_msg 'Detected real_root as a md device. Setting up the device node...'
-        MD_NUMBER=$(echo ${device}|sed -e 's#\(luks:\)\?/dev/md\([[:digit:]]\+\)#\2#')
-        if [ ! -e /dev/md${MD_NUMBER} ]
-        then
-            mknod /dev/md${MD_NUMBER} b 9 ${MD_NUMBER} >/dev/null 2>&1
-            [ $? -ne 0 ] && bad_msg "Creation of /dev/md${MD_NUMBER} failed..."
-        fi
-        mdstart ${MDPART} /dev/md${MD_NUMBER}
     fi
 }
 

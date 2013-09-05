@@ -2,6 +2,8 @@
 
 . /etc/initrd.d/00-common.sh
 . /etc/initrd.d/00-devmgr.sh
+. /etc/initrd.d/00-fsdev.sh
+. /etc/initrd.d/00-crypt.sh
 
 
 _is_aufs() {
@@ -266,76 +268,6 @@ _livecd_mount_copy_content() {
     local new_cdroot="${NEW_ROOT}${CDROOT_PATH}"
     [ ! -d "${new_cdroot}" ] && mkdir -p "${new_cdroot}"
     mount --bind "${CDROOT_PATH}" "${new_cdroot}"
-}
-
-media_find() {
-    # $1 = mount dir name / media name
-    # $2 = recognition file
-    # $3 = variable to have the device path
-    # $4 = actual mount dir path (full path)
-    # args remaining are possible devices
-
-    local media="${1}" recon="${2}" vrbl="${3}" mntdir="${4}"
-    shift 4
-
-    good_msg "Looking for the ${media}"
-
-    if [ "$#" -gt "0" ]; then
-
-        [ ! -d "${mntdir}" ] && \
-            mkdir -p "${mntdir}" 2>/dev/null >/dev/null
-
-        local mntcddir="${mntdir}"
-        if [ -n "${ISOBOOT}" ]; then
-            mntcddir="${mntdir%${media}}iso"
-            if [ ! -f "${mntcddir}" ]; then
-                mkdir "${mntcddir}"
-            fi
-        fi
-
-        for x in ${*}; do
-
-            # Check for a block device to mount
-            if [ ! -b "${x}" ]; then
-                continue
-            fi
-
-            #
-            # If disk and it has at least one partition, skip.
-            # We use /sys/block/${bsn}/${bsn}[0-9]* to make sure that we
-            # don't skip device mapper devices. Even the craziest scenario
-            # deserves a fair chance.
-            #
-            local bsn=$(basename "${x}")
-            local bpath="/sys/block/${bsn}"
-            local parts=$(find "${bpath}/" \
-                -regex "${bpath}/${bsn}[0-9]" -type d 2>/dev/null)
-            [ -n "${parts}" ] && continue
-
-            good_msg "Attempting to mount media: ${x}"
-            mount -r -t "${CDROOT_TYPE}" "${x}" "${mntcddir}" >/dev/null 2>&1 \
-                || continue
-
-            if [ -n "${ISOBOOT}" ] && [ -f "${mntcddir}/${ISOBOOT}" ]; then
-                mount -o loop "${mntcddir}/${ISOBOOT}" "${mntdir}" && \
-                    good_msg "iso mounted on ${mntdir}"
-            fi
-
-            # Check for the media
-            if [ -f "${mntdir}/${recon}" ]; then
-                # Set REAL_ROOT, CRYPT_ROOT_KEYDEV or whatever ${vrbl} is
-                eval ${vrbl}'='"${x}"
-                good_msg "Media found on ${x}"
-                break
-            else
-                umount "${mntcddir}"
-            fi
-        done
-    fi
-
-    eval local result='$'${vrbl}
-
-    [ -n "${result}" ] || bad_msg "Media not found"
 }
 
 livecd_init() {
