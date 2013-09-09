@@ -24,6 +24,10 @@ if [ "$0" = "/init" ]; then
     rm -f /linuxrc
 fi
 
+# make sure that /sbin and /usr/sbin are in PATH
+# dmraid for instance is in /usr/sbin
+PATH="${PATH}:/sbin:/usr/sbin"
+
 CMDLINE=$(cat /proc/cmdline)
 FAKE_ROOT=""
 FAKE_INIT=""
