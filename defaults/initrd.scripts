@@ -15,11 +15,6 @@
 . /etc/initrd.d/00-iscsi.sh
 . /etc/initrd.d/00-rootdev.sh
 
-
-getdvhoff() {
-    echo $(( $(hexdump -n 4 -s $((316 + 12 * $2)) -e '"%i"' $1) * 512))
-}
-
 # If devtmpfs is mounted, try move it to the new root
 # If that fails, try to unmount all possible mounts of devtmpfs as
 # stuff breaks otherwise

@@ -128,6 +128,10 @@ _livecd_mount_unpack_nfs() {
     fi
 }
 
+_getdvhoff() {
+    echo $(( $(hexdump -n 4 -s $((316 + 12 * $2)) -e '"%i"' $1) * 512))
+}
+
 _livecd_mount_sgimips() {
     # getdvhoff finds the starting offset (in bytes) of the squashfs
     # partition on the cdrom and returns this offset for losetup
@@ -140,7 +144,7 @@ _livecd_mount_sgimips() {
     # the LiveCD rootfs
     good_msg "Locating the SGI LiveCD root partition"
     echo " " | \
-        losetup -o $(getdvhoff "${NEW_ROOT}${REAL_ROOT}" 0) \
+        losetup -o $(_getdvhoff "${NEW_ROOT}${REAL_ROOT}" 0) \
             "${NEW_ROOT}${CDROOT_DEV}" \
             "${NEW_ROOT}${REAL_ROOT}"
     test_success "losetup /dev/sr0 /dev/loop0"
