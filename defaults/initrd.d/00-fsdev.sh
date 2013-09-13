@@ -9,6 +9,23 @@ mount_sysfs() {
     bad_msg "Failed to mount /sys!"
 }
 
+# If devtmpfs is mounted, try move it to the new root
+# If that fails, try to unmount all possible mounts of devtmpfs as
+# stuff breaks otherwise
+move_mounts_to_chroot() {
+    for fs in /run /dev /sys /proc; do
+        if grep -qs "$fs" /proc/mounts; then
+            local chroot_dir="${CHROOT}${fs}"
+            mkdir -p "${chroot_dir}"
+            if ! mount --move $fs "${chroot_dir}"
+            then
+                umount $fs || \
+                bad_msg "Failed to move and umount $fs!"
+            fi
+        fi
+    done
+}
+
 find_real_device() {
     local device="${1}"
     local out=
