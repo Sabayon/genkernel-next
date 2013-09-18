@@ -612,9 +612,13 @@ append_udev() {
         fi
     done
 
+    # systemd-207 dropped /sbin/udevd
+    local udevd_bin=/sbin/udevd
+    [ ! -e "${udevd_bin}" ] && udevd_bin=/usr/lib/systemd/systemd-udevd
+
     # Copy binaries
     copy_binaries "${TEMP}/initramfs-udev-temp" \
-        /sbin/udevd /bin/udevadm "${udev_dir}/scsi_id" \
+        "${udevd_bin}" /bin/udevadm "${udev_dir}/scsi_id" \
         "${udev_dir}/ata_id" "${udev_dir}/mtd_probe"
 
     cd "${TEMP}/initramfs-udev-temp/"

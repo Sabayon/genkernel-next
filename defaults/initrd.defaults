@@ -55,7 +55,10 @@ ROOT_LINKS='bin sbin lib lib32 lib64 boot usr opt emul'
 ROOT_TREES='etc root home var'
 KSUFF='.ko'
 
+# systemd-207 dropped /sbin/udevd
 UDEVD='/sbin/udevd'
+[ ! -e "${UDEVD}" ] && UDEVD='/usr/lib/systemd/systemd-udevd'
+
 MDEVD='/sbin/mdev'
 INITRD_SPLASH='/etc/initrd.splash'
 PLYMOUTHD_BIN='/sbin/plymouthd'
