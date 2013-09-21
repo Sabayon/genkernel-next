@@ -616,7 +616,7 @@ append_udev() {
     local udevd_bin=/sbin/udevd
     [ ! -e "${udevd_bin}" ] && udevd_bin=/usr/lib/systemd/systemd-udevd
     local udevadm_bin=/bin/udevadm
-    [ ! -e "${udevd_bin}" ] && udevadm_bin=/usr/bin/udevadm
+    [ ! -e "${udevadm_bin}" ] && udevadm_bin=/usr/bin/udevadm
 
     # Copy binaries
     copy_binaries "${TEMP}/initramfs-udev-temp" \
