@@ -180,8 +180,9 @@ start_volumes() {
 
     if [ "${USE_MDADM}" = "1" ]; then
         good_msg "Activating md raid devices"
-        mdadm --assemble --scan || \
-            bad_msg "mdadm failed to run, skipping raid assembly!"
+        mdadm --assemble --scan
+        # do not bad_msg, user could have this enabled even though
+        # no RAID is currently available.
     fi
 
     if [ "${USE_MULTIPATH_NORMAL}" = "1" ]; then
