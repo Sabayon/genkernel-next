@@ -219,7 +219,7 @@ start_volumes() {
             # real_root=/dev/vg/root
             # This needs to run after vgchange, using
             # vgchange --mknodes is too early.
-            cmds+="${cmds} \nvgmknodes --ignorelockingfailure"
+            cmds="${cmds} \nvgmknodes --ignorelockingfailure"
         fi
 
         # And finally execute it all (/proc/... needed if lvm
