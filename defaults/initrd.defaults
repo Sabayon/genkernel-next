@@ -61,7 +61,10 @@ UDEVD='/sbin/udevd'
 
 MDEVD='/sbin/mdev'
 INITRD_SPLASH='/etc/initrd.splash'
+# latest plymouth ebuild in gentoo has it in /usr/bin
 PLYMOUTHD_BIN='/sbin/plymouthd'
+[ ! -e "${PLYMOUTHD_BIN}" ] && PLYMOUTHD_BIN='/usr/bin/plymouthd'
+
 PLYMOUTH_BIN='/bin/plymouth'
 REAL_ROOT=''
 CONSOLE='/dev/console'
