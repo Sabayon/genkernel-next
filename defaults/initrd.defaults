@@ -66,6 +66,7 @@ PLYMOUTHD_BIN='/sbin/plymouthd'
 [ ! -e "${PLYMOUTHD_BIN}" ] && PLYMOUTHD_BIN='/usr/sbin/plymouthd'
 
 PLYMOUTH_BIN='/bin/plymouth'
+[ ! -e "${PLYMOUTH_BIN}" ] && PLYMOUTH_BIN='/usr/bin/plymouth'
 REAL_ROOT=''
 CONSOLE='/dev/console'
 NEW_ROOT='/newroot'

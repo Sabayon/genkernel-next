@@ -482,8 +482,12 @@ append_plymouth() {
     [ ! -e "${plymouthd_bin}" ] && \
         plymouthd_bin="/usr/sbin/plymouthd"
 
+    local plymouth_bin="/bin/plymouth"
+    [ ! -e "${plymouth_bin}" ] && \
+        plymouth_bin="/usr/bin/plymouth"
+
     copy_binaries "${TEMP}/initramfs-ply-temp" \
-        "${plymouthd_bin}" /bin/plymouth \
+        "${plymouthd_bin}" "${plymouth_bin}" \
         "${final_libs[@]}" || gen_die "cannot copy plymouth"
 
     log_future_cpio_content
