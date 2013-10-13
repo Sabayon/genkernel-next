@@ -480,7 +480,7 @@ append_plymouth() {
 
     local plymouthd_bin="/sbin/plymouthd"
     [ ! -e "${plymouthd_bin}" ] && \
-        plymouthd_bin="/usr/bin/plymouthd"
+        plymouthd_bin="/usr/sbin/plymouthd"
 
     copy_binaries "${TEMP}/initramfs-ply-temp" \
         "${plymouthd_bin}" /bin/plymouth \
