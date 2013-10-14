@@ -469,7 +469,6 @@ append_plymouth() {
 
     local libs=(
         "${libply_core}"
-        "/usr/lib*/libply-splash-core.so.*"
         "/usr/lib*/libply-splash-graphics.so.*"
         "/usr/lib*/plymouth/text.so"
         "/usr/lib*/plymouth/details.so"
