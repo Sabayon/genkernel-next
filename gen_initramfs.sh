@@ -461,7 +461,7 @@ append_plymouth() {
         gen_die "cannot setup the default plymouth theme"
 
     local libs=(
-        "{/lib*,/usr/lib*}/libply-splash-core.so.*"
+        "/lib*/libply-splash-core.so.*"
         "/usr/lib*/libply-splash-graphics.so.*"
         "/usr/lib*/plymouth/text.so"
         "/usr/lib*/plymouth/details.so"
