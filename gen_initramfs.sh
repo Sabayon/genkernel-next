@@ -426,6 +426,7 @@ append_plymouth() {
     mkdir -p "${TEMP}/initramfs-ply-temp/usr/share/plymouth/themes"
     mkdir -p "${TEMP}/initramfs-ply-temp/etc/plymouth"
     mkdir -p "${TEMP}/initramfs-ply-temp/"{bin,sbin}
+    mkdir -p "${TEMP}/initramfs-ply-temp/usr/"{bin,sbin}
 
     cd "${TEMP}/initramfs-ply-temp"
 
@@ -460,8 +461,15 @@ append_plymouth() {
         "${TEMP}/initramfs-ply-temp${theme_dir}/default.plymouth" || \
         gen_die "cannot setup the default plymouth theme"
 
+    # plymouth may have placed the libs into /usr/
+    local libply_core="/lib*/libply-splash-core.so.*"
+    if ! ls -1 ${libply_core} 2>/dev/null >/dev/null; then
+        libply_core="/usr/lib*/libply-splash-core.so.*"
+    fi
+
     local libs=(
-        "/lib*/libply-splash-core.so.*"
+        "${libply_core}"
+        "/usr/lib*/libply-splash-core.so.*"
         "/usr/lib*/libply-splash-graphics.so.*"
         "/usr/lib*/plymouth/text.so"
         "/usr/lib*/plymouth/details.so"
