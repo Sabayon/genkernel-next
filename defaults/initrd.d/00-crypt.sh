@@ -106,8 +106,8 @@ _open_luks() {
                 good_msg "Using key device ${real_luks_keydev}."
 
                 if [ ! -b "${real_luks_keydev}" ]; then
-                    err_msg "Insert device ${LUKS_KEYDEV} for ${LUKS_NAME}"
-                    err_msg "You have 10 seconds..."
+                    bad_msg "Insert device ${LUKS_KEYDEV} for ${LUKS_NAME}"
+                    bad_msg "You have 10 seconds..."
                     local count=10
                     while [ ${count} -gt 0 ]; do
                         count=$((count-1))
