@@ -151,8 +151,6 @@ _open_luks() {
 
                 good_msg "Removable device ${real_luks_keydev} mounted."
 
-                # TODO(lxnay): horrible sleep, what are we waiting for?
-                sleep 2
                 if [ ! -e "${mntkey}${LUKS_KEY}" ]; then
                     umount -n "${mntkey}"
                     key_error=1
