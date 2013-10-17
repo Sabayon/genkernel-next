@@ -37,8 +37,16 @@ _open_luks() {
             ;;
     esac
 
+    local LUKS_NAME="${1}"
+    # do not force the link to /dev/mapper/root
+    # but rather use the value from root=, which is
+    # in ${REAL_ROOT}
+    if [ "${LUKS_NAME}" = "root" ]; then
+        if echo "${REAL_ROOT}" | grep -q "^/dev/mapper"; then
+            LUKS_NAME="$(basename ${REAL_ROOT})"
+        fi
+    fi
     eval local LUKS_DEVICE='"${CRYPT_'${ltype}'}"'
-    eval local LUKS_NAME="${1}"  # no idea, really, this was old code
     eval local LUKS_KEY='"${CRYPT_'${ltype}'_KEY}"'
     eval local LUKS_KEYDEV='"${CRYPT_'${ltype}'_KEYDEV}"'
     eval local LUKS_TRIM='"${CRYPT_'${ltype}'_TRIM}"'
@@ -51,8 +59,11 @@ _open_luks() {
         return 1
     fi
 
+    local exit_st=
+
     while true; do
         local gpg_cmd=""
+        exit_st=1
 
         # if crypt_silent=1 and some error occurs, bail out.
         local any_error=
@@ -61,7 +72,8 @@ _open_luks() {
         [ "${keydev_error}" = "1" ] && any_error=1
         if [ "${CRYPT_SILENT}" = "1" ] && [ -n "${any_error}" ]; then
             bad_msg "Failed to setup the LUKS device"
-            return 1
+            exit_st=1
+            break
         fi
 
         if [ "${dev_error}" = "1" ]; then
@@ -191,6 +203,7 @@ _open_luks() {
 
         if [ "${ret}" = "0" ]; then
             good_msg "LUKS device ${LUKS_DEVICE} opened"
+            exit_st=0
             break
         fi
 
@@ -202,6 +215,8 @@ _open_luks() {
 
     umount -l "${mntkey}" 2>/dev/null >/dev/null
     rmdir -p "${mntkey}" 2>/dev/null >/dev/null
+
+    return ${exit_st}
 }
 
 start_luks() {
@@ -211,13 +226,15 @@ start_luks() {
         && sleep 6 && _bootstrap_key "ROOT"
 
     if [ -n "${CRYPT_ROOT}" ]; then
-        _open_luks "root"
-        if [ -n "${REAL_ROOT}" ]; then
-            # Rescan volumes
-            start_volumes
-        else
-            REAL_ROOT="/dev/mapper/root"
+        if _open_luks "root"; then
+            # force REAL_ROOT= to some value if not set
+            # this is mainly for backward compatibility,
+            # because grub2 always sets a valid root=
+            # and user must have it as well.
+            [ -z "${REAL_ROOT}" ] && REAL_ROOT="/dev/mapper/root"
         fi
+        # Always rescan volumes
+        start_volumes
     fi
 
     # TODO(lxnay): this sleep 6 thing is hurting my eyes sooooo much.
