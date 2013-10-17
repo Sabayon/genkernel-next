@@ -37,20 +37,12 @@ _open_luks() {
             ;;
     esac
 
-    local LUKS_NAME="${1}"
-    # do not force the link to /dev/mapper/root
-    # but rather use the value from root=, which is
-    # in ${REAL_ROOT}
-    if [ "${LUKS_NAME}" = "root" ]; then
-        if echo "${REAL_ROOT}" | grep -q "^/dev/mapper/"; then
-            LUKS_NAME="$(basename ${REAL_ROOT})"
-        fi
-    fi
     eval local LUKS_DEVICE='"${CRYPT_'${ltype}'}"'
     eval local LUKS_KEY='"${CRYPT_'${ltype}'_KEY}"'
     eval local LUKS_KEYDEV='"${CRYPT_'${ltype}'_KEYDEV}"'
     eval local LUKS_TRIM='"${CRYPT_'${ltype}'_TRIM}"'
 
+    local LUKS_NAME="${1}"
     local dev_error=0 key_error=0 keydev_error=0
     local mntkey="/mnt/key/" cryptsetup_opts=""
 
@@ -64,6 +56,23 @@ _open_luks() {
     while true; do
         local gpg_cmd=""
         exit_st=1
+
+        # do not force the link to /dev/mapper/root
+        # but rather use the value from root=, which is
+        # in ${REAL_ROOT}
+        local luks_dev_name=$(basename "${LUKS_DEVICE}")
+        local real_dev=
+        local luks_name_prefix=
+        if [ "${ltype}" = "ROOT" ]; then
+            real_dev="${REAL_ROOT}"
+        elif [ "${ltype}" = "SWAP" ]; then
+            real_dev="${REAL_RESUME}"
+        fi
+        if echo "${real_dev}" | grep -q "^/dev/mapper/"; then
+            # If we use LVM + cryptsetup, we may have collisions between
+            # the two inside /dev/mapper. So, make up a way to avoid them.
+            LUKS_NAME="${LUKS_NAME}_${luks_dev_name}-$(basename ${real_dev})"
+        fi
 
         # if crypt_silent=1 and some error occurs, bail out.
         local any_error=
@@ -202,8 +211,20 @@ _open_luks() {
             && mv /dev/tty.org /dev/tty
 
         if [ "${ret}" = "0" ]; then
-            good_msg "LUKS device ${LUKS_DEVICE} opened"
             exit_st=0
+            good_msg "LUKS device ${LUKS_DEVICE} opened"
+
+            # This is fine if the crypt device is a physical device
+            # like /dev/sdaX, however, if we have cryptsetup inside
+            # LVM, we must tweak REAL_ROOT if there is no device node.
+            start_volumes  # this should create /dev/mapper links
+            if echo "${real_dev}" | grep -q "^/dev/mapper/"; then
+                if [ ! -e "${real_dev}" ]; then
+                    good_msg "Creating symlink for ${LUKS_NAME} to ${real_dev}"
+                    ln -s "${LUKS_NAME}" "${real_dev}" || exit_st=1
+                fi
+            fi
+
             break
         fi
 
@@ -233,8 +254,6 @@ start_luks() {
             # and user must have it as well.
             [ -z "${REAL_ROOT}" ] && REAL_ROOT="/dev/mapper/root"
         fi
-        # Always rescan volumes
-        start_volumes
     fi
 
     # TODO(lxnay): this sleep 6 thing is hurting my eyes sooooo much.
@@ -243,10 +262,9 @@ start_luks() {
         && { [ -z "${CRYPT_ROOT}" ] && sleep 6; _bootstrap_key "SWAP"; }
 
     if [ -n "${CRYPT_SWAP}" ]; then
-        _open_luks "swap"
-        if [ -z "${REAL_RESUME}" ]; then
-            # Resume from swap as default
-            REAL_RESUME="/dev/mapper/swap"
+        if _open_luks "swap"; then
+            # force REAL_RESUME= to some value if not set
+            [ -z "${REAL_RESUME}" ] && REAL_RESUME="/dev/mapper/swap"
         fi
     fi
 }
