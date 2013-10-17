@@ -42,7 +42,7 @@ _open_luks() {
     # but rather use the value from root=, which is
     # in ${REAL_ROOT}
     if [ "${LUKS_NAME}" = "root" ]; then
-        if echo "${REAL_ROOT}" | grep -q "^/dev/mapper"; then
+        if echo "${REAL_ROOT}" | grep -q "^/dev/mapper/"; then
             LUKS_NAME="$(basename ${REAL_ROOT})"
         fi
     fi
