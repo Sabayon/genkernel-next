@@ -138,10 +138,11 @@ append_busybox() {
             gen_die "Busybox error: could not link ${i}!"
     done
 
-    local mod_applets="sbin/modprobe sbin/insmod sbin/rmmod bin/lsmod"
+    local sbin_applets="sbin/modprobe sbin/insmod"
+    sbin_applets+=" sbin/rmmod bin/lsmod sbin/losetup"
     local dir=
     local name=
-    for i in ${mod_applets}; do
+    for i in ${sbin_applets}; do
         dir=$(dirname $i)
         name=$(basename $i)
         rm -f ${TEMP}/initramfs-busybox-temp/$dir/$name
