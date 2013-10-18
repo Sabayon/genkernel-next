@@ -378,7 +378,7 @@ livecd_mount() {
                 MOUNTTYPE="${LOOPTYPE}"
                 ;;
         esac
-        mount -t "${MOUNTTYPE}" -o ro /dev/mapper/root \
+        mount -t "${MOUNTTYPE}" -o ro "${REAL_ROOT}" \
             "${NEW_ROOT}/mnt/livecd"
         test_success "Mount filesystem"
         FS_LOCATION="mnt/livecd"
