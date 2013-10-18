@@ -139,30 +139,48 @@ _livecd_mount_sgimips() {
     # All currently supported SGI Systems use SCSI CD-ROMs, so
     # so we know that the CD-ROM is usually going to be /dev/sr0.
     #
-    # We use the value given to losetup to set /dev/loop0 to point
-    # to the liveCD root partition, and then mount /dev/loop0 as
+    # We use the value given to losetup to set $(losetup -f) to point
+    # to the liveCD root partition, and then mount $(losetup -f) as
     # the LiveCD rootfs
+    local loop_dev=$(losetup -f)
+    if [ -z "${loop_dev}" ]; then
+        bad_msg "Cannot find a free loop device"
+        return 1
+    fi
+
+    if [ ! -e "${NEW_ROOT}${loop_dev}" ]; then
+        cp -a "${loop_dev}" "${NEW_ROOT}${loop_dev}" || {
+            bad_msg "Cannot copy ${loop_dev} to ${NEW_ROOT}"
+            return 1;
+        }
+    fi
+
     good_msg "Locating the SGI LiveCD root partition"
     echo " " | \
         losetup -o $(_getdvhoff "${NEW_ROOT}${REAL_ROOT}" 0) \
             "${NEW_ROOT}${CDROOT_DEV}" \
             "${NEW_ROOT}${REAL_ROOT}"
-    test_success "losetup /dev/sr0 /dev/loop0"
+    test_success "losetup /dev/sr0 ${loop_dev}"
 
     good_msg "Mounting the root partition"
     mount -t squashfs -o ro "${NEW_ROOT}${CDROOT_DEV}" \
         "${NEW_ROOT}/mnt/livecd"
-    test_success "mount /dev/loop0 /"
+    test_success "mount ${loop_dev} /"
 }
 
 _livecd_mount_gcloop() {
+    local loop_dev=$(losetup -f)
+    if [ -z "${loop_dev}" ]; then
+        bad_msg "Cannot find a free loop device"
+        return 1
+    fi
     good_msg "Mounting gcloop filesystem"
     echo " " | losetup -E 19 -e ucl-0 -p0 \
-        "${NEW_ROOT}/dev/loop0" \
+        "${NEW_ROOT}${loop_dev}" \
         "${CDROOT_PATH}/${LOOPEXT}${LOOP}"
     test_success "losetup the loop device"
 
-    mount -t ext2 -o ro "${NEW_ROOT}/dev/loop0" "${NEW_ROOT}/mnt/livecd"
+    mount -t ext2 -o ro "${NEW_ROOT}${loop_dev}" "${NEW_ROOT}/mnt/livecd"
     test_success "Mount the losetup loop device"
 }
 
@@ -291,12 +309,11 @@ livecd_init() {
     [ ! -e "${NEW_ROOT}/dev/console" ] && \
         mknod "${NEW_ROOT}"/dev/console c 5 1
 
-    # For SGI LiveCDs ...
-    if [ "${LOOPTYPE}" = "sgimips" ]; then
-        [ ! -e "${NEW_ROOT}/dev/sr0" ] && \
-            mknod "${NEW_ROOT}/dev/sr0" b 11 0
-        [ ! -e "${NEW_ROOT}/dev/loop0" ] && \
-            mknod "${NEW_ROOT}/dev/loop0" b 7 0
+    local loop_dev=$(losetup -f)
+    if [ -z "${loop_dev}" ]; then
+        bad_msg "Cannot find a free loop device"
+        CDROOT=0
+        return 1
     fi
 
     # Required for splash to work.  Not an issue with the initrd as this
@@ -345,10 +362,10 @@ livecd_mount() {
     # If encrypted, find key and mount, otherwise mount as usual
     if [ -n "${CRYPT_ROOT}" ]; then
         CRYPT_ROOT_KEY=$(head -n 1 "${CDROOT_PATH}/${CDROOT_MARKER}")
-        CRYPT_ROOT="/dev/loop0"
+        CRYPT_ROOT="$(losetup -f)"
         good_msg "You booted an encrypted livecd"
 
-        losetup /dev/loop0 "${CDROOT_PATH}/${LOOPEXT}${LOOP}"
+        losetup "${CRYPT_ROOT}" "${CDROOT_PATH}/${LOOPEXT}${LOOP}"
         test_success "Preparing loop filesystem"
 
         start_luks
