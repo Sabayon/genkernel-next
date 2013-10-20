@@ -281,7 +281,6 @@ start_luks() {
         fi
     fi
 
-    # same for swap, but no need to sleep if root was unencrypted
     [ -n "${CRYPT_SWAP_KEY}" ] && [ -z "${CRYPT_SWAP_KEYDEV}" ] \
         && _bootstrap_key "SWAP"
 
