@@ -170,6 +170,13 @@ setup_md_device() {
     fi
 }
 
+start_md_volumes() {
+    good_msg "Starting md devices"
+    mdadm --assemble --scan
+    # do not bad_msg, user could have this enabled even though
+    # no RAID is currently available.
+}
+
 start_volumes() {
     # Here, we check for /dev/device-mapper, and if it exists, we setup a
     # a symlink, which should hopefully fix bug #142775 and bug #147015
@@ -179,10 +186,7 @@ start_volumes() {
     fi
 
     if [ "${USE_MDADM}" = "1" ]; then
-        good_msg "Activating md raid devices"
-        mdadm --assemble --scan
-        # do not bad_msg, user could have this enabled even though
-        # no RAID is currently available.
+        start_md_volumes
     fi
 
     if [ "${USE_MULTIPATH_NORMAL}" = "1" ]; then
