@@ -87,7 +87,6 @@ for x in ${CMDLINE}; do
             USE_LVM_NORMAL=1
         ;;
         domdadm)
-            # TODO(lxnay): enable this implicitly if /sbin/mdadm is available
             USE_MDADM=1
         ;;
         dodmraid)

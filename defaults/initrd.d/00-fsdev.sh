@@ -3,6 +3,14 @@
 . /etc/initrd.d/00-common.sh
 . /etc/initrd.d/00-devmgr.sh
 
+MDADM_BIN="/sbin/mdadm"
+
+_is_mdadm() {
+    [ -x "${MDADM_BIN}" ] || return 1
+    [ "${USE_MDADM}" = "1" ] || return 1
+    return 0
+}
+
 mount_sysfs() {
     mount -t sysfs sysfs /sys -o noexec,nosuid,nodev \
         >/dev/null 2>&1 && return 0
@@ -172,7 +180,7 @@ setup_md_device() {
 
 start_md_volumes() {
     good_msg "Starting md devices"
-    mdadm --assemble --scan
+    "${MDADM_BIN}" --assemble --scan
     # do not bad_msg, user could have this enabled even though
     # no RAID is currently available.
 }
@@ -185,7 +193,7 @@ start_volumes() {
         ln -sf /dev/device-mapper /dev/mapper/control
     fi
 
-    [ "${USE_MDADM}" = "1" ] && start_md_volumes
+    _is_mdadm && start_md_volumes
 
     if [ "${USE_MULTIPATH_NORMAL}" = "1" ]; then
         good_msg "Scanning for multipath devices"
