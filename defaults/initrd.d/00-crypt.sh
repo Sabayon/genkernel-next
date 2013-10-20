@@ -14,15 +14,17 @@ _bootstrap_key() {
 }
 
 _crypt_exec() {
+    local luks_dev="${1}"
+    local cmd="${2}"
     # TODO(lxnay): this fugly crypt_silent should really go away
     if [ "${CRYPT_SILENT}" = "1" ]; then
-        eval ${1} >/dev/null 2>/dev/null
+        eval ${cmd} >/dev/null 2>/dev/null
     else
         ask_for_password --ply-tries 5 \
-            --ply-cmd "${1}" \
-            --ply-prompt "Encryption password (${LUKS_DEVICE}): " \
+            --ply-cmd "${cmd}" \
+            --ply-prompt "Encryption password (${luks_dev}): " \
             --tty-tries 5 \
-            --tty-cmd "${1}" || return 1
+            --tty-cmd "${cmd}" || return 1
         return 0
     fi
 }
@@ -30,19 +32,22 @@ _crypt_exec() {
 _open_luks() {
     case ${1} in
         root)
+            local ltypes=ROOTS
             local ltype=ROOT
             ;;
         swap)
+            local ltypes=SWAPS
             local ltype=SWAP
             ;;
     esac
 
-    eval local LUKS_DEVICE='"${CRYPT_'${ltype}'}"'
-    eval local LUKS_KEY='"${CRYPT_'${ltype}'_KEY}"'
-    eval local LUKS_KEYDEV='"${CRYPT_'${ltype}'_KEYDEV}"'
-    eval local LUKS_TRIM='"${CRYPT_'${ltype}'_TRIM}"'
+    eval local luks_devices='"${CRYPT_'${ltypes}'}"'
+    eval local luks_key='"${CRYPT_'${ltype}'_KEY}"'
+    eval local luks_keydev='"${CRYPT_'${ltype}'_KEYDEV}"'
+    eval local luks_trim='"${CRYPT_'${ltype}'_TRIM}"'
 
-    local LUKS_NAME="${1}"
+    local luks_name="${1}"
+
     local dev_error=0 key_error=0 keydev_error=0
     local mntkey="/mnt/key/" cryptsetup_opts=""
 
@@ -51,187 +56,204 @@ _open_luks() {
         return 1
     fi
 
-    local exit_st=
+    local real_dev=
+    if [ "${ltype}" = "ROOT" ]; then
+        real_dev="${REAL_ROOT}"
+    elif [ "${ltype}" = "SWAP" ]; then
+        real_dev="${REAL_RESUME}"
+    fi
 
-    while true; do
-        local gpg_cmd=""
-        exit_st=1
+    local exit_st= luks_device=
+    for luks_device in ${luks_devices}; do
 
-        # do not force the link to /dev/mapper/root
-        # but rather use the value from root=, which is
-        # in ${REAL_ROOT}
-        local luks_dev_name=$(basename "${LUKS_DEVICE}")
-        local real_dev=
-        local luks_name_prefix=
-        if [ "${ltype}" = "ROOT" ]; then
-            real_dev="${REAL_ROOT}"
-        elif [ "${ltype}" = "SWAP" ]; then
-            real_dev="${REAL_RESUME}"
-        fi
-        if echo "${real_dev}" | grep -q "^/dev/mapper/"; then
-            # If we use LVM + cryptsetup, we may have collisions between
-            # the two inside /dev/mapper. So, make up a way to avoid them.
-            LUKS_NAME="${LUKS_NAME}_${luks_dev_name}-$(basename ${real_dev})"
-        fi
+        good_msg "Working on device ${luks_device}..."
 
-        # if crypt_silent=1 and some error occurs, bail out.
-        local any_error=
-        [ "${dev_error}" = "1" ] && any_error=1
-        [ "${key_error}" = "1" ] && any_error=1
-        [ "${keydev_error}" = "1" ] && any_error=1
-        if [ "${CRYPT_SILENT}" = "1" ] && [ -n "${any_error}" ]; then
-            bad_msg "Failed to setup the LUKS device"
+        while true; do
+
+            local gpg_cmd=""
             exit_st=1
-            break
-        fi
 
-        if [ "${dev_error}" = "1" ]; then
-            prompt_user "LUKS_DEVICE" "${LUKS_NAME}"
-            dev_error=0
-            continue
-        fi
+            # do not force the link to /dev/mapper/root
+            # but rather use the value from root=, which is
+            # in ${REAL_ROOT}
+            local luks_dev_name=$(basename "${luks_device}")
+            local luks_name_prefix=
 
-        if [ "${key_error}" = "1" ]; then
-            prompt_user "LUKS_KEY" "${LUKS_NAME} key"
-            key_error=0
-            continue
-        fi
+            if echo "${real_dev}" | grep -q "^/dev/mapper/"; then
+                local real_dev_bn=$(basename "${real_dev}")
+                # If we use LVM + cryptsetup, we may have collisions between
+                # the two inside /dev/mapper. So, make up a way to avoid them.
+                luks_dev_name="${luks_name}_${luks_dev_name}-${real_dev_bn}"
+            fi
 
-        if [ "${keydev_error}" = "1" ]; then
-            prompt_user "LUKS_KEYDEV" "${LUKS_NAME} key device"
-            keydev_error=0
-            continue
-        fi
+            # if crypt_silent=1 and some error occurs, bail out.
+            local any_error=
+            [ "${dev_error}" = "1" ] && any_error=1
+            [ "${key_error}" = "1" ] && any_error=1
+            [ "${keydev_error}" = "1" ] && any_error=1
+            if [ "${CRYPT_SILENT}" = "1" ] && [ -n "${any_error}" ]; then
+                bad_msg "Failed to setup the LUKS device"
+                exit_st=1
+                break
+            fi
 
-        local luks_dev=$(find_real_device "${LUKS_DEVICE}")
-        [ -n "${luks_dev}" ] && LUKS_DEVICE="${luks_dev}"  # otherwise hope...
+            if [ "${dev_error}" = "1" ]; then
+                prompt_user "luks_device" "${luks_dev_name}"
+                dev_error=0
+                continue
+            fi
 
-        setup_md_device "${LUKS_DEVICE}"
-        cryptsetup isLuks "${LUKS_DEVICE}" || {
-            bad_msg "${LUKS_DEVICE} does not contain a LUKS header"
-            dev_error=1
-            continue;
-        }
+            if [ "${key_error}" = "1" ]; then
+                prompt_user "luks_key" "${luks_dev_name} key"
+                key_error=0
+                continue
+            fi
 
-        # Handle keys
-        if [ "${LUKS_TRIM}" = "yes" ]; then
-            good_msg "Enabling TRIM support for ${LUKS_NAME}."
-            cryptsetup_opts="${cryptsetup_opts} --allow-discards"
-        fi
+            if [ "${keydev_error}" = "1" ]; then
+                prompt_user "luks_keydev" "${luks_dev_name} key device"
+                keydev_error=0
+                continue
+            fi
 
-        if [ -n "${LUKS_KEY}" ]; then
-            local real_luks_keydev="${LUKS_KEYDEV}"
+            local luks_dev=$(find_real_device "${luks_device}")
+            [ -n "${luks_dev}" ] && \
+                luks_device="${luks_dev}"  # otherwise hope...
 
-            if [ ! -e "${mntkey}${LUKS_KEY}" ]; then
-                real_luks_keydev=$(find_real_device "${LUKS_KEYDEV}")
-                good_msg "Using key device ${real_luks_keydev}."
+            setup_md_device "${luks_device}"
+            cryptsetup isLuks "${luks_device}" || {
+                bad_msg "${luks_device} does not contain a LUKS header"
+                dev_error=1
+                continue;
+            }
 
-                if [ ! -b "${real_luks_keydev}" ]; then
-                    bad_msg "Insert device ${LUKS_KEYDEV} for ${LUKS_NAME}"
-                    bad_msg "You have 10 seconds..."
-                    local count=10
-                    while [ ${count} -gt 0 ]; do
-                        count=$((count-1))
-                        sleep 1
+            # Handle keys
+            if [ "${luks_trim}" = "yes" ]; then
+                good_msg "Enabling TRIM support for ${luks_dev_name}."
+                cryptsetup_opts="${cryptsetup_opts} --allow-discards"
+            fi
 
-                        real_luks_keydev=$(find_real_device "${LUKS_KEYDEV}")
-                        [ ! -b "${real_luks_keydev}" ] || {
-                            good_msg "Device ${real_luks_keydev} detected."
-                            break;
-                        }
-                    done
+            if [ -n "${luks_key}" ]; then
+                local real_luks_keydev="${luks_keydev}"
+
+                if [ ! -e "${mntkey}${luks_key}" ]; then
+                    real_luks_keydev=$(find_real_device "${luks_keydev}")
+                    good_msg "Using key device ${real_luks_keydev}."
 
                     if [ ! -b "${real_luks_keydev}" ]; then
-                        eval CRYPT_${ltype}_KEY=${LUKS_KEY}
-                        _bootstrap_key ${ltype}
-                        eval LUKS_KEYDEV='"${CRYPT_'${ltype}'_KEYDEV}"'
+                        bad_msg "Insert device ${luks_keydev} for ${luks_dev_name}"
+                        bad_msg "You have 10 seconds..."
+                        local count=10
+                        while [ ${count} -gt 0 ]; do
+                            count=$((count-1))
+                            sleep 1
 
-                        real_luks_keydev=$(find_real_device "${LUKS_KEYDEV}")
+                            real_luks_keydev=$(find_real_device "${luks_keydev}")
+                            [ ! -b "${real_luks_keydev}" ] || {
+                                good_msg "Device ${real_luks_keydev} detected."
+                                break;
+                            }
+                        done
+
                         if [ ! -b "${real_luks_keydev}" ]; then
-                            keydev_error=1
-                            bad_msg "Removable device ${LUKS_KEYDEV} not found."
+                            eval CRYPT_${ltype}_KEY=${luks_key}
+                            _bootstrap_key ${ltype}
+                            eval luks_keydev='"${CRYPT_'${ltype}'_KEYDEV}"'
+
+                            real_luks_keydev=$(find_real_device "${luks_keydev}")
+                            if [ ! -b "${real_luks_keydev}" ]; then
+                                keydev_error=1
+                                bad_msg "Device ${luks_keydev} not found."
+                                continue
+                            fi
+
+                            # continue otherwise will mount keydev which is
+                            # mounted by bootstrap
                             continue
                         fi
+                    fi
 
-                        # continue otherwise will mount keydev which is
-                        # mounted by bootstrap
+                    # At this point a device was recognized, now let's see
+                    # if the key is there
+                    mkdir -p "${mntkey}"  # ignore
+
+                    mount -n -o ro "${real_luks_keydev}" \
+                        "${mntkey}" || {
+                        keydev_error=1
+                        bad_msg "Mounting of device ${real_luks_keydev} failed."
+                        continue;
+                    }
+
+                    good_msg "Removable device ${real_luks_keydev} mounted."
+
+                    if [ ! -e "${mntkey}${luks_key}" ]; then
+                        umount -n "${mntkey}"
+                        key_error=1
+                        keydev_error=1
+                        bad_msg "{luks_key} on ${real_luks_keydev} not found."
                         continue
                     fi
                 fi
 
-                # At this point a device was recognized, now let's see
-                # if the key is there
-                mkdir -p "${mntkey}"  # ignore
+                # At this point a candidate key exists
+                # (either mounted before or not)
+                good_msg "${luks_key} on device ${real_luks_keydev} found"
+                if [ "$(echo ${luks_key} | grep -o '.gpg$')" = ".gpg" ] && \
+                    [ -e /usr/bin/gpg ]; then
 
-                mount -n -o ro "${real_luks_keydev}" \
-                    "${mntkey}" || {
-                    keydev_error=1
-                    bad_msg "Mounting of device ${real_luks_keydev} failed."
-                    continue;
-                }
+                    # TODO(lxnay): WTF is this?
+                    [ -e /dev/tty ] && mv /dev/tty /dev/tty.org
+                    mknod /dev/tty c 5 1
 
-                good_msg "Removable device ${real_luks_keydev} mounted."
-
-                if [ ! -e "${mntkey}${LUKS_KEY}" ]; then
-                    umount -n "${mntkey}"
-                    key_error=1
-                    keydev_error=1
-                    bad_msg "{LUKS_KEY} on ${real_luks_keydev} not found."
-                    continue
+                    cryptsetup_opts="${cryptsetup_opts} -d -"
+                    gpg_cmd="/usr/bin/gpg --logger-file /dev/null"
+                    gpg_cmd="${gpg_cmd} --quiet --decrypt ${mntkey}${luks_key} | "
+                else
+                    cryptsetup_opts="${cryptsetup_opts} -d ${mntkey}${luks_key}"
                 fi
             fi
 
-            # At this point a candidate key exists
-            # (either mounted before or not)
-            good_msg "${LUKS_KEY} on device ${real_luks_keydev} found"
-            if [ "$(echo ${LUKS_KEY} | grep -o '.gpg$')" = ".gpg" ] && \
-                [ -e /usr/bin/gpg ]; then
+            # At this point, keyfile or not, we're ready!
+            local cmd="${gpg_cmd}/sbin/cryptsetup"
+            cmd="${cmd} ${cryptsetup_opts} open ${luks_device} ${luks_dev_name}"
+            _crypt_exec "${luks_device}" "${cmd}"
+            local ret="${?}"
 
-                # TODO(lxnay): WTF is this?
-                [ -e /dev/tty ] && mv /dev/tty /dev/tty.org
-                mknod /dev/tty c 5 1
+            # TODO(lxnay): WTF is this?
+            [ -e /dev/tty.org ] \
+                && rm -f /dev/tty \
+                && mv /dev/tty.org /dev/tty
 
-                cryptsetup_opts="${cryptsetup_opts} -d -"
-                gpg_cmd="/usr/bin/gpg --logger-file /dev/null"
-                gpg_cmd="${gpg_cmd} --quiet --decrypt ${mntkey}${LUKS_KEY} | "
-            else
-                cryptsetup_opts="${cryptsetup_opts} -d ${mntkey}${LUKS_KEY}"
-            fi
-        fi
+            if [ "${ret}" = "0" ]; then
+                exit_st=0
+                good_msg "LUKS device ${luks_device} opened"
 
-        # At this point, keyfile or not, we're ready!
-        local cmd="${gpg_cmd}/sbin/cryptsetup"
-        cmd="${cmd} ${cryptsetup_opts} luksOpen ${LUKS_DEVICE} ${LUKS_NAME}"
-        _crypt_exec "${cmd}"
-        local ret="${?}"
-
-        # TODO(lxnay): WTF is this?
-        [ -e /dev/tty.org ] \
-            && rm -f /dev/tty \
-            && mv /dev/tty.org /dev/tty
-
-        if [ "${ret}" = "0" ]; then
-            exit_st=0
-            good_msg "LUKS device ${LUKS_DEVICE} opened"
-
-            # This is fine if the crypt device is a physical device
-            # like /dev/sdaX, however, if we have cryptsetup inside
-            # LVM, we must tweak REAL_ROOT if there is no device node.
-            start_volumes  # this should create /dev/mapper links
-            if echo "${real_dev}" | grep -q "^/dev/mapper/"; then
-                if [ ! -e "${real_dev}" ]; then
-                    good_msg "Creating symlink for ${LUKS_NAME} to ${real_dev}"
-                    ln -s "${LUKS_NAME}" "${real_dev}" || exit_st=1
+                # This is fine if the crypt device is a physical device
+                # like /dev/sdaX, however, if we have cryptsetup inside
+                # LVM, we must tweak REAL_ROOT if there is no device node.
+                start_volumes  # this should create /dev/mapper links
+                if echo "${real_dev}" | grep -q "^/dev/mapper/"; then
+                    if [ ! -e "${real_dev}" ]; then
+                        # WARN: while for ltype=SWAP this may not be a problem,
+                        # for ltype=ROOT this may render the system unbootable
+                        # because lvm can get angry to see a symlink where it's
+                        # not supposed to be or we may fail to create the proper
+                        # link (due to the if above), however, reordering the
+                        # cmdline entries may solve this.
+                        good_msg "Creating symlink ${luks_dev_name} -> ${real_dev}"
+                        ln -s "${luks_dev_name}" "${real_dev}" || exit_st=1
+                    fi
                 fi
+
+                break
             fi
 
-            break
-        fi
+            bad_msg "Failed to open LUKS device ${luks_device}"
+            dev_error=1
+            key_error=1
+            keydev_error=1
 
-        bad_msg "Failed to open LUKS device ${LUKS_DEVICE}"
-        dev_error=1
-        key_error=1
-        keydev_error=1
+        done
+
     done
 
     umount -l "${mntkey}" 2>/dev/null >/dev/null
@@ -246,7 +268,7 @@ start_luks() {
     [ -n "${CRYPT_ROOT_KEY}" ] && [ -z "${CRYPT_ROOT_KEYDEV}" ] \
         && sleep 6 && _bootstrap_key "ROOT"
 
-    if [ -n "${CRYPT_ROOT}" ]; then
+    if [ -n "${CRYPT_ROOTS}" ]; then
         if _open_luks "root"; then
             # force REAL_ROOT= to some value if not set
             # this is mainly for backward compatibility,
@@ -259,9 +281,9 @@ start_luks() {
     # TODO(lxnay): this sleep 6 thing is hurting my eyes sooooo much.
     # same for swap, but no need to sleep if root was unencrypted
     [ -n "${CRYPT_SWAP_KEY}" ] && [ -z "${CRYPT_SWAP_KEYDEV}" ] \
-        && { [ -z "${CRYPT_ROOT}" ] && sleep 6; _bootstrap_key "SWAP"; }
+        && { [ -z "${CRYPT_ROOTS}" ] && sleep 6; _bootstrap_key "SWAP"; }
 
-    if [ -n "${CRYPT_SWAP}" ]; then
+    if [ -n "${CRYPT_SWAPS}" ]; then
         if _open_luks "swap"; then
             # force REAL_RESUME= to some value if not set
             [ -z "${REAL_RESUME}" ] && REAL_RESUME="/dev/mapper/swap"

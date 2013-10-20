@@ -398,10 +398,33 @@ which the ramdisk scripts would recognize.
 
 *crypt_root*=<...>::
     This specifies the device encrypted by Luks, which contains the
-    root filesystem to mount.
+    root filesystem to mount. If you intend to use multiple devices
+    cooperating in the building of a single root device node (like
+    for instance in the case of dmcrypts -> software raid), please
+    use crypt_roots= instead.
+
+*crypt_roots*=<...>::
+    This specifies the devices encrypted by Luks, which concur in
+    the availability of a device node used for the root filesystem.
+    For instance, you could have two separately encrypted partitions
+    on separate disks that are part of a software raid setup. You just
+    need to declare multiple crypt_roots= statements each one containing
+    one device path. Please keep in mind that the entries will be processed
+    in the order they are declared. If you use crypt_roots=, remember to
+    remove any reference to crypt_root=. They all share the same root_key=
+    and root_keydev=.
 
 *crypt_swap*=<...>::
-    This specifies the swap device encrypted by Luks.
+    This specifies the swap device encrypted by Luks. If you have more than
+    one encrypted swap, please use crypt_swaps= instead.
+
+*crypt_swaps*=<...>::
+    This specifies the swap devices encrypted by Luks. You just
+    need to declare multiple crypt_swaps= statements each one containing
+    one device path. Please keep in mind that the entries will be processed
+    in the order they are declared. If you use crypt_swaps=, remember to
+    remove any reference to crypt_swap=. They all share the same root_key=
+    and root_keydev=.
 
 *root_key*=<...>::
     In case your root is encrypted with a key, you can use a device

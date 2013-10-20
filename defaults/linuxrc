@@ -195,11 +195,26 @@ for x in ${CMDLINE}; do
         ;;
 
         crypt_root=*)
-            CRYPT_ROOT=${x#*=}
+            # kept for backward compatibility
+            CRYPT_ROOTS=${x#*=}
         ;;
         crypt_swap=*)
-            CRYPT_SWAP=${x#*=}
+            # kept for backward compatibility
+            CRYPT_SWAPS=${x#*=}
         ;;
+
+        crypt_roots=*)
+            # The first entry will be the one that
+            # is going to be mapped to ${REAL_ROOT}.
+            # Multiple "roots" devices are needed
+            # in order to support multiple dmcrypts
+            # aggregated through software raid arrays.
+            CRYPT_ROOTS="${CRYPT_ROOTS} ${x#*=}"
+        ;;
+        crypt_swaps=*)
+            CRYPT_SWAPS="${CRYPT_SWAPS} ${x#*=}"
+        ;;
+
         root_key=*)
             CRYPT_ROOT_KEY=${x#*=}
         ;;

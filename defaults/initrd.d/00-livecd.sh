@@ -360,12 +360,12 @@ livecd_mount() {
     _cache_cd_contents
 
     # If encrypted, find key and mount, otherwise mount as usual
-    if [ -n "${CRYPT_ROOT}" ]; then
+    if [ -n "${CRYPT_ROOTS}" ]; then
         CRYPT_ROOT_KEY=$(head -n 1 "${CDROOT_PATH}/${CDROOT_MARKER}")
-        CRYPT_ROOT="$(losetup -f)"
+        CRYPT_ROOTS="$(losetup -f)"  # support only one value for livecd
         good_msg "You booted an encrypted livecd"
 
-        losetup "${CRYPT_ROOT}" "${CDROOT_PATH}/${LOOPEXT}${LOOP}"
+        losetup "${CRYPT_ROOTS}" "${CDROOT_PATH}/${LOOPEXT}${LOOP}"
         test_success "Preparing loop filesystem"
 
         start_luks
