@@ -1,5 +1,7 @@
 #!/bin/sh
 
+. /etc/initrd.defaults
+
 is_nfs() {
     [ "${REAL_ROOT}" = "/dev/nfs" ] && return 0
     return 1
