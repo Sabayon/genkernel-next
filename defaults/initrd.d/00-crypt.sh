@@ -62,7 +62,7 @@ _open_luks() {
         real_dev="${REAL_RESUME}"
     fi
 
-    local exit_st= luks_device=
+    local exit_st=0 luks_device=
     for luks_device in ${luks_devices}; do
 
         good_msg "Working on device ${luks_device}..."
@@ -70,7 +70,6 @@ _open_luks() {
         while true; do
 
             local gpg_cmd=""
-            exit_st=1
 
             # do not force the link to /dev/mapper/root
             # but rather use the value from root=, which is
@@ -223,13 +222,19 @@ _open_luks() {
                 && mv /dev/tty.org /dev/tty
 
             if [ "${ret}" = "0" ]; then
-                exit_st=0
                 good_msg "LUKS device ${luks_device} opened"
 
-                # This is fine if the crypt device is a physical device
+                # Note 1: This is fine if the crypt device is a physical device
                 # like /dev/sdaX, however, if we have cryptsetup inside
                 # LVM, we must tweak REAL_ROOT if there is no device node.
-                start_volumes  # this should create /dev/mapper links
+                # Note 2: we should not activate md arrays yet, because
+                # they could be started in degraded mode and mdadm is so stupid
+                # that it may end up creating multiple md devices with the
+                # same UUID... Let's postpone this for the end
+                (   USE_MDADM=0
+                    USE_DMRAID_NORMAL=0
+                    start_volumes # this creates /dev/mapper links
+                )
                 if echo "${real_dev}" | grep -q "^/dev/mapper/"; then
                     if [ ! -e "${real_dev}" ]; then
                         # WARN: while for ltype=SWAP this may not be a problem,
@@ -267,11 +272,14 @@ start_luks() {
         return 1
     fi
 
+    local root_or_swap=
+
     # if key is set but key device isn't, find it
     [ -n "${CRYPT_ROOT_KEY}" ] && [ -z "${CRYPT_ROOT_KEYDEV}" ] \
         && _bootstrap_key "ROOT"
 
     if [ -n "${CRYPT_ROOTS}" ]; then
+        root_or_swap=1
         if _open_luks "root"; then
             # force REAL_ROOT= to some value if not set
             # this is mainly for backward compatibility,
@@ -285,9 +293,17 @@ start_luks() {
         && _bootstrap_key "SWAP"
 
     if [ -n "${CRYPT_SWAPS}" ]; then
+        root_or_swap=1
         if _open_luks "swap"; then
             # force REAL_RESUME= to some value if not set
             [ -z "${REAL_RESUME}" ] && REAL_RESUME="/dev/mapper/swap"
         fi
+    fi
+
+    if [ -n "${root_or_swap}" ]; then
+        # We postponed the initialization of raid devices
+        # in order to avoid to assemble possibly degraded
+        # arrays.
+        start_md_volumes
     fi
 }
