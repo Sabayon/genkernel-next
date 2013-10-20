@@ -6,11 +6,12 @@
 . /etc/initrd.d/00-fsdev.sh
 
 _bootstrap_key() {
-    # $1 = ROOT/SWAP
+    local ltype="${1}"
     local keydevs=$(device_list)
-    eval local keyloc='"${CRYPT_'${1}'_KEY}"'
 
-    media_find "key" "${keyloc}" "CRYPT_${1}_KEYDEV" "/mnt/key" ${keydevs}
+    eval local keyloc='"${CRYPT_'${ltype}'_KEY}"'
+
+    media_find "key" "${keyloc}" "CRYPT_${ltype}_KEYDEV" "/mnt/key" ${keydevs}
 }
 
 _crypt_exec() {
