@@ -69,10 +69,13 @@ _rootdev_mount() {
     local mount_opts=ro
     local mount_fstype="${ROOTFSTYPE}"
     local fstype=$(get_device_fstype "${REAL_ROOT}")
+
     if is_zfs_fstype "${fstype}"; then
-        mount_fstype=zfs
+        [ -z "${mount_fstype}" ] && mount_fstype=zfs
         mount_opts=$(zfs_get_real_root_mount_flags)
     fi
+
+    [ -z "${mount_fstype}" ] && mount_fstype="${fstype}"
 
     good_msg "Detected fstype: ${fstype}"
     good_msg "Using mount fstype: ${mount_fstype}"
@@ -84,8 +87,15 @@ _rootdev_mount() {
     good_msg "Using mount opts: -o ${mopts}"
 
     mount -t "${mount_fstype}" -o "${mopts}" \
-        "${REAL_ROOT}" "${NEW_ROOT}" || return 1
-    return 0
+        "${REAL_ROOT}" "${NEW_ROOT}" && return 0
+
+    bad_msg "Cannot mount ${REAL_ROOT}, trying with -t auto"
+    mount -t "auto" -o "${mopts}" \
+        "${REAL_ROOT}" "${NEW_ROOT}" && return 0
+
+    bad_msg "Cannot mount ${REAL_ROOT} with -t auto, giving up"
+
+    return 1
 }
 
 _get_mounts_list() {
