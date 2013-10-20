@@ -17,7 +17,7 @@ _bootstrap_key() {
 _crypt_exec() {
     local luks_dev="${1}"
     local cmd="${2}"
-    # TODO(lxnay): this fugly crypt_silent should really go away
+
     if [ "${CRYPT_SILENT}" = "1" ]; then
         eval ${cmd} >/dev/null 2>/dev/null
     else
