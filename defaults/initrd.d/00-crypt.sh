@@ -52,11 +52,6 @@ _open_luks() {
     local dev_error=0 key_error=0 keydev_error=0
     local mntkey="/mnt/key/" cryptsetup_opts=""
 
-    if [ ! -e /sbin/cryptsetup ]; then
-        bad_msg "The ramdisk does not support LUKS"
-        return 1
-    fi
-
     local real_dev=
     if [ "${ltype}" = "ROOT" ]; then
         real_dev="${REAL_ROOT}"
@@ -214,7 +209,7 @@ _open_luks() {
             fi
 
             # At this point, keyfile or not, we're ready!
-            local cmd="${gpg_cmd}/sbin/cryptsetup"
+            local cmd="${gpg_cmd}${CRYPTSETUP_BIN}"
             cmd="${cmd} ${cryptsetup_opts} open ${luks_device} ${luks_dev_name}"
             _crypt_exec "${luks_device}" "${cmd}"
             local ret="${?}"
@@ -264,6 +259,11 @@ _open_luks() {
 }
 
 start_luks() {
+    if [ ! -e "${CRYPTSETUP_BIN}" ]; then
+        bad_msg "${CRYPTSETUP_BIN} not found inside the initramfs"
+        return 1
+    fi
+
     # TODO(lxnay): this sleep 6 thing is hurting my eyes sooooo much.
     # if key is set but key device isn't, find it
     [ -n "${CRYPT_ROOT_KEY}" ] && [ -z "${CRYPT_ROOT_KEYDEV}" ] \
