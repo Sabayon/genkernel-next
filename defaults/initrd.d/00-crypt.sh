@@ -5,6 +5,8 @@
 . /etc/initrd.d/00-splash.sh
 . /etc/initrd.d/00-fsdev.sh
 
+CRYPTSETUP_BIN="/sbin/cryptsetup"
+
 _bootstrap_key() {
     local ltype="${1}"
     local keydevs=$(device_list)

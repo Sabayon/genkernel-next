@@ -67,8 +67,6 @@ PLYMOUTHD_BIN="/sbin/plymouthd"
 PLYMOUTH_BIN="/bin/plymouth"
 [ ! -e "${PLYMOUTH_BIN}" ] && PLYMOUTH_BIN="/usr/bin/plymouth"
 
-CRYPTSETUP_BIN="/sbin/cryptsetup"
-
 REAL_ROOT=""
 CONSOLE="/dev/console"
 NEW_ROOT="/newroot"
