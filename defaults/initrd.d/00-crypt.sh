@@ -6,6 +6,7 @@
 . /etc/initrd.d/00-fsdev.sh
 
 CRYPTSETUP_BIN="/sbin/cryptsetup"
+KEY_MNT="/mnt/key"
 
 _bootstrap_key() {
     local ltype="${1}"
@@ -13,7 +14,7 @@ _bootstrap_key() {
 
     eval local keyloc='"${CRYPT_'${ltype}'_KEY}"'
 
-    media_find "key" "${keyloc}" "CRYPT_${ltype}_KEYDEV" "/mnt/key" ${keydevs}
+    media_find "key" "${keyloc}" "CRYPT_${ltype}_KEYDEV" "${KEY_MNT}" ${keydevs}
 }
 
 _crypt_exec() {
@@ -52,7 +53,7 @@ _open_luks() {
     local luks_name="${1}"
 
     local dev_error=0 key_error=0 keydev_error=0
-    local mntkey="/mnt/key/" cryptsetup_opts=""
+    local mntkey="${KEY_MNT}/" cryptsetup_opts=""
 
     local real_dev=
     if [ "${ltype}" = "ROOT" ]; then
