@@ -185,9 +185,7 @@ start_volumes() {
         ln -sf /dev/device-mapper /dev/mapper/control
     fi
 
-    if [ "${USE_MDADM}" = "1" ]; then
-        start_md_volumes
-    fi
+    [ "${USE_MDADM}" = "1" ] && start_md_volumes
 
     if [ "${USE_MULTIPATH_NORMAL}" = "1" ]; then
         good_msg "Scanning for multipath devices"
