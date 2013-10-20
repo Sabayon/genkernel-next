@@ -267,10 +267,9 @@ start_luks() {
         return 1
     fi
 
-    # TODO(lxnay): this sleep 6 thing is hurting my eyes sooooo much.
     # if key is set but key device isn't, find it
     [ -n "${CRYPT_ROOT_KEY}" ] && [ -z "${CRYPT_ROOT_KEYDEV}" ] \
-        && sleep 6 && _bootstrap_key "ROOT"
+        && _bootstrap_key "ROOT"
 
     if [ -n "${CRYPT_ROOTS}" ]; then
         if _open_luks "root"; then
@@ -282,10 +281,9 @@ start_luks() {
         fi
     fi
 
-    # TODO(lxnay): this sleep 6 thing is hurting my eyes sooooo much.
     # same for swap, but no need to sleep if root was unencrypted
     [ -n "${CRYPT_SWAP_KEY}" ] && [ -z "${CRYPT_SWAP_KEYDEV}" ] \
-        && { [ -z "${CRYPT_ROOTS}" ] && sleep 6; _bootstrap_key "SWAP"; }
+        && _bootstrap_key "SWAP"
 
     if [ -n "${CRYPT_SWAPS}" ]; then
         if _open_luks "swap"; then
