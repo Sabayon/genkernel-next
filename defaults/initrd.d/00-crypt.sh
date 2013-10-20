@@ -256,7 +256,7 @@ _open_luks() {
     done
 
     umount -l "${mntkey}" 2>/dev/null >/dev/null
-    rmdir -p "${mntkey}" 2>/dev/null >/dev/null
+    rmdir "${mntkey}" 2>/dev/null >/dev/null
 
     return ${exit_st}
 }
