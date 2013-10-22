@@ -118,7 +118,7 @@ _open_luks() {
                 luks_device="${luks_dev}"  # otherwise hope...
 
             setup_md_device "${luks_device}"
-            cryptsetup isLuks "${luks_device}" || {
+            eval "${CRYPTSETUP_BIN} isLuks ${luks_device}" || {
                 bad_msg "${luks_device} does not contain a LUKS header"
                 dev_error=1
                 continue;
