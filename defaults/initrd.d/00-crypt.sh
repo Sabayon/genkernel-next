@@ -34,14 +34,18 @@ _crypt_exec() {
 }
 
 _open_luks() {
-    case ${1} in
+    local luks_name="${1}"
+
+    case ${luks_name} in
         root)
             local ltypes=ROOTS
             local ltype=ROOT
+            local real_dev="${REAL_ROOT}"
             ;;
         swap)
             local ltypes=SWAPS
             local ltype=SWAP
+            local real_dev="${REAL_RESUME}"
             ;;
     esac
 
@@ -50,17 +54,8 @@ _open_luks() {
     eval local luks_keydev='"${CRYPT_'${ltype}'_KEYDEV}"'
     eval local luks_trim='"${CRYPT_'${ltype}'_TRIM}"'
 
-    local luks_name="${1}"
-
     local dev_error=0 key_error=0 keydev_error=0
     local mntkey="${KEY_MNT}/" cryptsetup_opts=""
-
-    local real_dev=
-    if [ "${ltype}" = "ROOT" ]; then
-        real_dev="${REAL_ROOT}"
-    elif [ "${ltype}" = "SWAP" ]; then
-        real_dev="${REAL_RESUME}"
-    fi
 
     local exit_st=0 luks_device=
     for luks_device in ${luks_devices}; do
