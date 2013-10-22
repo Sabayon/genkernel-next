@@ -212,7 +212,7 @@ _open_luks() {
 
             # At this point, keyfile or not, we're ready!
             local cmd="${gpg_cmd}${CRYPTSETUP_BIN}"
-            cmd="${cmd} ${cryptsetup_opts} open ${luks_device} ${luks_dev_name}"
+            cmd="${cmd} ${cryptsetup_opts} luksOpen ${luks_device} ${luks_dev_name}"
             _crypt_exec "${luks_device}" "${cmd}"
             local ret="${?}"
 
