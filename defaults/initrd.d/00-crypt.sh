@@ -275,13 +275,12 @@ start_luks() {
 
     if [ -n "${CRYPT_ROOTS}" ]; then
         root_or_swap=1
-        if _open_luks "root"; then
-            # force REAL_ROOT= to some value if not set
-            # this is mainly for backward compatibility,
-            # because grub2 always sets a valid root=
-            # and user must have it as well.
-            [ -z "${REAL_ROOT}" ] && REAL_ROOT="/dev/mapper/root"
-        fi
+        # force REAL_ROOT= to some value if not set
+        # this is mainly for backward compatibility,
+        # because grub2 always sets a valid root=
+        # and user must have it as well.
+        [ -z "${REAL_ROOT}" ] && REAL_ROOT="/dev/mapper/root"
+        _open_luks "root"
     fi
 
     [ -n "${CRYPT_SWAP_KEY}" ] && [ -z "${CRYPT_SWAP_KEYDEV}" ] \
@@ -289,10 +288,9 @@ start_luks() {
 
     if [ -n "${CRYPT_SWAPS}" ]; then
         root_or_swap=1
-        if _open_luks "swap"; then
-            # force REAL_RESUME= to some value if not set
-            [ -z "${REAL_RESUME}" ] && REAL_RESUME="/dev/mapper/swap"
-        fi
+        # force REAL_RESUME= to some value if not set
+        [ -z "${REAL_RESUME}" ] && REAL_RESUME="/dev/mapper/swap"
+        _open_luks "swap"
     fi
 
     if [ -n "${root_or_swap}" ]; then
