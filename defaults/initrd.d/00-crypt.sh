@@ -69,7 +69,12 @@ _open_luks() {
             # do not force the link to /dev/mapper/root
             # but rather use the value from root=, which is
             # in ${REAL_ROOT}
-            local luks_dev_name=$(basename "${luks_device}")
+            # Using find_real_device to convert UUID= or LABEL=
+            # strings into actual device paths, this and basename
+            # avoid to create long strings that could be truncated
+            # by cryptsetup, generating a "DM-UUID for device %s was truncated"
+            # error.
+            local luks_dev_name=$(basename $(find_real_device "${luks_device}"))
             local luks_name_prefix=
 
             if echo "${real_dev}" | grep -q "^/dev/mapper/"; then
