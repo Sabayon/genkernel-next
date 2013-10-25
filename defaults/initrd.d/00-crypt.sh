@@ -297,6 +297,6 @@ start_luks() {
         # We postponed the initialization of raid devices
         # in order to avoid to assemble possibly degraded
         # arrays.
-        start_md_volumes
+        start_volumes
     fi
 }
