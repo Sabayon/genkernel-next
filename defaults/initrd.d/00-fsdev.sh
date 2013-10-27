@@ -198,8 +198,10 @@ start_volumes() {
     if [ "${USE_MULTIPATH_NORMAL}" = "1" ]; then
         good_msg "Scanning for multipath devices"
         multipath -v 0
-        # TODO(lxnay): horrible sleep!
-        sleep 2
+
+        is_udev && udevadm settle
+        is_mdev && sleep 2
+
         good_msg "Activating multipath devices"
         dmsetup ls --target multipath --exec "/sbin/kpartx -a -v"
     fi
