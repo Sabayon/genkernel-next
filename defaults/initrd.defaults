@@ -77,6 +77,7 @@ CDROOT_PATH="/mnt/cdrom"
 # This is the file that the cdroot will be checked for as a
 # marker. It must exist RELATIVE to the cdroot.
 CDROOT_MARKER="/livecd"
+ZFSROOT="0"
 
 LOOPS="/livecd.loop /zisofs /livecd.squashfs /image.squashfs /livecd.gcloop"
 
