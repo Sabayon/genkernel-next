@@ -30,7 +30,7 @@ zfs_real_root_init() {
     esac
 
     # Verify that zfs support has been compiled in
-    if [ "USE_ZFS" = "1" ]; then
+    if [ "${USE_ZFS}" = "1" ]; then
         for i in /sbin/zfs /sbin/zpool; do
             if [ ! -x "${i}" ]; then
                 USE_ZFS=0
