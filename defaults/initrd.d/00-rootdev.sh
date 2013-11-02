@@ -33,7 +33,7 @@ _rootdev_detect() {
                 fi
                 ;;
 
-            ZFS*)
+            ZFS=*)
                 # zfs_rootdev_init will tweak ${REAL_ROOT}
                 zfs_rootdev_init
                 if [ "${?}" = "0" ]; then
