@@ -34,3 +34,6 @@ MODULES_CRYPT="${MODULES_CRYPTO}"
 
 # Virtio support (KVM mainly)
 MODULES_VIRTIO="virtio virtio_balloon virtio_console virtio_net virtio_blk virtio_scsi virtio_pci virtio_ring"
+
+# Microsoft Hyper-V support
+MODULES_HYPERV="hv_storvsc hv_netvsc hyperv_fb"
