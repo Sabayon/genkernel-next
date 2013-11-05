@@ -4,7 +4,7 @@
 . /etc/initrd.d/00-fsdev.sh
 . /etc/initrd.d/00-devmgr.sh
 
-_is_zfs() {
+is_zfs() {
     # Note: this only works after zfs_real_root_init
     #       (thus, only after real_root_init)
     [ "${USE_ZFS}" = "1" ] && return 0
@@ -65,7 +65,7 @@ _call_func_timeout() {
 
 zfs_start_volumes() {
     # is ZFS enabled?
-    _is_zfs || return 0
+    is_zfs || return 0
 
     # Avoid race involving asynchronous module loading
     if _call_func_timeout wait_for_zfs 5; then
