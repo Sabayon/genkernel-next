@@ -38,6 +38,8 @@ _rootdev_detect() {
                 zfs_rootdev_init
                 if [ "${?}" = "0" ]; then
                     got_good_root=1
+		    ZFSROOT=1
+		    continue
                 else
                     got_good_root=0
                     prompt_user "REAL_ROOT" "root block device"
@@ -69,6 +71,10 @@ _rootdev_mount() {
     local mount_opts=ro
     local mount_fstype="${ROOTFSTYPE}"
     local fstype=$(get_device_fstype "${REAL_ROOT}")
+
+    if [ "${ZFSROOT}" = "1" ]; then
+        fstype=zfs_member
+    fi
 
     if is_zfs_fstype "${fstype}"; then
         [ -z "${mount_fstype}" ] && mount_fstype=zfs
