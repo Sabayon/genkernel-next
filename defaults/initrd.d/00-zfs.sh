@@ -11,9 +11,16 @@ is_zfs() {
     return 1
 }
 
+# This piece of information can be used by external
+# functions to return the default filesystem type
+# for zfs members.
+zfs_member_fstype() {
+    echo "zfs_member"
+}
+
 is_zfs_fstype() {
     local fstype="${1}"
-    [ "${fstype}" = "zfs_member" ] && return 0
+    [ "${fstype}" = "$(zfs_member_fstype)" ] && return 0
     return 1
 }
 
