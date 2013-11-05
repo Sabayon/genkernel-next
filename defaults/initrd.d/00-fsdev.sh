@@ -69,6 +69,9 @@ find_real_device() {
 }
 
 get_device_fstype() {
+    # This function expects a real or UUID=,LABEL= based reference
+    # that can be resolved to a real device node. Using this
+    # function in combination with ZFS may lead to unexpected behaviour.
     local device=$(find_real_device "${1}")
     if [ -n "${device}" ]; then
         blkid -o value -s TYPE "${device}"
