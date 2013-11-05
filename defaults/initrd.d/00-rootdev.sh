@@ -52,8 +52,10 @@ _rootdev_detect() {
             prompt_user "REAL_ROOT" "root block device"
             got_good_root=0
 
-        # Check for a block device or NFS
-        elif [ -b "${REAL_ROOT}" ] || is_nfs; then
+        # Check for a block device, NFS or ZFS
+        # Here we assume that zfs_rootdev_init has correctly
+        # initialized ZFS volumes
+        elif [ -b "${REAL_ROOT}" ] || is_nfs || is_zfs; then
             got_good_root=1
         else
             bad_msg "${REAL_ROOT} is an invalid root device..."
@@ -69,6 +71,15 @@ _rootdev_mount() {
     local mount_opts=ro
     local mount_fstype="${ROOTFSTYPE}"
     local fstype=$(get_device_fstype "${REAL_ROOT}")
+
+    # handle ZFS special case. Thanks to Jordan Patterson
+    # for reporting this.
+    if [ -z "${fstype}" ] && is_zfs; then
+        # here we assume that if ${fstype} is empty
+        # and ZFS is enabled, we may well force the
+        # fstype value to zfs_member
+        fstype=$(zfs_member_fstype)
+    fi
 
     if is_zfs_fstype "${fstype}"; then
         [ -z "${mount_fstype}" ] && mount_fstype=zfs
