@@ -154,7 +154,7 @@ real_root_init() {
         REAL_ROOT="${FAKE_ROOT}"
     fi
     if [ -z "${REAL_INIT}" ] && [ -z "${FAKE_INIT}" ]; then
-        # if none of REAL_INIT and FAKE_INIT is set, default
+        # if none of REAL_INIT and FAKE_INIT are set, default
         # to /sbin/init
         REAL_INIT="/sbin/init"
     elif [ -z "${REAL_INIT}" ] && [ "${FAKE_INIT}" != "/linuxrc" ]; then
