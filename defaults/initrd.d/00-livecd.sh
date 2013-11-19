@@ -41,8 +41,7 @@ _setup_squashfs_aufs() {
     good_msg "Loading aufs"
     modprobe aufs > /dev/null 2>&1
 
-    mount -t squashfs -o loop,ro "${CDROOT_PATH}/${LOOP}" \
-        "${static}"
+    mount -t squashfs -o loop,ro "${LOOP_PATH}" "${static}"
     mount -t tmpfs none "${overlay}"
     mount -t aufs -o br:${overlay}:${static} aufs "${NEW_ROOT}"
 
@@ -71,34 +70,34 @@ _bootstrap_cd() {
         "REAL_ROOT" "${CDROOT_PATH}" ${devices}
 }
 
-_check_loop() {
-    if [ -z "${LOOP}" ] || [ ! -e "${CDROOT_PATH}/${LOOP}" ]; then
-        bad_msg "Invalid loop location: ${LOOP}"
-        bad_msg "Please export LOOP with a valid location"
-        bad_msg "or reboot and pass a proper loop=..."
-        bad_msg "kernel command line"
-        run_shell
-    fi
-}
+_setup_live_content() {
+    LOOP_PATH="${CDROOT_PATH}/${LOOP}"
 
-_cache_cd_contents() {
     # Check loop file exists and cache to ramdisk if DO_cache is enabled
     if [ "${LOOPTYPE}" != "noloop" ] && \
         [ "${LOOPTYPE}" != "sgimips" ]; then
 
-        _check_loop
+        if [ -z "${LOOP}" ] || [ ! -e "${LOOP_PATH}" ]; then
+            bad_msg "Invalid loop location: ${LOOP}"
+            bad_msg "Please export LOOP with a valid location"
+            bad_msg "or reboot and pass a proper loop=..."
+            bad_msg "kernel command line"
+            run_shell
+        fi
+
         if [ "${DO_cache}" ]; then
             good_msg "Copying loop file for caching..."
-            # Verify that the needed directory exists
-            mkdir -p "$(dirname ${NEW_ROOT}/mnt/${LOOP})"
+            local new_loop_path="/mnt/${LOOP}"
+            local new_loop_path_dir="/mnt"
 
-            cp -a "${CDROOT_PATH}/${LOOP}" "${NEW_ROOT}/mnt/${LOOP}"
+            mkdir -p "${new_loop_path_dir}" && \
+                cp -a "${LOOP_PATH}" "${new_loop_path}"
             if [ "${?}" != "0" ]; then
+                rm -rf "${new_loop_path}" 2>/dev/null
                 warn_msg "Failed to cache the loop file! Lack of RAM?"
-                rm -rf "${NEW_ROOT}/mnt/${LOOP}" 2>/dev/null
-                rm -rf "${NEW_ROOT}"/mnt/livecd.* 2>/dev/null
-                rm -rf "${NEW_ROOT}"/mnt/image.* 2>/dev/null
-                rm -rf "${NEW_ROOT}"/mnt/zisofs 2>/dev/null
+            else
+                # setup the new path to the loop file
+                LOOP_PATH="${new_loop_path}"
             fi
         fi
     fi
@@ -169,7 +168,7 @@ _livecd_mount_gcloop() {
     good_msg "Mounting gcloop filesystem"
     echo " " | losetup -E 19 -e ucl-0 -p0 \
         "${NEW_ROOT}${loop_dev}" \
-        "${CDROOT_PATH}/${LOOP}"
+        "${LOOP_PATH}"
     test_success "losetup the loop device"
 
     mount -t ext2 -o ro "${NEW_ROOT}${loop_dev}" "${NEW_ROOT}/mnt/livecd"
@@ -179,7 +178,7 @@ _livecd_mount_gcloop() {
 _livecd_mount_normal() {
     good_msg "Mounting loop filesystem"
     mount -t ext2 -o loop,ro \
-        "${CDROOT_PATH}/${LOOP}" \
+        "${LOOP_PATH}" \
         "${NEW_ROOT}/mnt/livecd"
     test_success "Mount filesystem"
 }
@@ -194,14 +193,8 @@ _livecd_mount_squashfs() {
     fi
 
     good_msg "Mounting squashfs filesystem"
-    local cached_squashfs_path="${NEW_ROOT}/mnt/${LOOP}"
-    local squashfs_path="${CDROOT_PATH}/${LOOP}"
 
-    # Upgrade to cached version if possible
-    if [ -n "${DO_cache}" ] && [ -f "${cached_squashfs_path}" ]; then
-        squashfs_path="${cached_squashfs_path}"
-    fi
-
+    local squashfs_path="${LOOP_PATH}"
     mount -t squashfs -o loop,ro "${squashfs_path}" \
         "${NEW_ROOT}/mnt/livecd" || {
         bad_msg "squashfs filesystem could not be mounted."
@@ -349,7 +342,7 @@ livecd_mount() {
     [ -z "${LOOP}" ] && LOOP=$(_find_loop)
     [ -z "${LOOPTYPE}" ] && LOOPTYPE=$(_find_looptype)
 
-    _cache_cd_contents
+    _setup_live_content
 
     # If encrypted, find key and mount, otherwise mount as usual
     if [ -n "${CRYPT_ROOTS}" ]; then
@@ -357,7 +350,7 @@ livecd_mount() {
         CRYPT_ROOTS="$(losetup -f)"  # support only one value for livecd
         good_msg "You booted an encrypted livecd"
 
-        losetup "${CRYPT_ROOTS}" "${CDROOT_PATH}/${LOOP}"
+        losetup "${CRYPT_ROOTS}" "${LOOP_PATH}"
         test_success "Preparing loop filesystem"
 
         start_luks
