@@ -41,7 +41,7 @@ _setup_squashfs_aufs() {
     good_msg "Loading aufs"
     modprobe aufs > /dev/null 2>&1
 
-    mount -t squashfs -o loop,ro "${CDROOT_PATH}/${LOOPEXT}${LOOP}" \
+    mount -t squashfs -o loop,ro "${CDROOT_PATH}/${LOOP}" \
         "${static}"
     mount -t tmpfs none "${overlay}"
     mount -t aufs -o br:${overlay}:${static} aufs "${NEW_ROOT}"
@@ -177,7 +177,7 @@ _livecd_mount_gcloop() {
     good_msg "Mounting gcloop filesystem"
     echo " " | losetup -E 19 -e ucl-0 -p0 \
         "${NEW_ROOT}${loop_dev}" \
-        "${CDROOT_PATH}/${LOOPEXT}${LOOP}"
+        "${CDROOT_PATH}/${LOOP}"
     test_success "losetup the loop device"
 
     mount -t ext2 -o ro "${NEW_ROOT}${loop_dev}" "${NEW_ROOT}/mnt/livecd"
@@ -187,7 +187,7 @@ _livecd_mount_gcloop() {
 _livecd_mount_normal() {
     good_msg "Mounting loop filesystem"
     mount -t ext2 -o loop,ro \
-        "${CDROOT_PATH}/${LOOPEXT}${LOOP}" \
+        "${CDROOT_PATH}/${LOOP}" \
         "${NEW_ROOT}/mnt/livecd"
     test_success "Mount filesystem"
 }
@@ -203,7 +203,7 @@ _livecd_mount_squashfs() {
 
     good_msg "Mounting squashfs filesystem"
     local cached_squashfs_path="${NEW_ROOT}/mnt/${LOOP}"
-    local squashfs_path="${CDROOT_PATH}/${LOOPEXT}${LOOP}"
+    local squashfs_path="${CDROOT_PATH}/${LOOP}"
 
     # Upgrade to cached version if possible
     if [ -n "${DO_cache}" ] && [ -f "${cached_squashfs_path}" ]; then
@@ -365,7 +365,7 @@ livecd_mount() {
         CRYPT_ROOTS="$(losetup -f)"  # support only one value for livecd
         good_msg "You booted an encrypted livecd"
 
-        losetup "${CRYPT_ROOTS}" "${CDROOT_PATH}/${LOOPEXT}${LOOP}"
+        losetup "${CRYPT_ROOTS}" "${CDROOT_PATH}/${LOOP}"
         test_success "Preparing loop filesystem"
 
         start_luks
@@ -395,7 +395,7 @@ livecd_mount() {
             _livecd_mount_gcloop
             FS_LOCATION="mnt/livecd"
         elif [ "${LOOPTYPE}" = "zisofs" ]; then
-            FS_LOCATION="${CDROOT_PATH/\/}/${LOOPEXT}${LOOP}"
+            FS_LOCATION="${CDROOT_PATH/\/}/${LOOP}"
         elif [ "${LOOPTYPE}" = "noloop" ]; then
             FS_LOCATION="${CDROOT_PATH/\/}"
         elif [ "${LOOPTYPE}" = "sgimips" ]; then
