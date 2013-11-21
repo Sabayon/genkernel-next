@@ -94,14 +94,14 @@ append_base_layout() {
     echo "/dev/ram0     /           ext2    defaults    0 0" > ${TEMP}/initramfs-base-temp/etc/fstab
     echo "proc          /proc       proc    defaults    0 0" >> ${TEMP}/initramfs-base-temp/etc/fstab
 
-    cd ${TEMP}/initramfs-base-temp/dev
-    mknod -m 660 console c 5 1
-    mknod -m 660 null c 1 3
-    mknod -m 660 zero c 1 5
-    mknod -m 600 tty0 c 4 0
-    mknod -m 600 tty1 c 4 1
-    mknod -m 600 ttyS0 c 4 64
-    chmod 1777 shm  # bug 476278
+    cd ${TEMP}/initramfs-base-temp/dev || gen_die "cannot cd to dev"
+    mknod -m 660 console c 5 1 || gen_die "cannot mknod"
+    mknod -m 660 null c 1 3 || gen_die "cannot mknod"
+    mknod -m 660 zero c 1 5 || gen_die "cannot mknod"
+    mknod -m 600 tty0 c 4 0 || gen_die "cannot mknod"
+    mknod -m 600 tty1 c 4 1 || gen_die "cannot mknod"
+    mknod -m 600 ttyS0 c 4 64 || gen_die "cannot mknod"
+    chmod 1777 shm || gen_die "cannot mknod" # bug 476278
 
     date -u '+%Y%m%d-%H%M%S' > ${TEMP}/initramfs-base-temp/etc/build_date
     echo "Genkernel $GK_V" > ${TEMP}/initramfs-base-temp/etc/build_id
