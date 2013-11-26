@@ -153,12 +153,20 @@ real_root_init() {
     if [ -z "${REAL_ROOT}" ] && [ "${FAKE_ROOT}" != "/dev/ram0" ]; then
         REAL_ROOT="${FAKE_ROOT}"
     fi
+
+    local default_init="/sbin/init"
     if [ -z "${REAL_INIT}" ] && [ -z "${FAKE_INIT}" ]; then
         # if none of REAL_INIT and FAKE_INIT are set, default
-        # to /sbin/init
-        REAL_INIT="/sbin/init"
-    elif [ -z "${REAL_INIT}" ] && [ "${FAKE_INIT}" != "/linuxrc" ]; then
-        REAL_INIT="${FAKE_INIT}"
+        # to ${default_init}
+        REAL_INIT="${default_init}"
+    elif [ -z "${REAL_INIT}" ]; then
+        if [ "${FAKE_INIT}" = "/linuxrc" ]; then
+            # if init=/linuxrc is given, ignore linuxrc
+            # this is for backward compatibility with very old setups
+            REAL_INIT="${default_init}"
+        else
+            REAL_INIT="${FAKE_INIT}"
+        fi
     fi
     if [ -z "${REAL_ROOTFLAGS}" ]; then
         REAL_ROOTFLAGS="${FAKE_ROOTFLAGS}"
