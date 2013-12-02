@@ -255,7 +255,7 @@ append_iscsi(){
 
     mkdir -p "${TEMP}/initramfs-iscsi-temp/usr/sbin/"
 
-    copy_binaries /usr/sbin/iscsistart
+    copy_binaries "${TEMP}/initramfs-iscsi-temp" /usr/sbin/iscsistart
 
     cd "${TEMP}/initramfs-iscsi-temp"
     log_future_cpio_content
