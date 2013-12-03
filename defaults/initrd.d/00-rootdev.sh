@@ -154,6 +154,12 @@ real_root_init() {
         REAL_ROOT="${FAKE_ROOT}"
     fi
 
+    if [ -z "${REAL_ROOTFLAGS}" ]; then
+        REAL_ROOTFLAGS="${FAKE_ROOTFLAGS}"
+    fi
+}
+
+real_init_init() {
     local default_init="/sbin/init"
     if [ -z "${REAL_INIT}" ] && [ -z "${FAKE_INIT}" ]; then
         # if none of REAL_INIT and FAKE_INIT are set, default
@@ -167,9 +173,6 @@ real_root_init() {
         else
             REAL_INIT="${FAKE_INIT}"
         fi
-    fi
-    if [ -z "${REAL_ROOTFLAGS}" ]; then
-        REAL_ROOTFLAGS="${FAKE_ROOTFLAGS}"
     fi
 }
 

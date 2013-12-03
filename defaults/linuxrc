@@ -258,6 +258,8 @@ done
 
 quiet_kmsg
 
+real_init_init
+
 is_livecd || {
     real_root_init && zfs_real_root_init;
 }
