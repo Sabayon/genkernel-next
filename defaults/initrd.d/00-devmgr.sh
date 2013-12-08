@@ -69,6 +69,10 @@ mount_devfs() {
         mount -t devpts -o gid=5,mode=0620 devpts /dev/pts \
             || bad_msg "Failed to mount /dev/pts"
     fi
+
+    mkdir -p -m 1777 /dev/shm
+    mount -t tmpfs -o mode=1777,nosuid,nodev,strictatime tmpfs \
+        /dev/shm || bad_msg "Failed to mount /dev/shm"
 }
 
 device_list() {

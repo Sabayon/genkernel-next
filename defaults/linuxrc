@@ -16,7 +16,6 @@ fi
 mount -t proc -o noexec,nosuid,nodev proc /proc >/dev/null 2>&1
 mount -o remount,rw / >/dev/null 2>&1
 mount -t tmpfs -o rw,nosuid,nodev,relatime,mode=755 none /run 2>&1
-mount -t tmpfs -o mode=1777,nosuid,nodev,strictatime tmpfs /dev/shm 2>&1
 
 /bin/busybox --install -s
 
