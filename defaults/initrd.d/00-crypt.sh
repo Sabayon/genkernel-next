@@ -267,19 +267,22 @@ _open_luks() {
 }
 
 start_luks() {
-    if [ ! -e "${CRYPTSETUP_BIN}" ]; then
+
+    local root_or_swap=
+    if [ -n "${CRYPT_ROOTS}" ] || [ -n "${CRYPT_SWAPS}" ]; then
+        root_or_swap=1
+    fi
+
+    if [ ! -e "${CRYPTSETUP_BIN}" ] && [ -n "${root_or_swap}" ]; then
         bad_msg "${CRYPTSETUP_BIN} not found inside the initramfs"
         return 1
     fi
-
-    local root_or_swap=
 
     # if key is set but key device isn't, find it
     [ -n "${CRYPT_ROOT_KEY}" ] && [ -z "${CRYPT_ROOT_KEYDEV}" ] \
         && _bootstrap_key "ROOT"
 
     if [ -n "${CRYPT_ROOTS}" ]; then
-        root_or_swap=1
         # force REAL_ROOT= to some value if not set
         # this is mainly for backward compatibility,
         # because grub2 always sets a valid root=
@@ -292,7 +295,6 @@ start_luks() {
         && _bootstrap_key "SWAP"
 
     if [ -n "${CRYPT_SWAPS}" ]; then
-        root_or_swap=1
         # force REAL_RESUME= to some value if not set
         [ -z "${REAL_RESUME}" ] && REAL_RESUME="/dev/mapper/swap"
         _open_luks "swap"
