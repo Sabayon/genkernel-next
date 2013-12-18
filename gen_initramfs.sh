@@ -1001,7 +1001,7 @@ create_initramfs() {
         append_data 'overlay'
     fi
 
-    if [[ $(id -u) == 0 ]]; then
+    if [[ $(id -u) == 0 && -z ${FAKED_MODE:-} ]]; then
         # keep this at the very end, generates /etc/ld.so.conf* and cache
         append_data 'ld_so_conf'
     fi
