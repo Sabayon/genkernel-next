@@ -1001,8 +1001,10 @@ create_initramfs() {
         append_data 'overlay'
     fi
 
-    # keep this at the very end, generates /etc/ld.so.conf* and cache
-    append_data 'ld_so_conf'
+    if [[ $(id -u) == 0 ]]; then
+        # keep this at the very end, generates /etc/ld.so.conf* and cache
+        append_data 'ld_so_conf'
+    fi
 
     # Finalize cpio by removing duplicate files
     print_info 1 "        >> Finalizing cpio..."
