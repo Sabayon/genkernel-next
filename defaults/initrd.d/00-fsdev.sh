@@ -152,35 +152,6 @@ media_find() {
     [ -n "${result}" ] || bad_msg "Media not found"
 }
 
-setup_md_device() {
-    if ! is_mdev; then
-        # mdev requires manual device node creation, while udev doesn't
-        # make sure that all the udev events are complete
-        is_udev && udevadm settle
-        return 0
-    fi
-
-    local device=
-
-    [ -n "${1}" ] && device="${1}"
-    [ -z "${1}" ] && device="${REAL_ROOT}"
-    [ -z "${device}" ] && return 0
-
-    local md_dev=$(echo ${device} | sed -e \
-        's#\(luks:\)\?\(/dev/md\)[[:digit:]]\+#\2#')
-    if [ "${md_dev}" = "/dev/md" ]; then
-        good_msg 'Detected root as a md device. Setting up the device node...'
-
-        local md_number=$(echo ${device} | sed -e \
-            's#\(luks:\)\?/dev/md\([[:digit:]]\+\)#\2#')
-        if [ ! -e "/dev/md${md_number}" ]; then
-            mknod "/dev/md${md_number}" b 9 "${md_number}" >/dev/null 2>&1
-            [ $? -ne 0 ] && bad_msg "Creation of /dev/md${md_number} failed..."
-        fi
-        mdstart ${MDPART} "/dev/md${md_number}"
-    fi
-}
-
 start_md_volumes() {
     good_msg "Starting md devices"
     "${MDADM_BIN}" --assemble --scan
@@ -215,11 +186,10 @@ start_volumes() {
             bad_msg "dmraid failed to run, skipping raid assembly!"
     fi
 
-    if [ "${USE_LVM_NORMAL}" = "1" ]; then
+    # make sure that all the devices had time to be configured
+    is_udev && udevadm settle
 
-        for dev in ${RAID_DEVICES}; do
-            setup_md_device "${dev}"
-        done
+    if [ "${USE_LVM_NORMAL}" = "1" ]; then
 
         # This is needed for /sbin/lvm to accept the following logic
         local cmds="#! /sbin/lvm"
