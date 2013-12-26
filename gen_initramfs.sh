@@ -648,11 +648,17 @@ append_udev() {
 }
 
 append_ld_so_conf() {
-    print_info 1 'ld.so.conf: adding /etc/ld.so.conf{.d/*,}...'
-
     local tmp_dir="${TEMP}/initramfs-ld-temp"
     rm -rf "${tmp_dir}"
     mkdir -p "${tmp_dir}"
+
+    print_info 1 'ldconfig: adding /sbin/ldconfig...'
+
+    # Add ldconfig to the initramfs so that we can
+    # run ldconfig at runtime if needed.
+    copy_binaries "${tmp_dir}" "/sbin/ldconfig"
+
+    print_info 1 'ld.so.conf: adding /etc/ld.so.conf{.d/*,}...'
 
     local f= f_dir=
     for f in /etc/ld.so.conf /etc/ld.so.conf.d/*; do
