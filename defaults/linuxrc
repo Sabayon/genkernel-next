@@ -257,6 +257,8 @@ done
 
 quiet_kmsg
 
+maybe_setup_ld_cache
+
 real_init_init
 
 is_livecd || {
