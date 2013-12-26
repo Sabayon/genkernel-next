@@ -3,6 +3,11 @@
 
 CPIO_ARGS="--quiet -o -H newc"
 
+_get_udevdir() {
+    local udev_dir=$(pkg-config --variable udevdir udev)
+    [[ -n "${udev_dir}" ]] && echo $(realpath "${udev_dir}")
+}
+
 # The copy_binaries function is explicitly released under the CC0 license to
 # encourage wide adoption and re-use.  That means:
 # - You may use the code of copy_binaries() as CC0 outside of genkernel
@@ -275,8 +280,9 @@ append_lvm(){
     mkdir -p "${TEMP}/initramfs-lvm-temp/etc/lvm/"
     print_info 1 'LVM: Adding support (copying binaries from system)...'
 
-    local udev_dir="$(pkg-config --variable udevdir udev)"
-    udev_files=( $(qlist -e sys-fs/lvm2:0 | grep ^${udev_dir}/rules.d) )
+    local udev_dir=$(_get_udevdir)
+    udev_files=( $(qlist -e sys-fs/lvm2:0 | xargs realpath | \
+        grep ^${udev_dir}/rules.d) )
     for f in "${udev_files[@]}"; do
         [ -f "${f}" ] || gen_die "append_lvm: not a file: ${f}"
         mkdir -p "${TEMP}/initramfs-lvm-temp"/$(dirname "${f}") || \
@@ -598,7 +604,7 @@ append_udev() {
         rm -r "${TEMP}/initramfs-udev-temp"
     fi
 
-    local udev_dir="$(pkg-config --variable udevdir udev)"
+    local udev_dir=$(_get_udevdir)
     udev_files="
         ${udev_dir}/rules.d/50-udev-default.rules
         ${udev_dir}/rules.d/60-persistent-storage.rules
