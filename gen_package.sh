@@ -95,6 +95,7 @@ gen_kerncache()
     echo "PATCHLEVEL = ${PAT}" >> "${TEMP}/kerncache/kerncache.config"
     echo "SUBLEVEL = ${SUB}" >> "${TEMP}/kerncache/kerncache.config"
     echo "EXTRAVERSION = ${EXV}" >> "${TEMP}/kerncache/kerncache.config"
+    echo "CONFIG_LOCALVERSION = ${LOV}" >> "${TEMP}/kerncache/kerncache.config"
 
     mkdir -p "${TEMP}/kerncache/lib/modules/"
 
@@ -143,7 +144,7 @@ gen_kerncache_extract_modules()
 
 gen_kerncache_extract_config()
 {
-    if [ -e "${KERNCACHE}" ]
+    if [ -e "${KERNCACHE}" -a "${SAVE_CONFIG}" = '1' ]
     then
         print_info 1 'Extracting kerncache config to /etc/kernels'
         mkdir -p /etc/kernels
@@ -155,7 +156,7 @@ gen_kerncache_extract_config()
 gen_kerncache_is_valid()
 {
     KERNCACHE_IS_VALID=0
-    if [ "${NO_KERNEL_SOURCES}" = '1' ]
+    if [ "${KERNEL_SOURCES}" = '0' ]
     then
 
         BUILD_KERNEL=0

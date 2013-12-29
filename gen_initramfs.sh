@@ -273,7 +273,7 @@ append_iscsi(){
 append_lvm(){
     if [ -d "${TEMP}/initramfs-lvm-temp" ]
     then
-        rm -r "${TEMP}/initramfs-lvm-temp/"
+        rm -rf "${TEMP}/initramfs-lvm-temp/"
     fi
     cd ${TEMP}
     mkdir -p "${TEMP}/initramfs-lvm-temp"/{bin,sbin}
@@ -305,7 +305,7 @@ append_lvm(){
     find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
             || gen_die "compressing lvm cpio"
     cd "${TEMP}"
-    rm -r "${TEMP}/initramfs-lvm-temp/"
+    rm -rf "${TEMP}/initramfs-lvm-temp/"
 }
 
 append_mdadm(){
@@ -690,25 +690,33 @@ append_ld_so_conf() {
     # but we need to generate a valid ld.so.conf. So we extract the
     # current CPIO archive, run ldconfig -r against it and append the
     # last bits.
-    local tmp_dir_ext="${tmp_dir}/extracted"
-    mkdir -p "${tmp_dir_ext}"
-    mkdir -p "${tmp_dir}/etc"
-    cd "${tmp_dir_ext}" || gen_die "cannot cd into ${tmp_dir_ext}"
-    cpio -id --quiet < "${CPIO}" || gen_die "cannot re-extract ${CPIO}"
+    #
+    # We only do this if we are "root", because "ldconfig -r" requires
+    # root privileges to chroot. If we are not root we don't generate the
+    # ld.so.cache here, but expect that ldconfig would regenerate it when the
+    # machine boots.
+    if [[ $(id -u) == 0 && -z ${FAKED_MODE:-} ]]; then
+        local tmp_dir_ext="${tmp_dir}/extracted"
+        mkdir -p "${tmp_dir_ext}"
+        mkdir -p "${tmp_dir}/etc"
+        cd "${tmp_dir_ext}" || gen_die "cannot cd into ${tmp_dir_ext}"
+        cpio -id --quiet < "${CPIO}" || gen_die "cannot re-extract ${CPIO}"
 
-    cd "${tmp_dir}" || gen_die "cannot cd into ${tmp_dir}"
-    ldconfig -r "${tmp_dir_ext}" || \
-        gen_die "cannot run ldconfig on ${tmp_dir_ext}"
-    cp -a "${tmp_dir_ext}/etc/ld.so.cache" "${tmp_dir}/etc/ld.so.cache" || \
-        gen_die "cannot copy ld.so.cache"
-    rm -rf "${tmp_dir_ext}"
+        cd "${tmp_dir}" || gen_die "cannot cd into ${tmp_dir}"
+        ldconfig -r "${tmp_dir_ext}" || \
+            gen_die "cannot run ldconfig on ${tmp_dir_ext}"
+        cp -a "${tmp_dir_ext}/etc/ld.so.cache" "${tmp_dir}/etc/ld.so.cache" || \
+            gen_die "cannot copy ld.so.cache"
+        rm -rf "${tmp_dir_ext}"
 
-    cd "${tmp_dir}" || gen_die "cannot cd into ${tmp_dir}"
-    log_future_cpio_content
-    find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
-            || gen_die "compressing ld.so.cache cpio"
-    cd "$(dirname "${tmp_dir}")"
-    rm -rf "${tmp_dir}"
+        cd "${tmp_dir}" || gen_die "cannot cd into ${tmp_dir}"
+        log_future_cpio_content
+        find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+                || gen_die "compressing ld.so.cache cpio"
+        cd "$(dirname "${tmp_dir}")"
+        rm -rf "${tmp_dir}"
+    fi
+
 }
 
 print_list()
