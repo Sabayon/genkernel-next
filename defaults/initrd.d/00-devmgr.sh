@@ -17,16 +17,11 @@ is_mdev() {
 devmgr_init() {
     if is_udev; then
         good_msg "Activating udev"
-        echo "${UDEVD}" > /proc/sys/kernel/hotplug
-        echo "" > /sys/kernel/uevent_helper
         "${UDEVD}" --daemon --resolve-names=never && \
             udevadm trigger --action=add && \
             udevadm settle || bad_msg "udevd failed to run"
     elif is_mdev; then
         good_msg "Activating mdev"
-        # Serialize hotplug events
-        touch /dev/mdev.seq
-        echo "${MDEVD}" > /proc/sys/kernel/hotplug
         # Ensure that device nodes are properly configured
         "${MDEVD}" -s || bad_msg "mdev -s failed"
     else
