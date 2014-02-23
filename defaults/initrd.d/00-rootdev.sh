@@ -200,7 +200,7 @@ ensure_initramfs_mounts() {
         dev=$(_get_mount_device "${fs}")
         [ -z "${dev}" ] && continue
         # Resolve it like util-linux mount does
-        [ -L "${dev}" ] && dev=$(readlink "${dev}")
+        [ -L "${dev}" ] && dev=$(realpath "${dev}")
         # In this case, it's probably part of the filesystem
         # and not a mountpoint
         [ -z "${dev}" ] && continue
