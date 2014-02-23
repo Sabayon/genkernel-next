@@ -788,7 +788,8 @@ append_drm() {
     rm -rf "${TEMP}/initramfs-drm-${KV}-temp/"
     mkdir -p "${TEMP}/initramfs-drm-${KV}-temp/lib/modules/${KV}"
 
-    local drm_path="./lib/modules/${KV}/kernel/drivers/gpu/drm"
+    local mods_path="./lib/modules/${KV}"
+    local drm_path="${mods_path}/kernel/drivers/gpu/drm"
     local modules
     if [ -d "${drm_path}" ]
     then
@@ -809,7 +810,7 @@ append_drm() {
     local mod i fws fw
     for i in ${modules}
     do
-        mod=$(find "${drm_path}" -name "${i}${MOD_EXT}" 2>/dev/null| head -n 1)
+        mod=$(find "${mods_path}" -name "${i}${MOD_EXT}" 2>/dev/null| head -n 1)
         if [ -z "${mod}" ]
         then
             print_warning 2 "Warning :: ${i}${MOD_EXT} not found; skipping..."
