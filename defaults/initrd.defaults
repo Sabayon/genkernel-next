@@ -57,6 +57,7 @@ KSUFF=".ko"
 # systemd-207 dropped /sbin/udevd
 UDEVD="/sbin/udevd"
 [ ! -e "${UDEVD}" ] && UDEVD="/usr/lib/systemd/systemd-udevd"
+[ ! -e "${UDEVD}" ] && UDEVD="/lib/systemd/systemd-udevd"
 
 MDEVD="/sbin/mdev"
 INITRD_SPLASH="/etc/initrd.splash"

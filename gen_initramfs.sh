@@ -637,6 +637,10 @@ append_udev() {
     # systemd-207 dropped /sbin/udevd
     local udevd_bin=/sbin/udevd
     [ ! -e "${udevd_bin}" ] && udevd_bin=/usr/lib/systemd/systemd-udevd
+    # systemd-210, moved udevd to another location
+    [ ! -e "${udevd_bin}" ] && udevd_bin=/lib/systemd/systemd-udevd
+    [ ! -e "${udevd_bin}" ] && gen_die "cannot find udevd"
+
     local udevadm_bin=/bin/udevadm
     [ ! -e "${udevadm_bin}" ] && udevadm_bin=/usr/bin/udevadm
 
