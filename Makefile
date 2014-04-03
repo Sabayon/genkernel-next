@@ -43,8 +43,8 @@ install: default
 	cp -rp netboot $(DESTDIR)/$(PREFIX)/share/genkernel/
 	cp -rp patches $(DESTDIR)/$(PREFIX)/share/genkernel/
 
-	install -d $(DESTDIR)/var/cache/genkernel/src
-	install -m 644 tarballs/* $(DESTDIR)/var/cache/genkernel/src/
+	install -d $(DESTDIR)/var/lib/genkernel/src
+	install -m 644 tarballs/* $(DESTDIR)/var/lib/genkernel/src/
 
 clean:
 	rm -f $(EXTRA_DIST)
