@@ -82,7 +82,7 @@ for x in ${CMDLINE}; do
         domdev)
             USE_MDEV=1
         ;;
-        dolvm)
+        dolvm|rd.lvm.lv=*)
             USE_LVM_NORMAL=1
         ;;
         domdadm)
