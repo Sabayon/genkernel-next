@@ -249,6 +249,9 @@ for x in ${CMDLINE}; do
         keymap=*)
             USE_KEYMAP=${x#*=}
         ;;
+        vconsole.keymap=*)
+            USE_KEYMAP=${x#*=}
+        ;;
         aufs)
             USE_AUFS=1
         ;;
