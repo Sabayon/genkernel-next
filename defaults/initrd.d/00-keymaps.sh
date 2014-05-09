@@ -5,7 +5,7 @@
 . /etc/initrd.d/00-livecd.sh
 
 setup_keymap() {
-    if [ -z "${DO_keymap}" ]; then
+    if [ -z "${keymap}" ]; then
         return 0
     fi
 
