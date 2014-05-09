@@ -246,10 +246,7 @@ for x in ${CMDLINE}; do
         rootfstype=*)
             ROOTFSTYPE=${x#*=}
         ;;
-        keymap=*)
-            USE_KEYMAP=${x#*=}
-        ;;
-        vconsole.keymap=*)
+        keymap=*|vconsole.keymap=*)
             USE_KEYMAP=${x#*=}
         ;;
         aufs)
