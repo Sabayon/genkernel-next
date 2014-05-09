@@ -85,13 +85,13 @@ for x in ${CMDLINE}; do
         dolvm|rd.lvm.lv=*)
             USE_LVM_NORMAL=1
         ;;
-        domdadm)
+        domdadm|rd.md.uuid=*)
             USE_MDADM=1
         ;;
-        dodmraid)
+        dodmraid|rd.dm.uuid=*)
             USE_DMRAID_NORMAL=1
         ;;
-        dodmraid=*)
+        dodmraid=*|rd.dm.uuid=*)
             DMRAID_OPTS=${x#*=}
             USE_DMRAID_NORMAL=1
         ;;
