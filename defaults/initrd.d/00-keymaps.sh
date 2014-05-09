@@ -5,7 +5,7 @@
 . /etc/initrd.d/00-livecd.sh
 
 setup_keymap() {
-    if [ -z "${keymap}" ]; then
+    if [ -z "${USE_KEYMAP}" ]; then
         return 0
     fi
 
@@ -21,62 +21,62 @@ choose_keymap() {
     cat /lib/keymaps/keymapList
     read -t 10 -p '<< Load keymap (Enter for default): ' keymap
 
-    case ${keymap} in
-        1|azerty) keymap=azerty ;;
-        2|be) keymap=be ;;
-        3|bg) keymap=bg ;;
-        4|br-a) keymap=br-a ;;
-        5|br-l) keymap=br-l ;;
-        6|by) keymap=by ;;
-        7|cf) keymap=cf ;;
-        8|croat) keymap=croat ;;
-        9|cz) keymap=cz ;;
-        10|de) keymap=de ;;
-        11|dk) keymap=dk ;;
-        12|dvorak) keymap=dvorak ;;
-        13|es) keymap=es ;;
-        14|et) keymap=et ;;
-        15|fi) keymap=fi ;;
-        16|fr) keymap=fr ;;
-        17|gr) keymap=gr ;;
-        18|hu) keymap=hu ;;
-        19|il) keymap=il ;;
-        20|is) keymap=is ;;
-        21|it) keymap=it ;;
-        22|jp) keymap=jp ;;
-        23|la) keymap=la ;;
-        24|lt) keymap=lt ;;
-        25|mk) keymap=mk ;;
-        26|nl) keymap=nl ;;
-        27|no) keymap=no ;;
-        28|pl) keymap=pl ;;
-        29|pt) keymap=pt ;;
-        30|ro) keymap=ro ;;
-        31|ru) keymap=ru ;;
-        32|se) keymap=se ;;
-        33|sg) keymap=sg ;;
-        34|sk-y) keymap=sk-y ;;
-        35|sk-z) keymap=sk-z ;;
-        36|slovene) keymap=slovene ;;
-        37|trf) keymap=trf ;;
-        38|trq) keymap=trq ;;
-        39|ua) keymap=ua ;;
-        40|uk) keymap=uk ;;
-        41|us) keymap=us ;;
-        42|wangbe) keymap=wangbe ;;
-        43|sf|ch*) keymap=sf ;;
+    case ${USE_KEYMAP} in
+        1|azerty) USE_KEYMAP=azerty ;;
+        2|be) USE_KEYMAP=be ;;
+        3|bg) USE_KEYMAP=bg ;;
+        4|br-a) USE_KEYMAP=br-a ;;
+        5|br-l) USE_KEYMAP=br-l ;;
+        6|by) USE_KEYMAP=by ;;
+        7|cf) USE_KEYMAP=cf ;;
+        8|croat) USE_KEYMAP=croat ;;
+        9|cz) USE_KEYMAP=cz ;;
+        10|de) USE_KEYMAP=de ;;
+        11|dk) USE_KEYMAP=dk ;;
+        12|dvorak) USE_KEYMAP=dvorak ;;
+        13|es) USE_KEYMAP=es ;;
+        14|et) USE_KEYMAP=et ;;
+        15|fi) USE_KEYMAP=fi ;;
+        16|fr) USE_KEYMAP=fr ;;
+        17|gr) USE_KEYMAP=gr ;;
+        18|hu) USE_KEYMAP=hu ;;
+        19|il) USE_KEYMAP=il ;;
+        20|is) USE_KEYMAP=is ;;
+        21|it) USE_KEYMAP=it ;;
+        22|jp) USE_KEYMAP=jp ;;
+        23|la) USE_KEYMAP=la ;;
+        24|lt) USE_KEYMAP=lt ;;
+        25|mk) USE_KEYMAP=mk ;;
+        26|nl) USE_KEYMAP=nl ;;
+        27|no) USE_KEYMAP=no ;;
+        28|pl) USE_KEYMAP=pl ;;
+        29|pt) USE_KEYMAP=pt ;;
+        30|ro) USE_KEYMAP=ro ;;
+        31|ru) USE_KEYMAP=ru ;;
+        32|se) USE_KEYMAP=se ;;
+        33|sg) USE_KEYMAP=sg ;;
+        34|sk-y) USE_KEYMAP=sk-y ;;
+        35|sk-z) USE_KEYMAP=sk-z ;;
+        36|slovene) USE_KEYMAP=slovene ;;
+        37|trf) USE_KEYMAP=trf ;;
+        38|trq) USE_KEYMAP=trq ;;
+        39|ua) USE_KEYMAP=ua ;;
+        40|uk) USE_KEYMAP=uk ;;
+        41|us) USE_KEYMAP=us ;;
+        42|wangbe) USE_KEYMAP=wangbe ;;
+        43|sf|ch*) USE_KEYMAP=sf ;;
     esac
 
-    if [ -e "/lib/keymaps/${keymap}.map" ]; then
-        good_msg "Loading the ''${keymap}'' keymap"
-        loadkmap < "/lib/keymaps/${keymap}.map"
-        splashcmd set_msg "Set keymap to ${keymap}"
-    elif [ -z "${keymap}" ]; then
+    if [ -e "/lib/keymaps/${USE_KEYMAP}.map" ]; then
+        good_msg "Loading the ''${USE_KEYMAP}'' keymap"
+        loadkmap < "/lib/keymaps/${USE_KEYMAP}.map"
+        splashcmd set_msg "Set keymap to ${USE_KEYMAP}"
+    elif [ -z "${USE_KEYMAP}" ]; then
         good_msg
         good_msg "Keeping default keymap"
         splashcmd set_msg "Keeping default keymap"
     else
-        bad_msg "Sorry, but keymap ${keymap} is invalid"
+        bad_msg "Sorry, but keymap ${USE_KEYMAP} is invalid"
         unset keymap
         choose_keymap
     fi

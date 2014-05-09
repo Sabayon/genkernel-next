@@ -247,7 +247,7 @@ for x in ${CMDLINE}; do
             ROOTFSTYPE=${x#*=}
         ;;
         keymap=*)
-            keymap=${x#*=}
+            USE_KEYMAP=${x#*=}
         ;;
         aufs)
             USE_AUFS=1
