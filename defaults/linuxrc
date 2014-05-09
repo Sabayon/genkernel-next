@@ -157,7 +157,11 @@ for x in ${CMDLINE}; do
             NFSROOT=${x#*=}
         ;;
 
-        iscsi_initiatorname=*)
+        netroot=iscsi:*)
+            x=${x#*=}
+            parse_dracut_iscsi_root "${x}"
+        ;;
+        iscsi_initiatorname=*|iscsi_initiator=*)
             ISCSI_INITIATORNAME=${x#*=}
         ;;
         iscsi_target=*)
