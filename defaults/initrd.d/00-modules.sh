@@ -80,9 +80,6 @@ cmdline_hwopts() {
             elif [ "${y}" = "no${x}" ]; then
                 MY_HWOPTS="$(echo ${MY_HWOPTS} | sed -e \"s/${x}//g\" -)"
             fi
-            if [ "$(echo ${y} | cut -b -7)" = "keymap=" ]; then
-                MY_HWOPTS="${MY_HWOPTS} keymap"
-            fi
         done
     done
 

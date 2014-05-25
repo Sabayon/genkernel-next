@@ -15,11 +15,13 @@ setup_keymap() {
 }
 
 choose_keymap() {
-    good_msg "Loading keymaps"
+    good_msg "Loading keyboard mappings"
 
-    splashcmd verbose
-    cat /lib/keymaps/keymapList
-    read -t 10 -p '<< Load keymap (Enter for default): ' keymap
+    if [ -n "${DO_keymap}" ]; then
+        splashcmd verbose
+        cat /lib/keymaps/keymapList
+        read -t 10 -p '<< Load keymap (Enter for default): ' USE_KEYMAP
+    fi
 
     case ${USE_KEYMAP} in
         1|azerty) USE_KEYMAP=azerty ;;
@@ -68,16 +70,15 @@ choose_keymap() {
     esac
 
     if [ -e "/lib/keymaps/${USE_KEYMAP}.map" ]; then
-        good_msg "Loading the ''${USE_KEYMAP}'' keymap"
+        good_msg "Loading the ''${USE_KEYMAP}'' keyboard mapping"
         loadkmap < "/lib/keymaps/${USE_KEYMAP}.map"
-        splashcmd set_msg "Set keymap to ${USE_KEYMAP}"
+        splashcmd set_msg "Set keyboard mapping to ${USE_KEYMAP}"
     elif [ -z "${USE_KEYMAP}" ]; then
-        good_msg
-        good_msg "Keeping default keymap"
-        splashcmd set_msg "Keeping default keymap"
+        good_msg "Keeping default keyboard mapping"
+        splashcmd set_msg "Keeping default keyboard mapping"
     else
-        bad_msg "Sorry, but keymap ${USE_KEYMAP} is invalid"
-        unset keymap
+        bad_msg "Sorry, but keyboard mapping ${USE_KEYMAP} is invalid"
+        unset USE_KEYMAP
         choose_keymap
     fi
 }
