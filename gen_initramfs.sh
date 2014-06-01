@@ -136,7 +136,7 @@ append_busybox() {
 
     # Set up a few default symlinks
     local default_applets="[ ash sh mount uname ls echo cut cat flock stty"
-    default_applets+=" readlink realpath mountpoint dmesg udhcpc"
+    default_applets+=" readlink realpath mountpoint dmesg udhcpc chmod mktemp"
     for i in ${BUSYBOX_APPLETS:-${default_applets}}; do
         rm -f ${TEMP}/initramfs-busybox-temp/bin/$i
         ln -s busybox ${TEMP}/initramfs-busybox-temp/bin/$i ||
