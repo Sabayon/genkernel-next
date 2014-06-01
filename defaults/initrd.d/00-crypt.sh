@@ -19,16 +19,18 @@ _bootstrap_key() {
 
 _crypt_exec() {
     local luks_dev="${1}"
-    local cmd="${2}"
+    local ply_cmd="${2}" # command for use when plymouth is active
+    local tty_cmd="${3}" # command for use without plymouth
+    local do_ask="${4}"  # whether we need a passphrase at all
 
-    if [ "${CRYPT_SILENT}" = "1" ]; then
-        eval ${cmd} >/dev/null 2>/dev/null
+    if [ "${CRYPT_SILENT}" = "1" -o "${do_ask}" = "0" ]; then
+        eval ${tty_cmd} >/dev/null 2>/dev/null
     else
         ask_for_password --ply-tries 5 \
-            --ply-cmd "${cmd}" \
+            --ply-cmd "${ply_cmd}" \
             --ply-prompt "Encryption password (${luks_dev}): " \
             --tty-tries 5 \
-            --tty-cmd "${cmd}" || return 1
+            --tty-cmd "${tty_cmd}" || return 1
         return 0
     fi
 }
@@ -64,7 +66,9 @@ _open_luks() {
 
         while true; do
 
-            local gpg_cmd=""
+            local gpg_ply_cmd=""
+            local gpg_tty_cmd=""
+            local passphrase_needed="1"
 
             # do not force the link to /dev/mapper/root
             # but rather use the value from root=, which is
@@ -202,18 +206,32 @@ _open_luks() {
                     mknod /dev/tty c 5 1
 
                     cryptsetup_opts="${cryptsetup_opts} -d -"
-                    gpg_cmd="/usr/bin/gpg --logger-file /dev/null"
-                    gpg_cmd="${gpg_cmd} --quiet --decrypt ${mntkey}${luks_key} | "
+                    # if plymouth not in use, gpg reads keyfile passphrase...
+                    gpg_tty_cmd="/usr/bin/gpg --logger-file /dev/null"
+                    gpg_tty_cmd="${gpg_tty_cmd} --quiet --decrypt ${mntkey}${luks_key} | "
+                    # but when plymouth is in use, keyfile passphrase piped in
+                    gpg_ply_cmd="/usr/bin/gpg --logger-file /dev/null"
+                    gpg_ply_cmd="${gpg_ply_cmd} --quiet --passphrase-fd 0 --batch --no-tty"
+                    gpg_ply_cmd="${gpg_ply_cmd} --decrypt ${mntkey}${luks_key} | "
                 else
                     cryptsetup_opts="${cryptsetup_opts} -d ${mntkey}${luks_key}"
+                    passphrase_needed="0" # keyfile not itself encrypted
                 fi
             fi
 
             # At this point, keyfile or not, we're ready!
-            local cmd="${gpg_cmd}${CRYPTSETUP_BIN}"
-            cmd="${cmd} ${cryptsetup_opts} luksOpen ${luks_device} ${luks_dev_name}"
-            _crypt_exec "${luks_device}" "${cmd}"
+            local ply_cmd="${gpg_ply_cmd}${CRYPTSETUP_BIN}"
+            local tty_cmd="${gpg_tty_cmd}${CRYPTSETUP_BIN}"
+            ply_cmd="${ply_cmd} ${cryptsetup_opts} luksOpen ${luks_device} ${luks_dev_name}"
+            tty_cmd="${tty_cmd} ${cryptsetup_opts} luksOpen ${luks_device} ${luks_dev_name}"
+            # send to a temporary shell script, so plymouth can
+            # invoke the pipeline successfully
+            local ply_cmd_file="$(mktemp -t "ply_cmd.XXXXXX")"
+            printf '#!/bin/sh\n%s\n' "${ply_cmd}" > "${ply_cmd_file}"
+            chmod 500 "${ply_cmd_file}"
+            _crypt_exec "${luks_device}" "${ply_cmd_file}" "${tty_cmd}" "${passphrase_needed}"
             local ret="${?}"
+            rm -f "${ply_cmd_file}"
 
             # TODO(lxnay): WTF is this?
             [ -e /dev/tty.org ] \
