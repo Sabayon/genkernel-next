@@ -293,7 +293,9 @@ append_lvm(){
 
     copy_binaries "${TEMP}/initramfs-lvm-temp" \
         /sbin/lvm /sbin/dmsetup /sbin/thin_check \
-        /sbin/thin_restore /sbin/thin_dump
+        /sbin/thin_restore /sbin/thin_dump \
+	/sbin/cache_check /sbin/cache_restore \
+	/sbin/cache_dump /sbin/cache_repair
 
     if [ -f /etc/lvm/lvm.conf ]
     then
