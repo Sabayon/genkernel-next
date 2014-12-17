@@ -166,9 +166,11 @@ prompt_user() {
 
     eval local oldvalue='$'${1}
 
-    [ $# != 2 -a $# != 3 ] && \
+    if [ $# != 2 -a $# != 3 ]; then
         bad_msg "Bad invocation of function prompt_user."
-        bad_msg "Please file a bug report with this message" && exit 1
+        bad_msg "Please file a bug report with this message"
+	exit 1
+    fi
     [ -n "${3}" ] && local explnt=" or : ${3}" || local explnt="."
 
     splashcmd verbose
