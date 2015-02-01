@@ -86,6 +86,8 @@ longusage() {
   echo "    --splash=<theme>    Enable framebuffer splash using <theme>"
   echo "    --splash-res=<res>  Select splash theme resolutions to install"
   echo "    --plymouth-theme=<theme>    Embed the given plymouth theme"
+  echo "    --uvesafb           Include uvesafb v86d helper support"
+  echo "    --no-uvesafb        Exclude uvesafb v86d helper support"
   echo "    --do-keymap-auto    Forces keymap selection at boot"
   echo "    --keymap        Enables keymap selection support"
   echo "    --no-keymap     Disables keymap selection support"
@@ -444,6 +446,10 @@ parse_cmdline() {
             PLYMOUTH_THEME=`parse_opt "$*"`
             print_info 2 "CMD_PLYMOUTH: ${CMD_PLYMOUTH}"
             print_info 2 "PLYMOUTH_THEME: ${PLYMOUTH_THEME}"
+            ;;
+        --uvesafb|--no-uvesafb)
+            CMD_UVESAFB=`parse_optbool "$*"`
+            print_info 2 "CMD_UVESAFB: ${CMD_UVESAFB}"
             ;;
         --install|--no-install)
             CMD_INSTALL=`parse_optbool "$*"`

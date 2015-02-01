@@ -245,6 +245,10 @@ INITIALIZATION
 *--plymouth-theme*=<theme>::
     Embeds the given plymouth theme into the initramfs.
 
+*--*[*no-*]*uvesafb*::
+    Installs, or not, the v86d helper binary into the initramfs for uvesafb
+    support. Needs the presence of the v86d binary in /sbin folder.
+
 *--do-keymap-auto*::
     Force keymap selection at boot.
 
