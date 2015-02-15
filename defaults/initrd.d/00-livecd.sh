@@ -11,6 +11,11 @@ _is_aufs() {
     return 1
 }
 
+_is_overlayfs() {
+    [ "${USE_OVERLAYFS}" = "1" ] && return 0
+    return 1
+}
+
 _find_loop() {
     local l=
     for loop in ${LOOPS}; do
@@ -28,6 +33,13 @@ _find_looptype() {
     [ "${LOOP}" = "/zisofs" ] && lt="${LOOP#/}"
     [ -z "${lt}" ] && lt="noloop"
     echo "${lt}"
+}
+
+_setup_cdrom_access() {
+    # have handy /mnt/cdrom (CDROOT_PATH) as well
+    local new_cdroot="${NEW_ROOT}${CDROOT_PATH}"
+    [ ! -d "${new_cdroot}" ] && mkdir -p "${new_cdroot}"
+    mount --bind "${CDROOT_PATH}" "${new_cdroot}"
 }
 
 _setup_squashfs_aufs() {
@@ -52,10 +64,38 @@ _setup_squashfs_aufs() {
         mount --move "${i}" "${NEW_ROOT}${i}"
     done
 
-    # have handy /mnt/cdrom (CDROOT_PATH) as well
-    local new_cdroot="${NEW_ROOT}${CDROOT_PATH}"
-    [ ! -d "${new_cdroot}" ] && mkdir -p "${new_cdroot}"
-    mount --bind "${CDROOT_PATH}" "${new_cdroot}"
+    _setup_cdrom_access
+}
+
+_setup_squashfs_overlayfs() {
+    # Setup overlayfs directories and vars
+    local overlay=/mnt/overlay
+    local upperdir="${overlay}/.upper"
+    local workdir="${overlay}/.work"
+    local static=/mnt/livecd
+
+    for i in "${overlay}" "${static}"; do
+        [ ! -d "${i}" ] && mkdir -p "${i}"
+    done
+    good_msg "Loading overlayfs"
+    modprobe overlay > /dev/null 2>&1
+
+    mount -t squashfs -o loop,ro "${LOOP_PATH}" "${static}"
+    mount -t tmpfs none "${overlay}"
+    mkdir "${upperdir}" "${workdir}"
+
+    mount -t overlay overlay \
+        -o lowerdir="${static}",upperdir="${upperdir}",workdir="${workdir}" \
+        "${NEW_ROOT}"
+
+    [ ! -d "${NEW_ROOT}${overlay}" ] && mkdir -p "${NEW_ROOT}${overlay}"
+    [ ! -d "${NEW_ROOT}${static}" ] && mkdir -p "${NEW_ROOT}${static}"
+    echo "overlay / overlay defaults 0 0" > "${NEW_ROOT}"/etc/fstab
+    for i in "${overlay}" "${static}"; do
+        mount --bind "${i}" "${NEW_ROOT}${i}"
+    done
+
+    _setup_cdrom_access
 }
 
 _bootstrap_cd() {
@@ -188,6 +228,11 @@ _livecd_mount_squashfs() {
     if _is_aufs; then
         good_msg "Mounting squashfs & aufs filesystems"
         _setup_squashfs_aufs
+        test_success "Mount filesystem"
+        return  # preserve old behaviour
+    elif _is_overlayfs; then  # same for overlay fs.
+        good_msg "Mounting squashfs & overlay fs filesystems"
+        _setup_squashfs_overlayfs
         test_success "Mount filesystem"
         return  # preserve old behaviour
     fi

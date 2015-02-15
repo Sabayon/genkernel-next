@@ -256,6 +256,9 @@ for x in ${CMDLINE}; do
         aufs)
             USE_AUFS=1
         ;;
+        overlayfs)
+            USE_OVERLAYFS=1
+        ;;
     esac
 done
 
