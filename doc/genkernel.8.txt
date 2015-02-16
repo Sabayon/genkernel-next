@@ -568,6 +568,9 @@ which the ramdisk scripts would recognize.
 *aufs*::
     Enables support for AUFS2 (if available in the kernel).
 
+*overlayfs*::
+    Enables support for Overlay FS (if available in the kernel).
+
 *rootflags*=<...>::
     Additional flags to mount the real root system with.
     For example *rootflags*=noatime would make "-o ro,noatime".

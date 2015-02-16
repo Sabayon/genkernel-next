@@ -16,6 +16,13 @@ _is_overlayfs() {
     return 1
 }
 
+_is_fallback_to_copy_required() {
+    if _is_aufs || _is_overlayfs; then
+        return 1
+    fi
+    return 0
+}
+
 _find_loop() {
     local l=
     for loop in ${LOOPS}; do
@@ -436,8 +443,8 @@ livecd_mount() {
 
     is_nfs && _livecd_mount_unpack_nfs
 
-    # Manually copy livecd content to tmpfs if aufs is disabled
-    _is_aufs || _livecd_mount_copy_content
+    # Manually copy livecd content to tmpfs if needed
+    _is_fallback_to_copy_required && _livecd_mount_copy_content
 }
 
 cd_update() {
