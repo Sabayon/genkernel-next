@@ -7,14 +7,93 @@
 
 CRYPTSETUP_BIN="/sbin/cryptsetup"
 KEY_MNT="/mnt/key"
+HEADER_MNT="/mnt/header"
 
-_bootstrap_key() {
+_bootstrap() {
     local ltype="${1}"
-    local keydevs=$(device_list)
+    local ltype2="${2}"
+    local mnt="${3}"
+    local devs=$(device_list)
 
-    eval local keyloc='"${CRYPT_'${ltype}'_KEY}"'
+    eval local loc='"${CRYPT_'${ltype}'_'${ltype2}'}"'
 
-    media_find "key" "${keyloc}" "CRYPT_${ltype}_KEYDEV" "${KEY_MNT}" ${keydevs}
+    media_find "${ltype2}" "${loc}" "CRYPT_${ltype}_${ltype2}DEV" "${mnt}" ${devs}
+}
+
+_bootstrap_real() {
+    local mnt_dev="${1}"
+    local mnt_path="${2}"
+    local mnt_dev_type="${3}"
+
+    local tgt_file="${4}"
+
+    local lname="${5}"
+    local ltype="${6}"
+
+    local real_mnt_dev="${mnt_dev}"
+
+    if [ ! -e "${mnt_path}${tgt_file}" ]; then
+        real_mnt_dev=$(find_real_device "${mnt_dev}")
+        good_msg "Using ${mnt_dev_type} device ${real_mnt_dev}."
+
+        if [ ! -b "${real_mnt_dev}" ]; then
+            bad_msg "Insert device ${mnt_dev} for ${lname}"
+            bad_msg "You have 10 seconds..."
+            local count=10
+            while [ ${count} -gt 0 ]; do
+                count=$((count-1))
+                sleep 1
+
+                real_mnt_dev=$(find_real_device "${mnt_dev}")
+                [ ! -b "${real_mnt_dev}" ] || {
+                    good_msg "Device ${real_mnt_dev} detected."
+                    break;
+                }
+            done
+
+            if [ ! -b "${real_mnt_dev}" ]; then
+                eval CRYPT_${ltype}_${mnt_dev_type}=${tgt_file}
+                _bootstrap "${ltype}" "${mnt_dev_type}" "${mnt_path}"
+                eval mnt_dev='"${CRYPT_'${ltype}'_'${mnt_dev_type}'DEV}"'
+
+                real_mnt_dev=$(find_real_device "${mnt_dev}")
+                if [ ! -b "${real_mnt_dev}" ]; then
+                    eval ${mnt_dev_type}dev_error=1
+                    bad_msg "Device ${mnt_dev} not found."
+                    continue
+                fi
+
+                # continue otherwise will mount the dev which is
+                # mounted by bootstrap
+                continue
+            fi
+        fi
+
+        # At this point a device was recognized, now let's see
+        # if the target file is there
+        mkdir -p "${mnt_path}"  # ignore
+
+        mount -n -o ro "${real_mnt_dev}" \
+        "${mnt_path}" || {
+            eval ${mnt_dev_type}dev_error=1
+            bad_msg "Mounting of device ${real_mnt_dev} failed."
+            continue;
+        }
+
+        good_msg "Removable device ${real_mnt_dev} mounted."
+
+        if [ ! -e "${mnt_path}${tgt_file}" ]; then
+            umount -n "${mnt_path}"
+            eval ${mnt_dev_type}_error=1
+	    eval ${mnt_dev_type}dev_error=1
+            bad_msg "${tgt_file} on ${real_mnt_dev} not found."
+            continue
+        fi
+    fi
+
+    # At this point a candidate target file exists
+    # (either mounted before or not)
+    good_msg "${tgt_file} on device ${real_mnt_dev} found"
 }
 
 _crypt_exec() {
@@ -52,12 +131,37 @@ _open_luks() {
     esac
 
     eval local luks_devices='"${CRYPT_'${ltypes}'}"'
-    eval local luks_key='"${CRYPT_'${ltype}'_KEY}"'
-    eval local luks_keydev='"${CRYPT_'${ltype}'_KEYDEV}"'
-    eval local luks_trim='"${CRYPT_'${ltype}'_TRIM}"'
+ 
+    # Key values
+        eval local luks_key='"${CRYPT_'${ltype}'_KEY}"'
 
-    local dev_error=0 key_error=0 keydev_error=0
-    local mntkey="${KEY_MNT}/" cryptsetup_opts=""
+        local luks_key_included=0
+
+        if [ -n "${luks_key}" ] && [ -f "${luks_key}" ]; then
+	    luks_key_included=1
+        fi
+    
+        eval local luks_keydev='"${CRYPT_'${ltype}'_KEYDEV}"'
+   
+    # Header values
+        eval local luks_header='"${CRYPT_'${ltype}'_HEADER}"'
+
+        local luks_header_included=0
+
+        if [ -n "${luks_header}" ] && [ -f "${luks_header}" ];then
+            luks_header_included=1
+        fi
+
+        eval local luks_headerdev='"${CRYPT_'${ltype}'_HEADERDEV}"'
+
+    # TRIM values
+        eval local luks_trim='"${CRYPT_'${ltype}'_TRIM}"'
+
+    # Misc
+        local mntkey="${KEY_MNT}/"
+	local mntheader="${HEADER_MNT}/"
+	
+	cryptsetup_opts=""
 
     local exit_st=0 luks_device=
     for luks_device in ${luks_devices}; do
@@ -93,6 +197,8 @@ _open_luks() {
             [ "${dev_error}" = "1" ] && any_error=1
             [ "${key_error}" = "1" ] && any_error=1
             [ "${keydev_error}" = "1" ] && any_error=1
+	    [ "${header_error}" = "1" ] && any_error=1
+	    [ "${headerdev_error}" = "1" ] && any_error=1
             if [ "${CRYPT_SILENT}" = "1" ] && [ -n "${any_error}" ]; then
                 bad_msg "Failed to setup the LUKS device"
                 exit_st=1
@@ -117,87 +223,62 @@ _open_luks() {
                 continue
             fi
 
+            if [ "${header_error}" = "1" ]; then
+                prompt_user "luks_header" "${luks_dev_name} header"
+                header_error=0
+                continue
+            fi
+
+            if [ "${headerdev_error}" = "1" ]; then
+                prompt_user "luks_headerdev" "${luks_dev_name} header device"
+                headerdev_error=0
+                continue
+            fi
+
             local luks_dev=$(find_real_device "${luks_device}")
             [ -n "${luks_dev}" ] && \
                 luks_device="${luks_dev}"  # otherwise hope...
 
-            eval "${CRYPTSETUP_BIN} isLuks ${luks_device}" || {
-                bad_msg "${luks_device} does not contain a LUKS header"
-                dev_error=1
-                continue;
-            }
+	    # Handle headers
+	    if [ -n "${luks_header}" ]; then
+                if [ "${luks_header_included}" = "0" ]; then
+                    _bootstrap_real "${luks_headerdev}" "${mntheader}" "header" "${luks_header}" "${luks_dev_name}" "${ltype}"
+                else
+		    mntheader=""
+ 		    good_msg "Header file ${luks_header} found included in initramfs"
+		fi
 
-            # Handle keys
+                if eval "${CRYPTSETUP_BIN} isLuks ${mntheader}${luks_header}"; then
+		    good_msg "${luks_header} is a valid luks header"
+                    cryptsetup_opts="${cryptsetup_opts} --header ${mntheader}${luks_header}"
+		else
+                    bad_msg "${luks_header} is not a valid LUKS header"
+                    header_error=1
+                    continue;
+	        fi
+            else
+                eval "${CRYPTSETUP_BIN} isLuks ${luks_device}" || {
+                    bad_msg "${luks_device} does not contain a LUKS header"
+                    dev_error=1
+                    continue;
+                }
+            fi
+
+	    # TRIM support
             if [ "${luks_trim}" = "yes" ]; then
                 good_msg "Enabling TRIM support for ${luks_dev_name}."
                 cryptsetup_opts="${cryptsetup_opts} --allow-discards"
             fi
 
-            if [ -n "${luks_key}" ]; then
-                local real_luks_keydev="${luks_keydev}"
+	    # Handle keys
+             if [ -n "${luks_key}" ]; then
+                if [ "${luks_key_included}" = "0" ]; then
+                    _bootstrap_real "${luks_keydev}" "${mntkey}" "key" "${luks_key}" "${luks_dev_name}" "${ltype}"
+ 		else
+		    mntkey=""
+		    good_msg "Key file ${luks_key} found included in initramfs"
+		fi
 
-                if [ ! -e "${mntkey}${luks_key}" ]; then
-                    real_luks_keydev=$(find_real_device "${luks_keydev}")
-                    good_msg "Using key device ${real_luks_keydev}."
-
-                    if [ ! -b "${real_luks_keydev}" ]; then
-                        bad_msg "Insert device ${luks_keydev} for ${luks_dev_name}"
-                        bad_msg "You have 10 seconds..."
-                        local count=10
-                        while [ ${count} -gt 0 ]; do
-                            count=$((count-1))
-                            sleep 1
-
-                            real_luks_keydev=$(find_real_device "${luks_keydev}")
-                            [ ! -b "${real_luks_keydev}" ] || {
-                                good_msg "Device ${real_luks_keydev} detected."
-                                break;
-                            }
-                        done
-
-                        if [ ! -b "${real_luks_keydev}" ]; then
-                            eval CRYPT_${ltype}_KEY=${luks_key}
-                            _bootstrap_key ${ltype}
-                            eval luks_keydev='"${CRYPT_'${ltype}'_KEYDEV}"'
-
-                            real_luks_keydev=$(find_real_device "${luks_keydev}")
-                            if [ ! -b "${real_luks_keydev}" ]; then
-                                keydev_error=1
-                                bad_msg "Device ${luks_keydev} not found."
-                                continue
-                            fi
-
-                            # continue otherwise will mount keydev which is
-                            # mounted by bootstrap
-                            continue
-                        fi
-                    fi
-
-                    # At this point a device was recognized, now let's see
-                    # if the key is there
-                    mkdir -p "${mntkey}"  # ignore
-
-                    mount -n -o ro "${real_luks_keydev}" \
-                        "${mntkey}" || {
-                        keydev_error=1
-                        bad_msg "Mounting of device ${real_luks_keydev} failed."
-                        continue;
-                    }
-
-                    good_msg "Removable device ${real_luks_keydev} mounted."
-
-                    if [ ! -e "${mntkey}${luks_key}" ]; then
-                        umount -n "${mntkey}"
-                        key_error=1
-                        keydev_error=1
-                        bad_msg "{luks_key} on ${real_luks_keydev} not found."
-                        continue
-                    fi
-                fi
-
-                # At this point a candidate key exists
-                # (either mounted before or not)
-                good_msg "${luks_key} on device ${real_luks_keydev} found"
                 if [ "$(echo ${luks_key} | grep -o '.gpg$')" = ".gpg" ] && \
                     [ -e /usr/bin/gpg ]; then
 
@@ -213,10 +294,10 @@ _open_luks() {
                     gpg_ply_cmd="/usr/bin/gpg --logger-file /dev/null"
                     gpg_ply_cmd="${gpg_ply_cmd} --quiet --passphrase-fd 0 --batch --no-tty"
                     gpg_ply_cmd="${gpg_ply_cmd} --decrypt ${mntkey}${luks_key} | "
-                else
+                 else
                     cryptsetup_opts="${cryptsetup_opts} -d ${mntkey}${luks_key}"
                     passphrase_needed="0" # keyfile not itself encrypted
-                fi
+                 fi
             fi
 
             # At this point, keyfile or not, we're ready!
@@ -277,8 +358,15 @@ _open_luks() {
 
     done
 
-    umount -l "${mntkey}" 2>/dev/null >/dev/null
-    rmdir "${mntkey}" 2>/dev/null >/dev/null
+    if [ "${luks_header_included}" = "0" ]; then   
+        umount -l "${mntheader}" 2>/dev/null >/dev/null
+        rmdir "${mntheader}" 2>/dev/null >/dev/null
+    fi
+
+    if [ "${luks_key_included}" = "0" ]; then   
+        umount -l "${mntkey}" 2>/dev/null >/dev/null
+        rmdir "${mntkey}" 2>/dev/null >/dev/null
+    fi
 
     return ${exit_st}
 }
@@ -295,9 +383,17 @@ start_luks() {
         return 1
     fi
 
-    # if key is set but key device isn't, find it
-    [ -n "${CRYPT_ROOT_KEY}" ] && [ -z "${CRYPT_ROOT_KEYDEV}" ] \
-        && _bootstrap_key "ROOT"
+    # Check if root header is not included in initramfs
+    if [ -n "${CRYPT_ROOT_HEADER}" ] && [ ! -f "${CRYPT_ROOT_HEADER}" ]; then
+        # if key is set but key device isn't, find it
+        [ -z "${CRYPT_ROOT_HEADERDEV}" ] && _bootstrap "ROOT" "header" "${HEADER_MNT}"
+    fi
+
+    # Check if root key is not included in initramfs
+    if [ -n "${CRYPT_ROOT_KEY}" ] && [ ! -f "${CRYPT_ROOT_KEY}" ]; then
+        # if key is set but key device isn't, find it
+        [ -z "${CRYPT_ROOT_KEYDEV}" ] && _bootstrap "ROOT" "key" "${KEY_MNT}"
+    fi
 
     if [ -n "${CRYPT_ROOTS}" ]; then
         # force REAL_ROOT= to some value if not set
@@ -308,8 +404,17 @@ start_luks() {
         _open_luks "root"
     fi
 
-    [ -n "${CRYPT_SWAP_KEY}" ] && [ -z "${CRYPT_SWAP_KEYDEV}" ] \
-        && _bootstrap_key "SWAP"
+    # Check if swap header is not included in initramfs
+    if [ -n "${CRYPT_SWAP_HEADER}" ] && [ ! -f "${CRYPT_SWAP_HEADER}" ]; then
+        # if key is set but key device isn't, find it
+        [ -z "${CRYPT_SWAP_HEADERDEV}" ] && _bootstrap "SWAP" "header" "${HEADER_MNT}"
+    fi
+
+    # Check if swap key is not included in initramfs
+    if [ -n "${CRYPT_SWAP_KEY}" ] && [ ! -f "${CRYPT_SWAP_KEY}" ]; then
+        # if key is set but key device isn't, find it
+        [ -z "${CRYPT_SWAP_KEYDEV}" ] && _bootstrap "SWAP" "key" "${KEY_MNT}"
+    fi
 
     if [ -n "${CRYPT_SWAPS}" ]; then
         # force REAL_RESUME= to some value if not set
@@ -324,3 +429,4 @@ start_luks() {
         start_volumes
     fi
 }
+
