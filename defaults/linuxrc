@@ -222,6 +222,12 @@ for x in ${CMDLINE}; do
         root_keydev=*)
             CRYPT_ROOT_KEYDEV=${x#*=}
         ;;
+        root_header=*)
+	    CRYPT_ROOT_HEADER=${x#*=}
+	;;
+        root_headerdev=*)
+            CRYPT_ROOT_HEADERDEV=${x#*=}
+	;;
         root_trim=*)
             CRYPT_ROOT_TRIM=${x#*=}
         ;;
@@ -232,6 +238,12 @@ for x in ${CMDLINE}; do
         swap_keydev=*)
             CRYPT_SWAP_KEYDEV=${x#*=}
         ;;
+        swap_header=*)
+	    CRYPT_SWAP_HEADER=${x#*=}
+	;;
+        swap_headerdev=*)
+            CRYPT_SWAP_HEADERDEV=${x#*=}
+	;;
         real_resume=*|resume=*)
             REAL_RESUME=${x#*=}
         ;;
