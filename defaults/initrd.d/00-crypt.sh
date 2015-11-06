@@ -242,7 +242,12 @@ _open_luks() {
 	    # Handle headers
 	    if [ -n "${luks_header}" ]; then
                 if [ "${luks_header_included}" = "0" ]; then
-                    _bootstrap_real "${luks_headerdev}" "${mntheader}" "header" "${luks_header}" "${luks_dev_name}" "${ltype}"
+                    _bootstrap_real "${luks_headerdev}" \
+			            "${mntheader}" \
+				    "header" \
+				    "${luks_header}" \
+				    "${luks_dev_name}" \
+				    "${ltype}"
                 else
 		    mntheader=""
  		    good_msg "Header file ${luks_header} found included in initramfs"
@@ -273,7 +278,12 @@ _open_luks() {
 	    # Handle keys
              if [ -n "${luks_key}" ]; then
                 if [ "${luks_key_included}" = "0" ]; then
-                    _bootstrap_real "${luks_keydev}" "${mntkey}" "key" "${luks_key}" "${luks_dev_name}" "${ltype}"
+                    _bootstrap_real "${luks_keydev}" \
+                                    "${mntkey}" \
+				    "key" \
+				    "${luks_key}" \
+				    "${luks_dev_name}" \
+				    "${ltype}"
  		else
 		    mntkey=""
 		    good_msg "Key file ${luks_key} found included in initramfs"
@@ -385,7 +395,7 @@ start_luks() {
 
     # Check if root header is not included in initramfs
     if [ -n "${CRYPT_ROOT_HEADER}" ] && [ ! -f "${CRYPT_ROOT_HEADER}" ]; then
-        # if key is set but key device isn't, find it
+        # if header is set but header device isn't, find it
         [ -z "${CRYPT_ROOT_HEADERDEV}" ] && _bootstrap "ROOT" "header" "${HEADER_MNT}"
     fi
 
@@ -406,7 +416,7 @@ start_luks() {
 
     # Check if swap header is not included in initramfs
     if [ -n "${CRYPT_SWAP_HEADER}" ] && [ ! -f "${CRYPT_SWAP_HEADER}" ]; then
-        # if key is set but key device isn't, find it
+        # if header is set but header device isn't, find it
         [ -z "${CRYPT_SWAP_HEADERDEV}" ] && _bootstrap "SWAP" "header" "${HEADER_MNT}"
     fi
 
