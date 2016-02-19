@@ -13,4 +13,5 @@
 . /etc/initrd.d/00-crypt.sh
 . /etc/initrd.d/00-suspend.sh
 . /etc/initrd.d/00-iscsi.sh
+. /etc/initrd.d/00-aoe.sh
 . /etc/initrd.d/00-rootdev.sh
