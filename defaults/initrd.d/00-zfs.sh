@@ -85,7 +85,7 @@ zfs_start_volumes() {
         if [ "${?}" = "0" ]; then
             good_msg "Importing ZFS pools succeeded"
         else
-            bad_msg "Imported ZFS pools failed"
+            warn_msg "Imported ZFS pools failed"
         fi
 
     else
@@ -105,7 +105,7 @@ zfs_start_volumes() {
             if [ "${?}" = "0" ]; then
                 good_msg "Import of ${ZFS_POOL} succeeded"
             else
-                bad_msg "Import of ${ZFS_POOL} failed"
+                warn_msg "Import of ${ZFS_POOL} failed"
             fi
         fi
     fi
