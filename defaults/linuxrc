@@ -194,7 +194,14 @@ for x in ${CMDLINE}; do
         iscsi_noibft)
             ISCSI_NOIBFT=1
         ;;
-
+	doaoe)
+	    USE_AOE=1
+	    AOE_WAIT="${AOE_WAIT-}"
+	;;
+	doaoe=*)
+	    USE_AOE=1
+	    AOE_WAIT="$AOE_WAIT ${x#*=}"
+	;;
         crypt_root=*)
             # kept for backward compatibility
             CRYPT_ROOTS=${x#*=}
@@ -293,6 +300,8 @@ is_mdev && splashcmd init
 cd /
 
 start_iscsi
+
+start_aoe
 
 start_volumes
 zfs_start_volumes
