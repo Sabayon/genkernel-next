@@ -284,15 +284,15 @@ splash_init
 
 modules_init
 
-# Apply scan delay if specified
-sdelay
-
 # If we're mdev, we better wait for all the modules to be loaded.
 is_mdev && splashcmd init
 
 cd /
 
 start_iscsi
+
+# Apply scan delay if specified
+sdelay
 
 start_volumes
 zfs_start_volumes

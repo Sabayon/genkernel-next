@@ -68,12 +68,6 @@ start_iscsi() {
 
     iscsistart -i "${ISCSI_INITIATORNAME}" -t "${ISCSI_TARGET}" \
         -a "${ISCSI_ADDRESS}" ${ADDITIONAL}
-
-    # let iscsid settle - otherwise mounting the iSCSI-disk
-    # will fail (very rarely, though)
-    # TODO(lxnay): this is horrible, find a real synchronization
-    # technique.
-    sleep 1
 }
 
 parse_dracut_iscsi_root() {
