@@ -294,6 +294,8 @@ compile_kernel() {
     if [ -n "${firmware_in_kernel_line}" -a "${firmware_in_kernel_line}" != CONFIG_FIRMWARE_IN_KERNEL=y ]
     then
         print_info 1 "        >> Installing firmware ('make firmware_install') due to CONFIG_FIRMWARE_IN_KERNEL != y..."
+        [ "${INSTALL_MOD_PATH}" != '' ] && export INSTALL_MOD_PATH
+        [ "${INSTALL_FW_PATH}" != '' ] && export INSTALL_FW_PATH
         MAKEOPTS="${MAKEOPTS} -j1" compile_generic "firmware_install" kernel
     else
         print_info 1 "        >> Not installing firmware as it's included in the kernel already (CONFIG_FIRMWARE_IN_KERNEL=y)..."
