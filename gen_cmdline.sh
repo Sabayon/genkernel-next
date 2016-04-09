@@ -163,7 +163,7 @@ longusage() {
   echo "    --compress-initrd, --no-compress-initrd"
   echo "                Compress or do not compress the generated initramfs"
   echo "    --compress-initramfs-type=<arg>"
-  echo "                Compression type for initramfs (best, xz, lzma, bzip2, gzip, lzop)"
+  echo "                Compression type for initramfs (best, xz, lzma, bzip2, gzip, lzop, lz4)"
 }
 
 usage() {
