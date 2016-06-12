@@ -1155,7 +1155,7 @@ EOF
         then
             copy_image_with_preserve "initramfs" \
                 "${TMPDIR}/initramfs-${KV}" \
-                "initramfs-${KNAME}-${ARCH}-${KV}"
+                "initramfs-${KNAME}-${ARCH}-${KV}${KAPPENDNAME}"
         fi
     fi
 }

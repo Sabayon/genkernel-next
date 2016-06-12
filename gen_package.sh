@@ -114,18 +114,18 @@ gen_kerncache_extract_kernel()
     /bin/tar -f ${KERNCACHE} -C ${TEMP} -xj
     copy_image_with_preserve "kernel" \
         "${TEMP}/kernel-${ARCH}-${KV}" \
-        "kernel-${KNAME}-${ARCH}-${KV}"
+        "kernel-${KNAME}-${ARCH}-${KV}${KAPPENDNAME}"
 
     if isTrue "${GENZIMAGE}"
     then
         copy_image_with_preserve "kernelz" \
             "${TEMP}/kernelz-${ARCH}-${KV}" \
-            "kernelz-${KNAME}-${ARCH}-${KV}"
+            "kernelz-${KNAME}-${ARCH}-${KV}${KAPPENDNAME}"
     fi
 
     copy_image_with_preserve "System.map" \
         "${TEMP}/System.map-${ARCH}-${KV}" \
-        "System.map-${KNAME}-${ARCH}-${KV}"
+        "System.map-${KNAME}-${ARCH}-${KV}${KAPPENDNAME}"
 }
 
 gen_kerncache_extract_modules()
