@@ -620,7 +620,7 @@ append_udev() {
         ${udev_dir}/rules.d/99-systemd.rules
         ${udev_dir}/rules.d/71-seat.rules
         /etc/modprobe.d/blacklist.conf
-        /lib/systemd/network/99-default.link
+        /usr/lib/systemd/network/99-default.link
     "
     is_maybe=0
     for f in ${udev_files} -- ${udev_maybe_files}; do
