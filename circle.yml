@@ -1,0 +1,25 @@
+general:
+  artifacts:
+    - "artifacts" # relative to the build directory
+
+machine:
+  services:
+    - docker
+dependencies:
+  override:
+    - docker pull sabayon/builder-amd64
+test:
+  override:
+    - >
+      mkdir artifacts;
+      docker run -e "ACCEPT_LICENSE=*" -e "LC_ALL=en_US.UTF-8" --entrypoint /bin/bash
+      -v $(pwd):/genkernel-next -t sabayon/builder-amd64 -c
+      'equo up && equo i -q --bdeps -o genkernel-next &&
+      equo i -q bison sys-block/open-iscsi sabayon-artwork-plymouth-default gentoolkit layman git gcc &&
+      eix-sync && layman -S;
+      available_kernel=$(equo match sys-kernel/linux-sabayon -q --showslot);
+      equo i --bdeps -q $available_kernel;
+      echo "Testing genkernel installation and kernel compilation ($available_kernel)" &&
+      cd /genkernel-next && make && make install &&
+      FEATURES="-userpriv" emerge $available_kernel &&
+      mv /usr/portage/packages/* /genkernel-next/artifacts;'
