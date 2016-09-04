@@ -50,7 +50,7 @@ set_bootloader_grub2() {
 
     print_info 1 "You can customize Grub2 parameters in /etc/default/grub."
     print_info 1 "Running grub2-mkconfig to create ${GRUB_CONF}..."
-    grub2-mkconfig -o "${GRUB_CONF}"
+    grub2-mkconfig -o "${GRUB_CONF}" 2> /dev/null || grub-mkconfig -o "${GRUB_CONF}" 2> /dev/null || gen_die "grub-mkconfig failed"
     [ "${BUILD_RAMDISK}" -ne 0 ] && sed -i 's/ro single/ro debug/' "${GRUB_CONF}"
 }
 
