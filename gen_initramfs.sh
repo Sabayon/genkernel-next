@@ -591,8 +591,6 @@ append_gpg() {
 
     print_info 1 "Including GPG support"
     copy_binaries "${TEMP}/initramfs-gpg-temp" /usr/bin/gpg
-    [[ -e "/usr/bin/gpg-agent" ]] \
-	    && copy_binaries "${TEMP}/initramfs-gpg-temp" /usr/bin/gpg-agent
 
     cd "${TEMP}/initramfs-gpg-temp/"
     log_future_cpio_content
