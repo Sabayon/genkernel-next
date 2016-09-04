@@ -14,7 +14,7 @@ MODULES_SCSI="sd_mod sg sr_mod aic79xx aic7xxx aic7xxx_old arcmsr BusLogic ncr53
 MODULES_WAITSCAN="scsi_wait_scan"
 
 # Hardware (Network)
-MODULES_NET="e1000 tg3"
+MODULES_NET="atl1c bnx2 e1000 igb pcnet32 r8169 sky2 tg3 virtio_net vmxnet3 macvlan vxlan bonding vxge cxgb4 cxgb cxgb3 tulip samsung-sxgbe ixgbe ixgb"
 
 # iSCSI support
 MODULES_ISCSI="scsi_transport_iscsi libiscsi iscsi_tcp"
