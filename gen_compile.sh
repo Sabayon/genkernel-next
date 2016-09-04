@@ -312,11 +312,11 @@ compile_kernel() {
     then
         copy_image_with_preserve "kernel" \
             "${tmp_kernel_binary}" \
-            "kernel-${KNAME}-${ARCH}-${KV}"
+            "kernel-${KNAME}-${ARCH}-${KV}${KAPPENDNAME}"
 
         copy_image_with_preserve "System.map" \
             "System.map" \
-            "System.map-${KNAME}-${ARCH}-${KV}"
+            "System.map-${KNAME}-${ARCH}-${KV}${KAPPENDNAME}"
 
         if isTrue "${GENZIMAGE}"
         then
@@ -325,9 +325,9 @@ compile_kernel() {
                 "kernelz-${KV}"
         fi
     else
-        cp "${tmp_kernel_binary}" "${TMPDIR}/kernel-${KNAME}-${ARCH}-${KV}" ||
+        cp "${tmp_kernel_binary}" "${TMPDIR}/kernel-${KNAME}-${ARCH}-${KV}${KAPPENDNAME}" ||
             gen_die "Could not copy the kernel binary to ${TMPDIR}!"
-        cp "System.map" "${TMPDIR}/System.map-${KNAME}-${ARCH}-${KV}" ||
+        cp "System.map" "${TMPDIR}/System.map-${KNAME}-${ARCH}-${KV}${KAPPENDNAME}" ||
             gen_die "Could not copy System.map to ${TMPDIR}!"
         if isTrue "${GENZIMAGE}"
         then

@@ -340,6 +340,10 @@ OUTPUT SETTINGS
     Tag the kernel and initrd with a name, if not defined this
     option defaults to genkernel
 
+*--appendname*=<...>::
+    Append a text to the kernel and initrd's name, if not defined this
+    option defaults to empty
+
 *--minkernpackage*=<tbz2>::
     File to output a .tar.bz2'd kernel and initrd: no modules outside
     of the initrd will be included...
