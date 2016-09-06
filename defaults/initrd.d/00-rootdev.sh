@@ -146,7 +146,9 @@ _get_mount_device() {
 # make like a little easier, busybox mount does not care about
 # leading, trailing or duplicate commas.
 _strip_mount_options() {
-    sed -r 's/(,|^)(no)?auto(,|$)/,/g'
+  sed -r \
+        -e 's/(,|^)(no)?auto(,|$)/,/g' \
+        -e 's/(,|^)iversion(,|$)/,/g'
 }
 
 real_root_init() {
