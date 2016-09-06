@@ -171,6 +171,12 @@ start_volumes() {
 
     if [ "${USE_MULTIPATH_NORMAL}" = "1" ]; then
         good_msg "Scanning for multipath devices"
+        good_msg ":: Populating scsi_id info for libudev queries"
+        mkdir -p /run/udev/data
+        for ech in /sys/block/* ; do
+          local tgtfile=b$(cat ${ech}/dev)
+          /lib/udev/scsi_id -g -x /dev/${ech##*/} |sed -e 's/^/E:/' >/run/udev/data/${tgtfile}
+        done
         multipath -v 0
 
         is_udev && udevadm settle
