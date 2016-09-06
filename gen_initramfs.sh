@@ -111,6 +111,20 @@ append_base_layout() {
     date -u '+%Y%m%d-%H%M%S' > ${TEMP}/initramfs-base-temp/etc/build_date
     echo "Genkernel $GK_V" > ${TEMP}/initramfs-base-temp/etc/build_id
 
+    # The ZFS tools want the hostid in order to find the right pool.
+    # Assume the initramfs we're building is for this system, so copy
+    # our current hostid into it.
+    # We also have to deal with binary+endianness here: glibc's gethostid
+    # expects the value to be in binary using the native endianness.  But
+    # the coreutils hostid program doesn't show it in the right form.
+    local hostid
+    if file -L "${TEMP}/initramfs-base-temp/bin/sh" | grep -q 'MSB executable'; then
+	    hostid="$(hostid)"
+    else
+	    hostid="$(hostid | sed -E 's/(..)(..)(..)(..)/\4\3\2\1/')"
+    fi
+    printf "$(echo "${hostid}" | sed 's/\([0-9A-F]\{2\}\)/\\x\1/gI')" > ${TEMP}/initramfs-base-temp/etc/hostid
+
     cd "${TEMP}/initramfs-base-temp/"
     log_future_cpio_content
     find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
