@@ -354,7 +354,7 @@ exec /sbin/switch_root -c "/dev/console" "${CHROOT}" \
 # If we get here, something bad has happened
 splashcmd verbose
 
-bad_msg "A fatal error has occured since ${REAL_INIT} did not"
+bad_msg "A fatal error has occurred since ${REAL_INIT} did not"
 bad_msg "boot correctly. Trying to open a shell..."
 
 exec /bin/bash
