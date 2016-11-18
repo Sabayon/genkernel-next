@@ -587,7 +587,7 @@ which the ramdisk scripts would recognize.
 *resume*=<...>::
 *noresume*::
     *noresume* disables any default resume parameters. *resume* and
-    *real_resume* specify a device via LABEL or UUID to use for for loading a
+    *real_resume* specify a device via LABEL or UUID to use for loading a
     SWSUSP resume image.
 
 *cdroot*[=<...>]::
