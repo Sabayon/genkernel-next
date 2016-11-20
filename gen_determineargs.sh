@@ -130,7 +130,8 @@ determine_real_args() {
     set_config_with_override BOOL   VIRTIO               CMD_VIRTIO               "no"
     set_config_with_override BOOL   MULTIPATH            CMD_MULTIPATH
     set_config_with_override BOOL   FIRMWARE             CMD_FIRMWARE
-    set_config_with_override STRING FIRMWARE_DIR         CMD_FIRMWARE_DIR         "/lib/firmware"
+    set_config_with_override STRING FIRMWARE_DST         CMD_FIRMWARE_DST         "/lib/firmware"
+    set_config_with_override STRING FIRMWARE_SRC         CMD_FIRMWARE_SRC         "$FIRMWARE_DST"
     set_config_with_override STRING FIRMWARE_FILES       CMD_FIRMWARE_FILES
     set_config_with_override BOOL   INTEGRATED_INITRAMFS CMD_INTEGRATED_INITRAMFS
     set_config_with_override BOOL   GENZIMAGE            CMD_GENZIMAGE
