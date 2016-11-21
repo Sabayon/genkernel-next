@@ -180,7 +180,8 @@ real_init_init() {
 
 # Read /etc/initramfs.mounts from ${NEW_ROOT} and mount the
 # listed filesystem mountpoints. For instance, /usr, which is
-# required by udev & systemd.
+# required by udev & systemd.  Prior to mounting, make an effort
+# to check the filesystem's integrity.
 ensure_initramfs_mounts() {
     local fslist=
 
@@ -191,6 +192,11 @@ ensure_initramfs_mounts() {
     fi
 
     local dev= fstype= opts= mnt= cmd=
+
+    # For mount points like /dev/mapper/vgxz-... or
+    # /dev/disk/by-... in /etc/fstab.
+    local logical_dev=
+
     for fs in ${fslist}; do
 
         mnt="${NEW_ROOT}${fs}"
@@ -199,18 +205,42 @@ ensure_initramfs_mounts() {
             continue
         fi
 
-        dev=$(_get_mount_device "${fs}")
+        logical_dev=$(_get_mount_device "${fs}")
+        [ -z "${logical_dev}" ] && continue
+        # Find the corresponding physical device, as this is the
+        # one we want to use for the fsck.
+        dev=$(realpath "${logical_dev}")
+        # Dunno if this is required, if logical_dev is
+        # non-empty, then so is dev.
         [ -z "${dev}" ] && continue
-        # Resolve it like util-linux mount does
-        [ -L "${dev}" ] && dev=$(realpath "${dev}")
-        # In this case, it's probably part of the filesystem
-        # and not a mountpoint
-        [ -z "${dev}" ] && continue
+
+        good_msg "Attempting to fsck ${fs} via ${dev} (aka ${logical_dev})..."
+        if [ -e "${REAL_E2FSCK_BIN}" ]
+        then
+            # Use the real one, not the busybox variant...
+            ${REAL_E2FSCK_BIN} ${REAL_E2FSCK_BIN_OPTS} ${dev}
+        elif [ -e "${BUSYBOX_BIN}" ]
+        then
+            # Fallback.
+            ${BUSYBOX_BIN} fsck ${dev}
+        else
+            warn_msg "No filesystem check tool found..."
+            warn_msg "${fs} will *not* be checked before mounting is attempted."
+            warn_msg "If you want the filesystems earmarked for"
+            warn_msg "early mounting to be checked beforehand, then please"
+            warn_msg "rebuild your initramfs with E2FSPROGS=yes,"
+            warn_msg "or at least BUSYBOX=yes set in /etc/genkernel.conf."
+        fi
 
         fstype=$(_get_mount_fstype "${fs}")
         if _get_mount_options "${fs}" | fgrep -q bind; then
             opts="bind"
             dev="${NEW_ROOT}${dev}"
+            # We want to mount via the logical dev below.  This
+            # provides for much more readability in future
+            # invocations of df.  In this case here, we simply
+            # must pick up the updated dev name.
+            logical_dev=${dev}
         else
             # ro must be trailing, and the options will always
             # contain at least 'defaults'
@@ -218,10 +248,10 @@ ensure_initramfs_mounts() {
             opts="${opts},ro"
         fi
 
-        cmd="mount -t ${fstype} -o ${opts} ${dev} ${mnt}"
-        good_msg "Mounting ${dev} as ${fs}: ${cmd}"
+        cmd="mount -t ${fstype} -o ${opts} ${logical_dev} ${mnt}"
+        good_msg "Mounting ${logical_dev} (aka ${dev}) as ${fs}: ${cmd}"
         if ! ${cmd}; then
-            bad_msg "Unable to mount ${dev} for ${fs}"
+            bad_msg "Unable to mount ${logical_dev} for ${fs}"
         fi
     done
 }
