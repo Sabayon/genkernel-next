@@ -196,9 +196,15 @@ start_volumes() {
     is_udev && udevadm settle
 
     if [ "${USE_LVM_NORMAL}" = "1" ]; then
-
+      for lvm_path in /sbin/lvm /bin/lvm MISSING ; do
+        [ -x "$lvm_path" ] && break
+      done
+      if [ "${lvm_path}" = "MISSING" ]
+      then
+        bad_msg "dolvm invoked, but LVM binary not available! skipping LVM volume group activation!"
+      else
         # This is needed for /sbin/lvm to accept the following logic
-        local cmds="#! /sbin/lvm"
+        local cmds="#! ${lvm_path}"
 
         # If there is a cahe, update it. Unbreak at least dmcrypt
         [ -d /etc/lvm/cache ] && cmds="${cmds} \nvgscan"
@@ -216,9 +222,8 @@ start_volumes() {
         # And finally execute it all (/proc/... needed if lvm
         # is compiled without readline)
         good_msg "Activating Logical Volume Groups"
-        printf "%b\n" "${cmds}" | lvm /proc/self/fd/0 || \
-            bad_msg "lvm failed to run, cannot activate logical volumes!"
-
+        printf "%b\n" "${cmds}" | $lvm_path /proc/self/fd/0
+      fi
     fi
 
     is_udev && udevadm settle
