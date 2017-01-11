@@ -868,6 +868,23 @@ append_drm() {
     rm -r "${TEMP}/initramfs-drm-${KV}-temp/"
 }
 
+append_modprobed() {
+    local TDIR="${TEMP}/initramfs-modprobe.d-temp"
+    if [ -d "${TDIR}" ]
+    then
+      rm -r "${TDIR}"
+    fi
+    mkdir -p "${TDIR}/etc"
+    cp -r "${MODPROBEDIR}" "${TDIR}/etc/modprobe.d"
+
+    cd "${TDIR}"
+    log_future_cpio_content
+    find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+      || gen_die "compressing modprobe.d cpio"
+    cd "${TEMP}"
+    rm -rf "${TDIR}" > /dev/null
+}
+
 # check for static linked file with objdump
 is_static() {
     LANG="C" LC_ALL="C" objdump -T $1 2>&1 | grep "not a dynamic object" > /dev/null
@@ -1024,6 +1041,13 @@ create_initramfs() {
     append_data 'blkid'
 
     append_data 'splash' "${SPLASH}"
+
+    if [ "$MODPROBEDIR" != '' ]
+    then
+        append_data 'modprobed'
+    else
+        print_info 1 "        >> Skipping modprobed copy"
+    fi
 
     append_data 'plymouth' "${PLYMOUTH}"
     isTrue "${PLYMOUTH}" && append_data 'drm'
