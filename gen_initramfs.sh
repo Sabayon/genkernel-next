@@ -192,6 +192,7 @@ append_e2fsprogs(){
 
     cd "${TEMP}"/initramfs-e2fsprogs-temp \
             || gen_die "cd '${TEMP}/initramfs-e2fsprogs-temp' failed"
+    log_future_cpio_content
     find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}"
     rm -rf "${TEMP}"/initramfs-e2fsprogs-temp > /dev/null
 }
@@ -533,6 +534,33 @@ append_plymouth() {
 
     cd "${TEMP}"
     rm -r "${TEMP}/initramfs-ply-temp/"
+}
+
+append_uvesafb(){
+    if [ -x "/sbin/v86d" ]
+    then
+        if [ -d "${TEMP}/initramfs-uvesafb-temp" ]
+        then
+            rm -rf "${TEMP}/initramfs-uvesafb-temp" > /dev/null
+        fi
+
+        mkdir -p ${TEMP}/initramfs-uvesafb-temp/dev
+        mkdir -p ${TEMP}/initramfs-uvesafb-temp/root
+
+        cd ${TEMP}/initramfs-uvesafb-temp/dev || gen_die "cannot cd to dev"
+        mknod -m 600 mem c 1 1 || gen_die "cannot mknod"
+
+        copy_binaries "${TEMP}/initramfs-uvesafb-temp/" /sbin/v86d
+
+        cd "${TEMP}/initramfs-uvesafb-temp/"
+        log_future_cpio_content
+        find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+                || gen_die "compressing uvesafb cpio"
+        cd "${TEMP}"
+        rm -rf "${TEMP}/initramfs-uvesafb-temp" > /dev/null
+    else
+        gen_die "uvesafb support cannot be included: No /sbin/v86d file found. Please emerge sys-apps/v86d[x86emu]."
+    fi
 }
 
 append_overlay(){
@@ -1051,6 +1079,8 @@ create_initramfs() {
 
     append_data 'plymouth' "${PLYMOUTH}"
     isTrue "${PLYMOUTH}" && append_data 'drm'
+
+    append_data 'uvesafb' "${UVESAFB}"
 
     if isTrue "${FIRMWARE}" && [ -n "${FIRMWARE_DIR}" ]
     then
