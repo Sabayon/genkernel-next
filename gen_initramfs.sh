@@ -574,9 +574,9 @@ append_luks() {
 }
 
 append_firmware() {
-    if [ -z "${FIRMWARE_FILES}" -a ! -d "${FIRMWARE_DIR}" ]
+    if [ -z "${FIRMWARE_FILES}" -a ! -d "${FIRMWARE_SRC}" ]
     then
-        gen_die "specified firmware directory (${FIRMWARE_DIR}) does not exist"
+        gen_die "specified firmware directory (${FIRMWARE_SRC}) does not exist"
     fi
     if [ -d "${TEMP}/initramfs-firmware-temp" ]
     then
@@ -594,7 +594,7 @@ append_firmware() {
         done
         IFS=$OLD_IFS
     else
-        cp -a "${FIRMWARE_DIR}"/* ${TEMP}/initramfs-firmware-temp/lib/firmware/
+        cp -a "${FIRMWARE_SRC}"/* ${TEMP}/initramfs-firmware-temp/lib/firmware/
     fi
     log_future_cpio_content
     find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
@@ -1052,7 +1052,7 @@ create_initramfs() {
     append_data 'plymouth' "${PLYMOUTH}"
     isTrue "${PLYMOUTH}" && append_data 'drm'
 
-    if isTrue "${FIRMWARE}" && [ -n "${FIRMWARE_DIR}" ]
+    if isTrue "${FIRMWARE}" && [ -n "${FIRMWARE_SRC}" ]
     then
         append_data 'firmware'
     fi
