@@ -216,5 +216,12 @@ determine_real_args() {
         INTEGRATED_INITRAMFS=0
     fi
 
+    # Since cryptsetup requires lvm2
+    # LUKS imply LVM 
+    if isTrue "${LUKS}"
+    then
+        LVM=1
+    fi
+
     get_KV
 }
