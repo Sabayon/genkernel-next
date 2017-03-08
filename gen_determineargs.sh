@@ -5,7 +5,7 @@ get_KV() {
     if [ "${KERNEL_SOURCES}" = '0' -a -e "${KERNCACHE}" ]
     then
         mkdir -p ${TEMP}
-        /bin/tar -xj -C ${TEMP} -f ${KERNCACHE} kerncache.config 
+        /bin/tar -xj -C ${TEMP} -f ${KERNCACHE} kerncache.config
         if [ -e ${TEMP}/kerncache.config ]
         then
             VER=`grep ^VERSION\ \= ${TEMP}/kerncache.config | awk '{ print $3 };'`
@@ -133,6 +133,7 @@ determine_real_args() {
     set_config_with_override STRING FIRMWARE_DST         CMD_FIRMWARE_DST         "/lib/firmware"
     set_config_with_override STRING FIRMWARE_SRC         CMD_FIRMWARE_SRC         "$FIRMWARE_DST"
     set_config_with_override STRING FIRMWARE_FILES       CMD_FIRMWARE_FILES
+    set_config_with_override BOOL   FIRMWARE_INSTALL     CMD_FIRMWARE_INSTALL     "no"
     set_config_with_override BOOL   INTEGRATED_INITRAMFS CMD_INTEGRATED_INITRAMFS
     set_config_with_override BOOL   GENZIMAGE            CMD_GENZIMAGE
     set_config_with_override BOOL   KEYMAP               CMD_KEYMAP               "yes"
@@ -217,7 +218,7 @@ determine_real_args() {
     fi
 
     # Since cryptsetup requires lvm2
-    # LUKS imply LVM 
+    # LUKS imply LVM
     if isTrue "${LUKS}"
     then
         LVM=1
