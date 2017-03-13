@@ -1,0 +1,23 @@
+image: quay.io/mudler/sabayon-builder-noentrypoint-amd64
+stages:
+    - build
+
+variables:
+  ACCEPT_LICENSE: '*'
+  FEATURES: '-userpriv -sandbox -usersandbox'
+
+compile:
+    stage: build
+    script:
+        - mkdir artifacts
+        - ( equo up && equo i -q --bdeps -o genkernel-next ) &>/dev/null
+        - ( equo i -q bison sys-block/open-iscsi sabayon-artwork-plymouth-default gentoolkit layman git gcc  ) &>/dev/null
+        - ( eix-sync && layman -S ) &>/dev/null
+        - export available_kernel=$(equo match sys-kernel/linux-sabayon -q --showslot)
+        - equo i --bdeps -q $available_kernel &>/dev/null
+        - echo "Testing genkernel installation and kernel compilation ($available_kernel)" && make && make install && emerge -j1 -b -v -t $available_kernel
+        - mv /usr/portage/packages/* ./artifacts/ &>artifacts/build.log
+    artifacts:
+        paths:
+            - artifacts
+
