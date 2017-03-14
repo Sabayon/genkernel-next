@@ -9,14 +9,15 @@ variables:
 compile:
     stage: build
     script:
-        - mkdir artifacts
-        - ( equo up && equo i -q --bdeps -o genkernel-next ) &>/dev/null
-        - ( equo i -q bison sys-block/open-iscsi sabayon-artwork-plymouth-default gentoolkit layman git gcc  ) &>/dev/null
+        - mkdir artifacts && mkdir artifacts/logs
+        - ( equo up && equo i -q --bdeps -o genkernel-next ) &>artifacts/logs/equo.log
+        - ( equo i -q bison sys-block/open-iscsi sabayon-artwork-plymouth-default gentoolkit layman git gcc  ) &>artifacts/logs/equo.log
         - ( eix-sync && layman -S ) &>/dev/null
         - export available_kernel=$(equo match sys-kernel/linux-sabayon -q --showslot)
-        - equo i --bdeps -q $available_kernel &>/dev/null
-        - echo "Testing genkernel installation and kernel compilation ($available_kernel)" && make && make install && emerge -j1 -b -v -t $available_kernel
-        - mv /usr/portage/packages/* ./artifacts/ &>artifacts/build.log
+        - equo i --bdeps -q $available_kernel &>artifacts/logs/equo.log
+        - echo "Testing genkernel installation and kernel compilation ($available_kernel)" && make && make install && emerge -j1 -b -q -t $available_kernel
+        - mv /usr/portage/packages/* ./artifacts/
+        - mv /var/log/portage/* ./artifacts/logs/
     artifacts:
         paths:
             - artifacts
