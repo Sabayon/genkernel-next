@@ -221,14 +221,14 @@ _open_luks() {
             fi
 
 			# if we have a keyfile embedded in the initramfs
-			if [ -n "${init_key}" ]; then
-			        if [ ! -e "${init_key}" ]; then
-                        bad_msg "{init_key} on initramfs not found."
-						key_error=1
-                        continue
-                    fi
-					cryptsetup_opts="${cryptsetup_opts} -d ${init_key}"
-			fi
+            if [ -n "${init_key}" ]; then
+				if [ ! -e "${init_key}" ]; then
+                   bad_msg "{init_key} on initramfs not found."
+                   key_error=1
+                   continue
+                fi
+                cryptsetup_opts="${cryptsetup_opts} -d ${init_key}"
+            fi
 
             # At this point, keyfile or not, we're ready!
             local ply_cmd="${gpg_ply_cmd}${CRYPTSETUP_BIN}"
