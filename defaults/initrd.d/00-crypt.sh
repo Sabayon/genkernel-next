@@ -55,6 +55,7 @@ _open_luks() {
     eval local luks_key='"${CRYPT_'${ltype}'_KEY}"'
     eval local luks_keydev='"${CRYPT_'${ltype}'_KEYDEV}"'
     eval local luks_trim='"${CRYPT_'${ltype}'_TRIM}"'
+    eval local init_key='"${CRYPT_'${ltype}'_INITKEY}"'
 
     local dev_error=0 key_error=0 keydev_error=0
     local mntkey="${KEY_MNT}/" cryptsetup_opts=""
@@ -218,6 +219,16 @@ _open_luks() {
                     passphrase_needed="0" # keyfile not itself encrypted
                 fi
             fi
+
+			# if we have a keyfile embedded in the initramfs
+			if [ -n "${init_key}" ]; then
+			        if [ ! -e "${init_key}" ]; then
+                        bad_msg "{init_key} on initramfs not found."
+						key_error=1
+                        continue
+                    fi
+					cryptsetup_opts="${cryptsetup_opts} -d ${init_key}"
+			fi
 
             # At this point, keyfile or not, we're ready!
             local ply_cmd="${gpg_ply_cmd}${CRYPTSETUP_BIN}"
