@@ -220,12 +220,12 @@ _open_luks() {
                 fi
             fi
 
-			# if we have a keyfile embedded in the initramfs
+            # if we have a keyfile embedded in the initramfs
             if [ -n "${init_key}" ]; then
-				if [ ! -e "${init_key}" ]; then
-                   bad_msg "{init_key} on initramfs not found."
-                   key_error=1
-                   continue
+                if [ ! -e "${init_key}" ]; then
+                    bad_msg "{init_key} on initramfs not found."
+                    key_error=1
+                    continue
                 fi
                 cryptsetup_opts="${cryptsetup_opts} -d ${init_key}"
             fi
