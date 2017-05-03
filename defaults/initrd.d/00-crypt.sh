@@ -235,6 +235,7 @@ _open_luks() {
                    continue
                 fi
                 cryptsetup_opts="${cryptsetup_opts} -d ${init_key}"
+                passphrase_needed="0"
             fi
 
             # At this point, keyfile or not, we're ready!
