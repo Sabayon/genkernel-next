@@ -230,7 +230,7 @@ _open_luks() {
             # if we have a keyfile embedded in the initramfs
             if [ -n "${init_key}" ]; then
                 if [ ! -e "${init_key}" ]; then
-                   bad_msg "{init_key} (${init_key}) on initramfs not found."
+                   bad_msg "{init_key} on initramfs not found."
                    initkey_error=1
                    continue
                 fi

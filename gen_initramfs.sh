@@ -119,9 +119,9 @@ append_base_layout() {
     # the coreutils hostid program doesn't show it in the right form.
     local hostid
     if file -L "${TEMP}/initramfs-base-temp/bin/sh" | grep -q 'MSB executable'; then
-	    hostid="$(hostid)"
+        hostid="$(hostid)"
     else
-	    hostid="$(hostid | sed -E 's/(..)(..)(..)(..)/\4\3\2\1/')"
+        hostid="$(hostid | sed -E 's/(..)(..)(..)(..)/\4\3\2\1/')"
     fi
     printf "$(echo "${hostid}" | sed 's/\([0-9A-F]\{2\}\)/\\x\1/gI')" > ${TEMP}/initramfs-base-temp/etc/hostid
 
@@ -139,7 +139,7 @@ append_busybox() {
         rm -rf "${TEMP}/initramfs-busybox-temp" > /dev/null
     fi
 
-    mkdir -p "${TEMP}/initramfs-busybox-temp/bin/" 
+    mkdir -p "${TEMP}/initramfs-busybox-temp/bin/"
     tar -xjf "${BUSYBOX_BINCACHE}" -C "${TEMP}/initramfs-busybox-temp/bin" busybox ||
         gen_die 'Could not extract busybox bincache!'
     chmod +x "${TEMP}/initramfs-busybox-temp/bin/busybox"
@@ -308,8 +308,8 @@ append_lvm(){
     copy_binaries "${TEMP}/initramfs-lvm-temp" \
         /sbin/lvm /sbin/dmsetup /sbin/thin_check \
         /sbin/thin_restore /sbin/thin_dump \
-	/sbin/cache_check /sbin/cache_restore \
-	/sbin/cache_dump /sbin/cache_repair
+    /sbin/cache_check /sbin/cache_restore \
+    /sbin/cache_dump /sbin/cache_repair
 
     if [ -f /etc/lvm/lvm.conf ]
     then
@@ -380,11 +380,11 @@ append_zfs(){
     # Copy binaries
     # Include libgcc_s.so.1 to workaround zfsonlinux/zfs#4749
     if type gcc-config 2>&1 1>/dev/null; then
-	    copy_binaries "${TEMP}/initramfs-zfs-temp" /sbin/{mount.zfs,zdb,zfs,zpool} \
-		    "/usr/lib/gcc/$(s=$(gcc-config -c); echo ${s%-*}/${s##*-})/libgcc_s.so.1"
+        copy_binaries "${TEMP}/initramfs-zfs-temp" /sbin/{mount.zfs,zdb,zfs,zpool} \
+            "/usr/lib/gcc/$(s=$(gcc-config -c); echo ${s%-*}/${s##*-})/libgcc_s.so.1"
     else
-	    copy_binaries "${TEMP}/initramfs-zfs-temp" /sbin/{mount.zfs,zdb,zfs,zpool} \
-		    /usr/lib/gcc/*/*/libgcc_s.so.1
+        copy_binaries "${TEMP}/initramfs-zfs-temp" /sbin/{mount.zfs,zdb,zfs,zpool} \
+            /usr/lib/gcc/*/*/libgcc_s.so.1
     fi
 
     cd "${TEMP}/initramfs-zfs-temp/"
@@ -991,6 +991,42 @@ append_auxilary() {
             || gen_die "compressing auxilary cpio"
     cd "${TEMP}"
     rm -r "${TEMP}/initramfs-aux-temp/"
+}
+
+append_files(){
+    if [ -d "${TEMP}/initramfs-files-temp" ]
+    then
+        rm -r "${TEMP}/initramfs-files-temp/"
+    fi
+    cd ${TEMP}
+    mkdir -p "${TEMP}/initramfs-files-temp/"
+
+    print_info 1 "Including files specified in config"
+
+    if [ -n "${FILES}" ]
+    then
+        print_info 1 "        >> Appending specified files to cpio data..."
+
+        for file in ${FILES}
+        do
+        if [ -f "$file" ]
+        then
+        cp --parents "$file" "${TEMP}/initramfs-files-temp/"
+        print_info 1 "            >> $file appended to initramfs"
+        else
+        print_warning 2 "$file not found on file system."
+        fi
+        done
+    else
+        print_info 1 "        >> No files specified for append to cpio data..."
+    fi
+
+    cd "${TEMP}/initramfs-files-temp/"
+    log_future_cpio_content
+    find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+            || gen_die "compressing files cpio"
+    cd "${TEMP}"
+    rm -rf "${TEMP}/initramfs-files-temp" > /dev/null
 }
 
 append_data() {

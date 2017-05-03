@@ -439,15 +439,15 @@ which the ramdisk scripts would recognize.
     In case your root is encrypted with a key, you can use a device
     like a  usb pen to store the key. This value should be the key
     path relative to the mount point.
-	If you need to use a keyfile embedded in the initramfs itself(for
-	example, when using grub cryptomount feature) please refer to 
-	root_initkey=.
+    If you need to use a keyfile embedded in the initramfs itself(for
+    example, when using grub cryptomount feature) please refer to
+    root_initkey=.
 
 *root_initkey*=<...>::
-	In case your root is encrypted with a key embedded in the initramfs.
-	This value should be absolute using initramfs organisation.
-	This is useful when grub cryptomount is used to avoid typing the 
-	same password twice, making the initramfs unlock itself.
+    In case your root is encrypted with a key embedded in the initramfs.
+    This value should be absolute using initramfs organisation.
+    This is useful when grub cryptomount is used to avoid typing the
+    same password twice, making the initramfs unlock itself.
 
 *root_keydev*=<...>::
     If necessary provide the name of the device that carries the
@@ -463,7 +463,7 @@ which the ramdisk scripts would recognize.
     Same as root_key for swap.
 
 *swap_initkey*=<...>::
-	Same as root_init_key for swap.
+    Same as root_init_key for swap.
 
 *swap_keydev*=<...>::
     Same as root_keydev for swap.
