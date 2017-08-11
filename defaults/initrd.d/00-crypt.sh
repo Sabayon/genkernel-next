@@ -7,6 +7,7 @@
 
 CRYPTSETUP_BIN="/sbin/cryptsetup"
 KEY_MNT="/mnt/key"
+HEADER_MNT="/mnt/header"
 
 _bootstrap_key() {
     local ltype="${1}"
@@ -55,9 +56,12 @@ _open_luks() {
     eval local luks_key='"${CRYPT_'${ltype}'_KEY}"'
     eval local luks_keydev='"${CRYPT_'${ltype}'_KEYDEV}"'
     eval local luks_trim='"${CRYPT_'${ltype}'_TRIM}"'
+    eval local luks_header='"${CRYPT_'${ltype}'_HEADER}"'
+    eval local luks_headerdev='"${CRYPT_'${ltype}'_HEADERDEV}"'
 
     local dev_error=0 key_error=0 keydev_error=0
     local mntkey="${KEY_MNT}/" cryptsetup_opts=""
+    local mntheader="${HEADER_MNT}/" header_error=0 headerdev_error=0
 
     local exit_st=0 luks_device=
     for luks_device in ${luks_devices}; do
@@ -93,6 +97,8 @@ _open_luks() {
             [ "${dev_error}" = "1" ] && any_error=1
             [ "${key_error}" = "1" ] && any_error=1
             [ "${keydev_error}" = "1" ] && any_error=1
+            [ "${header_error}" = "1" ] && any_error=1
+            [ "${headerdeve_error}" = "1" ] && any_error=1
             if [ "${CRYPT_SILENT}" = "1" ] && [ -n "${any_error}" ]; then
                 bad_msg "Failed to setup the LUKS device"
                 exit_st=1
@@ -121,11 +127,79 @@ _open_luks() {
             [ -n "${luks_dev}" ] && \
                 luks_device="${luks_dev}"  # otherwise hope...
 
-            eval "${CRYPTSETUP_BIN} isLuks ${luks_device}" || {
-                bad_msg "${luks_device} does not contain a LUKS header"
-                dev_error=1
-                continue;
-            }
+            if [ -n "${luks_header}" ]; then
+                local real_luks_headerdev="${luks_headerdev}"
+
+                if [ ! -e "${mntheader}${luks_header}" ]; then
+                    real_luks_headerdev=$(find_real_device "${luks_headerdev}")
+                    good_msg "Using header device ${real_luks_headerdev}."
+
+                    if [ ! -b "${real_luks_headerdev}" ]; then
+                        bad_msg "Insert device ${luks_headerdev} for ${luks_dev_name}"
+                        bad_msg "You have 10 seconds..."
+                        local count=10
+                        while [ ${count} -gt 0 ]; do
+                            count=$((count-1))
+                            sleep 1
+
+                            real_luks_headerdev=$(find_real_device "${luks_headerdev}")
+                            [ ! -b "${real_luks_headerdev}" ] || {
+                                good_msg "Device ${real_luks_headerdev} detected."
+                                break;
+                            }
+                        done
+
+                        if [ ! -b "${real_luks_headerdev}" ]; then
+                            eval CRYPT_${ltype}_HEADER=${luks_header}
+                            eval luks_headerdev='"${CRYPT_'${ltype}'_HEADERDEV}"'
+
+                            real_luks_headerdev=$(find_real_device "${luks_headerdev}")
+                            if [ ! -b "${real_luks_headerdev}" ]; then
+                                headerdev_error=1
+                                bad_msg "Device ${luks_headerdev} not found."
+                                continue
+                            fi
+
+                            # continue otherwise will mount keydev which is
+                            # mounted by bootstrap
+                            continue
+                        fi
+                    fi
+
+                    # At this point a device was recognized, now let's see
+                    # if the key is there
+                    mkdir -p "${mntheader}"  # ignore
+
+                    mount -n -o ro "${real_luks_headerdev}" \
+                        "${mntheader}" || {
+                        headerdev_error=1
+                        bad_msg "Mounting of device ${real_luks_headerdev} failed."
+                        continue;
+                    }
+
+                    good_msg "Removable device ${real_luks_headerdev} mounted."
+
+                    if [ ! -e "${mntheader}${luks_header}" ]; then
+                        umount -n "${mntheader}"
+                        header_error=1
+                        headerdev_error=1
+                        bad_msg "{luks_header} on ${real_luks_headerdev} not found."
+                        continue
+                    fi
+                fi
+
+                # At this point a candidate header exists
+                # (either mounted before or not)
+                good_msg "${luks_header} on device ${real_luks_headerdev} found"
+                header_opts=" --header=${mntheader}${luks_header}"
+
+            else
+                eval "${CRYPTSETUP_BIN} isLuks ${luks_device}" || {
+                    bad_msg "${luks_device} does not contain a LUKS header"
+                    dev_error=1
+                    continue;
+                }
+            fi
 
             # Handle keys
             if [ "${luks_trim}" = "yes" ]; then
@@ -222,8 +296,8 @@ _open_luks() {
             # At this point, keyfile or not, we're ready!
             local ply_cmd="${gpg_ply_cmd}${CRYPTSETUP_BIN}"
             local tty_cmd="${gpg_tty_cmd}${CRYPTSETUP_BIN}"
-            ply_cmd="${ply_cmd} ${cryptsetup_opts} luksOpen ${luks_device} ${luks_dev_name}"
-            tty_cmd="${tty_cmd} ${cryptsetup_opts} luksOpen ${luks_device} ${luks_dev_name}"
+            ply_cmd="${ply_cmd} ${cryptsetup_opts} luksOpen ${luks_device} ${luks_dev_name}${header_opts}"
+            tty_cmd="${tty_cmd} ${cryptsetup_opts} luksOpen ${luks_device} ${luks_dev_name}${header_opts}"
             # send to a temporary shell script, so plymouth can
             # invoke the pipeline successfully
             local ply_cmd_file="$(mktemp -t "ply_cmd.XXXXXX")"
@@ -279,6 +353,8 @@ _open_luks() {
 
     umount -l "${mntkey}" 2>/dev/null >/dev/null
     rmdir "${mntkey}" 2>/dev/null >/dev/null
+    umount -l "${mntheader}" 2>/dev/null >/dev/null
+    rmdir "${mntheader}" 2>/dev/null >/dev/null
 
     return ${exit_st}
 }
