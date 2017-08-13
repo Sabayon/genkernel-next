@@ -8,6 +8,11 @@ _get_udevdir() {
     [[ -n "${udev_dir}" ]] && echo $(realpath "${udev_dir}")
 }
 
+_get_systemdutildir() {
+    local systemdutil_dir=$(pkg-config systemd --variable=systemdutildir)
+    [[ -n "${systemdutil_dir}" ]] && echo $(realpath "${systemdutil_dir}")
+}
+
 # The copy_binaries function is explicitly released under the CC0 license to
 # encourage wide adoption and re-use.  That means:
 # - You may use the code of copy_binaries() as CC0 outside of genkernel
@@ -139,7 +144,7 @@ append_busybox() {
         rm -rf "${TEMP}/initramfs-busybox-temp" > /dev/null
     fi
 
-    mkdir -p "${TEMP}/initramfs-busybox-temp/bin/" 
+    mkdir -p "${TEMP}/initramfs-busybox-temp/bin/"
     tar -xjf "${BUSYBOX_BINCACHE}" -C "${TEMP}/initramfs-busybox-temp/bin" busybox ||
         gen_die 'Could not extract busybox bincache!'
     chmod +x "${TEMP}/initramfs-busybox-temp/bin/busybox"
@@ -628,6 +633,7 @@ append_udev() {
     fi
 
     local udev_dir=$(_get_udevdir)
+    local systemd_dir=$(_get_systemdutildir)
     udev_files="
         ${udev_dir}/rules.d/50-udev-default.rules
         ${udev_dir}/rules.d/60-persistent-storage.rules
@@ -639,7 +645,7 @@ append_udev() {
         ${udev_dir}/rules.d/99-systemd.rules
         ${udev_dir}/rules.d/71-seat.rules
         /etc/modprobe.d/blacklist.conf
-        /usr/lib/systemd/network/99-default.link
+        ${systemd_dir}/network/99-default.link
     "
     is_maybe=0
     for f in ${udev_files} -- ${udev_maybe_files}; do
@@ -659,11 +665,8 @@ append_udev() {
         fi
     done
 
-    # systemd-207 dropped /sbin/udevd
     local udevd_bin=/sbin/udevd
-    [ ! -e "${udevd_bin}" ] && udevd_bin=/usr/lib/systemd/systemd-udevd
-    # systemd-210, moved udevd to another location
-    [ ! -e "${udevd_bin}" ] && udevd_bin=/lib/systemd/systemd-udevd
+    [ ! -e "${udevd_bin}" ] && udevd_bin=${systemd_dir}/systemd-udevd
     [ ! -e "${udevd_bin}" ] && gen_die "cannot find udevd"
 
     local udevadm_bin=/bin/udevadm
