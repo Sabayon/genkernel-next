@@ -28,7 +28,7 @@ MODULES_USB="ehci-hcd uhci usb-ohci hid usb-storage uhci-hcd ohci-pci ohci-hcd x
 MODULES_FS="ext2 ext3 ext4 btrfs reiserfs jfs nfs xfs zfs overlay fuse"
 
 # Crypto
-MODULES_CRYPTO="sha1_generic sha256_generic sha512_generic cbc aes_generic aes-x86_64 xts"
+MODULES_CRYPTO="sha1_generic sha256_generic sha512_generic cbc ecb aes_generic aes-x86_64 xts"
 # Backward compatibility with previous releases
 MODULES_CRYPT="${MODULES_CRYPTO}"
 
