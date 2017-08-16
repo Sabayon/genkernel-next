@@ -225,6 +225,12 @@ for x in ${CMDLINE}; do
         root_trim=*)
             CRYPT_ROOT_TRIM=${x#*=}
         ;;
+        root_header=*)
+            CRYPT_ROOT_HEADER=${x#*=}
+        ;;
+        root_headerdev=*)
+            CRYPT_ROOT_HEADERDEV=${x#*=}
+        ;;
 
         swap_key=*)
             CRYPT_SWAP_KEY=${x#*=}
