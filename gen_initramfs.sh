@@ -664,8 +664,11 @@ append_udev() {
                 print_warning 1 "cannot copy ${f} from udev"
         fi
     done
-
+    # systemd-207 dropped /sbin/udevd
     local udevd_bin=/sbin/udevd
+    [ ! -e "${udevd_bin}" ] && udevd_bin=/usr/lib/systemd/systemd-udevd
+    # systemd-210, moved udevd to another location
+    [ ! -e "${udevd_bin}" ] && udevd_bin=/lib/systemd/systemd-udevd
     [ ! -e "${udevd_bin}" ] && udevd_bin=${systemd_dir}/systemd-udevd
     [ ! -e "${udevd_bin}" ] && gen_die "cannot find udevd"
 
