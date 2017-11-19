@@ -22,7 +22,7 @@ MODULES_ISCSI="scsi_transport_iscsi libiscsi iscsi_tcp"
 # Hardware (Pluggable)
 MODULES_FIREWIRE="ieee1394 ohci1394 sbp2"
 MODULES_PCMCIA="pcmcia pcmcia_core yenta_socket pd6729 i82092 i82365 tcic ds ide-cs firmware_class"
-MODULES_USB="ehci-hcd uhci usb-ohci hid usb-storage uhci-hcd ohci-pci ohci-hcd xhci-hcd xhci-pci xhci-plat xhci-plat-hcd usbhid hid-generic sl811-hcd hid-a4tech hid-apple hid-belkin hid-cherry hid-chicony hid-cypress hid-dummy hid-ezkey hid-gyration hid-logitech hid-microsoft hid-monterey hid-petalynx hid-pl hid-samsung hid-sony hid-sunplus"
+MODULES_USB="ehci-hcd uhci usb-ohci hid usb-storage uhci-hcd ohci-pci ohci-hcd xhci-hcd xhci-pci xhci-plat xhci-plat-hcd usbhid hid-generic sl811-hcd hid-a4tech hid-apple hid-belkin hid-cherry hid-chicony hid-cypress hid-dummy hid-ezkey hid-gyration hid-logitech hid_logitech_hidpp hid_logitech_dj hid-microsoft hid-monterey hid-petalynx hid-pl hid-samsung hid-sony hid-sunplus"
 
 # Filesystems
 MODULES_FS="ext2 ext3 ext4 btrfs reiserfs jfs nfs xfs zfs overlay fuse"
