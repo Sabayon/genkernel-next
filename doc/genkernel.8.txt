@@ -388,7 +388,7 @@ OUTPUT SETTINGS
     Compresses or does not compress the generated initramfs.
 
 *--compress-initramfs-type*=<arg>::
-    Compression type for initramfs (best, xz, lzma, bzip2, gzip, lzop).
+    Compression type for initramfs (best, xz, lzma, bzip2, gzip, lzop, lz4).
     "Best" causes selection of the best available algorithm that is selected
     in your kernel configuration.
 
