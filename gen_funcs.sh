@@ -396,7 +396,7 @@ copy_image_with_preserve() {
         print_info 5 "  Make new symlink(s) (from ${BOOTDIR}):"
         print_info 5 "    ${symlinkName} -> ${currDestImage}"
         pushd ${BOOTDIR} >/dev/null
-        ln -s "${currDestImage}" "${symlinkName}" || 
+        ln -s "${currDestImage}" "${symlinkName}" ||
             gen_die "Could not create the ${symlinkName} symlink!"
         if [ "${prevDestImageExists}" = '1' ]
         then
@@ -524,4 +524,20 @@ find_kernel_binary() {
 #   fi
     cd "${curdir}"
     echo "${tmp_kernel_binary}"
+}
+
+function kconfig_get_opt() {
+	kconfig="$1"
+	optname="$2"
+	sed -n "${kconfig}" \
+		-e "/^#\? \?${optname}[ =].*/{ s/.*${optname}[ =]//g; s/is not set\| +//g; p; q }"
+}
+
+function kconfig_set_opt() {
+	kconfig="$1"
+	optname="$2"
+	optval="$3"
+	sed -i "${kconfig}" \
+		-e "s/^#\? \?${optname}[ =].*/${optname}=${optval}/g" \
+	|| gen_die "Failed to set ${optname}=${optval} in $kconfig"
 }

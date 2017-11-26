@@ -166,6 +166,7 @@ longusage() {
   echo "                separate the filenames with a comma"
   echo "    --firmware-install"
   echo "                Enable installation firmware onto root filesystem."
+  echo "                (only available for kernels older than v4.14)"
   echo "    --integrated-initramfs, --no-integrated-initramfs"
   echo "                Include/exclude the generated initramfs in the kernel"
   echo "                instead of keeping it as a separate file"

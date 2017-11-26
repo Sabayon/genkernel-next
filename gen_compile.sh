@@ -292,17 +292,20 @@ compile_kernel() {
         compile_generic "${KERNEL_MAKE_DIRECTIVE_2}" kernel
     fi
 
-    if isTrue "${FIRMWARE_INSTALL}" ; then
-      local firmware_in_kernel_line=`fgrep CONFIG_FIRMWARE_IN_KERNEL "${KERNEL_OUTPUTDIR}"/.config`
-      if [ -n "${firmware_in_kernel_line}" -a "${firmware_in_kernel_line}" != CONFIG_FIRMWARE_IN_KERNEL=y ]
-      then
+    if isTrue "${FIRMWARE_INSTALL}" && [ ! -e "${KERNEL_DIR}/ihex2fw.c" ] ; then
+        # Kernel v4.14 removed firmware from the kernel sources, including the
+        # ihex2fw.c tool source. Try and detect the tool to see if we are in >=v4.14
+        print_warning 1 "        >> Linux v4.14 removed in-kernel firmware, you MUST install the sys-kernel/linux-firmware package!"
+    elif isTrue "${FIRMWARE_INSTALL}" ; then
+        local cfg_CONFIG_FIRMWARE_IN_KERNEL=$(kconfig_get_opt "${KERNEL_OUTPUTDIR}/.config" CONFIG_FIRMWARE_IN_KERNEL)
+        if isTrue "$cfg_CONFIG_FIRMWARE_IN_KERNEL"; then
+          print_info 1 "        >> Not installing firmware as it's included in the kernel already (CONFIG_FIRMWARE_IN_KERNEL=y)..."
+        else
           print_info 1 "        >> Installing firmware ('make firmware_install') due to CONFIG_FIRMWARE_IN_KERNEL != y..."
           [ "${INSTALL_MOD_PATH}" != '' ] && export INSTALL_MOD_PATH
           [ "${INSTALL_FW_PATH}" != '' ] && export INSTALL_FW_PATH
           MAKEOPTS="${MAKEOPTS} -j1" compile_generic "firmware_install" kernel
-      else
-        print_info 1 "        >> Not installing firmware as it's included in the kernel already (CONFIG_FIRMWARE_IN_KERNEL=y)..."
-      fi
+        fi
     else
       print_info 1 "        >> Not installing firmware as requested by configuration FIRMWARE_INSTALL=no..."
     fi
