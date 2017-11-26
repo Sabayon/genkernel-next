@@ -338,6 +338,17 @@ append_mdadm(){
     mkdir -p "${TEMP}/initramfs-mdadm-temp/etc/"
     mkdir -p "${TEMP}/initramfs-mdadm-temp/sbin/"
 
+    local udev_dir=$(_get_udevdir)
+    udev_files=( $(qlist -e sys-fs/mdadm:0 | xargs realpath | \
+        grep ^${udev_dir}/rules.d) )
+    for f in "${udev_files[@]}"; do
+        [ -f "${f}" ] || gen_die "append_mdadm: not a file: ${f}"
+        mkdir -p "${TEMP}/initramfs-mdadm-temp"/$(dirname "${f}") || \
+            gen_die "cannot create rules.d directory"
+        cp "${f}" "${TEMP}/initramfs-mdadm-temp/${f}" || \
+            gen_die "cannot copy ${f} from system"
+    done
+    
     copy_binaries "${TEMP}/initramfs-mdadm-temp" \
         /sbin/mdadm /sbin/mdmon /sbin/mdassemble
 
