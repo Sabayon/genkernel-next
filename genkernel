@@ -242,7 +242,7 @@ then
     fi
 
     # Run post kernel build hooks
-    if [ -e '/etc/kernels/postbuild.d']
+    if [ -e '/etc/kernels/postbuild.d' ]
     then
         run-parts /etc/kernels/postbuild.d
     fi
@@ -256,7 +256,7 @@ then
     fi
 
     # Run post kernel install hooks
-    if [ -e '/etc/kernels/postinstall.d']
+    if [ -e '/etc/kernels/postinstall.d' ]
     then
         run-parts /etc/kernels/postinstall.d
     fi
@@ -384,7 +384,7 @@ then
     unset CONFGREP
 
     # Run post initramfs hooks
-    if [ -e '/etc/kernels/postinitramfs.d']
+    if [ -e '/etc/kernels/postinitramfs.d' ]
     then
         run-parts /etc/kernels/postinitramfs.d
     fi
@@ -393,7 +393,7 @@ fi
 [ "${BOOTRW}" != '' ] && mount -o remount,ro ${BOOTDIR}
 
 # Run post genkernel hooks
-if [ -e '/etc/kernels/postgen.d']
+if [ -e '/etc/kernels/postgen.d' ]
 then
     run-parts /etc/kernels/postgen.d
 fi
