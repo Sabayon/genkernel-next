@@ -240,6 +240,12 @@ then
             print_warning "Unable to copy the kernel configuration file."
             # Just a warning because ordinary users are not allowed to write in /etc
     fi
+
+    # Run post kernel build hooks
+    if [ -e '/etc/kernels/postbuild.d' ]
+    then
+        run-parts /etc/kernels/postbuild.d
+    fi
 fi
 
 if isTrue "${CMD_INSTALL}"
@@ -247,6 +253,12 @@ then
     if [ "${KERNCACHE}" != "" -a "${KERNCACHE_IS_VALID}" != "0" ] 
     then
         gen_kerncache_extract_kernel
+    fi
+
+    # Run post kernel install hooks
+    if [ -e '/etc/kernels/postinstall.d' ]
+    then
+        run-parts /etc/kernels/postinstall.d
     fi
 fi
 
@@ -370,9 +382,21 @@ then
     fi
 
     unset CONFGREP
+
+    # Run post initramfs hooks
+    if [ -e '/etc/kernels/postinitramfs.d' ]
+    then
+        run-parts /etc/kernels/postinitramfs.d
+    fi
 fi
 
 [ "${BOOTRW}" != '' ] && mount -o remount,ro ${BOOTDIR}
+
+# Run post genkernel hooks
+if [ -e '/etc/kernels/postgen.d' ]
+then
+    run-parts /etc/kernels/postgen.d
+fi
 
 echo
 print_info 1 'Do NOT report kernel bugs as genkernel bugs unless your bug'
