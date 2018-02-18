@@ -4,6 +4,10 @@
 modules_kext()
 {
     KEXT=".ko"
+    if grep -sq '^CONFIG_MODULE_COMPRESS=y' "${KERNEL_DIR}"/.config; then
+    grep -sq '^CONFIG_MODULE_COMPRESS_XZ=y' "${KERNEL_DIR}"/.config && KEXT='.ko.xz'
+    grep -sq '^CONFIG_MODULE_COMPRESS_GZIP=y' "${KERNEL_DIR}"/.config && KEXT='.ko.gz'
+    fi
     echo ${KEXT}
 }
 
