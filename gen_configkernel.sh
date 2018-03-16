@@ -27,6 +27,14 @@ determine_config_file() {
     KERNEL_CONFIG="$(readlink -f "${KERNEL_CONFIG}")"
 }
 
+copy_certs() {
+    if isTrue "${KCERTS}" && [ "${KCERTS_SRC}" != "" ] && [ "${KCERTS_DST}" != "" ]
+    then
+        print_info 1 "Copying kernel certificates from ${KCERTS_SRC} to ${KCERTS_DST}"
+        cp ${KCERTS_SRC}/* ${KCERTS_DST}
+    fi
+}
+
 config_kernel() {
     determine_config_file
     cd "${KERNEL_DIR}" || gen_die 'Could not switch to the kernel directory!'
@@ -105,4 +113,6 @@ config_kernel() {
         compile_generic xconfig kernel
         [ "$?" ] || gen_die 'Error: xconfig failed!'
     fi
+
+    copy_certs
 }
