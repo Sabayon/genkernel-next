@@ -4,6 +4,19 @@
 modules_kext()
 {
     KEXT=".ko"
+#Testing modules compressiona to add right extension
+#CONFIG_MODULE_COMPRESS_XZ=y
+#CONFIG_MODULE_COMPRESS_GZIP=y
+
+if [ xy == x`kconfig_get_opt ${KERNEL_CONFIG} "CONFIG_MODULE_COMPRESS"` ] 
+then
+	if [ "xy" = x`kconfig_get_opt ${KERNEL_CONFIG} "CONFIG_MODULE_COMPRESS_XZ"` ]
+	then
+		KEXT="$KEXT.xz"
+	else
+		KEXT="$KEXT.gz"
+	fi
+fi
     echo ${KEXT}
 }
 
