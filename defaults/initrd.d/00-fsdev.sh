@@ -155,6 +155,13 @@ media_find() {
 start_md_volumes() {
     good_msg "Starting md devices"
     "${MDADM_BIN}" --assemble --scan
+    # Intel Matrix RAID (and possibly others) have a container layer above the actual volumes,
+    # So we have to look for volumes that haven't been activated.
+    local DEVICE
+    for DEVICE in `cat /proc/mdstat | grep inactive | cut -d" " -f 1`; do
+      "${MDADM_BIN}" -I /dev/${DEVICE}
+    done
+
     # do not bad_msg, user could have this enabled even though
     # no RAID is currently available.
 }
