@@ -348,9 +348,9 @@ append_mdadm(){
         cp "${f}" "${TEMP}/initramfs-mdadm-temp/${f}" || \
             gen_die "cannot copy ${f} from system"
     done
-    
+
     copy_binaries "${TEMP}/initramfs-mdadm-temp" \
-        /sbin/mdadm /sbin/mdmon /sbin/mdassemble
+        /sbin/mdadm /sbin/mdmon
 
     if [ -n "${MDADM_CONFIG}" ]
     then
