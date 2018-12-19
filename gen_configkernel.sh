@@ -3,6 +3,7 @@
 
 # Fills variable KERNEL_CONFIG
 determine_config_file() {
+    local prev_kconf=$(ls -v "/etc/kernels/kernel-config-${ARCH}-${VER}.${PAT}."* 2>/dev/null | grep -v '.old$' | tail -1)
     if [ "${CMD_KERNEL_CONFIG}" != "" ]
     then
         KERNEL_CONFIG="${CMD_KERNEL_CONFIG}"
@@ -12,6 +13,9 @@ determine_config_file() {
     elif [ -f "${GK_SHARE}/arch/${ARCH}/kernel-config-${KV}" ]
     then
         KERNEL_CONFIG="${GK_SHARE}/arch/${ARCH}/kernel-config-${KV}"
+    elif [ -f "${prev_kconf}" ]
+    then
+        KERNEL_CONFIG="${prev_kconf}"
     elif [ "${DEFAULT_KERNEL_CONFIG}" != "" -a -f "${DEFAULT_KERNEL_CONFIG}" ]
     then
         KERNEL_CONFIG="${DEFAULT_KERNEL_CONFIG}"
