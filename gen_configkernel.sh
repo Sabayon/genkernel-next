@@ -65,6 +65,20 @@ config_kernel() {
         fi
     fi
 
+    # Support kernel config fragment merging.
+    if isTrue "${MERGE_KCONFIG}"
+    then
+        KCONFIG_FRAGMENT=${KCONFIG_FRAGMENT:-/etc/default/genkernel_kconfig_fragment}
+        local message="Error: Config fragment ${KCONFIG_FRAGMENT} not found!"
+        print_info 1 "kernel: Merging config with ${KCONFIG_FRAGMENT}"
+        [[ -f "${KCONFIG_FRAGMENT}" ]] || gen_die  "${message}"
+        KCONFIG_CONFIG="${KERNEL_OUTPUTDIR}/.config" \
+            "${KERNEL_DIR}"/scripts/kconfig/merge_config.sh \
+            "${KERNEL_OUTPUTDIR}/.config" \
+            "${KCONFIG_FRAGMENT[@]}"
+        [[ "$?" ]] || gen_die "Error: merge_config.sh failed!"
+    fi
+
     if isTrue "${OLDCONFIG}"
     then
         print_info 1 '        >> Running oldconfig...'

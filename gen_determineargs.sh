@@ -97,6 +97,7 @@ determine_real_args() {
     set_config_with_override BOOL   PLYMOUTH             CMD_PLYMOUTH
     set_config_with_override BOOL   POSTCLEAR            CMD_POSTCLEAR
     set_config_with_override BOOL   MRPROPER             CMD_MRPROPER
+    set_config_with_override BOOL   MERGE_KCONFIG        CMD_MERGE_KCONFIG
     set_config_with_override BOOL   MENUCONFIG           CMD_MENUCONFIG
     set_config_with_override BOOL   NCONFIG              CMD_NCONFIG
     set_config_with_override BOOL   CLEAN                CMD_CLEAN
@@ -185,6 +186,12 @@ determine_real_args() {
         then
             gen_die 'Kernel Cache specified but no kernel tree to verify against!'
         fi
+    fi
+
+    # After merging config fragments, make alldefconfig is run by default
+    if isTrue ${MERGE_KCONFIG}
+    then
+        OLDCONFIG=0
     fi
 
     # Special case:  If --no-clean is specified on the command line,

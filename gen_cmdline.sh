@@ -23,6 +23,8 @@ longusage() {
   echo "    --color         Output debug in color"
   echo "    --no-color      Do not output debug in color"
   echo "  Kernel Configuration settings"
+  echo "    --mergekconfig      Run merge_config.sh instead of oldconfig"
+  echo "    --no-mergekconfig   Do not run merge_config.sh instead of oldconfig"
   echo "    --menuconfig        Run menuconfig after oldconfig"
   echo "    --no-menuconfig     Do not run menuconfig after oldconfig"
   echo "    --nconfig       Run nconfig after oldconfig"
@@ -357,6 +359,10 @@ parse_cmdline() {
             CMD_LOGLEVEL=`parse_opt "$*"`
             LOGLEVEL="${CMD_LOGLEVEL}"
             print_info 2 "CMD_LOGLEVEL: ${CMD_LOGLEVEL}"
+            ;;
+        --mergekconfig|--no-mergekconfig)
+            CMD_MERGE_KCONFIG=`parse_optbool "$*"`
+            print_info 2 "CMD_MERGE_KCONFIG: ${CMD_MERGE_KCONFIG}"
             ;;
         --menuconfig)
             TERM_LINES=`stty -a | head -n 1 | cut -d\  -f5 | cut -d\; -f1`
