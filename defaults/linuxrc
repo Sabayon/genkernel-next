@@ -19,6 +19,9 @@ mount -t tmpfs -o rw,nosuid,nodev,relatime,mode=755 none /run 2>&1
 
 /bin/busybox --install -s
 
+#Reck Modules
+depmod -a
+
 if [ "$0" = "/init" ]; then
     rm -f /linuxrc
 fi
