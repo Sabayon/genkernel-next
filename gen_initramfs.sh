@@ -654,7 +654,7 @@ append_udev() {
     udev_maybe_files="
         ${udev_dir}/rules.d/40-gentoo.rules
         ${udev_dir}/rules.d/99-systemd.rules
-        ${udev_dir}/rules.d/71-seat.rules
+        ${udev_dir}/rules.d/71-udev-seat.rules
         /etc/modprobe.d/blacklist.conf
         ${systemd_dir}/network/99-default.link
     "
