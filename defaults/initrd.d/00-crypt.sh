@@ -55,8 +55,9 @@ _open_luks() {
     eval local luks_key='"${CRYPT_'${ltype}'_KEY}"'
     eval local luks_keydev='"${CRYPT_'${ltype}'_KEYDEV}"'
     eval local luks_trim='"${CRYPT_'${ltype}'_TRIM}"'
+    eval local init_key='"${CRYPT_'${ltype}'_INITKEY}"'
 
-    local dev_error=0 key_error=0 keydev_error=0
+    local dev_error=0 key_error=0 initkey_error=0 keydev_error=0
     local mntkey="${KEY_MNT}/" cryptsetup_opts=""
 
     local exit_st=0 luks_device=
@@ -93,6 +94,7 @@ _open_luks() {
             [ "${dev_error}" = "1" ] && any_error=1
             [ "${key_error}" = "1" ] && any_error=1
             [ "${keydev_error}" = "1" ] && any_error=1
+            [ "${initkey_error}" = "1" ] && any_error=1
             if [ "${CRYPT_SILENT}" = "1" ] && [ -n "${any_error}" ]; then
                 bad_msg "Failed to setup the LUKS device"
                 exit_st=1
@@ -110,6 +112,12 @@ _open_luks() {
                 key_error=0
                 continue
             fi
+            if [ "${initkey_error}" = "1" ]; then
+                prompt_user "init_key" "${luks_dev_name} key"
+                initkey_error=0
+                continue
+            fi
+
 
             if [ "${keydev_error}" = "1" ]; then
                 prompt_user "luks_keydev" "${luks_dev_name} key device"
@@ -217,6 +225,17 @@ _open_luks() {
                     cryptsetup_opts="${cryptsetup_opts} -d ${mntkey}${luks_key}"
                     passphrase_needed="0" # keyfile not itself encrypted
                 fi
+            fi
+
+            # if we have a keyfile embedded in the initramfs
+            if [ -n "${init_key}" ]; then
+                if [ ! -e "${init_key}" ]; then
+                   bad_msg "{init_key} on initramfs not found."
+                   initkey_error=1
+                   continue
+                fi
+                cryptsetup_opts="${cryptsetup_opts} -d ${init_key}"
+                passphrase_needed="0"
             fi
 
             # At this point, keyfile or not, we're ready!

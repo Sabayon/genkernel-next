@@ -219,6 +219,9 @@ for x in ${CMDLINE}; do
         root_key=*)
             CRYPT_ROOT_KEY=${x#*=}
         ;;
+		root_initkey=*)
+            CRYPT_ROOT_INITKEY=${x#*=}
+        ;;
         root_keydev=*)
             CRYPT_ROOT_KEYDEV=${x#*=}
         ;;
@@ -228,6 +231,9 @@ for x in ${CMDLINE}; do
 
         swap_key=*)
             CRYPT_SWAP_KEY=${x#*=}
+        ;;
+		swap_initkey=*)
+            CRYPT_SWAP_INITKEY=${x#*=}
         ;;
         swap_keydev=*)
             CRYPT_SWAP_KEYDEV=${x#*=}
