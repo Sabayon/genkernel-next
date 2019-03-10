@@ -3,6 +3,7 @@
 . /etc/initrd.d/00-common.sh
 . /etc/initrd.d/00-fsdev.sh
 . /etc/initrd.d/00-devmgr.sh
+. /etc/initrd.d/00-splash.sh
 
 is_zfs() {
     # Note: this only works after zfs_real_root_init
@@ -98,6 +99,21 @@ zfs_start_volumes() {
                 zpool export -f "${ZFS_POOL}"
                 zpool import -N ${ZPOOL_FORCE} "${ZFS_POOL}"
             fi
+            # If ${ZFS_POOL}" supports encryption and is active
+            if [ "$(zpool list -H -o feature@encryption $(echo "${ZFS_POOL}" | awk -F\/ '{print $1}'))" = "active" ]; then
+               good_msg "Native ZFS encryption detected. Checking for encryptionroot."
+               ENCRYPTIONROOT=$(/sbin/zfs get -H -o value encryptionroot "${ZFS_POOL}")
+               # If root dataset is encrypted...
+               if ! [ "${ENCRYPTIONROOT}" = "-" ]; then
+                  good_msg "ZFS encryption root enabled"
+                  ask_for_password --prompt "Encryption password for ('${ENCRYPTIONROOT}')" \
+                                   --tries 5 \
+                                   --cmd "/sbin/zfs load-key ${ENCRYPTIONROOT}"
+               else
+                  good_msg "ZFS root is not encrypted."
+               fi
+            fi
+
         else
             good_msg "Importing ZFS pool ${ZFS_POOL}"
             zpool import -N ${ZPOOL_FORCE} "${ZFS_POOL}"
