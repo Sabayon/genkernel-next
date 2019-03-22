@@ -1101,8 +1101,8 @@ create_initramfs() {
     then
         # Explicitly do not compress if we are integrating into the kernel.
         # The kernel will do a better job of it than us.
-        mv ${TMPDIR}/initramfs-${KV} ${TMPDIR}/initramfs-${KV}.cpio
-        sed -i '/^.*CONFIG_INITRAMFS_SOURCE=.*$/d' ${KERNEL_DIR}/.config
+        mv "${TMPDIR}"/initramfs-"${KV}" "${TMPDIR}"/initramfs-"${KV}".cpio
+        sed -i '/^.*CONFIG_INITRAMFS_SOURCE=.*$/d' "${KERNEL_OUTPUTDIR}"/.config
         compress_config='INITRAMFS_COMPRESSION_NONE'
         case ${compress_ext} in
             gz)  compress_config='INITRAMFS_COMPRESSION_GZIP' ;;
@@ -1115,7 +1115,7 @@ create_initramfs() {
         esac
         # All N default except XZ, so there it gets used if the kernel does
         # compression on it's own.
-        cat >> ${KERNEL_DIR}/.config << EOF
+        cat >> "${KERNEL_OUTPUTDIR}/".config << EOF
 CONFIG_INITRAMFS_SOURCE="${TMPDIR}/initramfs-${KV}.cpio${compress_ext}"
 CONFIG_INITRAMFS_ROOT_UID=0
 CONFIG_INITRAMFS_ROOT_GID=0
