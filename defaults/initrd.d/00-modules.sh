@@ -78,7 +78,7 @@ cmdline_hwopts() {
             if [ "${y}" = "do${x}" ]; then
                 MY_HWOPTS="${MY_HWOPTS} $x"
             elif [ "${y}" = "no${x}" ]; then
-                MY_HWOPTS="$(echo ${MY_HWOPTS} | sed -e \"s/${x}//g\" -)"
+                MY_HWOPTS="$(echo ${MY_HWOPTS} | sed -e "s/${x}//g" -)"
             fi
         done
     done
