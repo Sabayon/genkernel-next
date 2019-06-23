@@ -777,7 +777,7 @@ print_list()
 append_modules() {
     local group
     local group_modules
-    local MOD_EXT=".ko"
+    local MOD_EXT=$(modules_kext)
 
     print_info 2 "initramfs: >> Searching for modules..."
     if [ "${INSTALL_MOD_PATH}" != '' ]
@@ -821,7 +821,7 @@ append_modules() {
 }
 
 append_drm() {
-    local MOD_EXT=".ko"
+    local MOD_EXT=$(modules_kext)
 
     print_info 2 "initramfs: >> Appending drm drivers..."
     if [ "${INSTALL_MOD_PATH}" != '' ]
