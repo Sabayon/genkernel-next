@@ -746,7 +746,7 @@ append_ld_so_conf() {
         mkdir -p "${tmp_dir_ext}"
         mkdir -p "${tmp_dir}/etc"
         cd "${tmp_dir_ext}" || gen_die "cannot cd into ${tmp_dir_ext}"
-        cpio -id --quiet < "${CPIO}" || gen_die "cannot re-extract ${CPIO}"
+        cpio -uid --quiet < "${CPIO}" || gen_die "cannot re-extract ${CPIO}"
 
         cd "${tmp_dir}" || gen_die "cannot cd into ${tmp_dir}"
         ldconfig -r "${tmp_dir_ext}" || \
