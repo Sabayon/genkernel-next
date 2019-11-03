@@ -320,6 +320,12 @@ append_lvm(){
     then
         cp /etc/lvm/lvm.conf "${TEMP}/initramfs-lvm-temp/etc/lvm/" ||
             gen_die 'Could not copy over lvm.conf!'
+
+        # use_lvmetad LVM config option need changing,
+        # because the functionality is not supported in initramfs:
+        sed -r -i -e '/^[[:space:]]*use_lvmetad/s:=.*:= 0:g' \
+            "${TEMP}/initramfs-lvm-temp/etc/lvm/lvm.conf" || \
+                    gen_die 'Could not sed lvm.conf!'
     fi
     cd "${TEMP}/initramfs-lvm-temp/"
     log_future_cpio_content
