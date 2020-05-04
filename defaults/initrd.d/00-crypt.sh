@@ -85,7 +85,7 @@ _bootstrap_real() {
         if [ ! -e "${mnt_path}${tgt_file}" ]; then
             umount -n "${mnt_path}"
             eval ${mnt_dev_type}_error=1
-	    eval ${mnt_dev_type}dev_error=1
+            eval ${mnt_dev_type}dev_error=1
             bad_msg "${tgt_file} on ${real_mnt_dev} not found."
             continue
         fi
@@ -133,35 +133,35 @@ _open_luks() {
     eval local luks_devices='"${CRYPT_'${ltypes}'}"'
  
     # Key values
-        eval local luks_key='"${CRYPT_'${ltype}'_KEY}"'
+    eval local luks_key='"${CRYPT_'${ltype}'_KEY}"'
 
-        local luks_key_included=0
+    local luks_key_included=0
 
-        if [ -n "${luks_key}" ] && [ -f "${luks_key}" ]; then
-	    luks_key_included=1
-        fi
-    
-        eval local luks_keydev='"${CRYPT_'${ltype}'_KEYDEV}"'
+    if [ -n "${luks_key}" ] && [ -f "${luks_key}" ]; then
+        luks_key_included=1
+    fi
+
+    eval local luks_keydev='"${CRYPT_'${ltype}'_KEYDEV}"'
    
     # Header values
-        eval local luks_header='"${CRYPT_'${ltype}'_HEADER}"'
+    eval local luks_header='"${CRYPT_'${ltype}'_HEADER}"'
 
-        local luks_header_included=0
+    local luks_header_included=0
 
-        if [ -n "${luks_header}" ] && [ -f "${luks_header}" ];then
-            luks_header_included=1
-        fi
+    if [ -n "${luks_header}" ] && [ -f "${luks_header}" ];then
+        luks_header_included=1
+    fi
 
-        eval local luks_headerdev='"${CRYPT_'${ltype}'_HEADERDEV}"'
+    eval local luks_headerdev='"${CRYPT_'${ltype}'_HEADERDEV}"'
 
     # TRIM values
-        eval local luks_trim='"${CRYPT_'${ltype}'_TRIM}"'
+    eval local luks_trim='"${CRYPT_'${ltype}'_TRIM}"'
 
     # Misc
-        local mntkey="${KEY_MNT}/"
-	local mntheader="${HEADER_MNT}/"
-	
-	cryptsetup_opts=""
+    local mntkey="${KEY_MNT}/"
+    local mntheader="${HEADER_MNT}/"
+
+    cryptsetup_opts=""
 
     local exit_st=0 luks_device=
     for luks_device in ${luks_devices}; do
@@ -197,8 +197,9 @@ _open_luks() {
             [ "${dev_error}" = "1" ] && any_error=1
             [ "${key_error}" = "1" ] && any_error=1
             [ "${keydev_error}" = "1" ] && any_error=1
-	    [ "${header_error}" = "1" ] && any_error=1
-	    [ "${headerdev_error}" = "1" ] && any_error=1
+            [ "${header_error}" = "1" ] && any_error=1
+            [ "${headerdev_error}" = "1" ] && any_error=1
+
             if [ "${CRYPT_SILENT}" = "1" ] && [ -n "${any_error}" ]; then
                 bad_msg "Failed to setup the LUKS device"
                 exit_st=1
@@ -239,28 +240,28 @@ _open_luks() {
             [ -n "${luks_dev}" ] && \
                 luks_device="${luks_dev}"  # otherwise hope...
 
-	    # Handle headers
-	    if [ -n "${luks_header}" ]; then
+            # Handle headers
+            if [ -n "${luks_header}" ]; then
                 if [ "${luks_header_included}" = "0" ]; then
                     _bootstrap_real "${luks_headerdev}" \
-			            "${mntheader}" \
-				    "header" \
-				    "${luks_header}" \
-				    "${luks_dev_name}" \
-				    "${ltype}"
+                        "${mntheader}" \
+                        "header" \
+                        "${luks_header}" \
+                        "${luks_dev_name}" \
+                        "${ltype}"
                 else
-		    mntheader=""
- 		    good_msg "Header file ${luks_header} found included in initramfs"
-		fi
+                    mntheader=""
+                    good_msg "Header file ${luks_header} found included in initramfs"
+                fi
 
                 if eval "${CRYPTSETUP_BIN} isLuks ${mntheader}${luks_header}"; then
-		    good_msg "${luks_header} is a valid luks header"
+                    good_msg "${luks_header} is a valid luks header"
                     cryptsetup_opts="${cryptsetup_opts} --header ${mntheader}${luks_header}"
-		else
+                else
                     bad_msg "${luks_header} is not a valid LUKS header"
                     header_error=1
                     continue;
-	        fi
+                fi
             else
                 eval "${CRYPTSETUP_BIN} isLuks ${luks_device}" || {
                     bad_msg "${luks_device} does not contain a LUKS header"
@@ -269,25 +270,25 @@ _open_luks() {
                 }
             fi
 
-	    # TRIM support
+            # TRIM support
             if [ "${luks_trim}" = "yes" ]; then
                 good_msg "Enabling TRIM support for ${luks_dev_name}."
                 cryptsetup_opts="${cryptsetup_opts} --allow-discards"
             fi
 
-	    # Handle keys
-             if [ -n "${luks_key}" ]; then
+            # Handle keys
+            if [ -n "${luks_key}" ]; then
                 if [ "${luks_key_included}" = "0" ]; then
                     _bootstrap_real "${luks_keydev}" \
-                                    "${mntkey}" \
-				    "key" \
-				    "${luks_key}" \
-				    "${luks_dev_name}" \
-				    "${ltype}"
- 		else
-		    mntkey=""
-		    good_msg "Key file ${luks_key} found included in initramfs"
-		fi
+                        "${mntkey}" \
+                        "key" \
+                        "${luks_key}" \
+                        "${luks_dev_name}" \
+                        "${ltype}"
+                else
+                    mntkey=""
+                    good_msg "Key file ${luks_key} found included in initramfs"
+                fi
 
                 if [ "$(echo ${luks_key} | grep -o '.gpg$')" = ".gpg" ] && \
                     [ -e /usr/bin/gpg ]; then
@@ -304,10 +305,10 @@ _open_luks() {
                     gpg_ply_cmd="/usr/bin/gpg --logger-file /dev/null"
                     gpg_ply_cmd="${gpg_ply_cmd} --quiet --passphrase-fd 0 --batch --no-tty"
                     gpg_ply_cmd="${gpg_ply_cmd} --decrypt ${mntkey}${luks_key} | "
-                 else
+                else
                     cryptsetup_opts="${cryptsetup_opts} -d ${mntkey}${luks_key}"
                     passphrase_needed="0" # keyfile not itself encrypted
-                 fi
+                fi
             fi
 
             # At this point, keyfile or not, we're ready!
