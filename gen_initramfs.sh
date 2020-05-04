@@ -955,8 +955,7 @@ append_auxilary() {
 }
 
 append_files(){
-    if [ -d "${TEMP}/initramfs-files-temp" ]
-    then
+    if [ -d "${TEMP}/initramfs-files-temp" ]; then
         rm -r "${TEMP}/initramfs-files-temp/"
     fi
     cd ${TEMP}
@@ -964,19 +963,16 @@ append_files(){
 
     print_info 1 "Including files specified in config"
 
-    if [ -n "${FILES}" ]
-    then
+    if [ -n "${FILES}" ]; then
         print_info 1 "        >> Appending specified files to cpio data..."
 	
-        for file in ${FILES}
-        do
-	    if [ -f "$file" ]
-	    then
-		cp --parents "$file" "${TEMP}/initramfs-files-temp/"
-		print_info 1 "            >> $file appended to initramfs"
-	    else
-		print_warning 2 "$file not found on file system."
-	    fi
+        for file in ${FILES}; do
+            if [ -f "$file" ]; then
+                cp --parents "$file" "${TEMP}/initramfs-files-temp/"
+                print_info 1 "            >> $file appended to initramfs"
+            else
+                print_warning 2 "$file not found on file system."
+            fi
         done
     else
         print_info 1 "        >> No files specified for append to cpio data..."
