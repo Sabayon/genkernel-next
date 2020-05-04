@@ -1010,6 +1010,38 @@ append_auxilary() {
     rm -r "${TEMP}/initramfs-aux-temp/"
 }
 
+append_files(){
+    if [ -d "${TEMP}/initramfs-files-temp" ]; then
+        rm -r "${TEMP}/initramfs-files-temp/"
+    fi
+    cd ${TEMP}
+    mkdir -p "${TEMP}/initramfs-files-temp/"
+
+    print_info 1 "Including files specified in config"
+
+    if [ -n "${FILES}" ]; then
+        print_info 1 "        >> Appending specified files to cpio data..."
+	
+        for file in ${FILES}; do
+            if [ -f "$file" ]; then
+                cp --parents "$file" "${TEMP}/initramfs-files-temp/"
+                print_info 1 "            >> $file appended to initramfs"
+            else
+                print_warning 2 "$file not found on file system."
+            fi
+        done
+    else
+        print_info 1 "        >> No files specified for append to cpio data..."
+    fi
+
+    cd "${TEMP}/initramfs-files-temp/"
+    log_future_cpio_content
+    find . -print | cpio ${CPIO_ARGS} --append -F "${CPIO}" \
+            || gen_die "compressing files cpio"
+    cd "${TEMP}"
+    rm -rf "${TEMP}/initramfs-files-temp" > /dev/null
+}
+
 append_data() {
     local name=$1 var=$2
     local func="append_${name}"
@@ -1043,6 +1075,7 @@ create_initramfs() {
     append_data 'luks' "${LUKS}"
     append_data 'multipath' "${MULTIPATH}"
     append_data 'gpg' "${GPG}"
+    append_data 'files' 1
 
     if [ "${RAMDISKMODULES}" = '1' ]
     then
