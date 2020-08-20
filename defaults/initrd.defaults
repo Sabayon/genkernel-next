@@ -87,3 +87,10 @@ DEFAULT_NFSOPTIONS="ro,nolock,rsize=1024,wsize=1024"
 # are not module groups need to be defined here...
 HWOPTS="keymap cache modules pata sata scsi usb firewire waitscan lvm dmraid mdadm fs net virtio hyperv"
 MY_HWOPTS="modules pata sata scsi usb firewire waitscan dmraid mdadm fs net iscsi crypto plymouth virtio"
+
+# Location of the busybox (if included).
+BUSYBOX_BIN=/bin/busybox
+# Location of the fs repair tool (if included).
+REAL_E2FSCK_BIN=/sbin/e2fsck
+# Options: -p = auto-repair, -C0 = write progress bar
+REAL_E2FSCK_BIN_OPTS="-p -C0"
